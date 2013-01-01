@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Streamus" namespace="Streamus.Backend.Domain">
+  <class name="Playlist" table="[Playlists]" lazy="false" >
+    <id name="Id">
+      <generator class="guid" />
+    </id>
+    <property name="UserId" not-null="true" />
+    <property name="Title" not-null="true" />
+    <property name="Position" not-null="true" />
+    <bag name="Items" inverse="true" cascade="all-delete-orphan">
+      <key column="PlaylistId" />
+      <one-to-many class="PlaylistItem" />
+    </bag> 
+  </class>
+</hibernate-mapping>

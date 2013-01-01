@@ -1,0 +1,65 @@
+{
+  "name": "Streamus",
+  "version": "0.30",
+  "manifest_version": 2,
+  "description": "Converts YouTube into an MP3 player for your browser.",
+  "background":{
+    "page": "ChromeExtension/background.htm"
+  },
+  "browser_action": {
+    "default_icon": "ChromeExtension/icon.png",
+    "default_title": "Streamus: Drop the 'ic' from streamed music.",
+    "default_popup": "ChromeExtension/foreground.htm"
+  },
+  "permissions": [
+    "contextMenus",
+    "clipboardWrite",
+    "storage",
+    "webRequest",
+    "webRequestBlocking",
+    "http://www.geoplugin.net/",
+    "http://www.beatport.com/top-100",
+    "http://www.youtube.com/",
+    "https://www.youtube.com/",
+    "https://graph.facebook.com/",
+	"http://localhost:61975//ldhgghofjpkjkidmlghkjniigkjbodag",
+    "tabs"
+	],
+  "content_scripts": [
+    {
+      "matches": ["http://www.youtube.com/watch?v*"],
+      "css": ["ChromeExtension/css/inject.css"],
+      "js": ["Shared/js/thirdParty/underscore.js", "Shared/js/thirdParty/jquery.js", "ChromeExtension/js/inject.js"]
+    },
+    {
+      "matches": ["http://www.facebook.com/robots.txt*"],
+      "js": ["Shared/js/thirdParty/oauth2/oauth2_inject.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "commands": {
+    "nextSong": {
+      "suggested_key": { "default": "Alt+N" },
+      "description": "Tells the player to play next song."
+    },
+    "previousSong": {
+      "suggested_key": { "default": "Alt+V" },
+      "description": "Tells the player to play previous song."
+    },
+    "toggleSong": {
+      "suggested_key": { "default": "Alt+B" },
+      "description": "Tells the player to play previous song."
+    },
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+B"
+      }
+    }
+  },
+  "web_accessible_resources": [
+    "ChromeExtension/css/inject.css",
+    "ChromeExtension/icon.png"
+  ],
+  "content_security_policy": 
+    "script-src 'self'  https://graph.facebook.com https://www.youtube.com https://ssl.google-analytics.com https://gdata.youtube.com https://suggestqueries.google.com https://www.youtube.com https://s.ytimg.com; object-src 'self'"
+}

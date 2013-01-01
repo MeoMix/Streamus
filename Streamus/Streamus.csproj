@@ -1,0 +1,390 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6E1BB86C-18B6-469B-8CAF-8DF671A30906}</ProjectGuid>
+    <ProjectTypeGuids>{E3E379DF-F4C6-4180-9B81-6769533ABE47};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Streamus</RootNamespace>
+    <AssemblyName>Streamus</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FluentValidation, Version=3.4.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Shared\NHibernate-3.3.1\Required_Bins\FluentValidation.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>Shared\NHibernate-3.3.1\Required_Bins\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>Shared\NHibernate-3.3.1\Tests\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="NHibernate">
+      <HintPath>Shared\NHibernate-3.3.1\Required_Bins\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.core">
+      <HintPath>Shared\NHibernate-3.3.1\Tests\nunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.6.2.12296, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Shared\NHibernate-3.3.1\Tests\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.6\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.4.0.20710.0\lib\net40\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.20710.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.4.0.20710.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.0.0\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Providers">
+      <HintPath>..\packages\Microsoft.AspNet.Providers.Core.1.1\lib\net40\System.Web.Providers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.20710.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.1.0\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.1.0\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Backend\Dao\PlaylistItemDao.cs" />
+    <Compile Include="Backend\Domain\DataInterfaces\IPlaylistItemDao.cs" />
+    <Compile Include="Backend\Domain\PlaylistItem.cs" />
+    <Compile Include="Backend\Domain\DataInterfaces\IUserDao.cs" />
+    <Compile Include="Backend\Domain\DataInterfaces\IPlaylistDao.cs" />
+    <Compile Include="Backend\Domain\DataInterfaces\ISongDao.cs" />
+    <Compile Include="Backend\Domain\DataInterfaces\IDao.cs" />
+    <Compile Include="Backend\Domain\Managers\SongManager.cs" />
+    <Compile Include="Backend\Domain\Managers\PlaylistManager.cs" />
+    <Compile Include="Backend\Domain\Managers\UserManager.cs" />
+    <Compile Include="Backend\Domain\Playlist.cs" />
+    <Compile Include="Backend\Domain\Song.cs" />
+    <Compile Include="Backend\Domain\User.cs" />
+    <Compile Include="Backend\Dao\AbstractNHibernateDao.cs" />
+    <Compile Include="Backend\Dao\NHibernateSessionManager.cs" />
+    <Compile Include="Backend\Dao\PlaylistDao.cs" />
+    <Compile Include="Backend\Dao\SongDao.cs" />
+    <Compile Include="Backend\Dao\UserDao.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\PlaylistController.cs" />
+    <Compile Include="Controllers\FacebookController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\JsonDataContractActionResult.cs" />
+    <Compile Include="Controllers\SongController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".gitignore" />
+    <EmbeddedResource Include="Backend\Domain\PlaylistItem.hbm.xml" />
+    <EmbeddedResource Include="Backend\Domain\Song.hbm.xml" />
+    <EmbeddedResource Include="Backend\Domain\User.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Backend\Domain\Playlist.hbm.xml" />
+    <Content Include="bin\Antlr3.Runtime.dll" />
+    <Content Include="bin\EntityFramework.dll" />
+    <Content Include="bin\FluentValidation.dll" />
+    <Content Include="bin\Iesi.Collections.dll" />
+    <Content Include="bin\log4net.dll" />
+    <Content Include="bin\Microsoft.Web.Infrastructure.dll" />
+    <Content Include="bin\Newtonsoft.Json.dll" />
+    <Content Include="bin\NHibernate.dll" />
+    <Content Include="bin\nunit.core.dll" />
+    <Content Include="bin\nunit.framework.dll" />
+    <Content Include="bin\System.Net.Http.Formatting.dll" />
+    <Content Include="bin\System.Web.Helpers.dll" />
+    <Content Include="bin\System.Web.Http.dll" />
+    <Content Include="bin\System.Web.Http.WebHost.dll" />
+    <Content Include="bin\System.Web.Mvc.dll" />
+    <Content Include="bin\System.Web.Optimization.dll" />
+    <Content Include="bin\System.Web.Providers.dll" />
+    <Content Include="bin\System.Web.Razor.dll" />
+    <Content Include="bin\System.Web.WebPages.Deployment.dll" />
+    <Content Include="bin\System.Web.WebPages.dll" />
+    <Content Include="bin\System.Web.WebPages.Razor.dll" />
+    <Content Include="bin\WebGrease.dll" />
+    <Content Include="ChromeExtension\background.htm" />
+    <Content Include="ChromeExtension\css\aristo\aristo.css" />
+    <Content Include="ChromeExtension\css\aristo\images\bg_fallback.png" />
+    <Content Include="ChromeExtension\css\aristo\images\icon_sprite.png" />
+    <Content Include="ChromeExtension\css\aristo\images\progress_bar.gif" />
+    <Content Include="ChromeExtension\css\aristo\images\slider_handles.png" />
+    <Content Include="ChromeExtension\css\aristo\images\ui-icons_222222_256x240.png" />
+    <Content Include="ChromeExtension\css\aristo\images\ui-icons_454545_256x240.png" />
+    <Content Include="ChromeExtension\css\foreground.css" />
+    <Content Include="ChromeExtension\css\inject.css" />
+    <Content Include="ChromeExtension\foreground.htm" />
+    <Content Include="ChromeExtension\icon.png" />
+    <Content Include="ChromeExtension\js\background\background.js" />
+    <Content Include="ChromeExtension\js\background\main.js" />
+    <Content Include="ChromeExtension\js\background\player.js" />
+    <Content Include="ChromeExtension\js\background\playlist.js" />
+    <Content Include="ChromeExtension\js\background\playlistDataProvider.js" />
+    <Content Include="ChromeExtension\js\background\playlistItem.js" />
+    <Content Include="ChromeExtension\js\background\playlistManager.js" />
+    <Content Include="ChromeExtension\js\background\requirePaths.js" />
+    <Content Include="ChromeExtension\js\background\songManager.js" />
+    <Content Include="ChromeExtension\js\background\user.js" />
+    <Content Include="ChromeExtension\js\foreground\contentButtons.js" />
+    <Content Include="ChromeExtension\js\foreground\contentHeader.js" />
+    <Content Include="ChromeExtension\js\foreground\contextMenu.js" />
+    <Content Include="ChromeExtension\js\foreground\dialogs.js" />
+    <Content Include="ChromeExtension\js\foreground\foreground.js" />
+    <Content Include="ChromeExtension\js\foreground\header.js" />
+    <Content Include="ChromeExtension\js\foreground\main.js" />
+    <Content Include="ChromeExtension\js\foreground\playerControls\playerControls.js" />
+    <Content Include="ChromeExtension\js\foreground\playerControls\playPauseButton.js" />
+    <Content Include="ChromeExtension\js\foreground\playerControls\previousButton.js" />
+    <Content Include="ChromeExtension\js\foreground\playerControls\shuffleButton.js" />
+    <Content Include="ChromeExtension\js\foreground\playerControls\skipButton.js" />
+    <Content Include="ChromeExtension\js\foreground\playerControls\volumeSlider.js" />
+    <Content Include="ChromeExtension\js\foreground\playlistsTab\playlistsContextMenu.js" />
+    <Content Include="ChromeExtension\js\foreground\playlistsTab\playlistsDisplay.js" />
+    <Content Include="ChromeExtension\js\foreground\playlistsTab\playlistsTab.js" />
+    <Content Include="ChromeExtension\js\foreground\progressBar.js" />
+    <Content Include="ChromeExtension\js\foreground\requirePaths.js" />
+    <Content Include="ChromeExtension\js\foreground\settingsTab\settings.js" />
+    <Content Include="ChromeExtension\js\foreground\songsTab\songInput.js" />
+    <Content Include="ChromeExtension\js\foreground\songsTab\songsContextMenu.js" />
+    <Content Include="ChromeExtension\js\foreground\songsTab\songsDisplay.js" />
+    <Content Include="ChromeExtension\js\foreground\songsTab\songsTab.js" />
+    <Content Include="ChromeExtension\js\foreground\timeDisplay.js" />
+    <Content Include="ChromeExtension\js\foreground\uielements.js" />
+    <Content Include="ChromeExtension\js\inject.js" />
+    <Content Include="ChromeExtension\js\playerStates.js" />
+    <Content Include="ChromeExtension\js\tests\main.js" />
+    <Content Include="Shared\js\thirdParty\jasmine-html.js" />
+    <Content Include="Shared\css\jasmine.css" />
+    <Content Include="ChromeExtension\tests.htm" />
+    <Content Include="ChromeExtension\js\tests\background\playlistItemSpec.js" />
+    <Content Include="ChromeExtension\js\tests\background\playlistSpec.js" />
+    <Content Include="hibernate.cfg.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Shared\js\thirdParty\backbone.js" />
+    <Content Include="Shared\NHibernate-3.3.1\Required_Bins\FluentValidation.dll" />
+    <Content Include="Shared\NHibernate-3.3.1\Required_Bins\Iesi.Collections.dll" />
+    <Content Include="Shared\NHibernate-3.3.1\Required_Bins\Iesi.Collections.pdb" />
+    <Content Include="Shared\NHibernate-3.3.1\Required_Bins\Iesi.Collections.xml" />
+    <Content Include="Shared\NHibernate-3.3.1\Required_Bins\NHibernate.dll" />
+    <Content Include="Shared\NHibernate-3.3.1\Required_Bins\NHibernate.pdb" />
+    <Content Include="Shared\NHibernate-3.3.1\Required_Bins\NHibernate.xml" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\ABC.hbm.xml" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\DbScripts\MsSql2008DialectLinqReadonlyCreateScript.sql" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\DbScripts\MsSql2008DialectLinqReadonlyDropScript.sql" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\DbScripts\MsSql2012DialectLinqReadonlyCreateScript.sql" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\DbScripts\MsSql2012DialectLinqReadonlyDropScript.sql" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\DbScripts\PostgreSQL82DialectLinqReadonlyCreateScript.sql" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\DbScripts\PostgreSQL82DialectLinqReadonlyDropScript.sql" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\log4net.dll" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\log4net.license.txt" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\log4net.xml" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.DomainModel.dll" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.DomainModel.pdb" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.DomainModel.xml" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.Test.dll" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.Test.pdb" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.Test.VisualBasic.dll" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.Test.VisualBasic.pdb" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.TestDatabaseSetup.dll" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.TestDatabaseSetup.pdb" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\nunit.core.dll" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\nunit.framework.dll" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\nunit.framework.license.txt" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\nunit.framework.xml" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\SharpTestsEx.NUnit.dll" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\SharpTestsEx.NUnit.xml" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\TestEnbeddedConfig.cfg.xml" />
+    <Content Include="favicon.ico" />
+    <Content Include="Global.asax" />
+    <Content Include="manifest.json" />
+    <Content Include="README.md" />
+    <Content Include="Shared\js\helpers.js" />
+    <Content Include="Shared\js\playerBuilder.js" />
+    <Content Include="Shared\js\song.js" />
+    <Content Include="Shared\js\thirdParty\geoplugin.js" />
+    <Content Include="Shared\js\thirdParty\googleAnalytics.js" />
+    <Content Include="Shared\js\thirdParty\jasmine.js" />
+    <Content Include="Shared\js\thirdParty\jquery.js" />
+    <Content Include="Shared\js\thirdParty\jqueryMousewheel.js" />
+    <Content Include="Shared\js\thirdParty\jqueryUi.js" />
+    <Content Include="Shared\js\thirdParty\levenshtein.js" />
+    <Content Include="Shared\js\thirdParty\oauth2\adapters\bitly.js" />
+    <Content Include="Shared\js\thirdParty\oauth2\adapters\facebook.js" />
+    <Content Include="Shared\js\thirdParty\oauth2\adapters\github.js" />
+    <Content Include="Shared\js\thirdParty\oauth2\adapters\google.js" />
+    <Content Include="Shared\js\thirdParty\oauth2\adapters\sample.js" />
+    <Content Include="Shared\js\thirdParty\oauth2\oauth2.html" />
+    <Content Include="Shared\js\thirdParty\oauth2\oauth2.js" />
+    <Content Include="Shared\js\thirdParty\oauth2\oauth2_finish.js" />
+    <Content Include="Shared\js\thirdParty\oauth2\oauth2_inject.js" />
+    <Content Include="Shared\js\thirdParty\onYouTubePlayerApiReady.js" />
+    <Content Include="Shared\js\thirdParty\require.js" />
+    <Content Include="ChromeExtension\js\tests\requirePaths.js" />
+    <Content Include="Shared\js\thirdParty\underscore.js" />
+    <Content Include="Shared\js\thirdParty\ytPlayerApiHelper.js" />
+    <Content Include="Shared\js\ytHelper.js" />
+    <Content Include="Web.config" />
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Images\" />
+    <Folder Include="Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Shared\js\thirdParty\MIT.LICENSE" />
+    <None Include="Shared\NHibernate-3.3.1\Required_Bins\nhibernate-configuration.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Shared\NHibernate-3.3.1\Required_Bins\nhibernate-mapping.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.Test.dll.config" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.Test.VisualBasic.dll.config" />
+    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.TestDatabaseSetup.dll.config" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:61975/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>
