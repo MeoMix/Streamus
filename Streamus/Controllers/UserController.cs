@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web.Mvc;
+using NHibernate;
 using Streamus.Backend.Dao;
 using Streamus.Backend.Domain;
 using Streamus.Backend.Domain.DataInterfaces;
@@ -23,6 +24,12 @@ namespace Streamus.Controllers
         public ActionResult GetById(Guid id)
         {
             User user = UserDao.GetById(id);
+
+            if (user == null)
+            {
+                string message = string.Format("Failed to find user with id {0}", id);
+                throw new ApplicationException(message);
+            }
 
             return new JsonDataContractActionResult(user);
         }

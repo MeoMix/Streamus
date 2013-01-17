@@ -40,24 +40,24 @@ namespace Streamus.Tests
             User = new UserManager(UserDao, PlaylistDao).CreateUser();
 
             Song = new Song("s91jgcmQoB0", "Tristam - Chairs", 219);
-            new SongManager(SongDao, PlaylistDao, PlaylistItemDao).SaveSong(Song);
+            new SongManager(SongDao).SaveSong(Song);
         }
 
         [Test]
-        public void CanSavePlaylistItem()
+        public void CanUpdatePlaylistItem()
         {
             Playlist = new Playlist(User.Id, "New Playlist 001", PlaylistDao.GetAll().Count);
-            new PlaylistManager(PlaylistDao, PlaylistItemDao).SavePlaylist(Playlist);
+            new PlaylistManager(PlaylistDao, PlaylistItemDao).CreatePlaylist(Playlist);
 
             var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
 
-            var playlistItem = new PlaylistItem(Playlist.Id, Playlist.Items.Count, Song.Id, Song.Title, Song.VideoId);
-            playlistManager.SavePlaylistItem(playlistItem);
+            var playlistItem = new PlaylistItem(Playlist.Id, Playlist.Items.Count, Song.Title, Song.VideoId);
+            playlistManager.CreatePlaylistItem(playlistItem);
             //Only add after successfully saving.
             Playlist.Items.Add(playlistItem);
 
             playlistItem.Title = "New Title 001";
-            playlistManager.SavePlaylistItem(playlistItem);
+            playlistManager.UpdatePlaylistItem(playlistItem);
 
             //Remove entity from NHibernate cache to force DB query to ensure actually created.
             NHibernateSessionManager.Instance.Evict(playlistItem);
@@ -72,12 +72,12 @@ namespace Streamus.Tests
         public void CanDeletePlaylistItem()
         {
             Playlist = new Playlist(User.Id, "New Playlist 001", PlaylistDao.GetAll().Count);
-            new PlaylistManager(PlaylistDao, PlaylistItemDao).SavePlaylist(Playlist);
+            new PlaylistManager(PlaylistDao, PlaylistItemDao).CreatePlaylist(Playlist);
 
             var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
 
-            var playlistItem = new PlaylistItem(Playlist.Id, Playlist.Items.Count, Song.Id, Song.Title, Song.VideoId);
-            playlistManager.SavePlaylistItem(playlistItem);
+            var playlistItem = new PlaylistItem(Playlist.Id, Playlist.Items.Count, Song.Title, Song.VideoId);
+            playlistManager.CreatePlaylistItem(playlistItem);
             //Only add after successfully saving.
             Playlist.Items.Add(playlistItem);
 

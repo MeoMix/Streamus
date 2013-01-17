@@ -98,6 +98,7 @@ define(['playlist', 'playlistItem', 'playlistDataProvider', 'user'], function(Pl
             var playlist = this.getPlaylistById(id);
             setSelectedPlaylist(playlist);
         },
+        getPlaylistByPosition: getPlaylistByPosition,
         getPlaylistById: function(id) {
             return _.find(playlists, function(p) {
                  return p.get('id') === id;
@@ -112,14 +113,22 @@ define(['playlist', 'playlistItem', 'playlistDataProvider', 'user'], function(Pl
                 position: playlists.length,
                 userId: user.id
             });
-            console.log("adding playlist with userId:", playlist.get('userId'));
 
+            console.log("Calling save with playlist inside of addPlaylist, item count:", playlist.get('items').length);
             //Save the playlist, but push after version from server because the ID will have changed.
-            playlist.save(function () {
-                playlists.push(playlist);
-                
-                if (callback) {
-                    callback(playlist);
+
+            playlist.save({},{
+                success: function(model, response, options) {
+                    console.log("model:", model, response, options);
+                    playlist.set('id', model.id);
+                    playlists.push(playlist);
+
+                    if (callback) {
+                        callback(playlist);
+                    }
+                },
+                error: function() {
+                    //TODO: Error?
                 }
             });
         },

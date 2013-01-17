@@ -1,15 +1,11 @@
-﻿using System;
+﻿using FluentValidation;
 using System.Runtime.Serialization;
-using FluentValidation;
 
 namespace Streamus.Backend.Domain
 {
     [DataContract]
     public class Song
     {
-        [DataMember(Name = "id")]
-        public Guid Id { get; set; }
-
         [DataMember(Name = "videoId")]
         public string VideoId { get; set; }
 

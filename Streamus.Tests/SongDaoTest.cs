@@ -36,7 +36,7 @@ namespace Streamus.Tests
 
             User = new UserManager(new UserDao(), new PlaylistDao()).CreateUser();
             Playlist = new Playlist(User.Id, "New Playlist 001", PlaylistDao.GetAll().Count);
-            new PlaylistManager(PlaylistDao, PlaylistItemDao).SavePlaylist(Playlist);
+            new PlaylistManager(PlaylistDao, PlaylistItemDao).CreatePlaylist(Playlist);
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace Streamus.Tests
         {
             var song = new Song("s91jgcmQoB0", "Tristam - Chairs", 219);
 
-            var songManager = new SongManager(SongDao, PlaylistDao, PlaylistItemDao);
+            var songManager = new SongManager(SongDao);
             songManager.SaveSong(song);
 
             song.Title = "New title 002";
@@ -53,7 +53,7 @@ namespace Streamus.Tests
             //Remove entity from NHibernate cache to force DB query to ensure actually created.
             NHibernateSessionManager.Instance.Evict(song);
 
-            Song songFromDatabase = SongDao.GetById(song.Id);
+            Song songFromDatabase = SongDao.GetByVideoId(song.VideoId);
             // Test that the song was successfully inserted
             Assert.IsNotNull(songFromDatabase);
             Assert.AreEqual(song.Title, songFromDatabase.Title);
@@ -69,14 +69,14 @@ namespace Streamus.Tests
                     Duration = 219
                 };
 
-            var songManager = new SongManager(SongDao, PlaylistDao, PlaylistItemDao);
+            var songManager = new SongManager(SongDao);
             songManager.SaveSong(song);
-            songManager.DeleteSongById(song.Id);
+            songManager.DeleteSongByVideoId(song.VideoId);
 
             //Remove entity from NHibernate cache to force DB query to ensure actually created.
             NHibernateSessionManager.Instance.Evict(song);
 
-            Song songFromDatabase = SongDao.GetById(song.Id);
+            Song songFromDatabase = SongDao.GetByVideoId(song.VideoId);
             // Test that the song was successfully deleted
             Assert.IsNull(songFromDatabase);
         }

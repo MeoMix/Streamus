@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using FluentValidation;
 using Streamus.Backend.Dao;
@@ -24,7 +25,10 @@ namespace Streamus.Backend.Domain
 
         public Playlist()
         {
+            Id = Guid.Empty;
+            UserId = Guid.Empty;
             Title = string.Empty;
+            Position = -1;
             Items = new List<PlaylistItem>();
         }
 
@@ -41,25 +45,46 @@ namespace Streamus.Backend.Domain
             Position = position;
         }
 
+        public void CopyFromDetached(Playlist detachedPlaylist)
+        {
+            UserId = detachedPlaylist.UserId;
+            Title = detachedPlaylist.Title;
+            Position = detachedPlaylist.Position;
+        }
+
         public void ValidateAndThrow()
         {
             var validator = new PlaylistValidator();
             validator.ValidateAndThrow(this);
-        }        
-        
+        }
+
         /// <summary>
         /// Must be provided to properly compare two objects
+        /// http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
         /// </summary>
         public override int GetHashCode()
         {
-            return Title.Length * 251 + Items.Count;
+            //return Id.GetHashCode();
+            unchecked // Overflow is fine, just wrap
+            {
+                int hash = 17;
+                hash = hash * 23 + Position.GetHashCode();
+                hash = hash * 23 + Title.GetHashCode();
+                hash = hash * 23 + Id.GetHashCode();
+                return hash;
+            }
         }
 
-        public override sealed bool Equals(object obj)
+        public override bool Equals(object obj)
         {
-            Playlist compareTo = obj as Playlist;
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((Playlist)obj);
+        }
 
-            return (compareTo != null) && Position == compareTo.Position;
+        protected bool Equals(Playlist other)
+        {
+            return Id.Equals(other.Id);
         }
     }
 

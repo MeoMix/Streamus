@@ -3,18 +3,25 @@ define(['songsContextMenu'], function (contextMenu) {
     'use strict';
     var songList = $('#SongList ul');
 
-    //Allows for drag-and-drop of songs.
+    //  Allows for drag-and-drop of songs.
     songList.sortable({
         axis: 'y',
-        //Whenever a song row is moved inform the Player of the new songlist order.
-        update: function () {
+        delay: 100, //  Adding this helps prevent unwanted clicks to play.
+        //  Whenever a song row is moved inform the Player of the new songlist order.
+        update: function (event, ui) {
+            console.log("Index affected:", ui.item.index());
+
+            var oldPosition = $(this).data('position');
+            var newPosition = ui.item.index();
+            var chrome.preventExtensions.getBackgroundPage().YoutubePlayer.updatePlaylistItemPosition(oldPosition, newPosition)
+
             var positions = [];
             songList.find('li a').each(function () {
                 var position = parseInt($(this).data('position'));
                 positions.push(position);
             });
 
-            chrome.extension.getBackgroundPage().YoutubePlayer.sync(positions);
+            chrome.extension.getBackgroundPage().YoutubePlayer.orderByPositions(positions);
         }
     });
 

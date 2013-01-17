@@ -11,7 +11,7 @@ define(function(){
 	//First check localStorage for the user's key. If it is not found, check storage.sync.
     //if still not found, generate a new key.
 	var userId = localStorage.getItem(userIdKey);
-	//userId = 'e11d8d4e-09ef-463f-b8bd-3bde287893b5';
+	userId = '3340883B-87BC-4118-BB4A-8FC29248CF88';
 	if (userId) {
 	    getUserById(userId, function (foundUser) {
 	        user = foundUser;

@@ -7,10 +7,9 @@ define(function(){
         var videoId = videoInformation.media$group.yt$videoid.$t;
 
         var song = {
-            //ID is provided after saving to the server.
-            id: null,
-            playlistId: playlistId,
+            //PK is videoId
             videoId: videoId,
+            playlistId: playlistId,
             title: videoInformation.title.$t,
             duration: parseInt(videoInformation.media$group.yt$duration.seconds, 10),
             relatedVideos: []

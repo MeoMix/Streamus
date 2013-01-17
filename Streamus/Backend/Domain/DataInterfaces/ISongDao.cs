@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Streamus.Backend.Domain.DataInterfaces
 {
     public interface ISongDao : IDao<Song>
     {
-        IList<Song> GetByIds(List<Guid> ids);
+        Song GetByVideoId(string videoId);
+        IList<Song> GetByVideoIds(List<string> videoIds);
     }
 }

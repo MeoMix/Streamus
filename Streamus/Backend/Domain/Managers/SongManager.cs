@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using NHibernate.Exceptions;
 using Streamus.Backend.Dao;
 using Streamus.Backend.Domain.DataInterfaces;
 using log4net;
@@ -11,14 +12,10 @@ namespace Streamus.Backend.Domain.Managers
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private ISongDao SongDao { get; set; }
-        private IPlaylistDao PlaylistDao { get; set; }
-        private IPlaylistItemDao PlaylistItemDao { get; set; }
 
-        public SongManager(ISongDao songDao, IPlaylistDao playlistDao, IPlaylistItemDao playlistItemDao)
+        public SongManager(ISongDao songDao)
         {
             SongDao = songDao;
-            PlaylistDao = playlistDao;
-            PlaylistItemDao = playlistItemDao;
         }
 
         public void SaveSong(Song song)
@@ -27,8 +24,22 @@ namespace Streamus.Backend.Domain.Managers
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
                 song.ValidateAndThrow();
-                SongDao.SaveOrUpdate(song);
-                NHibernateSessionManager.Instance.CommitTransaction();
+
+                //No need to update a song for now.
+                if (SongDao.GetByVideoId(song.VideoId) == null)
+                {
+                    SongDao.Save(song);
+                }
+
+                try
+                {
+                    NHibernateSessionManager.Instance.CommitTransaction();
+                }
+                catch (GenericADOException exception)
+                {
+                    //The song got saved somewhere else. This is pretty unlikely and also not a big deal at all.
+                    Logger.Error(exception);
+                }
             }
             catch (Exception exception)
             {
@@ -46,8 +57,17 @@ namespace Streamus.Backend.Domain.Managers
                 {
                     song.ValidateAndThrow();
                     SongDao.SaveOrUpdate(song);
+
+                    try
+                    {
+                        NHibernateSessionManager.Instance.CommitTransaction();
+                    }
+                    catch (GenericADOException exception)
+                    {
+                        //Got beaten to saving a song, oh well.
+                        Logger.Error(exception);
+                    }
                 }
-                NHibernateSessionManager.Instance.CommitTransaction();
             }
             catch (Exception exception)
             {
@@ -57,13 +77,13 @@ namespace Streamus.Backend.Domain.Managers
         }
 
         //Songs won't be deleted very often. No one user is able to do it -- so doesn't take a userId. Needs to be an admin.
-        public void DeleteSongById(Guid id)
+        public void DeleteSongByVideoId(string videoId)
         {
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
 
-                Song song = SongDao.GetById(id);
+                Song song = SongDao.GetByVideoId(videoId);
                 SongDao.Delete(song);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
@@ -91,12 +111,12 @@ namespace Streamus.Backend.Domain.Managers
             }
         }
 
-        public IList<Song> GetByIds(List<Guid> ids)
+        public IList<Song> GetByVideoIds(List<string> videoIds)
         {
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
-                IList<Song> songs = SongDao.GetByIds(ids);
+                IList<Song> songs = SongDao.GetByVideoIds(videoIds);
                 NHibernateSessionManager.Instance.CommitTransaction();
                 return songs;
             }

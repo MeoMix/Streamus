@@ -7,7 +7,7 @@ using log4net;
 
 namespace Streamus.Backend.Dao
 {
-    public class AbstractNHibernateDao<T> : MarshalByRefObject, IDao<T>
+    public class AbstractNHibernateDao<T> : MarshalByRefObject, IDao<T> where T : class
     {
         // ReSharper disable StaticFieldInGenericType
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -15,7 +15,7 @@ namespace Streamus.Backend.Dao
         private readonly Type PersistentType = typeof (T);
 
         /// <summary>
-        ///     Exposes the ISession used within the DAO.
+        /// Exposes the ISession used within the DAO.
         /// </summary>
         public ISession NHibernateSession
         {
@@ -23,7 +23,8 @@ namespace Streamus.Backend.Dao
         }
 
         /// <summary>
-        ///     Loads an instance of type TypeOfListItem from the DB based on its ID.
+        /// Loads an instance of type TypeOfListItem from the DB based on its ID.
+        /// Song's PK is from videoId, so use GetByVideoId if you're trying to get a Song.
         /// </summary>
         public T GetById(Guid id)
         {
@@ -31,20 +32,12 @@ namespace Streamus.Backend.Dao
 
             try
             {
-                // TODO: Still not sure when we should be locking or not locking the DB.
-                //if (shouldLock)
-                //{
-                //    entity = (T) NHibernateSession.Load(PersistentType, id, LockMode.Upgrade);
-                //}
-                //else
-                //{
                 entity = (T) NHibernateSession.Load(PersistentType, id);
-                //}
             }
             catch (ObjectNotFoundException exception)
-            {
-                Logger.Error(exception);
+            {   
                 //Consume error and return null.
+                Logger.Error(exception);
             }
 
             return entity;
@@ -63,10 +56,26 @@ namespace Streamus.Backend.Dao
         ///     For entities with automatatically generated IDs, such as identity, SaveOrUpdate may
         ///     be called when saving a new entity.  SaveOrUpdate can also be called to update any
         ///     entity, even if its ID is assigned. This method modifies the entity passed in.
+        ///     Can't call this with Song because its ID is provided from the client.
         /// </summary>
         public void SaveOrUpdate(T entity)
         {
             NHibernateSession.SaveOrUpdate(entity);
+        }
+
+        public T Merge(T entity)
+        {
+            return NHibernateSession.Merge(entity);
+        }
+
+        public void Save(T entity)
+        {
+            NHibernateSession.Save(entity);
+        }
+
+        public void Update(T entity)
+        {
+            NHibernateSession.Update(entity);
         }
 
         public void Delete(T entity)

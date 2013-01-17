@@ -10,6 +10,12 @@ namespace Streamus.Backend.Dao
 {
     public class PlaylistDao : AbstractNHibernateDao<Playlist>, IPlaylistDao
     {
+        new public void Delete(Playlist playlist)
+        {
+            playlist.Items.ToList().ForEach(NHibernateSession.Delete);
+            NHibernateSession.Delete(playlist);
+        }
+
         public IList<Playlist> GetByUserId(Guid userId)
         {
             ICriteria criteria = NHibernateSession
@@ -17,19 +23,6 @@ namespace Streamus.Backend.Dao
                 .Add(Restrictions.Eq("Playlist.UserId", userId));
 
             return criteria.List<Playlist>();
-        }
-
-        public Playlist GetByPlaylistItemId(Guid playlistItemId)
-        {
-            IQueryOver<Playlist, PlaylistItem> queryOver = NHibernateSession
-                .QueryOver<Playlist>()
-                .JoinQueryOver<PlaylistItem>(p => p.Items)
-                .Where(pi => pi.Id == playlistItemId);
-            //TODO: Can I set max result one somehow with this?
-
-            Playlist playlist = queryOver.List().FirstOrDefault();
-
-            return playlist;
         }
 
         public Playlist GetByPosition(Guid userId, int position)

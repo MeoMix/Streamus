@@ -7,14 +7,14 @@
     return {
         //Optimized this because I call getTotalTime twice a second against it... :s
         //I need to rewrite this so that when the current item's song forsure has an ID it is loaded instead of polling.
-        getLoadedSongById: function (id) {
+        getLoadedSongByVideoId: function (videoId) {
             var loadedSong;
          
-            if (lastSongRetrieved && lastSongRetrieved.id == id) {
+            if (lastSongRetrieved && lastSongRetrieved.videoId == videoId) {
                 loadedSong = lastSongRetrieved;
             } else {
                 loadedSong = _.find(loadedSongs, function(song) {
-                    return song.id == id;
+                    return song.videoId == videoId;
                 });
                 lastSongRetrieved = loadedSong;
             }
@@ -46,7 +46,7 @@
             console.log("calling load songs with:", songIds);
             $.ajax({
                 type: 'GET',
-                url: 'http://localhost:61975/Song/GetByIds',
+                url: 'http://localhost:61975/Song/GetByVideoIds',
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 traditional: true,
@@ -54,10 +54,10 @@
                     songIds: songIds
                 },
                 success: function (data) {
-                    var savedIds = _.pluck(data, 'id');
+                    var savedVideoIds = _.pluck(data, 'videoId');
                     //Remove all songs from the cache that need to be updated.
                     loadedSongs = _.reject(loadedSongs, function (loadedSong) {
-                        return _.contains(savedIds, loadedSong.id);
+                        return _.contains(savedVideoIds, loadedSong.videoId);
                     });
 
                     loadedSongs = loadedSongs.concat(data);
@@ -87,7 +87,7 @@
                 data: JSON.stringify(song),
                 success: function (data) {
                     loadedSongs = _.reject(loadedSongs, function(loadedSong) {
-                        return loadedSong.id === data.id;
+                        return loadedSong.videoId === data.videoId;
                     });
                     
                     loadedSongs.push(data);
@@ -102,7 +102,8 @@
             });
         },
         saveSongs: function (songs, callback) {
-            console.log("Saving songs:", songs);
+            console.log("Saving songs:", songs); 
+
             $.ajax({
                 type: 'POST',
                 url: 'http://localhost:61975/Song/SaveSongs',
@@ -111,10 +112,10 @@
                 data: JSON.stringify(songs),
                 success: function (data) {
                     console.log("data:", data);
-                    var savedIds = _.pluck(data, 'id');
+                    var savedVideoIds = _.pluck(data, 'videoId');
                     //Remove all songs from the cache that need to be updated.
                     loadedSongs = _.reject(loadedSongs, function (loadedSong) {
-                        return _.contains(savedIds, loadedSong.id);
+                        return _.contains(savedVideoIds, loadedSong.videoId);
                     });
 
                     loadedSongs = loadedSongs.concat(data);

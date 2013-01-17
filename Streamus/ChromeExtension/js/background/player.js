@@ -34,7 +34,7 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
                         loadItemByPosition(addedItem.get('position'));
                     } else {
                         if (playlistManager.activePlaylist.get('items').length > 1) {
-                            var nextItem = playlistManager.activePlaylist.getNextItem();
+                            var nextItem = playlistManager.activePlaylist.gotoNextItem();
                             loadItemByPosition(nextItem.get('position'));
                         }
                     }
@@ -45,20 +45,6 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
 
             var onPlayerError = function (error) {
                 console.error("An error was encountered.", error);
-                //var unplayableItem = playlistManager.activePlaylist.selectedItem;
-
-                //if (unplayableItem !== null) {
-                //    //Replace an unplayable song with a similiar, playable song.
-                //    //Shouldn't happen very often at all.
-                //    (function () {
-                //        ytHelper.findPlayableByVideoId(unplayableItem.videoId, function (playableSong) {
-                //            var addedItem = addItemBySong(playableSong);
-                //            loadItemByPosition(addedItem.position);
-                //            removeItemByPosition(unplayableItem.position);
-                //            player.playVideo();
-                //        });
-                //    })();
-                //}
 
                 switch (error.data) {
                 case 100:
@@ -95,22 +81,13 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
         };
 
         function cueItemByPosition(position) {
-            console.log("position:", position);
             var selectedItem = playlistManager.activePlaylist.selectItemByPosition(position);
-            
-            console.log("selectedItem is now:", selectedItem);
             player.cueVideoById(selectedItem.get('videoId'));
-            playlistManager.activePlaylist.addItemToHistory(selectedItem);
-            playlistManager.activePlaylist.syncShuffledItems(selectedItem.get('position'));
         };
 
         function loadItemByPosition(position) {
-            console.log("loading item by position:", position);
             var selectedItem = playlistManager.activePlaylist.selectItemByPosition(position);
-            console.log("selectedItem:", selectedItem);
             player.loadVideoById(selectedItem.get('videoId'));
-            playlistManager.activePlaylist.addItemToHistory(selectedItem);
-            playlistManager.activePlaylist.syncShuffledItems(selectedItem.get('position'));
         };
 
         function addItemBySong(song) {
@@ -128,9 +105,9 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
         var removeItemByPosition = function (position) {
             var selectedItem = playlistManager.activePlaylist.getSelectedItem();
             if (selectedItem && selectedItem.get('position') === position) {
-                var nextItem = playlistManager.activePlaylist.getNextItem();
+                var nextItem = playlistManager.activePlaylist.gotoNextItem();
                 
-                //nextItem position will equal position sometimes because getNextItem loops around to front of list.
+                //nextItem position will equal position sometimes because gotoNextItem loops around to front of list.
                 if (nextItem != null && nextItem.get('position') !== position) {
                     if (player.getPlayerState() == PlayerStates.PLAYING) {
                         loadItemByPosition(nextItem.get('position'));
@@ -152,25 +129,32 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
             get playlistTitle() {
                 return playlistManager.activePlaylist.get('title');
             },
+            
             set playlistTitle(value) {
                 playlistManager.activePlaylist.set('title', value);
                 refreshUI();
             },
+            
             get playlists() {
                 return playlistManager.playlists;
             },
+            
             get playerState() {
                 return (player && player.getPlayerState) ? player.getPlayerState() : PlayerStates.UNSTARTED;
             },
+            
             get items() {
                 return playlistManager.activePlaylist.get('items');
             },
+            
             get currentPlaylistId() {
                 return playlistManager.activePlaylist.get('id');
             },
+            
             get selectedItem() {
                 return playlistManager.activePlaylist.getSelectedItem();
             },
+            
             //Returns the elapsed time of the currently loaded song. Returns 0 if no song is playing.
             get currentTime() {
                 var currentTime = 0;
@@ -182,22 +166,25 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
 
                 return currentTime;
             },
+            
             //Gets the total time of the currently loaded song. Returns 0 if there is no song loaded.
             //TODO: I really don't like how this has to query songManager every time.
             get totalTime() {
                 var totalTime = 0;
                 var selectedItem = playlistManager.activePlaylist.getSelectedItem();
                 if (selectedItem) {
-                    var currentSong = songManager.getLoadedSongById(selectedItem.get('songId'));
+                    var currentSong = songManager.getLoadedSongByVideoId(selectedItem.get('songId'));
                     totalTime = currentSong ? currentSong.duration : 0;
                 }
 
                 return totalTime;
             },
+            
             //Return undefined until player has state VIDCUED
             get volume() {
                 return (player && player.getVolume) ? player.getVolume() : 0;
             },
+            
             set volume(value) {
                 if (value) {
                     player.setVolume(value);
@@ -205,6 +192,7 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
                     player.mute();
                 }
             },
+            
             connect: function() {
                 //Open a connection between the background and foreground. The connection will become invalid every time the foreground closes.
                 port = chrome.extension.connect({ name: "statusPoller" });
@@ -212,6 +200,7 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
                     port = null;
                 });
             },
+            
             selectPlaylist: function(playlistId) {
                 if (playlistManager.activePlaylist.get('id') !== playlistId) {
                     this.pause();
@@ -227,9 +216,7 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
                     refreshUI();
                 }
             },
-            selectPlaylistItem: function (position) {
-                playlistManager.activePlaylist.selectItemByPosition(position);
-            },
+            
             addPlaylist: function(playlistName, youtubePlaylistId) {
                 playlistManager.addPlaylist(playlistName, function (playlist) {
                     //Refresh the UI now to show that the playlist has been added.
@@ -247,6 +234,7 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
                     }
                 });
             },
+            
             removePlaylistById: function(playlistId) {
                 //Don't allow removing of active playlist.
                 //TODO: Perhaps just don't allow deleting the last playlist? More difficult.
@@ -255,16 +243,20 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
                     refreshUI();
                 }
             },
+            
             addSongToPlaylist: function(videoId, playlistId){
                 var playlist = playlistManager.getPlaylistById(playlistId);
                 playlist.addSongByVideoId(videoId);
             },
+            
             getItemByPosition: function(position) {
                 return playlistManager.activePlaylist.getItemByPosition(position);
             },
-            sync: function(positions) {
-                playlistManager.activePlaylist.sync(positions);
+            
+            orderByPositions: function (positions) {
+                playlistManager.activePlaylist.orderByPositions(positions);
             },
+            
             //Called when the user clicks mousedown on the progress bar dragger.
             seekStart: function() {
                 this.isSeeking = true;
@@ -273,6 +265,7 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
                 this.wasPlayingBeforeSeek = player.getPlayerState() === PlayerStates.PLAYING;
                 this.pause();
             },
+            
             seekTo: function(timeInSeconds) {
                 //Once the user has seeked to the new value let our update function run again.
                 //Wrapped in a set timeout because there is some delay before the seekTo finishes executing and I want to prevent flickering.
@@ -289,25 +282,33 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
                     this.pause();
                 }
             },
+            
             loadItemByPosition: loadItemByPosition,
+            
             cueItemByPosition: cueItemByPosition,
+            
             removeItemByPosition: removeItemByPosition,
+            
             //Adds a song to the activePlaylist. If it is the first song in the activePlaylist, that song is loaded as the current song.
             addItemBySong: addItemBySong,
-            play: function() {
+            
+            play: function () {
                 player.playVideo();
             },
-            pause: function() {
+            
+            pause: function () {
                 player.pauseVideo();
             },
-            toggleSong: function(){
-                if(player.getPlayerState() === PlayerStates.PLAYING){
+            
+            toggleSong: function () {
+                if( player.getPlayerState() === PlayerStates.PLAYING ){
                     this.pause();
                 }
                 else{
                     this.play();
                 }
             },
+            
             //Skips to the next song. Will start playing the song if the player was already playing.
             //if where == "next" it'll skip to the next song. otherwise it will skip to the previous song.
             skipSong: function(where) {
@@ -321,10 +322,10 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
                         console.log("related Video:", relatedVideo);
                         nextItem = playlistManager.activePlaylist.addItem(relatedVideo);
                     } else {
-                        nextItem = playlistManager.activePlaylist.getNextItem();
+                        nextItem = playlistManager.activePlaylist.gotoNextItem();
                     }
                 } else { //(where == "previous")
-                    nextItem = playlistManager.activePlaylist.getPreviousItem();
+                    nextItem = playlistManager.activePlaylist.gotoPreviousItem();
                 }
 
                 if (this.playerState === PlayerStates.PLAYING) {
@@ -333,10 +334,16 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
                     cueItemByPosition(nextItem.get('position'));
                 }
             },
+            
             addNewItem: function (videoInformation) {
                 var song = songManager.createSong(videoInformation, this.currentPlaylistId);
                 console.log("created new song:", song);
                 addItemBySong(song);
+            },
+            
+            updatePlaylistItemPosition: function(oldPosition, newPosition) {
+                playlistManager.activePlaylist.updateItemPosition(oldPosition, newPosition);
+
             }
         };
     })();
