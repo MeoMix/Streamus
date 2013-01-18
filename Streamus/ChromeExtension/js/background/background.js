@@ -35,7 +35,7 @@
     //                    var accessToken = Helpers.getUrlParamaterValueByName(tabs[i].url, "access_token");
     //                    console.log("accessToken:", accessToken);
     //                    $.ajax({
-    //                        url: 'http://localhost:61975/backend/fb/setAccessToken.php',
+    //                        url: 'http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/backend/fb/setAccessToken.php',
     //                        data: {
     //                            accessToken: accessToken
     //                        },
@@ -46,7 +46,7 @@
     //                            var authKey = JSON.parse(json);
 
     //                            //Make the AJAX request!
-    //                            var url = "http://localhost:61975/backend/fb/loadSongs.php";
+    //                            var url = "http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/backend/fb/loadSongs.php";
     //                            $.ajax({
     //                                url: url,
     //                                data: {

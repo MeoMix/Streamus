@@ -13,13 +13,14 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Streamus</RootNamespace>
     <AssemblyName>Streamus</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -62,15 +63,15 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Routing" />
@@ -129,6 +130,7 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.1.0\lib\WebGrease.dll</HintPath>
@@ -268,32 +270,6 @@
     <Content Include="Shared\NHibernate-3.3.1\Required_Bins\NHibernate.dll" />
     <Content Include="Shared\NHibernate-3.3.1\Required_Bins\NHibernate.pdb" />
     <Content Include="Shared\NHibernate-3.3.1\Required_Bins\NHibernate.xml" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\ABC.hbm.xml" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\DbScripts\MsSql2008DialectLinqReadonlyCreateScript.sql" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\DbScripts\MsSql2008DialectLinqReadonlyDropScript.sql" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\DbScripts\MsSql2012DialectLinqReadonlyCreateScript.sql" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\DbScripts\MsSql2012DialectLinqReadonlyDropScript.sql" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\DbScripts\PostgreSQL82DialectLinqReadonlyCreateScript.sql" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\DbScripts\PostgreSQL82DialectLinqReadonlyDropScript.sql" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\log4net.dll" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\log4net.license.txt" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\log4net.xml" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.DomainModel.dll" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.DomainModel.pdb" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.DomainModel.xml" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.Test.dll" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.Test.pdb" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.Test.VisualBasic.dll" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.Test.VisualBasic.pdb" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.TestDatabaseSetup.dll" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.TestDatabaseSetup.pdb" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\nunit.core.dll" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\nunit.framework.dll" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\nunit.framework.license.txt" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\nunit.framework.xml" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\SharpTestsEx.NUnit.dll" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\SharpTestsEx.NUnit.xml" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\TestEnbeddedConfig.cfg.xml" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="manifest.json" />
@@ -343,15 +319,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Shared\js\thirdParty\MIT.LICENSE" />
+    <None Include="Properties\PublishProfiles\Streamus Staging.pubxml" />
     <None Include="Shared\NHibernate-3.3.1\Required_Bins\nhibernate-configuration.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Shared\NHibernate-3.3.1\Required_Bins\nhibernate-mapping.xsd">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.Test.dll.config" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.Test.VisualBasic.dll.config" />
-    <Content Include="Shared\NHibernate-3.3.1\Tests\NHibernate.TestDatabaseSetup.dll.config" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -369,7 +343,7 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerPort>63807</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:61975/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>

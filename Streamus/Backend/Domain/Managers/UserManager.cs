@@ -37,7 +37,7 @@ namespace Streamus.Backend.Domain.Managers
                 UserDao.SaveOrUpdate(user);
 
                 //Create a brand new, empty playlist for the user.
-                var playlist = new Playlist(user.Id, "New Playlist");
+                var playlist = new Playlist(user.Id, "New Playlist", 0);
                 PlaylistDao.SaveOrUpdate(playlist);
 
                 NHibernateSessionManager.Instance.CommitTransaction();

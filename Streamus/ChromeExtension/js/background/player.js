@@ -343,7 +343,6 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
             
             updatePlaylistItemPosition: function(oldPosition, newPosition) {
                 playlistManager.activePlaylist.updateItemPosition(oldPosition, newPosition);
-
             }
         };
     })();

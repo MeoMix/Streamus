@@ -24,7 +24,7 @@
         loadSong: function(songId, callback) {
             $.ajax({
                 type: 'GET',
-                url: 'http://localhost:61975/Song/GetById',
+                url: 'http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/Song/GetById',
                 dataType: 'json',
                 data: {
                     songId: songId
@@ -46,7 +46,7 @@
             console.log("calling load songs with:", songIds);
             $.ajax({
                 type: 'GET',
-                url: 'http://localhost:61975/Song/GetByVideoIds',
+                url: 'http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/Song/GetByVideoIds',
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 traditional: true,
@@ -81,7 +81,7 @@
         saveSong: function(song, callback) {
             $.ajax({
                 type: 'POST',
-                url: 'http://localhost:61975/Song/SaveSong',
+                url: 'http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/Song/SaveSong',
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 data: JSON.stringify(song),
@@ -106,7 +106,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: 'http://localhost:61975/Song/SaveSongs',
+                url: 'http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/Song/SaveSongs',
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 data: JSON.stringify(songs),

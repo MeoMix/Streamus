@@ -22,7 +22,7 @@
     "http://www.youtube.com/",
     "https://www.youtube.com/",
     "https://graph.facebook.com/",
-	"http://localhost:61975//ldhgghofjpkjkidmlghkjniigkjbodag",
+	"http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/ldhgghofjpkjkidmlghkjniigkjbodag",
     "tabs"
 	],
   "content_scripts": [
@@ -61,5 +61,5 @@
     "ChromeExtension/icon.png"
   ],
   "content_security_policy": 
-    "script-src 'self'  https://graph.facebook.com https://www.youtube.com https://ssl.google-analytics.com https://gdata.youtube.com https://suggestqueries.google.com https://www.youtube.com https://s.ytimg.com; object-src 'self'"
+    "script-src 'self' 'unsafe-eval' https://graph.facebook.com https://www.youtube.com https://ssl.google-analytics.com https://gdata.youtube.com https://suggestqueries.google.com https://www.youtube.com https://s.ytimg.com; object-src 'self'"
 }

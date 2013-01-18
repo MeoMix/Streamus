@@ -11,7 +11,7 @@ define(['playlist', 'playlistItem', 'playlistDataProvider', 'user'], function(Pl
     user.onLoaded(function () {
         console.log("id:", user.id);
         $.ajax({
-            url: 'http://localhost:61975/Playlist/GetPlaylistsByUserId',
+            url: 'http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/Playlist/GetPlaylistsByUserId',
             dataType: 'json',
             data: {
                 userId: user.id

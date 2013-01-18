@@ -11,17 +11,22 @@ define(['songsContextMenu'], function (contextMenu) {
         update: function (event, ui) {
             console.log("Index affected:", ui.item.index());
 
-            var oldPosition = $(this).data('position');
+            console.log("ui item:", ui.item);
+
+            var oldPosition = ui.item.find('a').data('position');
             var newPosition = ui.item.index();
-            var chrome.preventExtensions.getBackgroundPage().YoutubePlayer.updatePlaylistItemPosition(oldPosition, newPosition)
 
-            var positions = [];
-            songList.find('li a').each(function () {
-                var position = parseInt($(this).data('position'));
-                positions.push(position);
-            });
+            console.log("old position / new position:", oldPosition, newPosition);
 
-            chrome.extension.getBackgroundPage().YoutubePlayer.orderByPositions(positions);
+            chrome.extension.getBackgroundPage().YoutubePlayer.updatePlaylistItemPosition(oldPosition, newPosition);
+
+            //var positions = [];
+            //songList.find('li a').each(function () {
+            //    var position = parseInt($(this).data('position'));
+            //    positions.push(position);
+            //});
+
+            //chrome.extension.getBackgroundPage().YoutubePlayer.orderByPositions(positions);
         }
     });
 
