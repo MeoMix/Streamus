@@ -21,6 +21,7 @@ namespace Streamus.Controllers
             return new JsonDataContractActionResult(user);
         }
 
+        [HttpGet]
         public ActionResult GetById(Guid id)
         {
             User user = UserDao.GetById(id);

@@ -1,4 +1,6 @@
-﻿define(['playlistManager'], function (playlistManager) {
+﻿define(['playlistManager',
+        'programState'
+       ], function (playlistManager, programState) {
     'use strict';
     //Bypass YouTube's content restrictions by looking like I'm a website.
     chrome.webRequest.onBeforeSendHeaders.addListener(function (info) {
@@ -35,7 +37,7 @@
     //                    var accessToken = Helpers.getUrlParamaterValueByName(tabs[i].url, "access_token");
     //                    console.log("accessToken:", accessToken);
     //                    $.ajax({
-    //                        url: 'http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/backend/fb/setAccessToken.php',
+    //                        url: programState.getBaseUrl() + 'backend/fb/setAccessToken.php',
     //                        data: {
     //                            accessToken: accessToken
     //                        },

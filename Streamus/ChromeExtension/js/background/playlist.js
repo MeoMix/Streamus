@@ -2,13 +2,15 @@
 //  Provides methods to work with PlaylistItems such as getting, removing, updating, shuffling etc..
 define(['ytHelper',
         'songManager',
-        'playlistItem'],
-    function(ytHelper, songManager, PlaylistItem) {
+        'playlistItem',
+        'programState'
+       ], function(ytHelper, songManager, PlaylistItem, programState) {
         'use strict';
 
         //  Call this whenever Player loads/cues a song.
         //  Takes shuffledItems, finds an item to remove by position, and then if there's nothing left
         //  in shuffled items -- reloads the available songs. Helps ensure an even distribution of shuffled items for less repeats.
+
         function syncShuffledItems(position) {
             this.set('shuffledItems', _.reject(this.shuffledItems, function(s) {
                 return s.position === position;
@@ -32,22 +34,22 @@ define(['ytHelper',
                     items: []
                 };
             },
-            url: function (type) {
+            url: function(type) {
                 var urlRoot = this.urlRoot;
-                switch(type) {
-                    case "POST":
-                        break;
-                    case "PUT":
-                        urlRoot += JSON.stringify(self);
-                        break;
-                    case "DELETE":
-                        break;
-                    case "GET":
-                        break;
+                switch (type) {
+                case "POST":
+                    break;
+                case "PUT":
+                    urlRoot += JSON.stringify(self);
+                    break;
+                case "DELETE":
+                    break;
+                case "GET":
+                    break;
                 }
                 return urlRoot;
             },
-            urlRoot: 'http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/Playlist/',
+            urlRoot: programState.getBaseUrl() + 'Playlist/',
             initialize: function() {
                 //  Our playlistItem data was fetched from the server with the playlist. Need to convert the collection to Backbone Model entities.
                 if (this.get('items').length > 0) {
@@ -88,11 +90,11 @@ define(['ytHelper',
                 //  TODO: Validation.
             },
             //  http://danielarandaochoa.com/backboneexamples/blog/2012/08/27/extending-backbone-js-classes/
-            save: function (attributes, options) {
+            save: function(attributes, options) {
                 // Keep track of the selected item in localStorage.
                 var selectedItem = this.getSelectedItem();
                 var selectedItemPosition = selectedItem ? selectedItem.get('position') : null;
-                
+
                 var selectedItemStorageKey = this.get('id') + '_selectedItemPosition';
                 localStorage.setItem(selectedItemStorageKey, selectedItemPosition);
 
@@ -108,7 +110,7 @@ define(['ytHelper',
 
                 var item = this.getItemByPosition(position);
                 console.log("item at position:", item, position);
-                
+
                 if (item != null && item.get('selected') === false) {
                     var itemPosition = item.get('position');
 
@@ -123,7 +125,7 @@ define(['ytHelper',
             getItemByPosition: function(position) {
                 var items = this.get('items');
                 console.log("getItemByPosition:", items);
-                return _.find(items, function (item) {
+                return _.find(items, function(item) {
                     return item.get('position') === position;
                 });
             },
@@ -227,7 +229,7 @@ define(['ytHelper',
             },
             createItems: function(items, callback) {
                 $.ajax({
-                    url: 'http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/Playlist/CreateItems',
+                    url: programState.getBaseUrl() + 'Playlist/CreateItems',
                     type: 'POST',
                     dataType: 'json',
                     contentType: 'application/json; charset=utf-8',
@@ -270,7 +272,7 @@ define(['ytHelper',
                 songManager.saveSong(song, function() {
                     $.ajax({
                         type: 'POST',
-                        url: 'http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/Playlist/CreateItem',
+                        url: programState.getBaseUrl() + 'Playlist/CreateItem',
                         dataType: 'json',
                         data: {
                             playlistId: playlistItem.get('playlistId'),
@@ -304,7 +306,7 @@ define(['ytHelper',
                 syncShuffledItems.call(this, position);
                 var self = this;
                 $.ajax({
-                    url: 'http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/Playlist/DeleteItemByPosition',
+                    url: programState.getBaseUrl() + 'Playlist/DeleteItemByPosition',
                     type: 'POST',
                     dataType: 'json',
                     data: {
@@ -322,32 +324,32 @@ define(['ytHelper',
                     }
                 });
             },
-            
-            updateItemPosition: function (oldPosition, newPosition, callback) {
+
+            updateItemPosition: function(oldPosition, newPosition, callback) {
                 var movedItem = this.getItemByPosition(oldPosition);
 
                 var distance = Math.abs(oldPosition - newPosition);
                 console.log("distance:", distance);
 
                 while (distance > 0) {
-                    
+
                     //  Determine if the item moved forward or backward in the list.
                     var itemBeingIteratedUpon;
                     var newItemPosition;
-                    
+
                     if (oldPosition > newPosition) {
                         //  Item moved forward in the list.
                         //  Every item with a position from one less than old position to new position gets incremented by one.
-                        
+
                         itemBeingIteratedUpon = this.getItemByPosition(distance - 1);
-                        newItemPosition = itemBeingIteratedUpon.get('position') + 1; 
+                        newItemPosition = itemBeingIteratedUpon.get('position') + 1;
                     } else {
                         //  Item moved backward in the list.
                         //  Every item from old position to one less than new position gets decremented by one.
-                        
+
                         var positionIndex = newPosition - (distance - 1);
                         itemBeingIteratedUpon = this.getItemByPosition(positionIndex);
-                        
+
                         newItemPosition = itemBeingIteratedUpon.get('position') - 1;
                     }
 
@@ -362,10 +364,10 @@ define(['ytHelper',
 
                 var playlistId = this.get('id');
                 var detachedItems = this.get('items');
-                
+
                 //  Need to update positions server-side with a save after updating client-side list.
                 $.ajax({
-                    url: 'http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/Playlist/UpdateItemPosition',
+                    url: programState.getBaseUrl() + 'Playlist/UpdateItemPosition',
                     type: 'POST',
                     dataType: 'json',
                     data: JSON.stringify({
@@ -384,9 +386,9 @@ define(['ytHelper',
             },
             
             //  Returns the currently selected playlistItem or null if no item was found.
-            getSelectedItem: function () {
+            getSelectedItem: function() {
                 var items = this.get('items');
-                var selectedItem = _.find(items, function (item) {
+                var selectedItem = _.find(items, function(item) {
                     return item.get('selected');
                 }) || null;
                 return selectedItem;
@@ -396,23 +398,23 @@ define(['ytHelper',
         return function(config) {
             var playlist = new Playlist(config);
 
-            playlist.on('change:title', function () {
+            playlist.on('change:title', function() {
                 var self = this;
                 $.ajax({
-                    url: 'http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/Playlist/UpdateTitle',
+                    url: programState.getBaseUrl() + 'Playlist/UpdateTitle',
                     type: 'POST',
                     dataType: 'json',
                     data: {
                         playlistId: self.get('id'),
                         title: self.get('title')
                     },
-                    error: function (error) {
+                    error: function(error) {
                         //  TODO: Rollback client-side transaction somehow?
                         console.error("Error saving title", error);
                     }
                 });
             });
-            
+
             return playlist;
         };
     });

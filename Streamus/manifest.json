@@ -1,8 +1,8 @@
 {
   "name": "Streamus",
-  "version": "0.30",
+  "version": "0.32",
   "manifest_version": 2,
-  "description": "Converts YouTube into an MP3 player for your browser.",
+  "description": "A music player for Google Chrome. Converts YouTube into an iPod with pandora-like searching. Plays in the background!",
   "background":{
     "page": "ChromeExtension/background.htm"
   },
@@ -22,7 +22,8 @@
     "http://www.youtube.com/",
     "https://www.youtube.com/",
     "https://graph.facebook.com/",
-	"http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/ldhgghofjpkjkidmlghkjniigkjbodag",
+	"http://localhost:61975/Streamus/",
+	"http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/",
     "tabs"
 	],
   "content_scripts": [

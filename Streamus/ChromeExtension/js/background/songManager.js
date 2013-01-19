@@ -1,4 +1,7 @@
-﻿define(['song', 'ytHelper'], function(Song, ytHelper) {
+﻿define(['song',
+        'ytHelper',
+        'programState'
+       ], function (Song, ytHelper, programState) {
     'use strict';
     //TODO: Implement caching where I only query for IDs I need. Not necessary for now because I don't make many requests.
     var loadedSongs = [];
@@ -24,7 +27,7 @@
         loadSong: function(songId, callback) {
             $.ajax({
                 type: 'GET',
-                url: 'http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/Song/GetById',
+                url: programState.getBaseUrl() + 'Song/GetById',
                 dataType: 'json',
                 data: {
                     songId: songId
@@ -46,7 +49,7 @@
             console.log("calling load songs with:", songIds);
             $.ajax({
                 type: 'GET',
-                url: 'http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/Song/GetByVideoIds',
+                url: programState.getBaseUrl() + 'Song/GetByVideoIds',
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 traditional: true,
@@ -81,7 +84,7 @@
         saveSong: function(song, callback) {
             $.ajax({
                 type: 'POST',
-                url: 'http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/Song/SaveSong',
+                url: programState.getBaseUrl() + 'Song/SaveSong',
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 data: JSON.stringify(song),
@@ -106,7 +109,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: 'http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/Song/SaveSongs',
+                url: programState.getBaseUrl() + 'Song/SaveSongs',
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 data: JSON.stringify(songs),

@@ -2,6 +2,7 @@ var require = {
     baseUrl: '../',
     paths: {
         'main': 'ChromeExtension/js/background/main',
+        'programState': 'ChromeExtension/js/programState',
         'background': 'ChromeExtension/js/background/background',
         'playlistDataProvider': 'ChromeExtension/js/background/playlistDataProvider',
         'playerStates': 'ChromeExtension/js/playerStates',

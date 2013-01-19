@@ -10,7 +10,6 @@
       <property name="connection.connection_string">Data Source=streamus.ckzxvgeeigfc.us-east-1.rds.amazonaws.com;Initial Catalog=StreamusTest;Persist Security Info=True;User ID=streamus_admin;Password=57r34mu5</property>
       <property name="dialect">NHibernate.Dialect.MsSql2008Dialect</property>
       <property name="proxyfactory.factory_class">NHibernate.Bytecode.DefaultProxyFactoryFactory, NHibernate</property>
-
       <mapping assembly="Streamus"/>
     </session-factory>
   </hibernate-configuration>

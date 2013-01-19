@@ -3,6 +3,7 @@ var require = {
     paths: {
         'main': 'ChromeExtension/js/foreground/main',
         'playerStates': 'ChromeExtension/js/playerStates',
+        'programState': 'ChromeExtension/js/programState',
         'foreground': 'ChromeExtension/js/foreground/foreground',
         'uiElements': 'ChromeExtension/js/foreground/uiElements',
         'playerControls': 'ChromeExtension/js/foreground/playerControls/playerControls',
