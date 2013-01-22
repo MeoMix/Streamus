@@ -14,14 +14,14 @@ namespace Streamus.Controllers
         private readonly IPlaylistDao PlaylistDao = new PlaylistDao();
         private readonly IPlaylistItemDao PlaylistItemDao = new PlaylistItemDao();
 
-        [HttpPost]
-        public ActionResult Create(Playlist playlist)
-        {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
-            playlistManager.CreatePlaylist(playlist);
+        //[HttpPost]
+        //public ActionResult Create(Playlist playlist)
+        //{
+        //    var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
+        //    playlistManager.CreatePlaylist(playlist);
 
-            return new JsonDataContractActionResult(playlist);
-        }
+        //    return new JsonDataContractActionResult(playlist);
+        //}a
 
         //[HttpPut]
         //public ActionResult Update(Playlist playlist)
@@ -32,22 +32,22 @@ namespace Streamus.Controllers
         //    return new JsonDataContractActionResult(playlist);
         //}
 
-        [HttpGet]
-        public ActionResult Get(Guid id)
-        {
-            Playlist playlist = PlaylistDao.GetById(id);
+        //[HttpGet]
+        //public ActionResult Get(Guid id)
+        //{
+        //    Playlist playlist = PlaylistDao.GetById(id);
 
-            return new JsonDataContractActionResult(playlist);
-        }
+        //    return new JsonDataContractActionResult(playlist);
+        //}
 
-        [HttpDelete]
-        public EmptyResult Delete(Guid id)
-        {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
-            playlistManager.DeletePlaylistById(id);
+        //[HttpDelete]
+        //public EmptyResult Delete(Guid id)
+        //{
+        //    var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
+        //    playlistManager.DeletePlaylistById(id);
 
-            return new EmptyResult();
-        }
+        //    return new EmptyResult();
+        //}
 
         [HttpPost]
         public EmptyResult UpdateItemPosition(Guid playlistId, List<PlaylistItem> detachedItems)

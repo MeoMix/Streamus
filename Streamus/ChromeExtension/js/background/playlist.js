@@ -1,23 +1,23 @@
-//  Playlist objects hold PlaylistItems and are going to be stored in PlaylistCollections.
-//  Provides methods to work with PlaylistItems such as getting, removing, updating, shuffling etc..
+//  Playlist holds a collection of PlaylistItems as well as properties pertaining to a playlist such as its title and
+//  history of songs played. Provides methods to work with PlaylistItems such as getting, removing, updating, etc..
 define(['ytHelper',
         'songManager',
         'playlistItem',
         'programState'
-       ], function(ytHelper, songManager, PlaylistItem, programState) {
+       ], function( ytHelper, songManager, PlaylistItem, programState ) {
         'use strict';
 
-        //  Call this whenever Player loads/cues a song.
-        //  Takes shuffledItems, finds an item to remove by position, and then if there's nothing left
-        //  in shuffled items -- reloads the available songs. Helps ensure an even distribution of shuffled items for less repeats.
-
+        //  Called whenever Player loads/cues a song. Takes shuffledItems, finds an item to remove by position,
+        //  and then if there's nothing left in shuffled items -- reloads the available songs.
+        //  Helps ensure an even distribution of shuffled items for less repeats.
         function syncShuffledItems(position) {
-            this.set('shuffledItems', _.reject(this.shuffledItems, function(s) {
-                return s.position === position;
+            this.set('shuffledItems', _.reject(this.get('shuffledItems'), function (s) {
+                return s.get('position') === position;
             }));
 
+            //  When all songs have been played once in shuffle mode, reset the shuffle playlist. Helps provide even distribution of 'random'
             if (this.get('shuffledItems').length === 0) {
-                this.set('shuffledItems', _.shuffle(this.items));
+                this.set('shuffledItems', _.shuffle(this.get('items')));
             }
         }
 
@@ -31,35 +31,40 @@ define(['ytHelper',
                     position: 0,
                     shuffledItems: [],
                     history: [],
-                    items: []
+                    items: Backbone.Collection.extend({
+                        model: PlaylistItem
+                    })
                 };
             },
-            url: function(type) {
-                var urlRoot = this.urlRoot;
-                switch (type) {
-                case "POST":
-                    break;
-                case "PUT":
-                    urlRoot += JSON.stringify(self);
-                    break;
-                case "DELETE":
-                    break;
-                case "GET":
-                    break;
-                }
-                return urlRoot;
-            },
+            
             urlRoot: programState.getBaseUrl() + 'Playlist/',
-            initialize: function() {
-                //  Our playlistItem data was fetched from the server with the playlist. Need to convert the collection to Backbone Model entities.
-                if (this.get('items').length > 0) {
+            
+            initialize: function (attributes, options) {
+                console.log("attributes/options:", attributes, options);
 
+                console.log("initializing with item count:", this.get('items').length);
+                var itemCollection = this.get('items');
+                console.log("Item collection count:", itemCollection.length);
+                
+                //convert the child array into a collection, even if parse was not called
+                //var books = attrs ? attrs.books : [];
+                //if (!(books instanceof Books)) {
+                //    this.set('books', new Books(books), { silent: true });
+                //}
+
+
+                //  Our playlistItem data was fetched from the server with the playlist. Need to convert the collection to Backbone Model entities.
+                if (itemCollection.length > 0) {
+
+                    //  Iterate over each of our items and ensure that the items are PlaylistItem models.
                     this.set('items', _.map(this.get('items'), function(playlistItemData) {
                         var returnValue;
                         //  This is a bit more robust. If any items in our playlist weren't Backbone.Models (could be loaded from server data), auto-convert during init.
                         if (playlistItemData instanceof Backbone.Model) {
+                            console.log("is a backbone model!");
                             returnValue = playlistItemData;
                         } else {
+                            console.log("is NOT a backbone model! D:");
                             returnValue = new PlaylistItem(playlistItemData);
                         }
                         return returnValue;
@@ -86,9 +91,7 @@ define(['ytHelper',
                     this.set('shuffledItems', _.shuffle(this.get('items')));
                 }
             },
-            validate: function() {
-                //  TODO: Validation.
-            },
+
             //  http://danielarandaochoa.com/backboneexamples/blog/2012/08/27/extending-backbone-js-classes/
             save: function(attributes, options) {
                 // Keep track of the selected item in localStorage.
@@ -100,6 +103,7 @@ define(['ytHelper',
 
                 return Backbone.Model.prototype.save.call(this, attributes, options);
             },
+            
             selectItemByPosition: function(position) {
                 //  Deselect the currently selected item, then select the new item to have selected.
                 var currentlySelected = this.getSelectedItem();
@@ -122,6 +126,7 @@ define(['ytHelper',
 
                 return item;
             },
+            
             getItemByPosition: function(position) {
                 var items = this.get('items');
                 console.log("getItemByPosition:", items);
@@ -129,6 +134,7 @@ define(['ytHelper',
                     return item.get('position') === position;
                 });
             },
+            
             getRelatedVideo: function() {
                 //  Take each playlist item's array of related videos, pluck them all out into a collection of arrays
                 //  then flatten the arrays into a collection of songs.
@@ -140,6 +146,7 @@ define(['ytHelper',
                 var randomRelatedVideo = relatedVideos[randomIndex];
                 return randomRelatedVideo;
             },
+            
             //TODO: This method name sucks and the method itself is doing too much. Refactor!
             gotoNextItem: function() {
                 var nextItem = null;
@@ -161,6 +168,7 @@ define(['ytHelper',
                 }
                 return nextItem;
             },
+            
             //  TODO: This method name sucks and the method itself is doing too much. Refactor!
             gotoPreviousItem: function() {
                 //  Move the currently playing item out of history and into the front of shuffledItems so that if
@@ -182,6 +190,7 @@ define(['ytHelper',
 
                 return previousItem;
             },
+            
             addItems: function(songs, callback) {
                 var createdPlaylistItems = [];
                 var self = this;
@@ -227,6 +236,7 @@ define(['ytHelper',
                     self.createItems(createdPlaylistItems, callback);
                 });
             },
+            
             createItems: function(items, callback) {
                 $.ajax({
                     url: programState.getBaseUrl() + 'Playlist/CreateItems',
@@ -244,6 +254,7 @@ define(['ytHelper',
                     }
                 });
             },
+            
             addItem: function(song, selected) {
                 var playlistId = this.get('id');
                 var itemCount = this.get('items').length;
@@ -291,7 +302,8 @@ define(['ytHelper',
 
                 return playlistItem;
             },
-            //TODO: What happens if I remove the selected item? I won't have anything selected.
+            
+            //  TODO: What happens if I remove the selected item? I won't have anything selected.
             removeItemByPosition: function(position, callback) {
                 //  If localStorage is saving the currently selected item as the one being deleted, clean that up so restarting the program doesn't try and 
                 //  select a playlistItem which does not exist.
@@ -329,7 +341,6 @@ define(['ytHelper',
                 var movedItem = this.getItemByPosition(oldPosition);
 
                 var distance = Math.abs(oldPosition - newPosition);
-                console.log("distance:", distance);
 
                 while (distance > 0) {
 
@@ -353,13 +364,10 @@ define(['ytHelper',
                         newItemPosition = itemBeingIteratedUpon.get('position') - 1;
                     }
 
-                    console.log("setting to position:", newItemPosition);
                     itemBeingIteratedUpon.set('position', newItemPosition);
                     distance--;
                 }
 
-                console.log("moved item:", movedItem);
-                console.log("new position:", newPosition);
                 movedItem.set('position', newPosition);
 
                 var playlistId = this.get('id');
@@ -370,6 +378,7 @@ define(['ytHelper',
                     url: programState.getBaseUrl() + 'Playlist/UpdateItemPosition',
                     type: 'POST',
                     dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
                     data: JSON.stringify({
                         playlistId: playlistId,
                         detachedItems: detachedItems
@@ -398,15 +407,14 @@ define(['ytHelper',
         return function(config) {
             var playlist = new Playlist(config);
 
-            playlist.on('change:title', function() {
-                var self = this;
+            playlist.on('change:title', function () {
                 $.ajax({
                     url: programState.getBaseUrl() + 'Playlist/UpdateTitle',
                     type: 'POST',
                     dataType: 'json',
                     data: {
-                        playlistId: self.get('id'),
-                        title: self.get('title')
+                        playlistId: this.get('id'),
+                        title: this.get('title')
                     },
                     error: function(error) {
                         //  TODO: Rollback client-side transaction somehow?

@@ -67,6 +67,7 @@ namespace Streamus.Backend.Domain.Managers
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
                 Playlist playlist = PlaylistDao.GetById(id);
+
                 PlaylistDao.Delete(playlist);
                 NHibernateSessionManager.Instance.CommitTransaction();
             }

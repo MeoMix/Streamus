@@ -3,6 +3,7 @@ var require = {
         'main': 'js/tests/main',
         'playlistItemSpec': 'js/tests/background/playlistItemSpec',
         'playlistSpec': 'js/tests/background/playlistSpec',
+        'userSpec': 'js/tests/background/userSpec',
 
         'jquery': '../Shared/js/thirdParty/jquery',
         'underscore': '../Shared/js/thirdParty/underscore',
@@ -11,6 +12,8 @@ var require = {
         'onYouTubePlayerApiReady': '../Shared/js/thirdParty/onYouTubePlayerApiReady',
         'geoplugin': '../Shared/js/thirdParty/geoplugin',
         'levenshtein': '../Shared/js/thirdParty/levenshtein',
+        
+        'programState': 'js/programState',
 
         'playlistItem': 'js/background/playlistItem',
         'player': 'js/background/player',

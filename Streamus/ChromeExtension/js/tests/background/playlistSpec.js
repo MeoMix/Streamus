@@ -11,6 +11,7 @@
         function addPlaylist(callback) {
             //  onReady will fire immediately if playlistManager is already ready.
             playlistManager.onReady(function () {
+                console.log("playlistManager is ready");
                 playlistManager.addPlaylist('Test Title', callback);
             });
         }
@@ -57,10 +58,17 @@
                 expect(playlist.get('title')).toEqual(title);
             });
 
+            xit("initializes with more than 0 items", function () {
+                var playlist = new Playlist();
+
+
+            });
+
             // Now create a Playlist object and write it to the global savedPlaylist.
             // Future test cases will work upon this created Playlist object.
             it("creates", function() {
-                runs(function() {
+                runs(function () {
+                    console.log("running addPlaylist");
                     addPlaylist(function (addedPlaylist) {
                         //  Here I set an outside-scope variable to use in my nested describe.
                         savedPlaylist = addedPlaylist;
@@ -75,7 +83,7 @@
                     expect(savedPlaylist).not.toEqual(null);
                     expect(savedPlaylist.isNew()).toEqual(false);
                     expect(savedPlaylist.get('id')).not.toEqual(null);
-                    expect(savedPlaylist.get('userId')).toEqual(user.id);
+                    expect(savedPlaylist.get('userId')).toEqual(user.get('id'));
                     expect(savedPlaylist.get('position')).toBeGreaterThan(-1);
                     expect(savedPlaylist.get('position')).toBeLessThan(playlistManager.playlists.length + 1);
                 });
@@ -86,7 +94,7 @@
         //  Playlists have to be saved to the DB before being presented to the UI and, as such
         //  any method that does anything significant has to have a Playlist already saved.
         //  This is shown by the isNew() property of Backbone -- it'll be true until object is saved.
-        describe('The saved Playlist', function() {
+        xdescribe('The saved Playlist', function() {
 
             // To stay DRY, I call a beforeEach that ensures the playlist has been saved.
             beforeEach(function() {
@@ -182,6 +190,14 @@
                 });
             });
 
+            //  Renaming sends a PATCH to the server.
+            it("renames itself", function () {
+                var newPlaylistTitle = 'Aww Yeah';
+                savedPlaylist.set('title', newPlaylistTitle);
+
+                expect(savedPlaylist.get('title')).toEqual(newPlaylistTitle);
+            });
+
             // The user can drag-and-drop PlaylistItems around in the Playlist. After
             // such an event, the Playlist needs to reorder itself to match the given positions.
             it("updates an item position itself", function() {
@@ -214,6 +230,7 @@
 
             // Sets a PlaylistItem as selected (and deselects the previously selected) based on position
             it("selects an item by position", function () {
+                var originalShuffledItems = savedPlaylist.get('shuffledItems');
                 var selectedItem = savedPlaylist.getSelectedItem();
                 var position = selectedItem.get('position');
                 
@@ -225,6 +242,12 @@
                 expect(newlySelectedItem.get('selected')).toEqual(true);
                 expect(newlySelectedItem.get('position')).toEqual(positionToSelect);
                 expect(selectedItem.get('selected')).toEqual(false);
+
+                if (originalShuffledItems.length === 1) {
+                    expect(savedPlaylist.get('shuffledItems').length).toEqual(savedPlaylist.get('items').length);
+                } else {
+                    expect(savedPlaylist.get('shuffledItems').length).toEqual(originalShuffledItems.length - 1);
+                }
             });
 
             // Returns a PlaylistItem object at a given position.
@@ -282,11 +305,11 @@
                 expect(nextItemPosition === selectedItemPosition + 1 || nextItemPosition === 0).toEqual(true);
             });
 
-            it("goes to the next item with shuffle enabled", function() {
+            xit("goes to the next item with shuffle enabled", function() {
 
             });
 
-            it("goes to the next item with radio mode enabled", function() {
+            xit("goes to the next item with radio mode enabled", function() {
 
             });
 
@@ -323,9 +346,11 @@
                 expect(previousItemPosition).toEqual(expectedPreviousPosition);
             });
             
-            // Deletes an item by its given position and saves the Playlist, updating the Position of all the other items.
+            //  Deletes an item by its given position and saves the Playlist, updating the Position of all the other items.
             it("removes an item by position", function () {
+                console.log("initial shuffledItems:", savedPlaylist.get('shuffledItems').length);
                 var initialItemCount = savedPlaylist.get('items').length;
+                console.log("initial item count:", initialItemCount);
                 var deleteResult = false;
                 runs(function () {
                     savedPlaylist.removeItemByPosition(0, function (wasDeleteSuccessful) {
@@ -338,20 +363,29 @@
                 });
 
                 runs(function () {
-                    expect(savedPlaylist.get('items').length === initialItemCount - 1);
-                    expect(savedPlaylist.get('shuffledItems').length === initialItemCount - 1);
+                    console.log("post shuffledItems:", savedPlaylist.get('shuffledItems').length);
+                    expect(savedPlaylist.get('items').length).toEqual(initialItemCount - 1);
+                    
+                    if (initialItemCount === 1) {
+                        expect(savedPlaylist.get('shuffledItems').length).toEqual(savedPlaylist.get('items').length);
+                    } else {
+                        expect(savedPlaylist.get('shuffledItems').length).toEqual(initialItemCount - 1);
+                    }
                 });
             });
 
-            // TODO: I'm not sure if a Playlist should be able to remove itself, or if a PlaylistCollection 
-            // should be able to remove it... probably both, but if additional work is needed for the cleanup then the Playlist would do it?
+            //  TODO: I'm not sure if a Playlist should be able to remove itself, or if a PlaylistCollection 
+            //  should be able to remove it... probably both, but if additional work is needed for the cleanup then the Playlist would do it?
             it("removes itself", function () {
                 var wasRemoveSuccessfull = false;
 
                 runs(function() {
                     savedPlaylist.destroy({
-                        success: function(removeResult) {
-                            wasRemoveSuccessfull = removeResult;
+                        success: function() {
+                            wasRemoveSuccessfull = true;
+                        },
+                        error: function () {
+                            console.error("There was an error removing the playlist.");
                         }
                     });
                 });

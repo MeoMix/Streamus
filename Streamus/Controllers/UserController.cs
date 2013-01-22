@@ -13,6 +13,7 @@ namespace Streamus.Controllers
         private readonly IUserDao UserDao = new UserDao();
         private readonly IPlaylistDao PlaylistDao = new PlaylistDao();
 
+        [HttpPost]
         public ActionResult Create()
         {
             var userManager = new UserManager(UserDao, PlaylistDao);
@@ -22,7 +23,7 @@ namespace Streamus.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetById(Guid id)
+        public ActionResult Get(Guid id)
         {
             User user = UserDao.GetById(id);
 

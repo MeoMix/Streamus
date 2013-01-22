@@ -13,22 +13,19 @@ define(['playlist',
             onReady: 'playlistManager.onReady'
         };
 
-        user.onLoaded(function() {
-            console.log("id:", user.id);
+        user.on('onLoaded', function () {
+            console.log("USER HAS LODED id:", user.get('id'));
             $.ajax({
                 url: programState.getBaseUrl() + 'Playlist/GetPlaylistsByUserId',
+                type: 'GET',
                 dataType: 'json',
                 data: {
-                    userId: user.id
+                    userId: user.get('id')
                 },
-                success: function(data) {
-                    console.log("user loaded. data returned:", data);
-                    //Transform the config items into Backbone.Model before adding to playlist since that is playlist's expected type.
-                    data.items = _.map(data.items, function(itemConfig) {
-                        return new PlaylistItem(itemConfig);
-                    });
+                success: function (data) {
+                    console.log("JSON data:", data);
 
-                    playlists = _.map(data, function(playlistConfig) {
+                    playlists = _.map(data, function (playlistConfig) {
                         return new Playlist(playlistConfig);
                     });
 
@@ -112,11 +109,12 @@ define(['playlist',
             //Songs is an optional paramater. When adding a playlist from YouTube a collection of songs
             //will be known -- so add them to the playlist during creation. When creating a new playlist
             //directly inside the app there won't be any songs.
-            addPlaylist: function(playlistTitle, callback) {
+            addPlaylist: function (playlistTitle, callback) {
+                console.log("inside of addPlaylist");
                 var playlist = new Playlist({
                     title: playlistTitle,
                     position: playlists.length,
-                    userId: user.id
+                    userId: user.get('id')
                 });
 
                 console.log("Calling save with playlist inside of addPlaylist, item count:", playlist.get('items').length);

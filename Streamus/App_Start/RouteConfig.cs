@@ -9,32 +9,67 @@ namespace Streamus.App_Start
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            //routes.MapRoute(
+            //    "post-Playlist",
+            //    "{controller}",
+            //    new {controller = "Playlist", action = "create"},
+            //    new {httpMethod = new HttpMethodConstraint("POST")}
+            //    );
+
+            //routes.MapRoute(
+            //    "getPlaylistsByUserId",
+            //    "{controller}/{id}",
+            //    new { controller = "Playlist", action = "get" },
+            //    new { httpMethod = new HttpMethodConstraint("GET") }
+            //);
+
+            //routes.MapRoute(
+            //    "get-Playlist",
+            //    "{controller}/{action}/{id}",
+            //    new {controller = "Playlist", action = "get"},
+            //    new {httpMethod = new HttpMethodConstraint("GET")}
+            //    );
+
+            //routes.MapRoute(
+            //    "put-Playlist",
+            //    "{controller}",
+            //    new {controller = "Playlist", action = "update"},
+            //    new {httpMethod = new HttpMethodConstraint("PUT")}
+            //    );
+
+            //routes.MapRoute(
+            //    "delete-Playlist",
+            //    "{controller}/{id}",
+            //    new {controller = "Playlist", action = "delete"},
+            //    new {httpMethod = new HttpMethodConstraint("DELETE")}
+            //    );
+
             routes.MapRoute(
-                "post-Playlist",
+                "post-User",
                 "{controller}",
-                new {controller = "Playlist", action = "create"},
-                new {httpMethod = new HttpMethodConstraint("POST")}
+                new { controller = "User", action = "create" },
+                new { httpMethod = new HttpMethodConstraint("POST") }
                 );
 
             routes.MapRoute(
-                "get-Playlist",
-                "{controller}/{id}/{userId}",
-                new {controller = "Playlist", action = "get"},
-                new {httpMethod = new HttpMethodConstraint("GET")}
+                "get-User",
+                "{controller}/{id}",
+                new { controller = "User", action = "get" },
+                new { httpMethod = new HttpMethodConstraint("GET") }
                 );
 
             routes.MapRoute(
-                "put-Playlist",
+                "put-User",
                 "{controller}",
-                new {controller = "Playlist", action = "update"},
-                new {httpMethod = new HttpMethodConstraint("PUT")}
+                new { controller = "User", action = "update" },
+                new { httpMethod = new HttpMethodConstraint("PUT") }
                 );
 
             routes.MapRoute(
-                "delete-Playlist",
-                "{controller}/{id}/{userId}",
-                new {controller = "Playlist", action = "delete"},
-                new {httpMethod = new HttpMethodConstraint("DELETE")}
+                "delete-User",
+                "{controller}/{id}",
+                new { controller = "User", action = "delete" },
+                new { httpMethod = new HttpMethodConstraint("DELETE") }
                 );
 
             routes.MapRoute(

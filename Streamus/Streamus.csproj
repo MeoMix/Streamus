@@ -254,6 +254,7 @@
     <Content Include="ChromeExtension\js\inject.js" />
     <Content Include="ChromeExtension\js\playerStates.js" />
     <Content Include="ChromeExtension\js\programState.js" />
+    <Content Include="ChromeExtension\js\tests\background\userSpec.js" />
     <Content Include="ChromeExtension\js\tests\main.js" />
     <Content Include="Shared\js\thirdParty\jasmine-html.js" />
     <Content Include="Shared\css\jasmine.css" />
