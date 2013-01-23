@@ -1,116 +1,84 @@
-define(['programState'], function (programState) {
+//  A singleton representing the sole logged on user for the program.
+//  Tries to load itself by ID stored in localStorage and then by chrome.storage.sync.
+//  If still unloaded, tells the server to create a new user and assumes that identiy.
+define(['programState'], function(programState) {
     'use strict';
     var userIdKey = 'UserId';
+
+    //  Loads user data by ID from the server, writes the ID
+    //  to client-side storage locations for future loading and then announces
+    //  that the user has been loaded fully.
+
+    function fetchUser(shouldSetSyncStorage) {
+        this.fetch({
+            success: function(model) {
+                //  TODO: Error handling for writing to sync too much.
+                //  Write to sync as little as possible because it has restricted read/write limits per hour.
+                if (shouldSetSyncStorage) {
+                    chrome.storage.sync.set({ userIdKey: model.get('id') });
+                }
+
+                localStorage.setItem(userIdKey, model.get('id'));
+
+                //  Announce that user has loaded so managers can use it to fetch data.
+                model.trigger('loaded');
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
+    }
 
     //  User data will be loaded either from cache or server.
     var User = Backbone.Model.extend({
         defaults: {
-            //  TODO: Allow multiple users at some point. This is just for debugging for now.
-            id: '3137f79d-9604-4e2f-aa57-9b12cc65ba45' //localStorage.getItem(userIdKey)
+            id: localStorage.getItem(userIdKey),
+            name: '' 
         },
+        
         urlRoot: programState.getBaseUrl() + 'User/',
+        
+        //  TODO: I am doing too much work in this initialize constructor. 
         initialize: function () {
-            //  If user's ID wasn't found in local storage, check sync.
+            //  If user's ID wasn't found in local storage, check sync because its a pc-shareable location, but doesn't work synchronously.
             if (this.isNew()) {
+                var self = this;
                 //  chrome.Storage.sync is cross-computer syncing with restricted read/write amounts.
-                chrome.storage.sync.get(userIdKey, function(data) {
+                
+                chrome.storage.sync.get(userIdKey, function (data) {
+                    //  Look for a user id in sync, it might be undefined though.
                     var foundUserId = data[userIdKey];
-                    if (foundUserId) {
-                        this.set('id', foundUserId);
-                        this.fetch({
-                            success: function(model) {
-                                localStorage.setItem(userIdKey, model.get('id'));
-                                model.trigger('onLoaded');
-                            },
-                            error: function (error) {
-                                console.error(error);
-                            }
-                        });
-                    }
-                    else{				
-                        //  No stored ID found -- create a new user and save the returned identity.
-                        //  TODO: Not 100% on fetching here.
 
-                        this.fetch({
-                            success: function(model) {
-                                localStorage.setItem(userIdKey, model.get('id'));
-                                chrome.storage.sync.set({ userIdKey: model.get('id') });
-                                model.trigger('onLoaded');
+                    if (typeof foundUserId === 'undefined') {
+                        
+                        //  No stored ID found at any client storage spot. Create a new user and use the returned user object.
+                        self.save({}, {
+                            
+                            //  TODO: I might need to pull properties out of returned server data and manually push into model.
+                            //  Currently only care about userId, name can't be updated.
+                            success: function (model) {
+                                //  Announce that user has loaded so managers can use it to fetch data.
+                                self.trigger('loaded');
                             },
                             error: function(error) {
                                 console.error(error);
                             }
                         });
+
+                    } else {
+                        //  Update the model's id to proper value and call fetch to retrieve all data from server.
+                        self.set('id', foundUserId);
+                        fetchUser.call(self, false);
                     }
                 });
 
             } else {
-                this.fetch({
-                    success: function (model) {
-                        chrome.storage.sync.set({ userIdKey: model.get('id') });
-                        localStorage.setItem(userIdKey, model.get('id'));
-                        model.trigger('onLoaded');
-                    },
-                    error: function (error) {
-                        console.error(error);
-                    }
-                });
+                //  User's ID was found in localStorage. Load immediately.
+                fetchUser.call(this, true);
             }
         }
     });
 
-
-   
-	//if (userId) {
-	//    getUserById(userId, function (foundUser) {
-	//        user = foundUser;
-	//        chrome.storage.sync.set({ userIdKey: user.id });
-	//        localStorage.setItem(userIdKey, user.id);
-	//        $(document).trigger(events.userLoaded);
-	//    });
-	//} else {
-	//    //Sync storage returns found items through a callback, it is async.
-	//    chrome.storage.sync.get(userIdKey, function (data) {
-	//        var foundUserId = data[userIdKey];
-	//        if (foundUserId) {
-	//		    getUserById(foundUserId, function(foundUser) {
-	//		        user = foundUser;
-	//		        localStorage.setItem(userIdKey, user.id);
-	//		        $(document).trigger(events.userLoaded);
-	//		    });
-	//		}
-	//		else{				
-	//		    //No stored ID found -- create a new user and save the returned identity.
-	//            $.ajax({
-	//                url: programState.getBaseUrl() + 'User/Create',
-	//                type: 'GET',
-	//                success: function(createdUser) {
-	//                    user = createdUser;
-	//                    localStorage.setItem(userIdKey, user.id);
-	//                    chrome.storage.sync.set({ userIdKey: user.id });
-	//                    $(document).trigger(events.userLoaded);
-	//                },
-	//                error: function(error) {
-	//                    console.error(error);
-	//                }
-	//            });
-	//        }
-	//	});
-	//}
-    
-	//function getUserById(id, callback) {
-	//    $.ajax({
-	//        url: programState.getBaseUrl() + 'User/GetById',
-	//        type: 'GET',
-	//        data: {
-	//            id: id
-	//        },
-	//        success: callback,
-	//        error: function(error) {
-	//            console.error(error);
-	//        }
-	//    });
-	//};
-
+    //  Return an already instantiated User model so that we have only a single instance available.
     return new User();
 });

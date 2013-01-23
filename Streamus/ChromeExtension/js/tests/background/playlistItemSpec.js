@@ -1,5 +1,5 @@
 ﻿define(['playlistItem'], function(PlaylistItem) {
-    describe('The PlaylistItem', function() {
+    xdescribe('The PlaylistItem', function() {
         it("should be able to be instantiated without paramaters and have the correct default values", function() {
             var playlistItem = new PlaylistItem();
             expect(playlistItem).not.toEqual(null);

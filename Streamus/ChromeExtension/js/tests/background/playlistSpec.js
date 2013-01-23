@@ -30,7 +30,7 @@
         }
 
         // A few preliminary tests which do not require a Playlist existing in the database.
-        describe('The unsaved Playlist', function() {
+        xdescribe('The unsaved Playlist', function() {
 
             it("instantiates without paramaters", function() {
                 var playlist = new Playlist();

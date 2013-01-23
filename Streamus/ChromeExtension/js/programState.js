@@ -1,10 +1,11 @@
-﻿define(function() {
+﻿//  A singleton which is used for configuration/debugging purposes currently.
+define(function () {
     'use strict';
     var ProgramState = Backbone.Model.extend({
         defaults: {
             isLocal: true
         },
-        //  Make sure to update the URL in manifest.json, too -- it can't read from here.
+        //  Make sure to update the URL in manifest.json, too.
         getBaseUrl: function() {
             var baseUrl;
             if (this.get('isLocal')) {
