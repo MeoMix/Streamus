@@ -13,11 +13,12 @@ define(['playlist',
             onReady: 'playlistManager.onReady'
         };
 
-        user.on('onLoaded', function () {
+
+        user.on('loaded', function () {
             console.log("USER HAS LODED id:", user.get('id'));
             $.ajax({
-                url: programState.getBaseUrl() + 'Playlist/GetPlaylistsByUserId',
                 type: 'GET',
+                url: programState.getBaseUrl() + 'Playlist/GetPlaylistsByUserId',
                 dataType: 'json',
                 data: {
                     userId: user.get('id')
