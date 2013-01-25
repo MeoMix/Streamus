@@ -29,10 +29,10 @@ namespace Streamus.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetById(Guid songId)
+        public ActionResult GetById(Guid videoId)
         {
             var songManager = new SongManager(SongDao);
-            Song song = songManager.GetById(songId);
+            Song song = songManager.GetById(videoId);
             return new JsonDataContractActionResult(song);
         }
 

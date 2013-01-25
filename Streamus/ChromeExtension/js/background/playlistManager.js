@@ -13,9 +13,7 @@ define(['playlist',
             onReady: 'playlistManager.onReady'
         };
 
-
         user.on('loaded', function () {
-            console.log("USER HAS LODED id:", user.get('id'));
             $.ajax({
                 type: 'GET',
                 url: programState.getBaseUrl() + 'Playlist/GetPlaylistsByUserId',
@@ -32,7 +30,7 @@ define(['playlist',
 
                     //PlaylistManager will remember the selected playlist via localStorage.
                     var savedPosition = JSON.parse(localStorage.getItem('selectedPlaylistPosition'));
-                    console.log("savedPosition:", savedPosition);
+
                     selectPlaylistByPosition(savedPosition != null ? parseInt(savedPosition) : 0);
 
                     $(document).trigger(events.onReady);

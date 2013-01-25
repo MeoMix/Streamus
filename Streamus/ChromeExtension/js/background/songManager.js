@@ -24,13 +24,13 @@
 
             return loadedSong;
         },
-        loadSong: function(songId, callback) {
+        loadSong: function (videoId, callback) {
             $.ajax({
                 type: 'GET',
                 url: programState.getBaseUrl() + 'Song/GetById',
                 dataType: 'json',
                 data: {
-                    songId: songId
+                    videoId: videoId
                 },
                 success: function (data) {
                     if (!_.contains(loadedSongs, data)) {
@@ -45,8 +45,8 @@
                 }
             });
         },
-        loadSongs: function (songIds, callback) {
-            console.log("calling load songs with:", songIds);
+        loadSongs: function (videoIds, callback) {
+            console.log("calling load songs with:", videoIds);
             $.ajax({
                 type: 'GET',
                 url: programState.getBaseUrl() + 'Song/GetByVideoIds',
@@ -54,7 +54,7 @@
                 contentType: 'application/json; charset=utf-8',
                 traditional: true,
                 data: {
-                    songIds: songIds
+                    videoIds: videoIds
                 },
                 success: function (data) {
                     var savedVideoIds = _.pluck(data, 'videoId');

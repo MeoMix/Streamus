@@ -32,7 +32,7 @@ define(['programState'], function(programState) {
     //  User data will be loaded either from cache or server.
     var User = Backbone.Model.extend({
         defaults: {
-            id: localStorage.getItem(userIdKey),
+            id: '51d77685-42c3-469a-b1b3-f0dc5ea75f5a', //localStorage.getItem(userIdKey),
             name: '' 
         },
         

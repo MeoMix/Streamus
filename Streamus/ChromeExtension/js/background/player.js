@@ -16,7 +16,7 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
                 //If there is a song to cue might as well have it ready to go.
                 if (playlistManager.activePlaylist.get('items').length > 0) {
                     console.log("cueuing item by position!");
-                    cueItemByPosition(playlistManager.activePlaylist.selectedItem.get('position'));
+                    cueItemByPosition(playlistManager.activePlaylist.getSelectedItem().get('position'));
                 }
                 refreshUI();
             };
@@ -172,8 +172,10 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
             get totalTime() {
                 var totalTime = 0;
                 var selectedItem = playlistManager.activePlaylist.getSelectedItem();
+
                 if (selectedItem) {
-                    var currentSong = songManager.getLoadedSongByVideoId(selectedItem.get('songId'));
+                    var selectedVideoId = selectedItem.get('videoId');
+                    var currentSong = songManager.getLoadedSongByVideoId(selectedVideoId);
                     totalTime = currentSong ? currentSong.duration : 0;
                 }
 

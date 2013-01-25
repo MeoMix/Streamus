@@ -6,7 +6,7 @@ namespace Streamus.Backend.Domain.DataInterfaces
     public interface IPlaylistItemDao : IDao<PlaylistItem>
     {
         PlaylistItem GetByPosition(Guid playlistId, int position);
-        PlaylistItem GetBySongId(Guid songId);
+        PlaylistItem GetByVideoId(Guid videoId);
         PlaylistItem GetSelected(Guid playlistId);
     }
 }

@@ -30,11 +30,11 @@ namespace Streamus.Backend.Dao
             return playlistItem;
         }
 
-        public PlaylistItem GetBySongId(Guid songId)
+        public PlaylistItem GetByVideoId(Guid videoId)
         {
             ICriteria criteria = NHibernateSession
                 .CreateCriteria(typeof (PlaylistItem), "PlaylistItem")
-                .Add(Restrictions.Eq("PlaylistItem.SongId", songId))
+                .Add(Restrictions.Eq("PlaylistItem.VideoId", videoId))
                 .SetMaxResults(1);
 
             PlaylistItem playlistItem = criteria.List<PlaylistItem>().FirstOrDefault();

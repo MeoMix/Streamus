@@ -82,11 +82,11 @@ define(['ytHelper',
                     var savedItemPosition = JSON.parse(localStorage.getItem(this.get('id') + '_selectedItemPosition'));
                     this.selectItemByPosition(savedItemPosition !== null ? parseInt(savedItemPosition, 10) : 0);
 
-                    var songIds = _.map(this.get('items'), function(item) {
-                        return item.get('songId');
+                    var videoIds = _.map(this.get('items'), function(item) {
+                        return item.get('videoId');
                     });
 
-                    songManager.loadSongs(songIds);
+                    songManager.loadSongs(videoIds);
 
                     this.set('shuffledItems', _.shuffle(this.get('items')));
                 }
@@ -201,7 +201,6 @@ define(['ytHelper',
                         videoId: song.videoId,
                         title: song.title,
                         relatedVideos: [],
-                        songId: -1,
                         selected: false
                     });
                     createdPlaylistItems.push(playlistItem);
@@ -220,21 +219,8 @@ define(['ytHelper',
                     }
                 });
 
-                //  TODO: I don't have a good way of linking my savedSongs back to their playlist item.
-                //  I'm using the videoId for now because all the songs that get added, if they have same video id,
-                //  must be identical during creation, so its fine to mix up the two.
-                songManager.saveSongs(songs, function(savedSongs) {
-
-                    _.each(savedSongs, function(song) {
-                        var foundItem = _.find(createdPlaylistItems, function(playlistItem) {
-                            return playlistItem.get('videoId') === song.videoId && playlistItem.get('songId') === null;
-                        });
-
-                        foundItem.set('videoId', song.videoId);
-                    });
-
-                    self.createItems(createdPlaylistItems, callback);
-                });
+                songManager.saveSongs(songs);
+                this.createItems(createdPlaylistItems, callback);
             },
             
             createItems: function(items, callback) {
@@ -280,25 +266,8 @@ define(['ytHelper',
                 }
 
                 //TODO: It's clear that I should probably be saving a Song as part of playlistItem, maybe?
-                songManager.saveSong(song, function() {
-                    $.ajax({
-                        type: 'POST',
-                        url: programState.getBaseUrl() + 'Playlist/CreateItem',
-                        dataType: 'json',
-                        data: {
-                            playlistId: playlistItem.get('playlistId'),
-                            position: playlistItem.get('position'),
-                            songId: playlistItem.get('songId'),
-                            title: playlistItem.get('title'),
-                            videoId: playlistItem.get('videoId')
-                        },
-                        success: function() {
-                        },
-                        error: function(error) {
-                            console.error(error);
-                        }
-                    });
-                });
+                songManager.saveSong(song);
+                this.save();
 
                 return playlistItem;
             },

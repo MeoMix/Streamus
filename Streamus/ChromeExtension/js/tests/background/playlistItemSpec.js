@@ -6,7 +6,6 @@
             expect(playlistItem.isNew()).toEqual(true);
             expect(playlistItem.get('id') === null);
             expect(playlistItem.get('playlistId') === null);
-            expect(playlistItem.get('songId') === null);
             expect(playlistItem.get('videoId') === '');
             expect(playlistItem.get('title') === '');
             expect(playlistItem.get('selected') === false);

@@ -67,7 +67,7 @@ namespace Streamus.Controllers
             return new EmptyResult();
         }
 
-        [HttpGet, ActionName("GetPlaylistsByUserId")]
+        [HttpGet]
         public ActionResult GetPlaylistsByUserId(Guid userId)
         {
             IList<Playlist> playlists = PlaylistDao.GetByUserId(userId);
