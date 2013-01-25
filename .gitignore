@@ -11,7 +11,6 @@ tmp/
 *.bak
 *.swp
 *~.nib
-local.properties
 .classpath
 .settings/
 .loadpath
@@ -64,7 +63,7 @@ local.properties
 *.dotCover
 
 ## TODO: If you have NuGet Package Restore enabled, uncomment this
-#packages/
+packages/
 
 # Visual C++ cache files
 ipch/
@@ -155,7 +154,7 @@ pip-log.txt
 
 #Translations
 *.mo
-
+	
 #Mr Developer
 .mr.developer.cfg
 
