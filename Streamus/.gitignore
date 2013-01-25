@@ -1,6 +1,4 @@
 *.min.js
 obj/
 bin/
-Properties/
 sftp-config.json
-hibernate.cfg.xml
