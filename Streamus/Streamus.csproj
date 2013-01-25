@@ -44,22 +44,20 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Shared\NHibernate-3.3.1\Required_Bins\FluentValidation.dll</HintPath>
     </Reference>
-    <Reference Include="Iesi.Collections">
-      <HintPath>Shared\NHibernate-3.3.1\Required_Bins\Iesi.Collections.dll</HintPath>
+    <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
-      <HintPath>Shared\NHibernate-3.3.1\Tests\log4net.dll</HintPath>
+      <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="NHibernate">
-      <HintPath>Shared\NHibernate-3.3.1\Required_Bins\NHibernate.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.core">
-      <HintPath>Shared\NHibernate-3.3.1\Tests\nunit.core.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework, Version=2.6.2.12296, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+    <Reference Include="NHibernate, Version=3.3.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Shared\NHibernate-3.3.1\Tests\nunit.framework.dll</HintPath>
+      <HintPath>..\packages\NHibernate.3.3.2.4000\lib\Net35\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -265,13 +263,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Shared\js\thirdParty\backbone.js" />
-    <Content Include="Shared\NHibernate-3.3.1\Required_Bins\FluentValidation.dll" />
-    <Content Include="Shared\NHibernate-3.3.1\Required_Bins\Iesi.Collections.dll" />
-    <Content Include="Shared\NHibernate-3.3.1\Required_Bins\Iesi.Collections.pdb" />
-    <Content Include="Shared\NHibernate-3.3.1\Required_Bins\Iesi.Collections.xml" />
-    <Content Include="Shared\NHibernate-3.3.1\Required_Bins\NHibernate.dll" />
-    <Content Include="Shared\NHibernate-3.3.1\Required_Bins\NHibernate.pdb" />
-    <Content Include="Shared\NHibernate-3.3.1\Required_Bins\NHibernate.xml" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="manifest.json" />
@@ -321,13 +312,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Shared\js\thirdParty\MIT.LICENSE" />
+    <Content Include="packages.config" />
     <None Include="Properties\PublishProfiles\Streamus Staging.pubxml" />
-    <None Include="Shared\NHibernate-3.3.1\Required_Bins\nhibernate-configuration.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Shared\NHibernate-3.3.1\Required_Bins\nhibernate-mapping.xsd">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
