@@ -1,9 +1,9 @@
 ﻿define(['playlist',
         'playlistManager',
-        'songManager',
+        'videoManager',
         'user',
         'ytHelper'],
-    function (Playlist, playlistManager, songManager, user, ytHelper) {
+    function (Playlist, playlistManager, videoManager, user, ytHelper) {
         'use strict';
         var savedPlaylist = null;
         
@@ -16,15 +16,15 @@
             });
         }
 
-        //  Creates a Song object after going out to YouTube's API for videoInformation based on videoId.
-        //  The Song object has its PlaylistId property set upon instantiation, and then the created song
+        //  Creates a Video object after going out to YouTube's API for videoInformation based on videoId.
+        //  The Video object has its PlaylistId property set upon instantiation, and then the created video
         //  is returned.
-        function createSongFromVideoId(videoId, playlistId, callback) {
+        function createVideoFromVideoId(videoId, playlistId, callback) {
             ytHelper.getVideoInformation(videoId, function (videoInformation) {
-                var song = songManager.createSong(videoInformation, playlistId);
+                var video = videoManager.createVideo(videoInformation, playlistId);
 
                 if (callback) {
-                    callback(song);
+                    callback(video);
                 }
             });
         }
@@ -103,7 +103,7 @@
                 }, "Playlist needs to exist for describe to execute", 10000);
             });
 
-            // Start by adding an item to the playlist through .addItem(song, selected) which will
+            // Start by adding an item to the playlist through .addItem(video, selected) which will
             // trigger a save to the database.
             it("adds an item", function() {
                 var videoId = 'lI9klhUAVTE';
@@ -112,8 +112,8 @@
                 var initialItemCount = savedPlaylist.get('items').length;
 
                 runs(function() {
-                    createSongFromVideoId(videoId, savedPlaylist.get('id'), function(song) {
-                        item = savedPlaylist.addItem(song, true);
+                    createVideoFromVideoId(videoId, savedPlaylist.get('id'), function(video) {
+                        item = savedPlaylist.addItem(video, true);
                         addedItemSuccessfully = true;
                     });
                 });
@@ -132,19 +132,19 @@
             });
 
             // Test an edge scenario where there's some lag on the database end and the user is impatient.
-            // Adding multiple songs through multiple AJAX requests shouldn't cause any issues.
+            // Adding multiple videos through multiple AJAX requests shouldn't cause any issues.
             it("adds two items in a row", function() {
                 var initialItemCount = savedPlaylist.get('items').length;
 
                 runs(function() {
                     var playlistId = savedPlaylist.get('id');
 
-                    createSongFromVideoId('s91jgcmQoB0', playlistId, function(song) {
-                        savedPlaylist.addItem(song, false);
+                    createVideoFromVideoId('s91jgcmQoB0', playlistId, function(video) {
+                        savedPlaylist.addItem(video, false);
                     });
 
-                    createSongFromVideoId('n_3mUnxCusM', playlistId, function(song) {
-                        savedPlaylist.addItem(song, false);
+                    createVideoFromVideoId('n_3mUnxCusM', playlistId, function(video) {
+                        savedPlaylist.addItem(video, false);
                     });
                 });
 
@@ -154,29 +154,29 @@
             });
             
             // A more common scenario is the user wanting to add a Playlist or some other sort of collection of music.
-            // In this scenario, we would send one AJAX request, but the payload would have multiple songs inside of it.
+            // In this scenario, we would send one AJAX request, but the payload would have multiple videos inside of it.
             it("adds 2 items as a collection", function () {
                 var initialItemCount = savedPlaylist.get('items').length;
-                var songs = [];
+                var videos = [];
 
                 runs(function () {
                     var playlistId = savedPlaylist.get('id');
-                    createSongFromVideoId('s91jgcmQoB0', playlistId, function (song) {
-                        songs.push(song);
+                    createVideoFromVideoId('s91jgcmQoB0', playlistId, function (video) {
+                        videos.push(video);
                     });
 
-                    createSongFromVideoId('n_3mUnxCusM', playlistId, function (song) {
-                        songs.push(song);
+                    createVideoFromVideoId('n_3mUnxCusM', playlistId, function (video) {
+                        videos.push(video);
                     });
                 });
 
                 waitsFor(function () {
-                    return songs.length === 2;
+                    return videos.length === 2;
                 });
 
                 var successfullyAddedItems = false;
                 runs(function () {
-                    savedPlaylist.addItems(songs, function() {
+                    savedPlaylist.addItems(videos, function () {
                         successfullyAddedItems = true;
                     });
                 });
@@ -210,7 +210,7 @@
                 //  Provide a collect of positions and playlist will make its playlistItem order match those positions.
                 var oldPosition = 0;
                 var newPosition = 1;
-                //  Resync playlist to swap song positions.
+                //  Resync playlist to swap item positions.
                 savedPlaylist.updateItemPosition(oldPosition, newPosition, function() {
                     syncSuccessful = true;
                 });
@@ -256,8 +256,8 @@
                 var videoId = '8qffkPaCttY';
                 
                 runs(function () {
-                    createSongFromVideoId(videoId, savedPlaylist.get('id'), function (song) {
-                        savedPlaylist.addItem(song, false);
+                    createVideoFromVideoId(videoId, savedPlaylist.get('id'), function (video) {
+                        savedPlaylist.addItem(video, false);
                         hasAddedItem = true;
                     });
                 });
@@ -315,7 +315,7 @@
 
             //  TODO: Shuffling enabled? Pandora mode enabled?
             //  The previous item is based first off of history. If the current Playlist has
-            //  skipped forward songs -- each song gets logged into History and is played is popped off
+            //  skipped forward items -- each item gets logged into History and is played is popped off
             //  to play when fulfilling previous items. If there is no history, then the previous item is
             //  found sequentially and loops around to the back of the playlist when going from position 0
             it("goes to previous item", function () {

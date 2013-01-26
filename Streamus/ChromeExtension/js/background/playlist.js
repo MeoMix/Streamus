@@ -1,21 +1,21 @@
 //  Playlist holds a collection of PlaylistItems as well as properties pertaining to a playlist such as its title and
-//  history of songs played. Provides methods to work with PlaylistItems such as getting, removing, updating, etc..
+//  history of videos played. Provides methods to work with PlaylistItems such as getting, removing, updating, etc..
 define(['ytHelper',
-        'songManager',
+        'videoManager',
         'playlistItem',
         'programState'
-       ], function( ytHelper, songManager, PlaylistItem, programState ) {
+       ], function( ytHelper, videoManager, PlaylistItem, programState ) {
         'use strict';
 
-        //  Called whenever Player loads/cues a song. Takes shuffledItems, finds an item to remove by position,
-        //  and then if there's nothing left in shuffled items -- reloads the available songs.
+        //  Called whenever Player loads/cues a video. Takes shuffledItems, finds an item to remove by position,
+        //  and then if there's nothing left in shuffled items -- reloads the available videos.
         //  Helps ensure an even distribution of shuffled items for less repeats.
         function syncShuffledItems(position) {
             this.set('shuffledItems', _.reject(this.get('shuffledItems'), function (s) {
                 return s.get('position') === position;
             }));
 
-            //  When all songs have been played once in shuffle mode, reset the shuffle playlist. Helps provide even distribution of 'random'
+            //  When all videos have been played once in shuffle mode, reset the shuffle playlist. Helps provide even distribution of 'random'
             if (this.get('shuffledItems').length === 0) {
                 this.set('shuffledItems', _.shuffle(this.get('items')));
             }
@@ -70,7 +70,7 @@ define(['ytHelper',
                         return returnValue;
                     }));
 
-                    //  Fetch all the related videos for songs on load. I don't want to save these to the DB because they're bulky and constantly change.
+                    //  Fetch all the related videos for videos on load. I don't want to save these to the DB because they're bulky and constantly change.
                     //  Data won't appear immediately as it is an async request, I just want to get the process started now.
                     _.each(this.get('items'), function(item) {
                         ytHelper.getRelatedVideos(item.get('videoId'), function(relatedVideos) {
@@ -82,11 +82,11 @@ define(['ytHelper',
                     var savedItemPosition = JSON.parse(localStorage.getItem(this.get('id') + '_selectedItemPosition'));
                     this.selectItemByPosition(savedItemPosition !== null ? parseInt(savedItemPosition, 10) : 0);
 
-                    var videoIds = _.map(this.get('items'), function(item) {
-                        return item.get('videoId');
+                    var ids = _.map(this.get('items'), function(item) {
+                        return item.get('id');
                     });
 
-                    songManager.loadSongs(videoIds);
+                    videoManager.loadVideos(ids);
 
                     this.set('shuffledItems', _.shuffle(this.get('items')));
                 }
@@ -137,7 +137,7 @@ define(['ytHelper',
             
             getRelatedVideo: function() {
                 //  Take each playlist item's array of related videos, pluck them all out into a collection of arrays
-                //  then flatten the arrays into a collection of songs.
+                //  then flatten the arrays into a collection of videos.
                 var relatedVideos = _.flatten(_.map(this.get('items'), function(item) {
                     return item.get('relatedVideos');
                 }));
@@ -191,15 +191,15 @@ define(['ytHelper',
                 return previousItem;
             },
             
-            addItems: function(songs, callback) {
+            addItems: function (videos, callback) {
                 var createdPlaylistItems = [];
                 var self = this;
-                _.each(songs, function(song) {
+                _.each(videos, function (video) {
                     var playlistItem = new PlaylistItem({
                         playlistId: self.get('id'),
                         position: self.get('items').length,
-                        videoId: song.videoId,
-                        title: song.title,
+                        videoId: video.id,
+                        title: video.title,
                         relatedVideos: [],
                         selected: false
                     });
@@ -219,7 +219,7 @@ define(['ytHelper',
                     }
                 });
 
-                songManager.saveSongs(songs);
+                videoManager.saveVideos(videos);
                 this.createItems(createdPlaylistItems, callback);
             },
             
@@ -241,15 +241,15 @@ define(['ytHelper',
                 });
             },
             
-            addItem: function(song, selected) {
+            addItem: function(video, selected) {
                 var playlistId = this.get('id');
                 var itemCount = this.get('items').length;
 
                 var playlistItem = new PlaylistItem({
                     playlistId: playlistId,
                     position: itemCount,
-                    videoId: song.videoId,
-                    title: song.title,
+                    videoId: video.id,
+                    title: video.title,
                     relatedVideos: []
                 });
 
@@ -265,8 +265,8 @@ define(['ytHelper',
                     this.selectItemByPosition(playlistItem.get('position'));
                 }
 
-                //TODO: It's clear that I should probably be saving a Song as part of playlistItem, maybe?
-                songManager.saveSong(song);
+                //TODO: It's clear that I should probably be saving a Video as part of playlistItem, maybe?
+                videoManager.saveVideo(video);
                 this.save();
 
                 return playlistItem;

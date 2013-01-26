@@ -24,7 +24,7 @@ namespace Streamus.Backend.Dao
 
         /// <summary>
         /// Loads an instance of type TypeOfListItem from the DB based on its ID.
-        /// Song's PK is from videoId, so use GetByVideoId if you're trying to get a Song.
+        /// Video's PK is from YouTube - it overrides GetById with a string implementation.
         /// </summary>
         public T GetById(Guid id)
         {
@@ -56,7 +56,6 @@ namespace Streamus.Backend.Dao
         ///     For entities with automatatically generated IDs, such as identity, SaveOrUpdate may
         ///     be called when saving a new entity.  SaveOrUpdate can also be called to update any
         ///     entity, even if its ID is assigned. This method modifies the entity passed in.
-        ///     Can't call this with Song because its ID is provided from the client.
         /// </summary>
         public void SaveOrUpdate(T entity)
         {

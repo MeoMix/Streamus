@@ -1,4 +1,4 @@
-//Responsible for showing options when interacting with a song list or play list
+//  Responsible for showing options when interacting with a video list or play list
 define(function(){
 	'use strict';
 	var selector = $('#ContextMenu');

@@ -20,31 +20,31 @@ define(['skipButton'], function(skipButton){
 		    //         var page = document.implementation.createHTMLDocument("");
 		    //         page.documentElement.innerHTML = this.responseText;
 
-		    //         var songTitles = [];
+		    //         var videoTitles = [];
 		    //         $(page).find('.secondColumn a').each(function() {
-		    //             songTitles.push(this.title);
+		    //             videoTitles.push(this.title);
 		    //         });
 
-		    //         var onBeatportScrapeComplete = function(songs) {
-		    //             console.log("creating beatport list", songs);
-		    //             addPlaylist("Beatport Top 100", songs);
+		    //         var onBeatportScrapeComplete = function(videos) {
+		    //             console.log("creating beatport list", videos);
+		    //             addPlaylist("Beatport Top 100", videos);
 		    //         };
 
-		    //         var songIndex = 0;
+		    //         var videoIndex = 0;
 		    //         var processNext;
-		    //         var beatportSongs = [];
+		    //         var beatportVideos = [];
 		    //         (processNext = function() {
-		    //             if (songIndex < songTitles.length) {
-		    //                 var songTitle = songTitles[songIndex];
-		    //                 songIndex++;
-		    //                 ytHelper.search(songTitle, function(videos) {
+		    //             if (videoIndex < videoTitles.length) {
+		    //                 var videoTitle = videoTitles[videoIndex];
+		    //                 videoIndex++;
+		    //                 ytHelper.search(videoTitle, function(videos) {
 		    //                     if (videos[0]) {
-		    //                         beatportSongs.push(videos[0]);
+		    //                         beatportVideos.push(videos[0]);
 		    //                     }
 		    //                     processNext();
 		    //                 });
 		    //             } else {
-		    //                 onBeatportScrapeComplete(beatportSongs);
+		    //                 onBeatportScrapeComplete(beatportVideos);
 		    //             }
 		    //         })();
 		    //     }

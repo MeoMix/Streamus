@@ -1,70 +1,74 @@
-﻿define(['song',
+﻿//  TODO: This entire entity needs revisiting now that video doesn't depend on a GUID.
+
+define(['video',
         'ytHelper',
         'programState'
-       ], function (Song, ytHelper, programState) {
+       ], function (Video, ytHelper, programState) {
     'use strict';
     //TODO: Implement caching where I only query for IDs I need. Not necessary for now because I don't make many requests.
-    var loadedSongs = [];
-    var lastSongRetrieved = null;
+    var loadedVideos = [];
+    var lastVideoRetrieved = null;
 
     return {
         //Optimized this because I call getTotalTime twice a second against it... :s
-        //I need to rewrite this so that when the current item's song forsure has an ID it is loaded instead of polling.
-        getLoadedSongByVideoId: function (videoId) {
-            var loadedSong;
+        //I need to rewrite this so that when the current item's video forsure has an ID it is loaded instead of polling.
+        getLoadedVideoById: function (id) {
+            var loadedVideo;
          
-            if (lastSongRetrieved && lastSongRetrieved.videoId == videoId) {
-                loadedSong = lastSongRetrieved;
+            if (lastVideoRetrieved && lastVideoRetrieved.id == id) {
+                loadedVideo = lastVideoRetrieved;
             } else {
-                loadedSong = _.find(loadedSongs, function(song) {
-                    return song.videoId == videoId;
+                loadedVideo = _.find(loadedVideos, function (video) {
+                    return video.id == id;
                 });
-                lastSongRetrieved = loadedSong;
+                lastVideoRetrieved = loadedVideo;
             }
 
-            return loadedSong;
+            return loadedVideo;
         },
-        loadSong: function (videoId, callback) {
+        //  TODO: This isn't used, but I'd expect it to be called during an addItem?
+        //loadVideo: function (id, callback) {
+        //    $.ajax({
+        //        type: 'GET',
+        //        url: programState.getBaseUrl() + 'Video/GetById',
+        //        dataType: 'json',
+        //        data: {
+        //            id: id
+        //        },
+        //        success: function (data) {
+        //            if (!_.contains(loadedVideos, data)) {
+        //                loadedVideos.push(data);
+        //            }
+        //            if (callback) {
+        //                callback(data);
+        //            }
+        //        },
+        //        error: function(error) {
+        //            console.error(error);
+        //        }
+        //    });
+        //},
+        loadVideos: function (ids, callback) {
             $.ajax({
                 type: 'GET',
-                url: programState.getBaseUrl() + 'Song/GetById',
-                dataType: 'json',
-                data: {
-                    videoId: videoId
-                },
-                success: function (data) {
-                    if (!_.contains(loadedSongs, data)) {
-                        loadedSongs.push(data);
-                    }
-                    if (callback) {
-                        callback(data);
-                    }
-                },
-                error: function(error) {
-                    console.error(error);
-                }
-            });
-        },
-        loadSongs: function (videoIds, callback) {
-            console.log("calling load songs with:", videoIds);
-            $.ajax({
-                type: 'GET',
-                url: programState.getBaseUrl() + 'Song/GetByVideoIds',
+                url: programState.getBaseUrl() + 'Video/GetByIds',
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 traditional: true,
                 data: {
-                    videoIds: videoIds
+                    ids: ids
                 },
                 success: function (data) {
-                    var savedVideoIds = _.pluck(data, 'videoId');
-                    //Remove all songs from the cache that need to be updated.
-                    loadedSongs = _.reject(loadedSongs, function (loadedSong) {
-                        return _.contains(savedVideoIds, loadedSong.videoId);
+                    var savedIds = _.pluck(data, 'id');
+
+                    //  Remove all videos from the cache that need to be updated.
+                    loadedVideos = _.reject(loadedVideos, function (loadedVideo) {
+                        return _.contains(savedIds, loadedVideo.id);
                     });
 
-                    loadedSongs = loadedSongs.concat(data);
-                    console.log("loaded songs:", loadedSongs);
+                    //  TODO: I don't think I can do this because then my video's aren't Backbone objects?
+                    loadedVideos = loadedVideos.concat(data);
+
                     if (callback) {
                         callback(data);
                     }
@@ -74,26 +78,25 @@
                 }
             });
         },
-        //Call createSong for any song intended to be saved to the DB. Otherwise, just go straight to the song constructor
-        //for displaying song information elsewhere (suggested videos, users selecting a video from dropdown, etc)
-        createSong: function(videoInformation, playlistId) {
-            var song = new Song(videoInformation, playlistId);
-            console.log("Created song. Video id:", song.videoId);
-            return song;
+        //  Call createVideo for any video intended to be saved to the DB. Otherwise, just go straight to the Video constructor
+        //  for displaying video information elsewhere (suggested videos, users selecting a video from dropdown, etc)
+        createVideo: function (videoInformation, playlistId) {
+            var video = new Video(videoInformation, playlistId);
+            return video;
         },
-        saveSong: function(song, callback) {
+        saveVideo: function(video, callback) {
             $.ajax({
                 type: 'POST',
-                url: programState.getBaseUrl() + 'Song/SaveSong',
+                url: programState.getBaseUrl() + 'Video/SaveVideo',
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
-                data: JSON.stringify(song),
+                data: JSON.stringify(video),
                 success: function (data) {
-                    loadedSongs = _.reject(loadedSongs, function(loadedSong) {
-                        return loadedSong.videoId === data.videoId;
+                    loadedVideos = _.reject(loadedVideos, function (loadedVideo) {
+                        return loadedVideo.id === data.id;
                     });
                     
-                    loadedSongs.push(data);
+                    loadedVideos.push(data);
                     
                     if (callback) {
                         callback(data);
@@ -104,24 +107,22 @@
                 }
             });
         },
-        saveSongs: function (songs, callback) {
-            console.log("Saving songs:", songs); 
-
+        saveVideos: function (videos, callback) {
             $.ajax({
                 type: 'POST',
-                url: programState.getBaseUrl() + 'Song/SaveSongs',
+                url: programState.getBaseUrl() + 'Video/SaveVideos',
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
-                data: JSON.stringify(songs),
+                data: JSON.stringify(videos),
                 success: function (data) {
-                    console.log("data:", data);
-                    var savedVideoIds = _.pluck(data, 'videoId');
-                    //Remove all songs from the cache that need to be updated.
-                    loadedSongs = _.reject(loadedSongs, function (loadedSong) {
-                        return _.contains(savedVideoIds, loadedSong.videoId);
+                    var savedIds = _.pluck(data, 'id');
+                    //  Remove all videos from the cache that need to be updated.
+                    loadedVideos = _.reject(loadedVideos, function (loadedVideo) {
+                        return _.contains(savedIds, loadedVideo.id);
                     });
 
-                    loadedSongs = loadedSongs.concat(data);
+                    //  TODO: Not sure I should be doing this.
+                    loadedVideos = loadedVideos.concat(data);
 
                     if (callback) {
                         callback(data);
@@ -132,31 +133,29 @@
                 }
             });
         },
-        loadSongsIncrementally: function (playlistId, callback) {
+        loadVideosIncrementally: function (playlistId, callback) {
             var startIndex = 1;
             var maxResultsPerSearch = 50;
             var totalVideosProcessed = 0;
 
             var videos = [];
             var self = this;
-            console.log("How about here?", playlistId);
 
             var getVideosInterval = setInterval(function () {
-                console.log("loadSongsIncrementally playlistId:", playlistId);
                 $.ajax({
                     url: "https://gdata.youtube.com/feeds/api/playlists/" + playlistId + "?v=2&alt=json&max-results=" + maxResultsPerSearch + "&start-index=" + startIndex,
                     success: function (result) {
-                        console.log("Result:", result);
 
                         _.each(result.feed.entry, function (entry) {
-                            //If the title is blank the video has been deleted from the playlist, no data to fetch.
+
+                            //  If the title is blank the video has been deleted from the playlist, no data to fetch.
                             if (entry.title.$t !== "") {
                                 var videoId = entry.media$group.yt$videoid.$t;
                                 ytHelper.getVideoInformation(videoId, function (videoInformation) {
                                     console.log("Video information:", videoInformation);
                                     //Video Information will be null if the video has been banned on copyright grounds.
                                     if (videoInformation !== null) {
-                                        var video = self.createSong(videoInformation, playlistId);
+                                        var video = self.createVideo(videoInformation, playlistId);
                                         videos.push(video);
                                         totalVideosProcessed++;
                                         
@@ -184,7 +183,7 @@
                             }
                         });
                         
-                        //If X songs are received and X+C songs were requested, stop because no more songs in playlist.
+                        //If X videos are received and X+C videos were requested, stop because no more videos in playlist.
                         //TODO: Maybe I just always want to return.
                         if (result.feed.entry.length < maxResultsPerSearch) {
                             clearInterval(getVideosInterval);

@@ -105,9 +105,6 @@ define(['playlist',
                     return p.get('id') === id;
                 });
             },
-            //Songs is an optional paramater. When adding a playlist from YouTube a collection of songs
-            //will be known -- so add them to the playlist during creation. When creating a new playlist
-            //directly inside the app there won't be any songs.
             addPlaylist: function (playlistTitle, callback) {
                 console.log("inside of addPlaylist");
                 var playlist = new Playlist({

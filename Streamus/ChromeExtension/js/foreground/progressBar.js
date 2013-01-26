@@ -1,8 +1,8 @@
-﻿//A progress bar which shows the elapsed time as compared to the total time of the current song.
-//Changes colors based on player state -- yellow when paused, green when playing.
+﻿//  A progress bar which shows the elapsed time as compared to the total time of the current video.
+//  Changes colors based on player state -- yellow when paused, green when playing.
 define(function(){
     'use strict';
-    var selector = $('#SongTimeProgressBar');
+    var selector = $('#VideoTimeProgressBar');
     var mousewheelTimeout = null, mousewheelValue = -1;
 
     var events = {
@@ -39,7 +39,7 @@ define(function(){
         repaint();
     });
 
-    //Repaints the progress bar's filled-in amount based on the % of time elapsed for current song.
+    //  Repaints the progress bar's filled-in amount based on the % of time elapsed for current video.
     var repaint = function(){
         var elapsedTime = selector.val();
         var totalTime = selector.prop('max');
@@ -50,7 +50,7 @@ define(function(){
         selector.css('background-image', backgroundImage);
     };
 
-    //If a song is currently playing when the GUI opens then initialize with those values.
+    //If a video is currently playing when the GUI opens then initialize with those values.
     var currentTime = chrome.extension.getBackgroundPage().YoutubePlayer.currentTime;
     var totalTime = chrome.extension.getBackgroundPage().YoutubePlayer.totalTime;
 
@@ -60,7 +60,7 @@ define(function(){
         repaint();
     }
 
-    //Pause the GUI's refreshes for updating the timers while the user is dragging the song time slider around.
+    //Pause the GUI's refreshes for updating the timers while the user is dragging the video time slider around.
     var update = function(){
         var playerIsSeeking = chrome.extension.getBackgroundPage().YoutubePlayer.isSeeking;
 

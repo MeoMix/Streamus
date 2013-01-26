@@ -1,6 +1,6 @@
 //Load mousewheel here because it isn't needed in foreground and is not wrapped in a require block (so it might get loaded before jQuery if put in foreground)
-define(['playerControls', 'header', 'settings', 'songsTab', 'playlistsTab', 'timeDisplay', 'progressBar', 'contentButtons'],
- function(playerControls, header, settings, songsTab, playlistsTab, timeDisplay, progressBar){
+define(['playerControls', 'header', 'settings', 'videosTab', 'playlistsTab', 'timeDisplay', 'progressBar', 'contentButtons'],
+ function (playerControls, header, settings, videosTab, playlistsTab, timeDisplay, progressBar) {
      'use strict';
      
      //Keep the current time display in sync with progressBar (i.e. when user is dragging progressBar)
@@ -15,7 +15,7 @@ define(['playerControls', 'header', 'settings', 'songsTab', 'playlistsTab', 'tim
             console.log("refreshing");
             playerControls.refreshControls();
             header.updateTitle();
-            songsTab.reload();
+            videosTab.reload();
             playlistsTab.reload();
         }
     };

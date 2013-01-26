@@ -18,13 +18,13 @@ var require = {
         'playlistItem': 'js/background/playlistItem',
         'player': 'js/background/player',
         'playlistManager': 'js/background/playlistManager',
-        'songManager': 'js/background/songManager',
+        'videoManager': 'js/background/videoManager',
         'playerBuilder': 'js/background/playerBuilder',
         'playlist': 'js/background/playlist',
         'playlistDataProvider': 'js/background/playlistDataProvider',
         'user': 'js/background/user',
 
-        'song': '../Shared/js/song',
+        'video': '../Shared/js/video',
         'ytHelper': '../Shared/js/ytHelper',
         'helpers': '../Shared/js/helpers'
     }

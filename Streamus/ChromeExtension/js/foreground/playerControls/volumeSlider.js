@@ -62,7 +62,7 @@ define(function(){
 	var musicVolume = (function(){
 		var volume = 100;
 
-		//TODO: Difficult to properly represent state when not already known -- can't get info from YouTube API until a song is playing.
+		//TODO: Difficult to properly represent state when not already known -- can't get info from YouTube API until a video is playing.
 		var storedMusicVolume = localStorage.getItem(VOLUME_KEY);
 		if(storedMusicVolume){
 			volume = JSON.parse(storedMusicVolume);

@@ -1,5 +1,5 @@
 //A global object which abstracts more difficult implementations of retrieving data from YouTube.
-define(['geoplugin', 'levenshtein', 'song'], function (geoplugin, levDist, Song) {
+define(['geoplugin', 'levenshtein', 'video'], function (geoplugin, levDist, Video) {
     'use strict';
 
     var findPlayableByTitle = function (title, callback) {
@@ -36,9 +36,10 @@ define(['geoplugin', 'levenshtein', 'song'], function (geoplugin, levDist, Song)
                 var searchUrl = buildSearchUrl(searchIndex, maxResultsPerSearch, text);
 
                 $.getJSON(searchUrl, function (response) {
-                    //Add all playable songs to a list and return.
+
+                    //  Add all playable videos to a list and return.
                     $(response.feed.entry).each(function () {
-                        var video = new Song(this, playlistId);
+                        var video = new Video(this, playlistId);
                         videos.push(video);
                     });
 
@@ -54,7 +55,7 @@ define(['geoplugin', 'levenshtein', 'song'], function (geoplugin, levDist, Song)
     };
 
     //Takes a videoId which is presumed to have content restrictions and looks through YouTube
-    //for a song with a similiar name that might be the right song to play.
+    //for a video with a similiar name that might be the right video to play.
     var findPlayableByVideoId = function (videoId, callback) {
         this.getVideoInformation(videoId, function (videoInformation) {
             if (videoInformation) {
@@ -64,22 +65,22 @@ define(['geoplugin', 'levenshtein', 'song'], function (geoplugin, levDist, Song)
     };
 
     return {
-        //TODO: Do I need to debounce this?
-        //When a song comes from the server it won't have its related videos, so need to fetch and populate.
+        //  TODO: Do I need to debounce this?
+        //  When a video comes from the server it won't have its related videos, so need to fetch and populate.
         getRelatedVideos: function (videoId, callback) {
             console.log("getting related videos", videoId);
-            //Do an async request for the song's related videos. There isn't a hard dependency on them existing right as a song is created.
+            //  Do an async request for the videos's related videos. There isn't a hard dependency on them existing right as a video is created.
             $.ajax({
                 url: 'https://gdata.youtube.com/feeds/api/videos/' + videoId + '/related?v=2&alt=json',
                 success: function(result) {
-                    //Don't set length to 0 here because relatedVideos property probably doesn't exist since it just came from server.
+                    //  Don't set length to 0 here because relatedVideos property probably doesn't exist since it just came from server.
                     var relatedVideos = [];
 
-                    //Don't really need that many suggested videos. 
+                    //  Don't really need that many suggested videos. 
                     for (var i = 0; i < 5; i++) {
                         var relatedVideo = result.feed.entry[i];
-                        //Don't forget to set the playlistId after adding a related video to a playlist later.
-                        var video = new Song(relatedVideo);
+                        //  Don't forget to set the playlistId after adding a related video to a playlist later.
+                        var video = new Video(relatedVideo);
                         relatedVideos.push(video);
                     }
 
@@ -95,7 +96,7 @@ define(['geoplugin', 'levenshtein', 'song'], function (geoplugin, levDist, Song)
         },
         search: search,
         findPlayableByVideoId: findPlayableByVideoId,
-        //Takes a URL and returns parsed URL information such as schema and song id if found inside of the URL.
+        //  Takes a URL and returns parsed URL information such as schema and video id if found inside of the URL.
         parseUrl: function (url) {
             var parsedUrlData = null;
 
@@ -104,7 +105,7 @@ define(['geoplugin', 'levenshtein', 'song'], function (geoplugin, levDist, Song)
                 spotify: 'open.spotify.com/track/'
             };
 
-            //TODO: Get better at regex and figure out how to support something like: https://www.youtube.com/watch?feature=player_embedded&v=6od4WeaWDcs
+            //  TODO: Get better at regex and figure out how to support something like: https://www.youtube.com/watch?feature=player_embedded&v=6od4WeaWDcs
             url = url.replace('feature=player_embedded&', '');
             var match = url.match(urlFormats.youTube);
             console.log("Match:", match);
@@ -163,22 +164,22 @@ define(['geoplugin', 'levenshtein', 'song'], function (geoplugin, levDist, Song)
         },
         findPlayableByTitle: findPlayableByTitle
 
-        //findVideo: function (songTitle, callback) {
+        //findVideo: function (videoTitle, callback) {
         //    $.ajax({
         //        url: "http://gdata.youtube.com/feeds/api/videos",
         //        data: {
         //            alt: "json",
-        //            q: songTitle // + " - " + song.artists
+        //            q: videoTitle // + " - " + video.artists
         //        },
         //        success: function (json) {
         //            //Find the video most related to our video by duration.
         //            var videos = json.feed.entry;
-        //            //TODO: Do we also want to compare levenshtein distance of song titles?
+        //            //TODO: Do we also want to compare levenshtein distance of video titles?
         //            var closestVideo = _.sortBy(videos, function (video) {
         //                //TODO: Duration would be nice, but I can't use it always if I don't have video information already.
                         
         //                //var duration = video.media$group.yt$duration.seconds;
-        //                //var durationDifference = Math.abs(song.duration - duration);
+        //                //var durationDifference = Math.abs(video.duration - duration);
         //                //return durationDifference;
         //            })[0];
 

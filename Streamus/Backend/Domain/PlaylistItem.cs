@@ -15,7 +15,7 @@ namespace Streamus.Backend.Domain
         [DataMember(Name = "position")]
         public int Position { get; set; }
         
-        //Store Title on PlaylistItem as well as on Song because user might want to rename PlaylistItem.
+        //  Store Title on PlaylistItem as well as on Video because user might want to rename PlaylistItem.
         [DataMember(Name = "title")]
         public string Title { get; set; }
 
@@ -78,14 +78,14 @@ namespace Streamus.Backend.Domain
     public class PlaylistItemValidator : AbstractValidator<PlaylistItem>
     {
         private readonly IPlaylistDao PlaylistDao = new PlaylistDao();
-        private readonly ISongDao SongDao = new SongDao();
+        private readonly IVideoDao VideoDao = new VideoDao();
 
         public PlaylistItemValidator()
         {
             RuleFor(playlistItem => playlistItem.PlaylistId).NotEqual(Guid.Empty);
             RuleFor(playlistItem => playlistItem.PlaylistId).Must(playlistId => PlaylistDao.GetById(playlistId) != null);
             RuleFor(playlistItem => playlistItem.VideoId).NotEqual(string.Empty);
-            RuleFor(playlistItem => playlistItem.VideoId).Must(videoId => SongDao.GetByVideoId(videoId) != null);
+            RuleFor(playlistItem => playlistItem.VideoId).Must(videoId => VideoDao.GetById(videoId) != null);
             RuleFor(playlistItem => playlistItem.Position).GreaterThanOrEqualTo(0);
         }
     }

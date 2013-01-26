@@ -46,21 +46,6 @@
     //                        },
     //                        success: function (json) {
     //                            var authKey = JSON.parse(json);
-
-    //                            //Make the AJAX request!
-    //                            var url = "http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/backend/fb/loadSongs.php";
-    //                            $.ajax({
-    //                                url: url,
-    //                                data: {
-    //                                    authkey: authKey
-    //                                },
-    //                                //Leave this line in for FF support!
-    //                                dataType: "json",
-    //                                success: function (otherJson) {
-    //                                    //Loop through received songs and add them to the library
-    //                                    console.log("JSON BIG SUCCESS:", otherJson);
-    //                                }
-    //                            });
     //                        }
     //                    });
 
@@ -103,14 +88,14 @@
     chrome.commands.onCommand.addListener(function(command) {
         console.log("command:", command);
         switch(command){
-            case 'nextSong':
-                YoutubePlayer.skipSong("next");
+            case 'nextVideo':
+                YoutubePlayer.skipVideo("next");
                 break;
-            case 'previousSong':
-                YoutubePlayer.skipSong("previous");
+            case 'previousVideo':
+                YoutubePlayer.skipVideo("previous");
             break;
-            case 'toggleSong':
-                YoutubePlayer.toggleSong();
+            case 'toggleVideo':
+                YoutubePlayer.toggleVideo();
         }
     });
 
@@ -120,7 +105,7 @@
                 sendResponse({playlists: YoutubePlayer.playlists});
             break;
             case 'addVideoByIdToPlaylist':
-                YoutubePlayer.addSongToPlaylist(request.videoId, request.playlistId);
+                YoutubePlayer.addVideoByIdToPlaylist(request.id, request.playlistId);
             break;
             default:
                 console.error("Unhandled request method:", request.method);

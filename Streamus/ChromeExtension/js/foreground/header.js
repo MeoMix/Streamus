@@ -1,18 +1,23 @@
-﻿//Displays the currently playing song or a default welcome message.
+﻿//  Displays the currently playing playlistItem's title or a default welcome message.
 define(function(){
     'use strict';
     var header = $('#Header');
     var headerTitle = $('#HeaderTitle');
     var defaultCaption = 'Welcome to Streamus';
 
-    //Scroll the song in the title if its too long to read.
+    //  Scroll the playlistItem title if its too long to read.
     headerTitle.mouseover(function () {
         var distanceToMove = $(this).width() - header.width();
-        var duration = 15 * distanceToMove; //Just a feel good value; scales as the text gets longer.
-        $(this).animate({ 
-            marginLeft: "-" + distanceToMove + "px" }, {
+
+        //  Just a feel good value; scales as the text gets longer.
+        var duration = 15 * distanceToMove; 
+        $(this).animate({
+            marginLeft: "-" + distanceToMove + "px"
+        }, {
             duration: duration,
-            easing: 'linear'} );
+            easing: 'linear'
+        });
+
     }).mouseout(function () {
         $(this).stop(true).animate({ marginLeft: "0px" });
     });
@@ -23,7 +28,8 @@ define(function(){
         headerTitle.text(text);
     }
 
-    updateTitle(); //Initialize the title because might be re-opening with a song already loaded.
+    //  Initialize the title because might be re-opening with a playlistItem already loaded.
+    updateTitle(); 
 
     return {
         updateTitle: updateTitle

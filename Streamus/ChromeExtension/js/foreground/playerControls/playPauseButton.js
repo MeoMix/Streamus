@@ -1,12 +1,14 @@
 //The play/pause icon.
 define(function(){
 	'use strict';
-	var playPauseButton = $('#PlayPauseButton'), pauseIcon = $('#pauseIcon'), playIcon = $('#playIcon');
+	var playPauseButton = $('#PlayPauseButton');
+	var pauseIcon = $('#pauseIcon');
+	var playIcon = $('#playIcon');
     
 	function refresh() {
 	    var player = chrome.extension.getBackgroundPage().YoutubePlayer;
 	    
-	    //Change the music button to the 'Play' image and cause a song to play upon click.
+	    //Change the music button to the 'Play' image and cause a video to play upon click.
         function setToPlay() {
             pauseIcon.hide();
             playIcon.show();
@@ -18,7 +20,7 @@ define(function(){
             });
         }
 	    
-	    //Change the music button to the 'Pause' image and cause a song to pause upon click.
+	    //Change the music button to the 'Pause' image and cause a video to pause upon click.
         function setToPause() {
             pauseIcon.show();
             playIcon.hide();

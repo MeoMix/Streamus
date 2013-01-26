@@ -1,7 +1,8 @@
-//Holds onto the currentTime and totalTime song labels as well as the elapsed time progress bar.
+//Holds onto the currentTime and totalTime video labels as well as the elapsed time progress bar.
 define(['helpers'], function(helpers) {
     'use strict';
-    var currentTimeLabel = $('#CurrentTimeLabel'), totalTimeLabel = $('#TotalTimeLabel');
+    var currentTimeLabel = $('#CurrentTimeLabel');
+    var totalTimeLabel = $('#TotalTimeLabel');
 
     function updateLabel(currentTime, totalTime) {
         currentTimeLabel.text(currentTime);

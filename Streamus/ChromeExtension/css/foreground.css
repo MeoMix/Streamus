@@ -335,7 +335,7 @@
   display: none;
 }
 
-#SongTimeProgressBar {
+#VideoTimeProgressBar {
   -webkit-appearance:none !important;  
   position: absolute;
   -webkit-box-sizing:border-box;
@@ -351,7 +351,7 @@
   border-radius:3px
 }
 
-#SongTimeProgressBar::-webkit-slider-thumb {
+#VideoTimeProgressBar::-webkit-slider-thumb {
   -webkit-appearance:none !important; 
   width:12px; 
   height:12px; 
@@ -362,7 +362,7 @@
   cursor: pointer;
 }
 
-#SongTimeProgressBar::-webkit-slider-thumb:active {
+#VideoTimeProgressBar::-webkit-slider-thumb:active {
   background: #fff;
 }
   

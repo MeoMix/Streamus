@@ -1,5 +1,5 @@
 var YoutubePlayer = null;
-define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function(playlistManager, songManager, playerBuilder, ytHelper) {
+define(['playlistManager', 'videoManager', 'playerBuilder', 'ytHelper'], function (playlistManager, videoManager, playerBuilder, ytHelper) {
     'use strict';
     console.log('inside player');
     //Handles communications between the GUI and the YT Player API.
@@ -13,7 +13,7 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
         //Initialize the player
         (function () {
             var onReady = function () {
-                //If there is a song to cue might as well have it ready to go.
+                //If there is a playlistItem to cue might as well have it ready to go.
                 if (playlistManager.activePlaylist.get('items').length > 0) {
                     console.log("cueuing item by position!");
                     cueItemByPosition(playlistManager.activePlaylist.getSelectedItem().get('position'));
@@ -22,15 +22,15 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
             };
 
             var onStateChange = function(playerState) {
-                //If the song stopped playing and there's another song to skip to, do so.
+                //If the video stopped playing and there's another playlistItem to skip to, do so.
                 if (playerState.data === PlayerStates.ENDED) {
                     //Don't pass message to UI if it is closed. Handle sock change in the background.
                     //The player can be playing in the background and UI changes may try and be posted to the UI, need to prevent.
                     var isRadioModeEnabled = JSON.parse(localStorage.getItem('isRadioModeEnabled')) || false;
                     if (isRadioModeEnabled) {
-                        var nextSong = playlistManager.activePlaylist.getRelatedVideo();
-                        console.log("nextSong relatedVideo:", nextSong);
-                        var addedItem = playlistManager.activePlaylist.addItem(nextSong);
+                        var nextVideo = playlistManager.activePlaylist.getRelatedVideo();
+                        console.log("nextVideo relatedVideo:", nextVideo);
+                        var addedItem = playlistManager.activePlaylist.addItem(nextVideo);
                         loadItemByPosition(addedItem.get('position'));
                     } else {
                         if (playlistManager.activePlaylist.get('items').length > 1) {
@@ -52,7 +52,7 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
                     break;
                 case 101:
                 case 150:
-                    alert("Video requested does not allow playback in the embedded players. Finding replacement song.");
+                    alert("Video requested does not allow playback in the embedded players.");
                     break;
                 }
             };
@@ -90,11 +90,11 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
             player.loadVideoById(selectedItem.get('videoId'));
         };
 
-        function addItemBySong(song) {
-            var isFirstSong = playlistManager.activePlaylist.get('items').length === 0;
-            var addedItem = playlistManager.activePlaylist.addItem(song, isFirstSong);
-            console.log("Successfully added item by song:", addedItem);
-            if (isFirstSong) {
+        function addItemByVideo(video) {
+            var isFirstVideo = playlistManager.activePlaylist.get('items').length === 0;
+            var addedItem = playlistManager.activePlaylist.addItem(video, isFirstVideo);
+            console.log("Successfully added item by video:", addedItem);
+            if (isFirstVideo) {
                 cueItemByPosition(addedItem.get('position'));
             }
             
@@ -155,7 +155,7 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
                 return playlistManager.activePlaylist.getSelectedItem();
             },
             
-            //Returns the elapsed time of the currently loaded song. Returns 0 if no song is playing.
+            //  Returns the elapsed time of the currently loaded video. Returns 0 if no video is playing.
             get currentTime() {
                 var currentTime = 0;
                 if (playlistManager.activePlaylist.getSelectedItem()) {
@@ -167,16 +167,16 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
                 return currentTime;
             },
             
-            //Gets the total time of the currently loaded song. Returns 0 if there is no song loaded.
-            //TODO: I really don't like how this has to query songManager every time.
+            //Gets the total time of the currently loaded video. Returns 0 if there is no video loaded.
+            //TODO: I really don't like how this has to query videoManager every time.
             get totalTime() {
                 var totalTime = 0;
                 var selectedItem = playlistManager.activePlaylist.getSelectedItem();
 
                 if (selectedItem) {
                     var selectedVideoId = selectedItem.get('videoId');
-                    var currentSong = songManager.getLoadedSongByVideoId(selectedVideoId);
-                    totalTime = currentSong ? currentSong.duration : 0;
+                    var currentVideo = videoManager.getLoadedVideoById(selectedVideoId);
+                    totalTime = currentVideo ? currentVideo.duration : 0;
                 }
 
                 return totalTime;
@@ -210,7 +210,7 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
                     console.log("selecting playlist by id:", playlistId);
                     playlistManager.setActivePlaylistById(playlistId);
                     console.log("active playlist title and items:", playlistManager.activePlaylist.get('title'), playlistManager.activePlaylist.get('items'));
-                    //If the newly loaded playlist has a song to play cue it to replace the currently loaded song.
+                    //  If the newly loaded playlist has a video to play cue it to replace the currently loaded video.
                     if (playlistManager.activePlaylist.get('items').length > 0) {
                         cueItemByPosition(0);
                     }
@@ -221,15 +221,15 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
             
             addPlaylist: function(playlistName, youtubePlaylistId) {
                 playlistManager.addPlaylist(playlistName, function (playlist) {
-                    //Refresh the UI now to show that the playlist has been added.
+                    //  Refresh the UI now to show that the playlist has been added.
                     refreshUI();
 
                     if (youtubePlaylistId) {
-                        songManager.loadSongsIncrementally(youtubePlaylistId, function (loadedSongs) {
-                            console.log("load songs incrementally returned:", loadedSongs);
-                            if (loadedSongs) {
-                                playlist.addItems(loadedSongs);
-                                //Continue refreshing the UI with every burst of songs loaded.
+                        videoManager.loadVideosIncrementally(youtubePlaylistId, function (loadedVideos) {
+                            console.log("load videos incrementally returned:", loadedVideos);
+                            if (loadedVideos) {
+                                playlist.addItems(loadedVideos);
+                                //  Continue refreshing the UI with every burst of videos loaded.
                                 refreshUI();
                             }
                         });
@@ -246,9 +246,9 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
                 }
             },
             
-            addSongToPlaylist: function(videoId, playlistId){
+            addVideoByIdToPlaylist: function(id, playlistId){
                 var playlist = playlistManager.getPlaylistById(playlistId);
-                playlist.addSongByVideoId(videoId);
+                playlist.addVideoById(id);
             },
             
             getItemByPosition: function(position) {
@@ -259,11 +259,11 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
                 playlistManager.activePlaylist.orderByPositions(positions);
             },
             
-            //Called when the user clicks mousedown on the progress bar dragger.
+            //  Called when the user clicks mousedown on the progress bar dragger.
             seekStart: function() {
                 this.isSeeking = true;
-                //Need to record this to decide if should be playing after seek ends. You'd think that seek would handle this, but
-                //it does it incorrectly when a song hasn't been started. It will start to play a song if you seek in an unplayed song.
+                //  Need to record this to decide if should be playing after seek ends. You'd think that seek would handle this, but
+                //  it does it incorrectly when a video hasn't been started. It will start to play a video if you seek in an unplayed video.
                 this.wasPlayingBeforeSeek = player.getPlayerState() === PlayerStates.PLAYING;
                 this.pause();
             },
@@ -291,8 +291,8 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
             
             removeItemByPosition: removeItemByPosition,
             
-            //Adds a song to the activePlaylist. If it is the first song in the activePlaylist, that song is loaded as the current song.
-            addItemBySong: addItemBySong,
+            //Adds a video to the activePlaylist. If it is the first video in the activePlaylist, that video is loaded as the current video.
+            addItemByVideo: addItemByVideo,
             
             play: function () {
                 player.playVideo();
@@ -302,7 +302,7 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
                 player.pauseVideo();
             },
             
-            toggleSong: function () {
+            toggleVideo: function () {
                 if( player.getPlayerState() === PlayerStates.PLAYING ){
                     this.pause();
                 }
@@ -311,9 +311,9 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
                 }
             },
             
-            //Skips to the next song. Will start playing the song if the player was already playing.
-            //if where == "next" it'll skip to the next song. otherwise it will skip to the previous song.
-            skipSong: function(where) {
+            //Skips to the next video. Will start playing the video if the player was already playing.
+            //if where == "next" it'll skip to the next video. otherwise it will skip to the previous video.
+            skipVideo: function(where) {
                 var nextItem;
 
                 if (where == "next") {
@@ -338,9 +338,8 @@ define(['playlistManager', 'songManager', 'playerBuilder', 'ytHelper'], function
             },
             
             addNewItem: function (videoInformation) {
-                var song = songManager.createSong(videoInformation, this.currentPlaylistId);
-                console.log("created new song:", song);
-                addItemBySong(song);
+                var video = videoManager.createVideo(videoInformation, this.currentPlaylistId);
+                addItemByVideo(video);
             },
             
             updatePlaylistItemPosition: function(oldPosition, newPosition) {

@@ -1,4 +1,4 @@
-﻿//PlaylistItems have a one-to-one relationship with a Song object via the videoId property.
+﻿//PlaylistItems have a one-to-one relationship with a Video object via the videoId property.
 define(function() {
     'use strict';
     var PlaylistItem = Backbone.Model.extend({

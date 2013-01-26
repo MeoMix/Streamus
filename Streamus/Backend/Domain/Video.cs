@@ -4,10 +4,10 @@ using System.Runtime.Serialization;
 namespace Streamus.Backend.Domain
 {
     [DataContract]
-    public class Song
+    public class Video
     {
-        [DataMember(Name = "videoId")]
-        public string VideoId { get; set; }
+        [DataMember(Name = "id")]
+        public string Id { get; set; }
 
         [DataMember(Name = "title")]
         public string Title { get; set; }
@@ -15,34 +15,34 @@ namespace Streamus.Backend.Domain
         [DataMember(Name = "duration")]
         public int Duration { get; set; }
 
-        public Song()
+        public Video()
         {
-            VideoId = string.Empty;
+            Id = string.Empty;
             Title = string.Empty;
         }
 
-        public Song(string videoId, string title, int duration)
+        public Video(string id, string title, int duration)
         {
-            VideoId = videoId;
+            Id = id;
             Title = title;
             Duration = duration;
         }
 
         public void ValidateAndThrow()
         {
-            var validator = new SongValidator();
+            var validator = new VideoValidator();
             validator.ValidateAndThrow(this);
         }
     }
 
-    #region SongValidator
+    #region VideoValidator
 
-    public class SongValidator : AbstractValidator<Song>
+    public class VideoValidator : AbstractValidator<Video>
     {
-        public SongValidator()
+        public VideoValidator()
         {
-            RuleFor(song => song.Title).Length(0, 255);
-            RuleFor(song => song.VideoId).Length(11);
+            RuleFor(video => video.Title).Length(0, 255);
+            RuleFor(video => video.Id).Length(11);
         }
     }
 

@@ -1,7 +1,7 @@
 Streamus
 ========
 
-A Google Chrome extension which allows users to create playlists containing songs streamed from YouTube.
+A Google Chrome extension which allows users to create playlists containing videos streamed from YouTube.
 
 Requirements
 ========
@@ -20,21 +20,21 @@ Installation
 Overview
 ========
 
-Streamus was created with the intention of making the process of playing music much simpler. Previously, I had found that the most convenient way to play music was through YouTube. This lent itself to keeping a list of bookmarks of pleasant songs. I noticed, though, that my bookmarking solution did not scale well with large collections of songs. Streamus was designed with the intention of being just as simple, quick and easy as using YouTube itself, but with all of the functionality of a desktop MP3 player.
+Streamus was created with the intention of making the process of playing music much simpler. Previously, I had found that the most convenient way to play music was through YouTube. This lent itself to keeping a list of bookmarks of pleasant videos. I noticed, though, that my bookmarking solution did not scale well with large collections of videos. Streamus was designed with the intention of being just as simple, quick and easy as using YouTube itself, but with all of the functionality of a desktop MP3 player.
 
-An initial load of Streamus will present the user with a playlist containing a handful of songs. While not fully realized yet, the intention is to be able to pre-populate Streamus with hundreds of songs spanning all common genres of music. Users will have the ability to create their own playlists, stream from pre-existing, dynamic playlists, or enable Pandora-esque song finding.
+An initial load of Streamus will present the user with a playlist containing a handful of videos. While not fully realized yet, the intention is to be able to pre-populate Streamus with hundreds of videos spanning all common genres of music. Users will have the ability to create their own playlists, stream from pre-existing, dynamic playlists, or enable Pandora-esque video finding.
 
 Supported Functionality
 ========
 
 * A fully functional YouTube search bar with results (roughly) identical to that of YouTube itself.
-* The ability to add songs via this YouTube search bar, or to simply provide a YouTube URL.
+* The ability to add videos via this YouTube search bar, or to simply provide a YouTube URL.
 * Play, pause, skip and rewind.
-* Skip to point in time in song by clicking on the elapsed time progress bar.
-* Control the sound output, mute/unmute the current song.
-* Shuffle playlists / drag-and-drop songs in playlist.
-* Delete songs from playlist
-* Create multiple playlists each storing their own set of songs
+* Skip to point in time in video by clicking on the elapsed time progress bar.
+* Control the sound output, mute/unmute the current video.
+* Shuffle playlists / drag-and-drop videos in playlist.
+* Delete videos from playlist
+* Create multiple playlists each storing their own set of videos
 * Rename playlists 
 
 Screenshots & Usage Demo

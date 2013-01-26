@@ -1,14 +1,14 @@
-//When clicked -- shuffles the playlist. Doesn't affect curently playing song at all.
-//Can't be clicked with 2 or fewer songs.
+//When clicked -- shuffles the playlist. Doesn't affect curently playing video at all.
+//Can't be clicked with 2 or fewer videos.
 define(function(){
 	'use strict';
-	var shuffleButton = $('#ShuffleButton').click(shuffleSong);
+	var shuffleButton = $('#ShuffleButton').click(shuffleVideo);
 	//localStorage serializes bools to strings.
 	if(JSON.parse(localStorage.getItem('isShuffleEnabled') || false)){
 		shuffleButton.addClass('pressed');
 	}
 
-	function shuffleSong(){
+	function shuffleVideo() {
 		if(shuffleButton.hasClass('pressed')){
 			shuffleButton.removeClass('pressed');
 		}

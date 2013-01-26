@@ -1,14 +1,14 @@
-//When clicked -- skips to the last song. Can't be clicked with only 1 song.
+//When clicked -- skips to the last video. Can't be clicked with only 1 video.
 //Will skip from the begining of the list to the end.
 define(function(){
     'use strict';
     var previousButton = $('#PreviousButton');
 
-    function skipSong() {
-        chrome.extension.getBackgroundPage().YoutubePlayer.skipSong('previous');
+    function skipVideo() {
+        chrome.extension.getBackgroundPage().YoutubePlayer.skipVideo('previous');
         //Prevent spamming by only allowing a next click once a second.
         setTimeout(function () { 
-            previousButton.off('click').one('click', skipSong);
+            previousButton.off('click').one('click', skipVideo);
         }, 1000);
     }
     
@@ -18,7 +18,7 @@ define(function(){
         if (player.selectedItem) {
             if (player.items.length > 1) {
                 //Paint the skipButton's path black and bind its click event.
-                previousButton.prop('src', "images/skip.png").removeClass('disabled').off('click').one('click', skipSong);
+                previousButton.prop('src', "images/skip.png").removeClass('disabled').off('click').one('click', skipVideo);
                 previousButton.find('.path').css('fill', 'black');
             }
         }

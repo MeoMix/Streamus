@@ -1,5 +1,5 @@
 //http://www.geoplugin.net/javascript.gp
-//Needed to figure out GeoLocation to filter out some song suggestions.
+//Needed to figure out GeoLocation to filter out some video suggestions.
 define(function() {
     'use strict';
     var countryCode = 'US';

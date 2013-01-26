@@ -39,17 +39,17 @@
     }
   ],
   "commands": {
-    "nextSong": {
+    "nextVideo": {
       "suggested_key": { "default": "Alt+N" },
-      "description": "Tells the player to play next song."
+      "description": "Tells the player to play next video."
     },
-    "previousSong": {
+    "previousVideo": {
       "suggested_key": { "default": "Alt+V" },
-      "description": "Tells the player to play previous song."
+      "description": "Tells the player to play previous video."
     },
-    "toggleSong": {
+    "toggleVideo": {
       "suggested_key": { "default": "Alt+B" },
-      "description": "Tells the player to play previous song."
+      "description": "Tells the player to play previous video."
     },
     "_execute_browser_action": {
       "suggested_key": {

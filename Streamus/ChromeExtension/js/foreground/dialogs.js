@@ -1,10 +1,10 @@
 define(function() {
     'use strict';
     return {
-        showBannedSongDialog: function() {
-            var bannedSongDialog = $('#BannedSongDialog');
+        showBannedVideoDialog: function() {
+            var bannedVideoDialog = $('#BannedVideoDialog');
 
-            bannedSongDialog.dialog({
+            bannedVideoDialog.dialog({
                 autoOpen: true,
                 modal: true,
                 buttons: {

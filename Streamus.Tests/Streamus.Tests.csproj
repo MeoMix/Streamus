@@ -81,7 +81,7 @@
     <Compile Include="PlaylistDaoTest.cs" />
     <Compile Include="UserDaoTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SongDaoTest.cs" />
+    <Compile Include="VideoDaoTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Streamus\Streamus.csproj">
