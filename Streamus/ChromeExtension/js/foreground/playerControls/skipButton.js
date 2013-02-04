@@ -19,7 +19,7 @@ define(function(){
         //Otherwise, only allow skipping if there's more than 1 playlistItem.
         var oneItemAndRadioModeEnabled = JSON.parse(localStorage.getItem('isRadioModeEnabled') || false) && player.items.length > 0;
         if (oneItemAndRadioModeEnabled || player.items.length > 1) {
-            console.log("enabling");
+
             //Paint the skipButton's path black and bind its click event.
             //TODO: Use underscore's throttle here to prevent spam clicking.
             skipButton.prop('src', "images/skip.png").removeClass('disabled').off('click').one('click', skipVideo);

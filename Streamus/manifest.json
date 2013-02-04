@@ -30,11 +30,11 @@
     {
       "matches": ["http://www.youtube.com/watch?v*"],
       "css": ["ChromeExtension/css/inject.css"],
-      "js": ["Shared/js/thirdParty/underscore.js", "Shared/js/thirdParty/jquery.js", "ChromeExtension/js/inject.js"]
+      "js": ["ChromeExtension/js/thirdParty/underscore.js", "ChromeExtension/js/thirdParty/jquery.js", "ChromeExtension/js/inject.js"]
     },
     {
       "matches": ["http://www.facebook.com/robots.txt*"],
-      "js": ["Shared/js/thirdParty/oauth2/oauth2_inject.js"],
+      "js": ["ChromeExtension/js/thirdParty/oauth2/oauth2_inject.js"],
       "run_at": "document_start"
     }
   ],

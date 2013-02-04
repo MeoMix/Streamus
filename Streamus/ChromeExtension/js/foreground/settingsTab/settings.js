@@ -6,7 +6,6 @@ define(['skipButton'], function(skipButton){
     enableRadioModeCheckBox.prop('checked', isRadioModeEnabled);
 
     enableRadioModeCheckBox.change(function () {
-        console.log("setting checked:", this.checked);
         localStorage.setItem('isRadioModeEnabled', this.checked);
         skipButton.refresh();
     }).trigger('change');
@@ -26,7 +25,6 @@ define(['skipButton'], function(skipButton){
 		    //         });
 
 		    //         var onBeatportScrapeComplete = function(videos) {
-		    //             console.log("creating beatport list", videos);
 		    //             addPlaylist("Beatport Top 100", videos);
 		    //         };
 

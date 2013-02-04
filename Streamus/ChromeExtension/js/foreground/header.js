@@ -24,7 +24,7 @@ define(function(){
     
     function updateTitle() {
         var selectedItem = chrome.extension.getBackgroundPage().YoutubePlayer.selectedItem;
-        var text = selectedItem ? selectedItem.title : defaultCaption;
+        var text = selectedItem ? selectedItem.get('title') : defaultCaption;
         headerTitle.text(text);
     }
 

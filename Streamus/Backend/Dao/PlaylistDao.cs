@@ -1,19 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using NHibernate;
 using NHibernate.Criterion;
 using Streamus.Backend.Domain;
-using Streamus.Backend.Domain.DataInterfaces;
+using Streamus.Backend.Domain.Interfaces;
+using log4net;
 
 namespace Streamus.Backend.Dao
 {
     public class PlaylistDao : AbstractNHibernateDao<Playlist>, IPlaylistDao
     {
-        new public void Delete(Playlist playlist)
+        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        public Playlist Get(Guid id)
         {
-            playlist.Items.ToList().ForEach(NHibernateSession.Delete);
-            NHibernateSession.Delete(playlist);
+            Playlist playlist = null;
+
+            try
+            {
+                playlist = (Playlist)NHibernateSession.Load(typeof(Playlist), id);
+            }
+            catch (ObjectNotFoundException exception)
+            {
+                //  Consume error and return null.
+                Logger.Error(exception);
+            }
+
+            return playlist;
         }
 
         public IList<Playlist> GetByUserId(Guid userId)

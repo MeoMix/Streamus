@@ -6,8 +6,11 @@ namespace Streamus.Controllers
 {
     public class JsonDataContractActionResult : JsonResult
     {
-        //http://stackoverflow.com/questions/1302946/asp-net-mvc-controlling-serialization-of-property-names-with-jsonresult
-        //Handles the naming conventions for converting C# objects to JavaScript objects.
+        /// <summary>
+        ///     http://stackoverflow.com/questions/1302946/asp-net-mvc-controlling-serialization-of-property-names-with-jsonresult
+        ///     Handles the naming conventions for converting C# objects to JavaScript objects.
+        /// </summary>
+        /// <param name="data">The object to be serialized under data contract. </param>
         public JsonDataContractActionResult(Object data)
         {
             Data = data;

@@ -135,16 +135,20 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Backend\Dao\PlaylistItemDao.cs" />
-    <Compile Include="Backend\Domain\DataInterfaces\IPlaylistItemDao.cs" />
+    <Compile Include="Backend\Domain\Interfaces\IPlaylistItemDao.cs" />
     <Compile Include="Backend\Domain\PlaylistItem.cs" />
-    <Compile Include="Backend\Domain\DataInterfaces\IUserDao.cs" />
-    <Compile Include="Backend\Domain\DataInterfaces\IPlaylistDao.cs" />
-    <Compile Include="Backend\Domain\DataInterfaces\IVideoDao.cs" />
-    <Compile Include="Backend\Domain\DataInterfaces\IDao.cs" />
+    <Compile Include="Backend\Domain\Interfaces\IUserDao.cs" />
+    <Compile Include="Backend\Domain\Interfaces\IPlaylistDao.cs" />
+    <Compile Include="Backend\Domain\Interfaces\IVideoDao.cs" />
+    <Compile Include="Backend\Domain\Interfaces\IDao.cs" />
     <Compile Include="Backend\Domain\Managers\VideoManager.cs" />
     <Compile Include="Backend\Domain\Managers\PlaylistManager.cs" />
     <Compile Include="Backend\Domain\Managers\UserManager.cs" />
     <Compile Include="Backend\Domain\Playlist.cs" />
+    <Compile Include="Backend\Domain\Validators\PlaylistItemValidator.cs" />
+    <Compile Include="Backend\Domain\Validators\PlaylistValidator.cs" />
+    <Compile Include="Backend\Domain\Validators\UserValidator.cs" />
+    <Compile Include="Backend\Domain\Validators\VideoValidator.cs" />
     <Compile Include="Backend\Domain\Video.cs" />
     <Compile Include="Backend\Domain\User.cs" />
     <Compile Include="Backend\Dao\AbstractNHibernateDao.cs" />
@@ -152,11 +156,10 @@
     <Compile Include="Backend\Dao\PlaylistDao.cs" />
     <Compile Include="Backend\Dao\VideoDao.cs" />
     <Compile Include="Backend\Dao\UserDao.cs" />
-    <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\PlaylistController.cs" />
-    <Compile Include="Controllers\FacebookController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JsonDataContractActionResult.cs" />
+    <Compile Include="Controllers\PlaylistItemController.cs" />
     <Compile Include="Controllers\VideoController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
@@ -166,7 +169,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
-    <EmbeddedResource Include="Backend\Domain\PlaylistItem.hbm.xml" />
+    <EmbeddedResource Include="Backend\Domain\PlaylistItem.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Backend\Domain\Video.hbm.xml" />
     <EmbeddedResource Include="Backend\Domain\User.hbm.xml">
       <SubType>Designer</SubType>
@@ -207,12 +212,15 @@
     <Content Include="ChromeExtension\foreground.htm" />
     <Content Include="ChromeExtension\icon.png" />
     <Content Include="ChromeExtension\js\background\background.js" />
+    <Content Include="ChromeExtension\js\background\loginManager.js" />
     <Content Include="ChromeExtension\js\background\main.js" />
     <Content Include="ChromeExtension\js\background\player.js" />
     <Content Include="ChromeExtension\js\background\playlist.js" />
     <Content Include="ChromeExtension\js\background\playlistDataProvider.js" />
     <Content Include="ChromeExtension\js\background\playlistItem.js" />
+    <Content Include="ChromeExtension\js\background\playlistItems.js" />
     <Content Include="ChromeExtension\js\background\playlistManager.js" />
+    <Content Include="ChromeExtension\js\background\playlists.js" />
     <Content Include="ChromeExtension\js\background\requirePaths.js" />
     <Content Include="ChromeExtension\js\background\videoManager.js" />
     <Content Include="ChromeExtension\js\background\user.js" />
@@ -235,55 +243,58 @@
     <Content Include="ChromeExtension\js\foreground\progressBar.js" />
     <Content Include="ChromeExtension\js\foreground\requirePaths.js" />
     <Content Include="ChromeExtension\js\foreground\settingsTab\settings.js" />
-    <Content Include="ChromeExtension\js\foreground\videosTab\videoInput.js" />
-    <Content Include="ChromeExtension\js\foreground\videosTab\videosContextMenu.js" />
-    <Content Include="ChromeExtension\js\foreground\videosTab\videosDisplay.js" />
-    <Content Include="ChromeExtension\js\foreground\videosTab\videosTab.js" />
+    <Content Include="ChromeExtension\js\foreground\playlistItemsTab\playlistItemInput.js" />
+    <Content Include="ChromeExtension\js\foreground\playlistItemsTab\playlistItemsContextMenu.js" />
+    <Content Include="ChromeExtension\js\foreground\playlistItemsTab\playlistItemsDisplay.js" />
+    <Content Include="ChromeExtension\js\foreground\playlistItemsTab\playlistItemsTab.js" />
     <Content Include="ChromeExtension\js\foreground\timeDisplay.js" />
     <Content Include="ChromeExtension\js\foreground\uielements.js" />
     <Content Include="ChromeExtension\js\inject.js" />
     <Content Include="ChromeExtension\js\playerStates.js" />
+    <Content Include="ChromeExtension\js\background\playlistItemsHistory.js" />
     <Content Include="ChromeExtension\js\programState.js" />
+    <Content Include="ChromeExtension\js\tests\background\playerSpec.js" />
     <Content Include="ChromeExtension\js\tests\background\userSpec.js" />
     <Content Include="ChromeExtension\js\tests\main.js" />
-    <Content Include="Shared\js\thirdParty\jasmine-html.js" />
-    <Content Include="Shared\css\jasmine.css" />
+    <Content Include="ChromeExtension\js\thirdParty\jasmine-html.js" />
+    <Content Include="ChromeExtension\css\jasmine.css" />
     <Content Include="ChromeExtension\tests.htm" />
     <Content Include="ChromeExtension\js\tests\background\playlistItemSpec.js" />
     <Content Include="ChromeExtension\js\tests\background\playlistSpec.js" />
     <Content Include="hibernate.cfg.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shared\js\thirdParty\backbone.js" />
+    <Content Include="ChromeExtension\js\thirdParty\backbone.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="manifest.json" />
     <Content Include="README.md" />
-    <Content Include="Shared\js\helpers.js" />
-    <Content Include="Shared\js\playerBuilder.js" />
-    <Content Include="Shared\js\video.js" />
-    <Content Include="Shared\js\thirdParty\geoplugin.js" />
-    <Content Include="Shared\js\thirdParty\googleAnalytics.js" />
-    <Content Include="Shared\js\thirdParty\jasmine.js" />
-    <Content Include="Shared\js\thirdParty\jquery.js" />
-    <Content Include="Shared\js\thirdParty\jqueryMousewheel.js" />
-    <Content Include="Shared\js\thirdParty\jqueryUi.js" />
-    <Content Include="Shared\js\thirdParty\levenshtein.js" />
-    <Content Include="Shared\js\thirdParty\oauth2\adapters\bitly.js" />
-    <Content Include="Shared\js\thirdParty\oauth2\adapters\facebook.js" />
-    <Content Include="Shared\js\thirdParty\oauth2\adapters\github.js" />
-    <Content Include="Shared\js\thirdParty\oauth2\adapters\google.js" />
-    <Content Include="Shared\js\thirdParty\oauth2\adapters\sample.js" />
-    <Content Include="Shared\js\thirdParty\oauth2\oauth2.html" />
-    <Content Include="Shared\js\thirdParty\oauth2\oauth2.js" />
-    <Content Include="Shared\js\thirdParty\oauth2\oauth2_finish.js" />
-    <Content Include="Shared\js\thirdParty\oauth2\oauth2_inject.js" />
-    <Content Include="Shared\js\thirdParty\onYouTubePlayerApiReady.js" />
-    <Content Include="Shared\js\thirdParty\require.js" />
+    <Content Include="ChromeExtension\js\helpers.js" />
+    <Content Include="ChromeExtension\js\playerBuilder.js" />
+    <Content Include="ChromeExtension\js\video.js" />
+    <Content Include="ChromeExtension\js\thirdParty\geoplugin.js" />
+    <Content Include="ChromeExtension\js\thirdParty\googleAnalytics.js" />
+    <Content Include="ChromeExtension\js\thirdParty\jasmine.js" />
+    <Content Include="ChromeExtension\js\thirdParty\jquery.js" />
+    <Content Include="ChromeExtension\js\thirdParty\jqueryMousewheel.js" />
+    <Content Include="ChromeExtension\js\thirdParty\jqueryUi.js" />
+    <Content Include="ChromeExtension\js\thirdParty\levenshtein.js" />
+    <Content Include="ChromeExtension\js\thirdParty\oauth2\adapters\bitly.js" />
+    <Content Include="ChromeExtension\js\thirdParty\oauth2\adapters\facebook.js" />
+    <Content Include="ChromeExtension\js\thirdParty\oauth2\adapters\github.js" />
+    <Content Include="ChromeExtension\js\thirdParty\oauth2\adapters\google.js" />
+    <Content Include="ChromeExtension\js\thirdParty\oauth2\adapters\sample.js" />
+    <Content Include="ChromeExtension\js\thirdParty\oauth2\oauth2.html" />
+    <Content Include="ChromeExtension\js\thirdParty\oauth2\oauth2.js" />
+    <Content Include="ChromeExtension\js\thirdParty\oauth2\oauth2_finish.js" />
+    <Content Include="ChromeExtension\js\thirdParty\oauth2\oauth2_inject.js" />
+    <Content Include="ChromeExtension\js\thirdParty\onYouTubePlayerApiReady.js" />
+    <Content Include="ChromeExtension\js\thirdParty\require.js" />
     <Content Include="ChromeExtension\js\tests\requirePaths.js" />
-    <Content Include="Shared\js\thirdParty\underscore.js" />
-    <Content Include="Shared\js\thirdParty\ytPlayerApiHelper.js" />
-    <Content Include="Shared\js\ytHelper.js" />
+    <Content Include="ChromeExtension\js\thirdParty\underscore.js" />
+    <Content Include="ChromeExtension\js\thirdParty\ytPlayerApiHelper.js" />
+    <Content Include="ChromeExtension\js\videos.js" />
+    <Content Include="ChromeExtension\js\ytHelper.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -303,7 +314,7 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Shared\js\thirdParty\MIT.LICENSE" />
+    <Content Include="ChromeExtension\js\thirdParty\MIT.LICENSE" />
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>

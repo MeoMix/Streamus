@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web.Mvc;
 using Streamus.Backend.Dao;
 using Streamus.Backend.Domain;
-using Streamus.Backend.Domain.DataInterfaces;
+using Streamus.Backend.Domain.Interfaces;
 using Streamus.Backend.Domain.Managers;
 
 namespace Streamus.Controllers
@@ -18,7 +17,7 @@ namespace Streamus.Controllers
         public ActionResult Create(Playlist playlist)
         {
             var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
-            playlistManager.CreatePlaylist(playlist);
+            playlistManager.Save(playlist);
 
             return new JsonDataContractActionResult(playlist);
         }
@@ -35,7 +34,7 @@ namespace Streamus.Controllers
         [HttpGet]
         public ActionResult Get(Guid id)
         {
-            Playlist playlist = PlaylistDao.GetById(id);
+            Playlist playlist = PlaylistDao.Get(id);
 
             return new JsonDataContractActionResult(playlist);
         }
@@ -76,10 +75,10 @@ namespace Streamus.Controllers
         }
 
         [HttpPost]
-        public EmptyResult DeleteItemByPosition(Guid playlistId, int position, Guid userId)
+        public EmptyResult DeleteItemByPosition(Guid playlistId, Guid itemId, Guid userId)
         {
             var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
-            playlistManager.DeleteItemByPosition(playlistId, position, userId);
+            playlistManager.DeleteItem(playlistId, itemId, userId);
 
             return new EmptyResult();
         }
@@ -94,7 +93,7 @@ namespace Streamus.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateItems(IList<PlaylistItem> playlistItems)
+        public ActionResult CreateItems(IEnumerable<PlaylistItem> playlistItems)
         {
             var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
             playlistManager.CreatePlaylistItems(playlistItems);

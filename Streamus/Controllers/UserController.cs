@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Web.Mvc;
-using NHibernate;
 using Streamus.Backend.Dao;
 using Streamus.Backend.Domain;
-using Streamus.Backend.Domain.DataInterfaces;
+using Streamus.Backend.Domain.Interfaces;
 using Streamus.Backend.Domain.Managers;
 
 namespace Streamus.Controllers
@@ -13,6 +12,10 @@ namespace Streamus.Controllers
         private readonly IUserDao UserDao = new UserDao();
         private readonly IPlaylistDao PlaylistDao = new PlaylistDao();
 
+        /// <summary>
+        ///     Creates a new User object and writes it to the database.
+        /// </summary>
+        /// <returns>The newly created User</returns>
         [HttpPost]
         public ActionResult Create()
         {
@@ -25,13 +28,7 @@ namespace Streamus.Controllers
         [HttpGet]
         public ActionResult Get(Guid id)
         {
-            User user = UserDao.GetById(id);
-
-            if (user == null)
-            {
-                string message = string.Format("Failed to find user with id {0}", id);
-                throw new ApplicationException(message);
-            }
+            User user = UserDao.Get(id);
 
             return new JsonDataContractActionResult(user);
         }

@@ -1,4 +1,4 @@
-﻿require(['underscore'], function () {
+﻿require(['jquery', 'underscore'], function () {
     //     Backbone.js 0.9.9
 
     //     (c) 2010-2012 Jeremy Ashkenas, DocumentCloud Inc.

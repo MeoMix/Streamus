@@ -1,5 +1,6 @@
-﻿using FluentValidation;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
+using FluentValidation;
+using Streamus.Backend.Domain.Validators;
 
 namespace Streamus.Backend.Domain
 {
@@ -33,18 +34,7 @@ namespace Streamus.Backend.Domain
             var validator = new VideoValidator();
             validator.ValidateAndThrow(this);
         }
+
+        //  TODO: Need to implement Equals() and GetHashCode()
     }
-
-    #region VideoValidator
-
-    public class VideoValidator : AbstractValidator<Video>
-    {
-        public VideoValidator()
-        {
-            RuleFor(video => video.Title).Length(0, 255);
-            RuleFor(video => video.Id).Length(11);
-        }
-    }
-
-    #endregion
 }

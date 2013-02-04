@@ -18,6 +18,7 @@ define(function(){
         }
 
         mousewheelValue += delta;
+
         selector.val(mousewheelValue);
         repaint();
 
@@ -46,6 +47,7 @@ define(function(){
 
         //Don't divide by 0.
         var fill = totalTime !== '0' ? elapsedTime / totalTime : 0;
+
         var backgroundImage = '-webkit-gradient(linear,left top, right top, from(#ccc), color-stop('+ fill +',#ccc), color-stop('+ fill+',rgba(0,0,0,0)), to(rgba(0,0,0,0)))';
         selector.css('background-image', backgroundImage);
     };
@@ -61,14 +63,13 @@ define(function(){
     }
 
     //Pause the GUI's refreshes for updating the timers while the user is dragging the video time slider around.
-    var update = function(){
-        var playerIsSeeking = chrome.extension.getBackgroundPage().YoutubePlayer.isSeeking;
+    var update = function () {
+        var youtubePlayer = chrome.extension.getBackgroundPage().YoutubePlayer;
+        var playerIsSeeking = youtubePlayer.isSeeking;
 
         if(!playerIsSeeking) {
-            var currentTime = chrome.extension.getBackgroundPage().YoutubePlayer.currentTime;
-            var totalTime = chrome.extension.getBackgroundPage().YoutubePlayer.totalTime;
-            selector.val(currentTime);
-            selector.prop('max', totalTime);
+            selector.val(youtubePlayer.currentTime);
+            selector.prop('max', youtubePlayer.totalTime);
             repaint();
         }
     };

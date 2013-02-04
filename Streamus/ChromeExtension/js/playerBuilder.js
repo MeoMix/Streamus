@@ -1,9 +1,9 @@
 define(['ytPlayerApiHelper'], function (ytPlayerApiHelper) {
     return {
         buildPlayer: function (frameId, onReady, onStateChange, onPlayerError, callback) {
-            console.log("calling apiHelper");
+
             ytPlayerApiHelper.onApiReady(function () {
-                console.log('onFrameId');
+
                 if (frameId) {
                     //https://developers.google.com/youtube/iframe_api_reference#Loading_a_Video_Player
                     //After the API's JavaScript code loads, the API will call the onYouTubeIframeAPIReady function.

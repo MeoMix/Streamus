@@ -1,38 +1,46 @@
 //Manages an array of Playlist objects.
 define(['playlist',
+        'playlists',
         'playlistItem',
+        'playlistItems',
         'playlistDataProvider',
-        'user',
+        'loginManager',
         'programState'
-       ], function (Playlist, PlaylistItem, playlistDataProvider, user, programState) {
+       ], function (Playlist, Playlists, PlaylistItem, PlaylistItems, playlistDataProvider, loginManager, programState) {
         'use strict';
-        var playlists = [];
+        var playlists = new Playlists();
         var isReady = false;
 
         var events = {
             onReady: 'playlistManager.onReady'
         };
+           
+        loginManager.once('loggedIn', function () {
+            console.log("login manager on loggedIn is firing");
 
-        user.on('loaded', function () {
+            var userId = loginManager.get('user').get('id');
+
             $.ajax({
                 type: 'GET',
                 url: programState.getBaseUrl() + 'Playlist/GetPlaylistsByUserId',
                 dataType: 'json',
                 data: {
-                    userId: user.get('id')
+                    userId: userId
                 },
                 success: function (data) {
-                    console.log("JSON data:", data);
-
-                    playlists = _.map(data, function (playlistConfig) {
-                        return new Playlist(playlistConfig);
-                    });
+                    playlists.reset(data);
 
                     //PlaylistManager will remember the selected playlist via localStorage.
-                    var savedPosition = JSON.parse(localStorage.getItem('selectedPlaylistPosition'));
+                    var savedId = localStorage.getItem('selectedPlaylistId');
+                    
+                    if (savedId === null) {
+                        var playlist = playlists.at(0);
+                        selectPlaylistById(playlist.get('id'));
+                    } else {
+                        selectPlaylistById(savedId);
+                    }
 
-                    selectPlaylistByPosition(savedPosition != null ? parseInt(savedPosition) : 0);
-
+                    console.log("triggering on ready");
                     $(document).trigger(events.onReady);
                     isReady = true;
                 },
@@ -42,41 +50,38 @@ define(['playlist',
             });
         });
 
-        function selectPlaylistByPosition(position) {
-            var playlist = getPlaylistByPosition(position);
+        loginManager.login();
+
+        function selectPlaylistById(id) {
+            var playlist = playlists.get(id);
             if (playlist != null) {
-                console.log("playlist at position " + position, playlist);
                 setSelectedPlaylist(playlist);
             }
         }
 
-        function getPlaylistByPosition(position) {
-            return _.find(playlists, function(p) {
-                return p.get('position') === position;
-            });
-        }
-
         function getSelectedPlaylist() {
-            var selectedPlaylist = _.find(playlists, function(p) {
-                return p.get('selected');
+            var selectedPlaylist = playlists.find(function(playlist) {
+                return playlist.get('selected');
             });
+            
             return selectedPlaylist;
         }
 
         function setSelectedPlaylist(playlistToSelect) {
             var selectedPlaylist = getSelectedPlaylist();
 
-            if (selectedPlaylist != null && selectedPlaylist.position != playlistToSelect.position) {
+            if (selectedPlaylist != null && selectedPlaylist.get('id') != playlistToSelect.get('id')) {
                 selectedPlaylist.set('selected', false);
             }
 
             //First time loading up there won't be a playlist selected yet, so just go ahead and set.
             playlistToSelect.set('selected', true);
-            localStorage.setItem('selectedPlaylistPosition', playlistToSelect.get('position'));
+            localStorage.setItem('selectedPlaylistId', playlistToSelect.get('id'));
         }
 
         return {
-            onReady: function(event) {
+            onReady: function (event) {
+                console.log("onReady called. isReady:", isReady);
                 if (isReady) {
                     event();
                 } else {
@@ -93,55 +98,52 @@ define(['playlist',
                 console.log("calling setActivePlaylist with value", value);
                 setSelectedPlaylist(value);
             },
-            //TODO: Probably should convert this to position.
             setActivePlaylistById: function(id) {
-                console.log("calling setActivePlaylistById", id);
-                var playlist = this.getPlaylistById(id);
+                var playlist = playlists.get(id);
                 setSelectedPlaylist(playlist);
             },
-            getPlaylistByPosition: getPlaylistByPosition,
-            getPlaylistById: function(id) {
-                return _.find(playlists, function(p) {
-                    return p.get('id') === id;
-                });
-            },
             addPlaylist: function (playlistTitle, callback) {
-                console.log("inside of addPlaylist");
+                var userId = loginManager.get('user').get('id');
+
+                console.log("Playlist's length: ", playlists.length);
+                console.trace();
+
                 var playlist = new Playlist({
                     title: playlistTitle,
                     position: playlists.length,
-                    userId: user.get('id')
+                    userId: userId
                 });
 
-                console.log("Calling save with playlist inside of addPlaylist, item count:", playlist.get('items').length);
-                //Save the playlist, but push after version from server because the ID will have changed.
-
-                playlist.save({}, {
-                    success: function(model, response, options) {
-                        console.log("model:", model, response, options);
-                        playlist.set('id', model.id);
+                console.log("Calling save with playlist", playlist);
+                
+                //  Save the playlist, but push after version from server because the ID will have changed.
+                playlist.save(new Array(), {
+                    success: function () {
+                        console.log("Save successful");
                         playlists.push(playlist);
 
                         if (callback) {
                             callback(playlist);
                         }
                     },
-                    error: function() {
-                        //TODO: Error?
+                    error: function (error) {
+                        console.error(error);
                     }
                 });
             },
             removePlaylistById: function(playlistId) {
                 console.log("playlist id:", playlistId);
-                var playlist = _.find(playlists, function(p) {
-                    return p.get('id') === playlistId;
+                var playlist = playlists.get(playlistId);
+               
+                playlist.destroy({
+                    success: function() {
+                        //  Remove from playlists clientside only after server responds with successful delete.
+                        playlists.remove(playlist);
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }
                 });
-                //Remove from playlists clientside only after server responds with successful delete.
-                playlists = _.reject(playlists, function(p) {
-                    return p.get('id') === playlistId;
-                });
-
-                playlist.remove();
             }
         };
     });

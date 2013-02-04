@@ -27,7 +27,7 @@ define(['playlistsContextMenu', 'ytHelper'], function(contextMenu, ytHelper){
                     if(onValidInputEvent){
                         onValidInputEvent();
                     }
-                    console.log("building playlist from id");
+
                     ytHelper.getPlaylistTitle(youtubePlaylistId, function (playlistTitle) {
                         if(playlistTitle){
                             chrome.extension.getBackgroundPage().YoutubePlayer.addPlaylist(playlistTitle, youtubePlaylistId);
@@ -60,8 +60,9 @@ define(['playlistsContextMenu', 'ytHelper'], function(contextMenu, ytHelper){
             };
 
             //Build up each row.
-            console.log(" reload playlists:", chrome.extension.getBackgroundPage().YoutubePlayer.playlists);
-            _.each(chrome.extension.getBackgroundPage().YoutubePlayer.playlists, function(playlist){
+            var playlists = chrome.extension.getBackgroundPage().YoutubePlayer.playlists;
+
+            playlists.each(function(playlist){
                 var listItem = $('<li/>').appendTo(playlistList);
          
                 $('<a/>', {
@@ -77,7 +78,6 @@ define(['playlistsContextMenu', 'ytHelper'], function(contextMenu, ytHelper){
                 }).appendTo(listItem);
 
                 if (playlist.get('selected')) {
-                    console.log("reload select row", playlist.get('id'));
                     selectRow(playlist.get('id')); 
                 }
             });
@@ -86,7 +86,6 @@ define(['playlistsContextMenu', 'ytHelper'], function(contextMenu, ytHelper){
             playlistList.children().click(function(){
                 var clickedId = $(this).children()[0].id;
                 selectRow(clickedId);
-                console.log("clicked selectPlaylist", clickedId);
                 chrome.extension.getBackgroundPage().YoutubePlayer.selectPlaylist(clickedId);
                 return false;
             });

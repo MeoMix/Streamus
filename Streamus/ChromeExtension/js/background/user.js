@@ -20,6 +20,8 @@ define(['programState'], function(programState) {
 
                 localStorage.setItem(userIdKey, model.get('id'));
 
+                console.log("loaded!!");
+
                 //  Announce that user has loaded so managers can use it to fetch data.
                 model.trigger('loaded');
             },
@@ -32,7 +34,7 @@ define(['programState'], function(programState) {
     //  User data will be loaded either from cache or server.
     var User = Backbone.Model.extend({
         defaults: {
-            id: '51d77685-42c3-469a-b1b3-f0dc5ea75f5a', //localStorage.getItem(userIdKey),
+            id: '189d00d5-9cef-4ace-92ef-d760e7202558', //localStorage.getItem(userIdKey),
             name: '' 
         },
         
@@ -79,6 +81,9 @@ define(['programState'], function(programState) {
         }
     });
 
-    //  Return an already instantiated User model so that we have only a single instance available.
-    return new User();
+    //  Only ever instantiate one User.
+    return _.once(function(config) {
+        var user = new User(config);
+        return user;
+    });
 });

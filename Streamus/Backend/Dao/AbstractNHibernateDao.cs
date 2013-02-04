@@ -1,46 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using NHibernate;
-using Streamus.Backend.Domain.DataInterfaces;
-using log4net;
+using Streamus.Backend.Domain.Interfaces;
 
 namespace Streamus.Backend.Dao
 {
     public class AbstractNHibernateDao<T> : MarshalByRefObject, IDao<T> where T : class
     {
-        // ReSharper disable StaticFieldInGenericType
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        // ReSharper restore StaticFieldInGenericType
         private readonly Type PersistentType = typeof (T);
 
         /// <summary>
-        /// Exposes the ISession used within the DAO.
+        ///     Exposes the ISession used within the DAO.
         /// </summary>
-        public ISession NHibernateSession
+        protected ISession NHibernateSession
         {
             get { return NHibernateSessionManager.Instance.GetSession(); }
-        }
-
-        /// <summary>
-        /// Loads an instance of type TypeOfListItem from the DB based on its ID.
-        /// Video's PK is from YouTube - it overrides GetById with a string implementation.
-        /// </summary>
-        public T GetById(Guid id)
-        {
-            T entity = default(T);
-
-            try
-            {
-                entity = (T) NHibernateSession.Load(PersistentType, id);
-            }
-            catch (ObjectNotFoundException exception)
-            {   
-                //Consume error and return null.
-                Logger.Error(exception);
-            }
-
-            return entity;
         }
 
         /// <summary>
@@ -80,23 +54,6 @@ namespace Streamus.Backend.Dao
         public void Delete(T entity)
         {
             NHibernateSession.Delete(entity);
-        }
-
-        /// <summary>
-        ///     Commits changes regardless of whether there's an open transaction or not.
-        ///     Only use this when you want to commit data for a single DAO and not entire transaction.
-        /// </summary>
-        public void CommitChanges()
-        {
-            if (NHibernateSessionManager.Instance.HasOpenTransaction())
-            {
-                NHibernateSessionManager.Instance.CommitTransaction();
-            }
-            else
-            {
-                // If there's no transaction, just flush the changes
-                NHibernateSessionManager.Instance.GetSession().Flush();
-            }
         }
     }
 }

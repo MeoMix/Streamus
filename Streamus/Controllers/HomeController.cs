@@ -4,13 +4,12 @@ namespace Streamus.Controllers
 {
     public class HomeController : Controller
     {
-        //
-        // GET: /Home/
-
+        /// <summary>
+        /// There's no website, but this is needed just to show a 'Server is Running' page.
+        /// </summary>
         public ActionResult Index()
         {
             return View();
         }
-
     }
 }

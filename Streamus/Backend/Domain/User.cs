@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using FluentValidation;
+using Streamus.Backend.Domain.Validators;
 
 namespace Streamus.Backend.Domain
 {
@@ -23,17 +24,7 @@ namespace Streamus.Backend.Domain
             var validator = new UserValidator();
             validator.ValidateAndThrow(this);
         }
+
+        //  TODO: Need to implement Equals() and GetHashCode()
     }
-
-    #region UserValidator
-
-    public class UserValidator : AbstractValidator<User>
-    {
-        public UserValidator()
-        {
-            RuleFor(user => user.Name).Length(0, 255);
-        }
-    }
-
-    #endregion
 }

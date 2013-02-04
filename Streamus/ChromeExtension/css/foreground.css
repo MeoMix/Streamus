@@ -14,7 +14,7 @@
 
 ::-webkit-scrollbar-button:start:decrement,
 ::-webkit-scrollbar-button:end:increment  {
-  height: 0px;
+  height: 0;
 }
 
 ::-webkit-scrollbar-track-piece  {
@@ -113,9 +113,9 @@
 }
 
 .header {
-  top: 0px; 
-  left: 0px; 
-  right: 0px; 
+  top: 0; 
+  left: 0; 
+  right: 0; 
   border-left:1px solid #ccc; 
   height: 40px; 
   -webkit-box-shadow: 0 2px 3px rgba(0,0,0,.2); 
@@ -211,7 +211,6 @@
   width: 12px;
   height: 12px;
 }
-
 
 .ui-autocomplete {
   max-height: 260px;
@@ -581,8 +580,6 @@
 .pressed svg *{
   fill:#060 !important;
 }
-
-
 
 .sidebar-button {
 	background: rgba(245,184,0,1);

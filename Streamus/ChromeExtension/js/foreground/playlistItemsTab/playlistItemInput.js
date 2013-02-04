@@ -1,10 +1,11 @@
 //  The videos tab header. Users may add videos by clicking on Add Videos.
 //  Clicking Add Videos will allow the user to either search w/ auto-complete suggestions, or to paste youtube URLs into the input.
-define(['ytHelper', 'dialogs', 'helpers'], function (ytHelper, dialogs, helpers) {
+define(['ytHelper', 'dialogs', 'helpers'],
+    function (ytHelper, dialogs, helpers) {
     'use strict';
 
     var initialize = function () {
-        var addInput = $('#CurrentVideoDisplay .addInput').attr('placeholder', 'Search or Enter YouTube URL');
+        var addInput = $('#CurrentPlaylistItemDisplay .addInput').attr('placeholder', 'Search or Enter YouTube URL');
 
         //  Provides the drop-down suggestions and video suggestions.
         addInput.autocomplete({
@@ -22,8 +23,9 @@ define(['ytHelper', 'dialogs', 'helpers'], function (ytHelper, dialogs, helpers)
             },
             select: function (event, ui) {
                 //  Don't change the text when user clicks their video selection.
-                event.preventDefault(); 
-                handleValidInput(ui.item.value.videoId);
+                event.preventDefault();
+
+                handleValidInput(ui.item.value.id);
             }
         });
         
@@ -43,13 +45,11 @@ define(['ytHelper', 'dialogs', 'helpers'], function (ytHelper, dialogs, helpers)
             //  Wrapped in a timeout to support 'rightclick->paste' 
             setTimeout(function () {
                 var url = addInput.val();
-                var parsedUrlData = ytHelper.parseUrl(url);
-
-                console.log("Parsed URL Data:", parsedUrlData);
+                var parsedVideoId = ytHelper.parseVideoIdFromUrl(url);
 
                 //  If found a valid YouTube link then just add the video.
-                if (parsedUrlData && parsedUrlData.videoId) {
-                    handleValidInput(parsedUrlData.videoId);
+                if (parsedVideoId) {
+                    handleValidInput(parsedVideoId);
                 }
             });
         };
@@ -89,16 +89,22 @@ define(['ytHelper', 'dialogs', 'helpers'], function (ytHelper, dialogs, helpers)
             //  Searches youtube for video results based on the given text.
             var showVideoSuggestions = function (text) {
                 ytHelper.search(text, null, function (videos) {
+
                     if (!userIsTyping) {
-                        var videoTitles = [];
-                        $(videos).each(function () {
+                        var videoDisplayObjects = videos.map(function(video) {
                             //  I wanted the label to be duration | title to help delinate between typing suggestions and actual videos.
-                            var label = helpers.prettyPrintTime(this.duration) + " | " + this.title;
-                            videoTitles.push({ label: label, value: this });
+                            var videoDuration = video.get('duration');
+                            var videoTitle = video.get('title');
+                            var label = helpers.prettyPrintTime(videoDuration) + " | " + videoTitle;
+
+                            return {
+                                label: label,
+                                value: video
+                            };
                         });
 
                         //  Show videos found instead of suggestions.
-                        addInput.autocomplete("option", "source", videoTitles);
+                        addInput.autocomplete("option", "source", videoDisplayObjects);
                         addInput.autocomplete("search", '');
                     }
                 });

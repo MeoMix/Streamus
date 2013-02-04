@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using NHibernate.Exceptions;
 using Streamus.Backend.Dao;
-using Streamus.Backend.Domain.DataInterfaces;
+using Streamus.Backend.Domain.Interfaces;
 using log4net;
 
 namespace Streamus.Backend.Domain.Managers
@@ -21,7 +21,7 @@ namespace Streamus.Backend.Domain.Managers
             PlaylistItemDao = playlistItemDao;
         }
 
-        public void CreatePlaylist(Playlist playlist)
+        public void Save(Playlist playlist)
         {
             try
             {
@@ -43,7 +43,7 @@ namespace Streamus.Backend.Domain.Managers
         //    {
         //        NHibernateSessionManager.Instance.BeginTransaction();
 
-        //        Playlist playlist = PlaylistDao.GetById(detachedPlaylist.Id);
+        //        Playlist playlist = PlaylistDao.Get(detachedPlaylist.Id);
         //        if (playlist == null)
         //        {
         //            throw new Exception("Shouldn't be null inside of UpdatePlaylist");
@@ -66,7 +66,7 @@ namespace Streamus.Backend.Domain.Managers
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
-                Playlist playlist = PlaylistDao.GetById(id);
+                Playlist playlist = PlaylistDao.Get(id);
 
                 PlaylistDao.Delete(playlist);
                 NHibernateSessionManager.Instance.CommitTransaction();
@@ -88,7 +88,7 @@ namespace Streamus.Backend.Domain.Managers
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
-                Playlist playlist = PlaylistDao.GetById(playlistId);
+                Playlist playlist = PlaylistDao.Get(playlistId);
 
                 foreach (PlaylistItem playlistItem in playlist.Items)
                 {
@@ -111,18 +111,18 @@ namespace Streamus.Backend.Domain.Managers
         public void UpdateTitle(Guid playlistId, string title)
         {
             NHibernateSessionManager.Instance.BeginTransaction();
-            Playlist playlist = PlaylistDao.GetById(playlistId);
+            Playlist playlist = PlaylistDao.Get(playlistId);
             playlist.Title = title;
             PlaylistDao.Update(playlist);
             NHibernateSessionManager.Instance.CommitTransaction();
         }
 
-        public void DeleteItemByPosition(Guid playlistId, int itemPosition, Guid userId)
+        public void DeleteItem(Guid playlistId, Guid itemId, Guid userId)
         {
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
-                Playlist playlist = PlaylistDao.GetById(playlistId);
+                Playlist playlist = PlaylistDao.Get(playlistId);
 
                 if (playlist.UserId != userId)
                 {
@@ -130,10 +130,18 @@ namespace Streamus.Backend.Domain.Managers
                     throw new ApplicationException(errorMessage);
                 }
 
-                PlaylistItem playlistItem = PlaylistItemDao.GetByPosition(playlistId, itemPosition);
-                //Be sure to remove from Playlist first so that cascade doesn't re-save.
+                PlaylistItem playlistItem = playlist.Items.First(item => item.Id == itemId);
+
+                //  Be sure to remove from Playlist first so that cascade doesn't re-save.
                 playlist.Items.Remove(playlistItem);
-                PlaylistItemDao.Delete(playlistItem);
+
+                //  Update all playlistItems positions which would be affected by the remove.
+                foreach (PlaylistItem item in playlist.Items.Where(i => i.Position > playlistItem.Position))
+                {
+                    item.Position--;
+                }
+
+                PlaylistDao.Update(playlist);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
@@ -174,15 +182,21 @@ namespace Streamus.Backend.Domain.Managers
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
                 playlistItem.ValidateAndThrow();
-                PlaylistItemDao.Update(playlistItem);
 
-                PlaylistItem knownPlaylistItem = PlaylistItemDao.GetByPosition(playlistItem.PlaylistId, playlistItem.Position);
+                PlaylistItem knownPlaylistItem = PlaylistItemDao.Get(playlistItem.PlaylistId, playlistItem.Id);
+
+                //  TODO: Sometimes we're updating and sometimes we're creating because the client
+                //  sets PlaylistItem's ID so its difficult to tell server-side.
                 if (knownPlaylistItem == null)
                 {
-                    throw new Exception("Shouldn't be null inside of SavePlaylistItem");
+                    PlaylistItemDao.Save(playlistItem);
                 }
-                
-                PlaylistItemDao.Merge(playlistItem);
+                else
+                {
+                    //  TODO: I don't think I should need both of these, double check at some point.
+                    //PlaylistItemDao.Update(playlistItem);
+                    PlaylistItemDao.Merge(playlistItem);
+                }
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
@@ -193,7 +207,7 @@ namespace Streamus.Backend.Domain.Managers
             }
         }
 
-        public void CreatePlaylistItems(IList<PlaylistItem> playlistItems)
+        public void CreatePlaylistItems(IEnumerable<PlaylistItem> playlistItems)
         {
             try
             {

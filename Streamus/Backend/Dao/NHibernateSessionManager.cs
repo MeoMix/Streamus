@@ -131,10 +131,6 @@ namespace Streamus.Backend.Dao
                 transaction = GetSession().BeginTransaction();
                 ContextTransaction = transaction;
             }
-            else
-            {
-                
-            }
         }
 
         public void CommitTransaction()
@@ -148,10 +144,6 @@ namespace Streamus.Backend.Dao
                     transaction.Commit();
                     ContextTransaction = null;
                 }
-                else
-                {
-                    
-                }
             }
             catch (HibernateException exception)
             {
@@ -161,7 +153,7 @@ namespace Streamus.Backend.Dao
             }
         }
 
-        public bool HasOpenTransaction()
+        private bool HasOpenTransaction()
         {
             ITransaction transaction = ContextTransaction;
 

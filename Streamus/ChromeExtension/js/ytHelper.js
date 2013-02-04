@@ -1,9 +1,8 @@
 //A global object which abstracts more difficult implementations of retrieving data from YouTube.
-define(['geoplugin', 'levenshtein', 'video'], function (geoplugin, levDist, Video) {
+define(['geoplugin', 'levenshtein', 'video', 'videos'], function (geoplugin, levDist, Video, Videos) {
     'use strict';
 
     var findPlayableByTitle = function (title, callback) {
-        console.log("calling findPlayableByTitle with title:", title);
         search(title, null, function (videos) {
             videos.sort(function (a, b) {
                 return levDist(a.title, title) - levDist(b.title, title);
@@ -21,12 +20,12 @@ define(['geoplugin', 'levenshtein', 'video'], function (geoplugin, levDist, Vide
 
     //Performs a search of YouTube with the provided text and returns a list of playable videos (<= max-results)
     var search = function (text, playlistId, callback) {
-        console.log("Calling search w/ text:", text, callback);
+
         var searchIndex = 1;
         var timeInterval = 200;
         var timeToSpendSearching = 500;
         var elapsedTime = 0;
-        var videos = [];
+        var videos = new Videos();
         var maxResultsPerSearch = 50;
 
         var searchInterval = setInterval(function () {
@@ -38,9 +37,18 @@ define(['geoplugin', 'levenshtein', 'video'], function (geoplugin, levDist, Vide
                 $.getJSON(searchUrl, function (response) {
 
                     //  Add all playable videos to a list and return.
-                    $(response.feed.entry).each(function () {
-                        var video = new Video(this, playlistId);
-                        videos.push(video);
+                    _.each(response.feed.entry, function(videoInformation) {
+                        
+                        //  Strip out the id. An example of $t's contents: tag:youtube.com,2008:video:UwHQp8WWMlg
+                        var id = videoInformation.media$group.yt$videoid.$t;
+                        var durationInSeconds = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
+                        
+                        videos.push({
+                            id: id,
+                            playlistId: playlistId,
+                            title: videoInformation.title.$t,
+                            duration: durationInSeconds
+                        });
                     });
 
                     searchIndex += maxResultsPerSearch;
@@ -48,7 +56,7 @@ define(['geoplugin', 'levenshtein', 'video'], function (geoplugin, levDist, Vide
             }
             else {
                 clearInterval(searchInterval);
-                
+
                 callback(videos);
             }
         }, timeInterval);
@@ -68,7 +76,7 @@ define(['geoplugin', 'levenshtein', 'video'], function (geoplugin, levDist, Vide
         //  TODO: Do I need to debounce this?
         //  When a video comes from the server it won't have its related videos, so need to fetch and populate.
         getRelatedVideos: function (videoId, callback) {
-            console.log("getting related videos", videoId);
+
             //  Do an async request for the videos's related videos. There isn't a hard dependency on them existing right as a video is created.
             $.ajax({
                 url: 'https://gdata.youtube.com/feeds/api/videos/' + videoId + '/related?v=2&alt=json',
@@ -78,14 +86,23 @@ define(['geoplugin', 'levenshtein', 'video'], function (geoplugin, levDist, Vide
 
                     //  Don't really need that many suggested videos. 
                     for (var i = 0; i < 5; i++) {
-                        var relatedVideo = result.feed.entry[i];
+                        var relatedVideoInformation = result.feed.entry[i];
+
+                        //  Strip out the id. An example of $t's contents: tag:youtube.com,2008:video:UwHQp8WWMlg
+                        var id = relatedVideoInformation.media$group.yt$videoid.$t;
+                        var durationInSeconds = parseInt(relatedVideoInformation.media$group.yt$duration.seconds, 10);
+
                         //  Don't forget to set the playlistId after adding a related video to a playlist later.
-                        var video = new Video(relatedVideo);
+                        var video = new Video({
+                            id: id,
+                            title: relatedVideoInformation.title.$t,
+                            duration: durationInSeconds
+                        });
+
                         relatedVideos.push(video);
                     }
 
                     if (callback) {
-                        console.log("found related video count", relatedVideos.length);
                         callback(relatedVideos);
                     }
                 },
@@ -97,27 +114,17 @@ define(['geoplugin', 'levenshtein', 'video'], function (geoplugin, levDist, Vide
         search: search,
         findPlayableByVideoId: findPlayableByVideoId,
         //  Takes a URL and returns parsed URL information such as schema and video id if found inside of the URL.
-        parseUrl: function (url) {
-            var parsedUrlData = null;
-
-            var urlFormats = {
-                youTube: /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/,
-                spotify: 'open.spotify.com/track/'
-            };
+        parseVideoIdFromUrl: function (url) {
+            var videoId = null;
 
             //  TODO: Get better at regex and figure out how to support something like: https://www.youtube.com/watch?feature=player_embedded&v=6od4WeaWDcs
             url = url.replace('feature=player_embedded&', '');
-            var match = url.match(urlFormats.youTube);
-            console.log("Match:", match);
+            var match = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/);
             if (match && match[2].length === 11) {
-                parsedUrlData = {
-                    videoId: match[2]
-                };
-
-                console.log("set parsedUrl data");
+                videoId = match[2];
             }
 
-            return parsedUrlData;
+            return videoId;
         },
 
         parseUrlForPlaylistId: function (url) {
@@ -136,7 +143,6 @@ define(['geoplugin', 'levenshtein', 'video'], function (geoplugin, levDist, Vide
         },
         
         getPlaylistTitle: function (playlistId, callback) {
-            console.log("playlistId passed into buildPlaylistFromId", playlistId);
             $.ajax({
                 url: "https://gdata.youtube.com/feeds/api/playlists/" + playlistId + "?v=2&alt=json",
                 success: function(result) {
@@ -183,7 +189,6 @@ define(['geoplugin', 'levenshtein', 'video'], function (geoplugin, levDist, Vide
         //                //return durationDifference;
         //            })[0];
 
-        //            console.log("found video:", closestVideo);
         //            callback(closestVideo);
         //        }
         //    });

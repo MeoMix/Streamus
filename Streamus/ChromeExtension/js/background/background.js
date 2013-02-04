@@ -18,9 +18,7 @@
     //Build iframe AFTER onBeforeSendHeaders listener. You can't put this shit in the HTML.
     $('<iframe id="MusicHolder" width="640" height="390" src="http://www.youtube.com/embed/dummy?enablejsapi=1"></iframe>').appendTo('body');
 
-    console.log("binding to playlistManager onReady");
     playlistManager.onReady(function () {
-        console.log('playlistManager is Ready!');
         require(['player'], function() {});
     });
     
@@ -35,14 +33,13 @@
     //					chrome.tabs.onUpdated.removeListener(onFacebookLogin);
 
     //                    var accessToken = Helpers.getUrlParamaterValueByName(tabs[i].url, "access_token");
-    //                    console.log("accessToken:", accessToken);
     //                    $.ajax({
     //                        url: programState.getBaseUrl() + 'backend/fb/setAccessToken.php',
     //                        data: {
     //                            accessToken: accessToken
     //                        },
-    //                        error: function(a, e) {
-    //                            console.log("error:", a, e);
+    //                        error: function(error) {
+    //                            console.error(error);
     //                        },
     //                        success: function (json) {
     //                            var authKey = JSON.parse(json);
@@ -62,7 +59,6 @@
     // //                access_token: localStorage.params['access_token']
     // //            },
     // //            success: function(a, e){
-    // //                console.log("success:", a, e);
     // //            }
     // //        });
     // //    }
@@ -86,7 +82,6 @@
     });
 
     chrome.commands.onCommand.addListener(function(command) {
-        console.log("command:", command);
         switch(command){
             case 'nextVideo':
                 YoutubePlayer.skipVideo("next");

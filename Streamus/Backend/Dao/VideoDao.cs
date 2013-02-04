@@ -2,8 +2,8 @@
 using NHibernate;
 using NHibernate.Criterion;
 using Streamus.Backend.Domain;
-using Streamus.Backend.Domain.DataInterfaces;
 using System.Collections.Generic;
+using Streamus.Backend.Domain.Interfaces;
 using log4net;
 
 namespace Streamus.Backend.Dao
@@ -12,7 +12,7 @@ namespace Streamus.Backend.Dao
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public Video GetById(string id)
+        public Video Get(string id)
         {
             Video video = null;
             try
@@ -28,7 +28,7 @@ namespace Streamus.Backend.Dao
             return video;
         } 
 
-        public IList<Video> GetByIds(List<string> ids)
+        public IList<Video> Get(List<string> ids)
         {
             IQueryOver<Video, Video> criteria = NHibernateSession
                 .QueryOver<Video>()

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Streamus.Backend.Dao;
-using Streamus.Backend.Domain.DataInterfaces;
+using Streamus.Backend.Domain.Interfaces;
 using log4net;
 
 namespace Streamus.Backend.Domain.Managers
@@ -34,11 +34,11 @@ namespace Streamus.Backend.Domain.Managers
                 NHibernateSessionManager.Instance.BeginTransaction();
                 user = new User();
                 user.ValidateAndThrow();
-                UserDao.SaveOrUpdate(user);
+                UserDao.Save(user);
 
-                //Create a brand new, empty playlist for the user.
+                //  Create a brand new, empty playlist for the user.
                 var playlist = new Playlist(user.Id, "New Playlist", 0);
-                PlaylistDao.SaveOrUpdate(playlist);
+                PlaylistDao.Save(playlist);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
@@ -49,26 +49,6 @@ namespace Streamus.Backend.Domain.Managers
             }
 
             return user;
-        }
-
-        /// <summary>
-        ///     Saves a user to the database -- cr
-        /// </summary>
-        /// <param name="user"></param>
-        public void SaveUser(User user)
-        {
-            try
-            {
-                NHibernateSessionManager.Instance.BeginTransaction();
-                user.ValidateAndThrow();
-                UserDao.SaveOrUpdate(user);
-                NHibernateSessionManager.Instance.CommitTransaction();
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                throw;
-            }
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿//  Test cases for the background's user model. Hopes to ensure that the user
 //  loads successfully from the server from a client-side id or, alternatively,
 //  that it is created successfully by the server.
-define(['user'], function (user) {
+define(['loginManager'], function (loginManager) {
     'use strict';
     var userIdKey = 'UserId';
     
@@ -24,18 +24,17 @@ define(['user'], function (user) {
         //  Makes sure a user loads. A bad test case because the user's loadability is dependent on code
         //  that isn't modifiable by this method, so I can only infer current state.
         it('loads', function () {
-            var userLoaded = false;
-            runs(function () {
-                user.on('loaded', function () {
-                    userLoaded = true;
-                });
+
+            runs(function() {
+                loginManager.login();
             });
 
             waitsFor(function() {
-                return userLoaded === true;
+                return loginManager.get('loggedIn') === true;
             }, "The user should have loaded.", 5000);
 
-            runs(function() {
+            runs(function () {
+                var user = loginManager.get('user');
                 expect(user.isNew()).toBe(false);
             });
         });

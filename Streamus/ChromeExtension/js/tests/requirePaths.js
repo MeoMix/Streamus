@@ -5,27 +5,32 @@ var require = {
         'playlistSpec': 'js/tests/background/playlistSpec',
         'userSpec': 'js/tests/background/userSpec',
 
-        'jquery': '../Shared/js/thirdParty/jquery',
-        'underscore': '../Shared/js/thirdParty/underscore',
-        'backbone': '../Shared/js/thirdParty/backbone',
-        'ytPlayerApiHelper': '../Shared/js/thirdParty/ytPlayerApiHelper',
-        'onYouTubePlayerApiReady': '../Shared/js/thirdParty/onYouTubePlayerApiReady',
-        'geoplugin': '../Shared/js/thirdParty/geoplugin',
-        'levenshtein': '../Shared/js/thirdParty/levenshtein',
+        'jquery': 'js/thirdParty/jquery',
+        'underscore': 'js/thirdParty/underscore',
+        'backbone': 'js/thirdParty/backbone',
+        'ytPlayerApiHelper': 'js/thirdParty/ytPlayerApiHelper',
+        'onYouTubePlayerApiReady': 'js/thirdParty/onYouTubePlayerApiReady',
+        'geoplugin': 'js/thirdParty/geoplugin',
+        'levenshtein': 'js/thirdParty/levenshtein',
         
         'programState': 'js/programState',
 
         'playlistItem': 'js/background/playlistItem',
+        'playlistItems': 'js/background/playlistItems',
+        'playlistItemsHistory': 'js/background/playlistItemsHistory',
         'player': 'js/background/player',
         'playlistManager': 'js/background/playlistManager',
+        'loginManager': 'js/background/loginManager',
         'videoManager': 'js/background/videoManager',
         'playerBuilder': 'js/background/playerBuilder',
         'playlist': 'js/background/playlist',
+        'playlists': 'js/background/playlists',
         'playlistDataProvider': 'js/background/playlistDataProvider',
         'user': 'js/background/user',
 
-        'video': '../Shared/js/video',
-        'ytHelper': '../Shared/js/ytHelper',
-        'helpers': '../Shared/js/helpers'
+        'video': 'js/video',
+        'videos': 'js/videos',
+        'ytHelper': 'js/ytHelper',
+        'helpers': 'js/helpers'
     }
 };
