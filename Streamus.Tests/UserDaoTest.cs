@@ -24,7 +24,7 @@ namespace Streamus.Tests
         {
             //  Run this bit of code to have the UserDaoTest create the StreamusTest tables.
             //  Disable this again immediately after. It'll mess up tests and makes everything run slower.
-            bool needSetupDatabase = false;
+            bool needSetupDatabase = true;
 
             if (needSetupDatabase)
             {

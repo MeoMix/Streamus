@@ -45,7 +45,7 @@
                 item.set('relatedVideos', relatedVideos);
             });
         });
-        
+        console.log("Calling load videos with videoIds:", videoIds);
         if (videoIds.length > 0) {
             //  Cache in our video manager all the related songs for our items. This will allow for tooltips with
             //  more details information in the future, but without the need to incur all the overhead on load.

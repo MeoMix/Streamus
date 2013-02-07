@@ -24,20 +24,20 @@ namespace Streamus.Controllers
             return new JsonDataContractActionResult(video);
         }
 
+        [HttpGet]
+        public ActionResult Get(string id)
+        {
+            var videoManager = new VideoManager(VideoDao);
+            Video video = videoManager.Get(id);
+            return new JsonDataContractActionResult(video);
+        }
+
         [HttpPost]
         public ActionResult SaveVideos(List<Video> videos)
         {
             var videoManager = new VideoManager(VideoDao);
             videoManager.Save(videos);
             return new JsonDataContractActionResult(videos);
-        }
-
-        [HttpGet]
-        public ActionResult GetById(string id)
-        {
-            var videoManager = new VideoManager(VideoDao);
-            Video video = videoManager.Get(id);
-            return new JsonDataContractActionResult(video);
         }
 
         [HttpGet]

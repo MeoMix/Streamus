@@ -6,13 +6,13 @@ define(['video',
         'programState'
        ], function (Video, Videos, ytHelper, programState) {
     'use strict';
-    //TODO: Implement caching where I only query for IDs I need. Not necessary for now because I don't make many requests.
+    //  TODO: Implement caching where I only query for IDs I need. Not necessary for now because I don't make many requests.
     var loadedVideos = new Videos();
     var lastVideoRetrieved = null;
 
     return {
-        //Optimized this because I call getTotalTime twice a second against it... :s
-        //I need to rewrite this so that when the current item's video forsure has an ID it is loaded instead of polling.
+        //  Optimized this because I call getTotalTime twice a second against it... :s
+        //  I need to rewrite this so that when the current item's video forsure has an ID it is loaded instead of polling.
         getLoadedVideoById: function (id) {
             var loadedVideo;
          
@@ -25,52 +25,52 @@ define(['video',
 
             return loadedVideo;
         },
-        //  TODO: This isn't used, but I'd expect it to be called during an addItem?
-        //loadVideo: function (id, callback) {
-        //    $.ajax({
-        //        type: 'GET',
-        //        url: programState.getBaseUrl() + 'Video/GetById',
-        //        dataType: 'json',
-        //        data: {
-        //            id: id
-        //        },
-        //        success: function (data) {
-        //            if (!_.contains(loadedVideos, data)) {
-        //                loadedVideos.push(data);
-        //            }
-        //            if (callback) {
-        //                callback(data);
-        //            }
-        //        },
-        //        error: function(error) {
-        //            console.error(error);
-        //        }
-        //    });
-        //},
-        loadVideos: function (ids, callback) {
-            //  TODO: Anything in Backbone that can simplify this more?
+        loadVideo: function (id, callback) {
+            if (loadedVideos.get(id) == null) {
+                var video = new Video({ id: id });
 
-            $.ajax({
-                type: 'GET',
-                url: programState.getBaseUrl() + 'Video/GetByIds',
-                dataType: 'json',
-                contentType: 'application/json; charset=utf-8',
-                traditional: true,
-                data: {
-                    ids: ids
-                },
-                success: function (data) {
-                    //  TODO: Pass merge paramater if videos can update properties, they can't currently
-                    loadedVideos.add(data);
+                video.fetch({
+                    success: function (data) {
+                        loadedVideos.add(data);
 
-                    if (callback) {
-                        callback(data);
+                        if (callback) {
+                            callback(data);
+                        }
+                    },
+                    error: function (error) {
+                        console.error(error);
                     }
-                },
-                error: function(error) {
-                    console.error(error);
-                }
-            });
+                });
+            }
+        },
+        loadVideos: function (ids, callback) {
+            //  Don't load any videos we already have cached.
+            var idsNotYetLoaded = _.reject(ids, function (id) { return loadedVideos.get(id) != null });
+
+            if (idsNotYetLoaded.length > 0) {
+                //  TODO: Anything in Backbone that can simplify this more?
+                $.ajax({
+                    type: 'GET',
+                    url: programState.getBaseUrl() + 'Video/GetByIds',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    traditional: true,
+                    data: {
+                        ids: idsNotYetLoaded
+                    },
+                    success: function (data) {
+                        //  TODO: Pass merge paramater if videos can update properties, they can't currently
+                        loadedVideos.add(data);
+
+                        if (callback) {
+                            callback(data);
+                        }
+                    },
+                    error: function (error) {
+                        console.error(error);
+                    }
+                });
+            }
         },
         //  Call createVideo for any video intended to be saved to the DB. Otherwise, just go straight to the Video constructor
         //  for displaying video information elsewhere (suggested videos, users selecting a video from dropdown, etc)
@@ -104,6 +104,7 @@ define(['video',
             });
         },
         saveVideos: function (videos, callback) {
+            console.log("Calling save videos! Need to convert to backbone.");
             $.ajax({
                 type: 'POST',
                 url: programState.getBaseUrl() + 'Video/SaveVideos',

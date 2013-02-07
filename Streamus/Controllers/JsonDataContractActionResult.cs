@@ -18,9 +18,12 @@ namespace Streamus.Controllers
 
         public override void ExecuteResult(ControllerContext context)
         {
-            var serializer = new DataContractJsonSerializer(Data.GetType());
-            context.HttpContext.Response.ContentType = "application/json";
-            serializer.WriteObject(context.HttpContext.Response.OutputStream, Data);
+            if (Data != null)
+            {
+                var serializer = new DataContractJsonSerializer(Data.GetType());
+                context.HttpContext.Response.ContentType = "application/json";
+                serializer.WriteObject(context.HttpContext.Response.OutputStream, Data);
+            }
         }
     }
 }

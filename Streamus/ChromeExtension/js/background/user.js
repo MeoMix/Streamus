@@ -20,8 +20,6 @@ define(['programState'], function(programState) {
 
                 localStorage.setItem(userIdKey, model.get('id'));
 
-                console.log("loaded!!");
-
                 //  Announce that user has loaded so managers can use it to fetch data.
                 model.trigger('loaded');
             },
@@ -34,7 +32,7 @@ define(['programState'], function(programState) {
     //  User data will be loaded either from cache or server.
     var User = Backbone.Model.extend({
         defaults: {
-            id: '189d00d5-9cef-4ace-92ef-d760e7202558', //localStorage.getItem(userIdKey),
+            id: 'fee83611-6f4f-484d-83e6-3b5ebcd98d42', //localStorage.getItem(userIdKey),
             name: '' 
         },
         

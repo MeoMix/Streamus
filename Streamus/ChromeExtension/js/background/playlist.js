@@ -241,6 +241,7 @@ define(['ytHelper',
                 });
 
                 this.get('items').push(playlistItem);
+                videoManager.loadVideo(videoId);
 
                 var shuffledItems = this.get('shuffledItems');
                 shuffledItems.push(playlistItem);
@@ -253,8 +254,11 @@ define(['ytHelper',
                 }
 
                 //TODO: Should probably be saving a Video as part of playlistItem, maybe?
-                videoManager.saveVideo(video);
-                playlistItem.save();
+                videoManager.saveVideo(video, function () {
+                    //  Need to ensure that a video saves to the database before trying to save the item for it.
+                    playlistItem.save();
+                });
+                
 
                 return playlistItem;
             },
