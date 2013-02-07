@@ -10,14 +10,14 @@ namespace Streamus.Tests
     [TestFixture]
     public class PlaylistItemDaoTest
     {
-        private readonly IUserDao UserDao = new UserDao();
-        private readonly IPlaylistDao PlaylistDao = new PlaylistDao();
-        private readonly IVideoDao VideoDao = new VideoDao();
-        private readonly IPlaylistItemDao PlaylistItemDao = new PlaylistItemDao();
-        private User User;
-        private Playlist Playlist;
-        private Video Video;
-        private PlaylistManager PlaylistManager;
+        private IUserDao UserDao { get; set; }
+        private IPlaylistDao PlaylistDao { get; set; }
+        private IVideoDao VideoDao { get; set; }
+        private IPlaylistItemDao PlaylistItemDao { get; set; }
+        private User User { get; set; }
+        private Playlist Playlist { get; set; }
+        private Video Video { get; set; }
+        private PlaylistManager PlaylistManager { get; set; }
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -25,6 +25,18 @@ namespace Streamus.Tests
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
+            try
+            {
+                UserDao = new UserDao();
+                PlaylistDao = new PlaylistDao();
+                PlaylistItemDao = new PlaylistItemDao();
+                VideoDao = new VideoDao();
+            }
+            catch (TypeInitializationException exception)
+            {
+                throw exception.InnerException;
+            }
+
             User = new UserManager(UserDao, PlaylistDao).CreateUser();
             Video = new Video("s91jgcmQoB0", "Tristam - Chairs", 219);
             new VideoManager(VideoDao).Save(Video);

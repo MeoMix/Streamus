@@ -117,7 +117,7 @@ namespace Streamus.Backend.Domain.Managers
             NHibernateSessionManager.Instance.CommitTransaction();
         }
 
-        public void DeleteItem(Guid playlistId, Guid itemId, Guid userId)
+        public void DeleteItem(Guid itemId, Guid playlistId, Guid userId)
         {
             try
             {

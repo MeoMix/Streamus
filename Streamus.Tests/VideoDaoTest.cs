@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using Streamus.Backend.Dao;
 using Streamus.Backend.Domain;
@@ -10,12 +11,12 @@ namespace Streamus.Tests
     [TestFixture]
     public class VideoDaoTest
     {
-        private readonly IVideoDao VideoDao = new VideoDao();
-        private readonly IPlaylistDao PlaylistDao = new PlaylistDao();
-        private readonly IPlaylistItemDao PlaylistItemDao = new PlaylistItemDao();
-        private User User;
-        private Playlist Playlist;
-        private VideoManager VideoManager;
+        private IVideoDao VideoDao { get; set; }
+        private IPlaylistDao PlaylistDao { get; set; }
+        private IPlaylistItemDao PlaylistItemDao { get; set; }
+        private User User { get; set; }
+        private Playlist Playlist { get; set; }
+        private VideoManager VideoManager { get; set; }
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -23,6 +24,17 @@ namespace Streamus.Tests
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
+            try
+            {
+                PlaylistDao = new PlaylistDao();
+                PlaylistItemDao = new PlaylistItemDao();
+                VideoDao = new VideoDao();
+            }
+            catch (TypeInitializationException exception)
+            {
+                throw exception.InnerException;
+            }
+
             User = new UserManager(new UserDao(), new PlaylistDao()).CreateUser();
             Playlist = new Playlist(User.Id, "New Playlist 001", PlaylistDao.GetAll().Count);
             new PlaylistManager(PlaylistDao, PlaylistItemDao).Save(Playlist);

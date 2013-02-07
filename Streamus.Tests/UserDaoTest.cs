@@ -1,4 +1,5 @@
-﻿using NHibernate.Cfg;
+﻿using System;
+using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
 using NUnit.Framework;
 using Streamus.Backend.Dao;
@@ -12,9 +13,9 @@ namespace Streamus.Tests
     public class UserDaoTest
     {
         private Configuration Configuration { get; set; }
-        private readonly IUserDao UserDao = new UserDao();
-        private readonly IPlaylistDao PlaylistDao = new PlaylistDao();
-        private UserManager UserManager;
+        private IUserDao UserDao { get; set; }
+        private IPlaylistDao PlaylistDao { get; set; }
+        private UserManager UserManager { get; set; }
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -22,9 +23,19 @@ namespace Streamus.Tests
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
+            try
+            {
+                UserDao = new UserDao();
+                PlaylistDao = new PlaylistDao();
+            }
+            catch (TypeInitializationException exception)
+            {
+                throw exception.InnerException;
+            }
+
             //  Run this bit of code to have the UserDaoTest create the StreamusTest tables.
             //  Disable this again immediately after. It'll mess up tests and makes everything run slower.
-            bool needSetupDatabase = true;
+            const bool needSetupDatabase = true;
 
             if (needSetupDatabase)
             {

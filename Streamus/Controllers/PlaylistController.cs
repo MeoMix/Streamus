@@ -75,15 +75,6 @@ namespace Streamus.Controllers
         }
 
         [HttpPost]
-        public EmptyResult DeleteItemByPosition(Guid playlistId, Guid itemId, Guid userId)
-        {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
-            playlistManager.DeleteItem(playlistId, itemId, userId);
-
-            return new EmptyResult();
-        }
-
-        [HttpPost]
         public ActionResult CreateItem(PlaylistItem playlistItem)
         {
             var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);

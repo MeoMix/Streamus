@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Runtime.Remoting.Messaging;
 using System.Web;
 using NHibernate;
@@ -29,7 +30,18 @@ namespace Streamus.Backend.Dao
         /// </summary>
         public static NHibernateSessionManager Instance
         {
-            get { return Nested.NHibernateSessionManager; }
+            get
+            {
+                try
+                {
+                    return Nested.NHibernateSessionManager;
+                }
+                catch (TypeInitializationException exception)
+                {
+                    Logger.Error(exception.InnerException.Message);
+                    throw exception.InnerException;
+                }
+            }
         }
 
         /// <summary>

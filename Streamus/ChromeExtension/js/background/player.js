@@ -185,6 +185,7 @@ define(['playlistManager', 'videoManager', 'playerBuilder', 'ytHelper'], functio
                 if (selectedItem) {
                     var selectedVideoId = selectedItem.get('videoId');
                     var currentVideo = videoManager.getLoadedVideoById(selectedVideoId);
+                    console.log("Current video", currentVideo);
                     totalTime = currentVideo ? currentVideo.get('duration') : 0;
                 }
 

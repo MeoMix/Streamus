@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 using Streamus.Backend.Dao;
 using Streamus.Backend.Domain;
 using Streamus.Backend.Domain.Interfaces;
@@ -27,6 +28,15 @@ namespace Streamus.Controllers
             playlistManager.UpdatePlaylistItem(playlistItem);
 
             return new JsonDataContractActionResult(playlistItem);
+        }
+
+        [HttpDelete]
+        public EmptyResult Delete(Guid id, Guid playlistId, Guid userId)
+        {
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
+            playlistManager.DeleteItem(id, playlistId, userId);
+
+            return new EmptyResult();
         }
     }
 }

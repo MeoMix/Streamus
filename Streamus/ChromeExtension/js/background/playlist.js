@@ -5,8 +5,9 @@ define(['ytHelper',
         'playlistItems',
         'playlistItemsHistory',
         'playlistItem',
-        'programState'
-    ], function(ytHelper, videoManager, PlaylistItems, PlaylistItemsHistory, PlaylistItem, programState) {
+        'programState',
+        'loginManager'
+    ], function(ytHelper, videoManager, PlaylistItems, PlaylistItemsHistory, PlaylistItem, programState, loginManager) {
         'use strict';
         
         var Playlist = Backbone.Model.extend({
@@ -267,18 +268,24 @@ define(['ytHelper',
             removeItem: function(item, callback) {
                 //  If localStorage is saving the currently selected item as the one being deleted, clean that up so restarting the program doesn't try and 
                 //  select a playlistItem which does not exist.
-                if (localStorage.getItem(this.get('id') + '_selectedItemId') === item.get('id')) {
-                    localStorage.setItem(this.get('id') + '_selectedItemId', null);
+                var playlistId = this.get('id');
+                var itemId = item.get('id');
+                if (localStorage.getItem(playlistId + '_selectedItemId') === itemId) {
+                    localStorage.setItem(playlistId + '_selectedItemId', null);
                 }
 
                 //  I'm removing the item client-side before issuing a command to the server for usability sake.
                 //  It is counter-intuitive to the user to click 'Delete' and have lag while the server responds.
                 //  TODO: How do I handle a scenario where the server fails to delete by ID?
-                this.remove(item);
+                this.get('items').remove(item);
 
-                syncShuffledItems.call(this, id);
+                syncShuffledItems.call(this, itemId);
 
                 item.destroy({
+                    data: $.param({
+                        playlistId: playlistId,
+                        userId: loginManager.get('user').get('id')
+                    }),
                     success: callback,
                     error: function (error) {
                         console.error(error);
