@@ -3,6 +3,7 @@ using Streamus.Backend.Dao;
 using Streamus.Backend.Domain;
 using Streamus.Backend.Domain.Interfaces;
 using Streamus.Backend.Domain.Managers;
+using System;
 
 namespace Streamus.Tests
 {
@@ -43,63 +44,63 @@ namespace Streamus.Tests
             PlaylistManager.Save(Playlist);
         }
 
-        //[Test]
-        //public void CanUpdatePlaylistItem()
-        //{
-        //    //  Usually created client-side, but for testing it is OK to create server-side.
-        //    Guid playlistItemId = Guid.NewGuid();
-        //    var playlistItem = new PlaylistItem(Playlist.Id, playlistItemId, Playlist.Items.Count, Video.Title, Video.Id);
-        //    PlaylistManager.CreatePlaylistItem(playlistItem);
+        [Test]
+        public void Updates()
+        {
+            //  Usually created client-side, but for testing it is OK to create server-side.
+            Guid playlistItemId = Guid.NewGuid();
+            var playlistItem = new PlaylistItem(Playlist.Id, playlistItemId, Playlist.Items.Count, Video.Title, Video.Id);
+            PlaylistManager.CreatePlaylistItem(playlistItem);
 
-        //    //  Only add after successfully saving.
-        //    Playlist.Items.Add(playlistItem);
+            //  Only add after successfully saving.
+            Playlist.Items.Add(playlistItem);
 
-        //    playlistItem.Title = "New Title 001";
-        //    PlaylistManager.UpdatePlaylistItem(playlistItem);
+            playlistItem.Title = "New Title 001";
+            PlaylistManager.UpdatePlaylistItem(playlistItem);
 
-        //    //  Remove entity from NHibernate cache to force DB query to ensure actually created.
-        //    NHibernateSessionManager.Instance.Evict(playlistItem);
+            //  Remove entity from NHibernate cache to force DB query to ensure actually created.
+            NHibernateSessionManager.Instance.Clear();
 
-        //    PlaylistItem playlistItemFromDatabase = PlaylistItemDao.Get(playlistItem.PlaylistId, playlistItem.Id);
+            PlaylistItem playlistItemFromDatabase = PlaylistItemDao.Get(playlistItem.PlaylistId, playlistItem.Id);
 
-        //    //  Test that the playlitItem was successfully inserted
-        //    Assert.IsNotNull(playlistItemFromDatabase);
-        //    Assert.AreEqual(playlistItemFromDatabase.Title, playlistItem.Title);
-        //}
+            //  Test that the playlitItem was successfully inserted
+            Assert.IsNotNull(playlistItemFromDatabase);
+            Assert.AreEqual(playlistItemFromDatabase.Title, playlistItem.Title);
+        }
 
-        //[Test]
-        //public void CanDeletePlaylistItem()
-        //{
-        //    //  Usually created client-side, but for testing it is OK to create server-side.
-        //    Guid firstItemId = Guid.NewGuid();
-        //    var firstItem = new PlaylistItem(Playlist.Id, firstItemId, Playlist.Items.Count, Video.Title, Video.Id);
-        //    PlaylistManager.CreatePlaylistItem(firstItem);
+        [Test]
+        public void Deletes()
+        {
+            //  Usually created client-side, but for testing it is OK to create server-side.
+            Guid firstItemId = Guid.NewGuid();
+            var firstItem = new PlaylistItem(Playlist.Id, firstItemId, Playlist.Items.Count, Video.Title, Video.Id);
+            PlaylistManager.CreatePlaylistItem(firstItem);
 
-        //    //  Only add after successfully saving.
-        //    Playlist.Items.Add(firstItem);
+            //  Only add after successfully saving.
+            Playlist.Items.Add(firstItem);
 
-        //    //  Usually created client-side, but for testing it is OK to create server-side.
-        //    Guid secondItemId = Guid.NewGuid();
-        //    var secondItem = new PlaylistItem(Playlist.Id, secondItemId, Playlist.Items.Count, Video.Title, Video.Id);
-        //    PlaylistManager.CreatePlaylistItem(secondItem);
+            //  Usually created client-side, but for testing it is OK to create server-side.
+            Guid secondItemId = Guid.NewGuid();
+            var secondItem = new PlaylistItem(Playlist.Id, secondItemId, Playlist.Items.Count, Video.Title, Video.Id);
+            PlaylistManager.CreatePlaylistItem(secondItem);
 
-        //    //  Only add after successfully saving.
-        //    Playlist.Items.Add(secondItem);
+            //  Only add after successfully saving.
+            Playlist.Items.Add(secondItem);
 
-        //    PlaylistManager.DeleteItem(firstItem.PlaylistId, firstItem.Id, Playlist.UserId);
+            PlaylistManager.DeleteItem(firstItem.PlaylistId, firstItem.Id, Playlist.UserId);
 
-        //    //  Remove entity from NHibernate cache to force DB query to ensure actually created.
-        //    NHibernateSessionManager.Instance.Evict(firstItem);
+            //  Remove entity from NHibernate cache to force DB query to ensure actually created.
+            NHibernateSessionManager.Instance.Clear();
 
-        //    PlaylistItem deletedPlaylistItem = PlaylistItemDao.Get(firstItem.PlaylistId, firstItem.Id);
-        //    Assert.IsNull(deletedPlaylistItem);
+            PlaylistItem deletedPlaylistItem = PlaylistItemDao.Get(firstItem.PlaylistId, firstItem.Id);
+            Assert.IsNull(deletedPlaylistItem);
 
-        //    // Remove entity from NHibernate cache to ensure position was updated.
-        //    NHibernateSessionManager.Instance.Evict(secondItem);
+            // Remove entity from NHibernate cache to ensure position was updated.
+            NHibernateSessionManager.Instance.Clear();
 
-        //    PlaylistItem updatedPlaylistItem = PlaylistItemDao.Get(secondItem.PlaylistId, secondItem.Id);
+            PlaylistItem updatedPlaylistItem = PlaylistItemDao.Get(secondItem.PlaylistId, secondItem.Id);
 
-        //    Assert.AreEqual(updatedPlaylistItem.Position, 0);
-        //} 
+            Assert.AreEqual(updatedPlaylistItem.Position, 0);
+        } 
     }
 }

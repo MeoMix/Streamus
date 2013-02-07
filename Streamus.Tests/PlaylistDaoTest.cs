@@ -48,7 +48,7 @@ namespace Streamus.Tests
             PlaylistManager.UpdateTitle(playlist.Id, "Existing Playlist 001");
 
             //  Remove entity from NHibernate cache to force DB query to ensure actually created.
-            NHibernateSessionManager.Instance.Evict(playlist);
+            NHibernateSessionManager.Instance.Clear();
 
             Playlist playlistFromDatabase = PlaylistDao.Get(playlist.Id);
             //  Test that the product was successfully inserted
@@ -71,8 +71,7 @@ namespace Streamus.Tests
             playlist.Items.Add(playlistItem);
             PlaylistManager.DeletePlaylistById(playlist.Id);
 
-            NHibernateSessionManager.Instance.Evict(playlist);
-            NHibernateSessionManager.Instance.Evict(playlistItem);
+            NHibernateSessionManager.Instance.Clear();
 
             Playlist playlistFromDatabase = PlaylistDao.Get(playlist.Id);
             //  Test that the product was successfully inserted

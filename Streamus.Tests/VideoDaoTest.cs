@@ -45,7 +45,7 @@ namespace Streamus.Tests
             VideoManager.Save(video);
 
             //  Remove entity from NHibernate cache to force DB query to ensure actually created.
-            NHibernateSessionManager.Instance.Evict(video);
+            NHibernateSessionManager.Instance.Clear();
 
             Video videoFromDatabase = VideoDao.Get(video.Id);
 

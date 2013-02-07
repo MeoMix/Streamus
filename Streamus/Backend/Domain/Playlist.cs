@@ -53,33 +53,38 @@ namespace Streamus.Backend.Domain
             validator.ValidateAndThrow(this);
         }
 
-        /// <summary>
-        ///     Must be provided to properly compare two objects
-        ///     http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
-        /// </summary>
+        private int? _oldHashCode;
         public override int GetHashCode()
         {
-            //  Overflow could happen, but that would be OK.
-            unchecked
+            // Once we have a hash code we'll never change it
+            if (_oldHashCode.HasValue)
+                return _oldHashCode.Value;
+
+            bool thisIsTransient = Equals(Id, Guid.Empty);
+
+            // When this instance is transient, we use the base GetHashCode()
+            // and remember it, so an instance can NEVER change its hash code.
+            if (thisIsTransient)
             {
-                int hash = 17;
-                hash = hash*23 + Position.GetHashCode();
-                hash = hash*23 + Title.GetHashCode();
-                hash = hash*23 + Id.GetHashCode();
-                return hash;
+                _oldHashCode = base.GetHashCode();
+                return _oldHashCode.Value;
             }
+            return Id.GetHashCode();
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((Playlist) obj);
-        }
+            Playlist other = obj as Playlist;
+            if (other == null)
+                return false;
 
-        private bool Equals(Playlist other)
-        {
-            return Id.Equals(other.Id);
+            // handle the case of comparing two NEW objects
+            bool otherIsTransient = Equals(other.Id, Guid.Empty);
+            bool thisIsTransient = Equals(Id, Guid.Empty);
+            if (otherIsTransient && thisIsTransient)
+                return ReferenceEquals(other, this);
+
+            return other.Id.Equals(Id);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using FluentValidation;
 using Streamus.Backend.Domain.Validators;
+using System;
 
 namespace Streamus.Backend.Domain
 {
@@ -35,6 +36,33 @@ namespace Streamus.Backend.Domain
             validator.ValidateAndThrow(this);
         }
 
-        //  TODO: Need to implement Equals() and GetHashCode()
+        public override int GetHashCode()
+        {
+            bool thisIsTransient = Equals(Id, string.Empty);
+
+            if (thisIsTransient)
+            {
+                throw new ApplicationException("Video should never be transient.");
+            }
+
+            return Id.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            Video other = obj as Video;
+            if (other == null)
+                return false;
+
+            // handle the case of comparing two NEW objects
+            bool otherIsTransient = Equals(other.Id, string.Empty);
+            bool thisIsTransient = Equals(Id, string.Empty);
+            if (otherIsTransient || thisIsTransient)
+            {
+                throw new ApplicationException("Video should never be transient.");
+            }
+
+            return other.Id.Equals(Id);
+        }
     }
 }

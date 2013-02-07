@@ -22,11 +22,17 @@ namespace Streamus.Tests
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            Configuration = new Configuration();
-            Configuration.Configure();
+            //  Run this bit of code to have the UserDaoTest create the StreamusTest tables.
+            //  Disable this again immediately after. It'll mess up tests and makes everything run slower.
+            bool needSetupDatabase = false;
 
-            //  Recreate database schema before execution of tests. 
-            new SchemaExport(Configuration).Execute(false, true, false);
+            if (needSetupDatabase)
+            {
+                Configuration = new Configuration();
+                Configuration.Configure();
+
+                new SchemaExport(Configuration).Execute(false, true, false);
+            }
         }
 
         /// <summary>
@@ -45,7 +51,7 @@ namespace Streamus.Tests
             User user = UserManager.CreateUser();
 
             //  Remove entity from NHibernate cache to force DB query to ensure actually created.
-            NHibernateSessionManager.Instance.Evict(user);
+            NHibernateSessionManager.Instance.Clear();
 
             User userFromDatabase = UserDao.Get(user.Id);
             //  Test that the product was successfully inserted

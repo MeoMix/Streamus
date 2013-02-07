@@ -62,48 +62,14 @@ namespace Streamus.Backend.Dao
             SessionFactory = new Configuration().Configure().BuildSessionFactory();
         }
 
-        /// <summary>
-        ///     Allows you to register an interceptor on a new session.  This may not be called if there is already
-        ///     an open session attached to the HttpContext.  If you have an interceptor to be used, modify
-        ///     the HttpModule to call this before calling BeginTransaction().
-        /// </summary>
-        public void RegisterInterceptor(IInterceptor interceptor)
-        {
-            ISession session = ContextSession;
-
-            if (session != null && session.IsOpen)
-            {
-                throw new CacheException("You cannot register an interceptor once a session has already been opened");
-            }
-
-            GetSession(interceptor);
-        }
-
         public ISession GetSession()
         {
-            return GetSession(null);
-        }
-
-        public void Evict(object evictee)
-        {
-            GetSession(null).Evict(evictee);
-        }
-
-        /// <summary>
-        ///     Gets a session with or without an interceptor.  This method is not called directly; instead,
-        ///     it gets invoked from other public methods.
-        /// </summary>
-        private ISession GetSession(IInterceptor interceptor)
-        {
-            ISession session = ContextSession;
-
-            if (session == null)
+            if (ContextSession == null)
             {
-                session = interceptor != null ? SessionFactory.OpenSession(interceptor) : SessionFactory.OpenSession();
-                ContextSession = session;
+                ContextSession = SessionFactory.OpenSession();
             }
 
-            return session;
+            return ContextSession;
         }
 
         /// <summary>
@@ -120,6 +86,11 @@ namespace Streamus.Backend.Dao
             }
 
             ContextSession = null;
+        }
+
+        public void Clear()
+        {
+            GetSession().Clear();
         }
 
         public void BeginTransaction()
