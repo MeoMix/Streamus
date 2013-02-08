@@ -2,8 +2,8 @@
 define(function(){
 	'use strict';
 	var playPauseButton = $('#PlayPauseButton');
-	var pauseIcon = $('#pauseIcon');
-	var playIcon = $('#playIcon');
+	var pauseIcon = $('#PauseIcon');
+	var playIcon = $('#PlayIcon');
     
     //  Change the music button to the 'Play' image and cause a video to play upon click.
 	function setToPlay() {

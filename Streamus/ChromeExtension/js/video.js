@@ -6,7 +6,6 @@ define(['programState'], function(programState){
         defaults: {
             //  Provided by YouTube's API.
             id: '',
-            playlistId: null,
             title: '',
             duration: -1
         },

@@ -117,9 +117,7 @@ define(['geoplugin', 'levenshtein', 'video', 'videos'], function (geoplugin, lev
         parseVideoIdFromUrl: function (url) {
             var videoId = null;
 
-            //  TODO: Get better at regex and figure out how to support something like: https://www.youtube.com/watch?feature=player_embedded&v=6od4WeaWDcs
-            url = url.replace('feature=player_embedded&', '');
-            var match = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/);
+            var match = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|watch\?.*?\&v=)([^#\&\?]*).*/);
             if (match && match[2].length === 11) {
                 videoId = match[2];
             }

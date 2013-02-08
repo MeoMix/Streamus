@@ -3,10 +3,9 @@ define(['playlist',
         'playlists',
         'playlistItem',
         'playlistItems',
-        'playlistDataProvider',
         'loginManager',
         'programState'
-       ], function (Playlist, Playlists, PlaylistItem, PlaylistItems, playlistDataProvider, loginManager, programState) {
+       ], function (Playlist, Playlists, PlaylistItem, PlaylistItems, loginManager, programState) {
         'use strict';
         var playlists = new Playlists();
         var isReady = false;
@@ -16,8 +15,6 @@ define(['playlist',
         };
            
         loginManager.once('loggedIn', function () {
-            console.log("login manager on loggedIn is firing");
-
             var userId = loginManager.get('user').get('id');
 
             $.ajax({
@@ -40,7 +37,6 @@ define(['playlist',
                         selectPlaylistById(savedId);
                     }
 
-                    console.log("triggering on ready");
                     $(document).trigger(events.onReady);
                     isReady = true;
                 },

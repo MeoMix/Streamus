@@ -25,6 +25,9 @@ define(['video',
 
             return loadedVideo;
         },
+        cacheVideo: function(video) {
+            loadedVideos.add(video);
+        },
         loadVideo: function (id, callback) {
             if (loadedVideos.get(id) == null) {
                 var video = new Video({ id: id });

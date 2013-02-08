@@ -12,7 +12,6 @@
                 var self = this;
 
                 user.on('loaded', function() {
-                    console.log("User has loaded, triggering loggedIn");
                     self.set('loggedIn', true);
                     self.set('user', this);
                     self.trigger('loggedIn');

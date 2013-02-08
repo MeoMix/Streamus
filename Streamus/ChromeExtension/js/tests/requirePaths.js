@@ -25,7 +25,6 @@ var require = {
         'playerBuilder': 'js/background/playerBuilder',
         'playlist': 'js/background/playlist',
         'playlists': 'js/background/playlists',
-        'playlistDataProvider': 'js/background/playlistDataProvider',
         'user': 'js/background/user',
 
         'video': 'js/video',

@@ -226,7 +226,7 @@
   z-index:3;
 }
 
-#playIcon{
+#PlayIcon{
   left: 54% !important;
 }
 
@@ -329,7 +329,7 @@
   overflow: hidden;
 }
 
-#pauseIcon
+#PauseIcon
 {
   display: none;
 }

@@ -4,7 +4,6 @@ var require = {
         'main': 'background/main',
         'programState': 'programState',
         'background': 'background/background',
-        'playlistDataProvider': 'background/playlistDataProvider',
         'playerStates': 'playerStates',
         'player': 'background/player',
         'playlist': 'background/playlist',

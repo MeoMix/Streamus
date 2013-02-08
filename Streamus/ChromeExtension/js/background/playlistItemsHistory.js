@@ -7,7 +7,7 @@
 
     return function(config) {
         var playlistItemsHistory = new PlaylistItemsHistory(config);
-        console.log("playlistItemsHistory:", playlistItemsHistory);
+
         return playlistItemsHistory;
     };
 })

@@ -45,6 +45,8 @@ define(function(){
         var elapsedTime = selector.val();
         var totalTime = selector.prop('max');
 
+        console.log("elapsed and total time:", elapsedTime, totalTime);
+
         //Don't divide by 0.
         var fill = totalTime !== '0' ? elapsedTime / totalTime : 0;
 

@@ -242,7 +242,7 @@ define(['ytHelper',
                 });
 
                 this.get('items').push(playlistItem);
-                videoManager.loadVideo(videoId);
+                videoManager.cacheVideo(video);
 
                 var shuffledItems = this.get('shuffledItems');
                 shuffledItems.push(playlistItem);

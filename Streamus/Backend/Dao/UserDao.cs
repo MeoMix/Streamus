@@ -13,7 +13,7 @@ namespace Streamus.Backend.Dao
 
         public User Get(Guid id)
         {
-            User user = null;
+            User user;
 
             try
             {
@@ -21,8 +21,8 @@ namespace Streamus.Backend.Dao
             }
             catch (ObjectNotFoundException exception)
             {
-                //  Consume error and return null.
                 Logger.Error(exception);
+                throw;
             }
 
             return user;
