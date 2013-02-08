@@ -89,20 +89,6 @@ define(['video',
 
             return video;
         },
-        saveVideo: function (video, callback) {
-            video.save({
-                success: function(data) {
-                    loadedVideos.add(data);
-                    
-                    if (callback) {
-                        callback(data);
-                    }
-                },
-                error: function (error) {
-                    console.error(error);
-                }
-            });
-        },
         saveVideos: function (videos, callback) {
             console.log("Calling save videos! Need to convert to backbone.");
             $.ajax({

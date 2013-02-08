@@ -1,5 +1,5 @@
 ﻿//  PlaylistItems have a one-to-one relationship with a Video object via the videoId property.
-define(['helpers', 'programState'], function(helpers, programState) {
+define(['helpers', 'programState', 'loginManager'], function(helpers, programState, loginManager) {
     'use strict';
     
     var PlaylistItem = Backbone.Model.extend({
@@ -16,7 +16,16 @@ define(['helpers', 'programState'], function(helpers, programState) {
                 relatedVideos: [] 
             };
         },
-        urlRoot: programState.getBaseUrl() + 'PlaylistItem/'
+        urlRoot: programState.getBaseUrl() + 'PlaylistItem/',
+        destroy: function (options) {
+            //  Override URL
+            options || (options = {});
+            options.url = this.url() + '/' + this.get('playlistId') + '/' + loginManager.get('user').get('id');
+
+            // Call Model.destroy().
+            // We are reusing the existing functionality from Backbone.Model.destroy().
+            Backbone.Model.prototype.destroy.apply(this, arguments);
+        }
     });
 
     //  Public exposure of a constructor for building new PlaylistItem objects.

@@ -254,12 +254,14 @@ define(['ytHelper',
                     this.selectItemById(playlistItemId);
                 }
 
-                //TODO: Should probably be saving a Video as part of playlistItem, maybe?
-                videoManager.saveVideo(video, function () {
-                    //  Need to ensure that a video saves to the database before trying to save the item for it.
-                    playlistItem.save();
+                //  TODO: Should probably be saving a Video as part of playlistItem, maybe?
+                //  TODO: Backbone documentation conflicts implementation -- need to pass in empty {} here to call save properly.
+                video.save({}, {
+                    success: function () {
+                        //  Need to ensure that a video saves to the database before trying to save the item for it.
+                        playlistItem.save();
+                    }
                 });
-                
 
                 return playlistItem;
             },
@@ -282,10 +284,6 @@ define(['ytHelper',
                 syncShuffledItems.call(this, itemId);
 
                 item.destroy({
-                    data: $.param({
-                        playlistId: playlistId,
-                        userId: loginManager.get('user').get('id')
-                    }),
                     success: callback,
                     error: function (error) {
                         console.error(error);
