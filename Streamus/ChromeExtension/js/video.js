@@ -12,7 +12,7 @@ define(['programState'], function(programState){
         urlRoot: programState.getBaseUrl() + 'Video/',
         save: function (attributes, options) {
             chrome.extension.getBackgroundPage().VideoManager.cache(this);
-            Backbone.Model.prototype.save.apply(this, attributes, options);
+            return Backbone.Model.prototype.save.call(this, attributes, options);
         }
     });
 

@@ -264,19 +264,21 @@ define(['ytHelper',
 
                 this.get('items').push(playlistItem);
 
-                if (selected) {
-                    var playlistItemId = playlistItem.get('id');
-                    this.selectItemById(playlistItemId);
-                }
-
                 //  TODO: Should probably be saving a Video as part of playlistItem, maybe?
                 //  TODO: Backbone documentation conflicts implementation -- need to pass in empty {} here to call save properly.
+                console.log("Saving a video.")
                 video.save({}, {
                     success: function () {
+                        console.log("Saving playlistItem");
                         //  Need to ensure that a video saves to the database before trying to save the item for it.
                         playlistItem.save();
                     }
                 });
+                
+                if (selected) {
+                    var playlistItemId = playlistItem.get('id');
+                    this.selectItemById(playlistItemId);
+                }
 
                 return playlistItem;
             },

@@ -75,6 +75,7 @@ define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistM
         })();
 
         playlistManager.onActivePlaylistTitleChange(refreshUI);
+        playlistManager.onPlaylistRemoved(refreshUI);
 
         function refreshUI() {
             if (port && port.postMessage) {
@@ -207,15 +208,6 @@ define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistM
                         });
                     }
                 });
-            },
-            
-            removePlaylistById: function(playlistId) {
-                //Don't allow removing of active playlist.
-                //TODO: Perhaps just don't allow deleting the last playlist? More difficult.
-                if (playlistManager.activePlaylist.get('id') !== playlistId) {
-                    playlistManager.removePlaylistById(playlistId);
-                    refreshUI();
-                }
             },
             
             addVideoByIdToPlaylist: function(id, playlistId){

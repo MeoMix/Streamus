@@ -15,7 +15,8 @@ define(['playlist',
 
         var events = {
             onReady: 'playlistManager.onReady',
-            onActivePlaylistTitleChange: 'playlistManager.onActivePlaylistTitleChange'
+            onActivePlaylistTitleChange: 'playlistManager.onActivePlaylistTitleChange',
+            onPlaylistRemoved: 'playlistManager.onPlaylistRemoved'
         };
 
         loginManager.once('loggedIn', function() {
@@ -92,6 +93,9 @@ define(['playlist',
             onActivePlaylistTitleChange: function(event) {
                 $(document).on(events.onActivePlaylistTitleChange, event);
             },
+            onPlaylistRemoved: function (event) {
+                $(document).on(events.onPlaylistRemoved, event);
+            },
             get playlists() {
                 return playlists;
             },
@@ -137,19 +141,25 @@ define(['playlist',
                     }
                 });
             },
-            removePlaylistById: function(playlistId) {
-                console.log("playlist id:", playlistId);
-                var playlist = playlists.get(playlistId);
+            
+            removePlaylistById: function (playlistId) {
+                //Don't allow removing of active playlist.
+                //TODO: Perhaps just don't allow deleting the last playlist? More difficult.
+                if (activePlaylist.get('id') !== playlistId) {
+                    console.log("playlist id:", playlistId);
+                    var playlist = playlists.get(playlistId);
 
-                playlist.destroy({
-                    success: function() {
-                        //  Remove from playlists clientside only after server responds with successful delete.
-                        playlists.remove(playlist);
-                    },
-                    error: function(error) {
-                        console.error(error);
-                    }
-                });
+                    playlist.destroy({
+                        success: function () {
+                            //  Remove from playlists clientside only after server responds with successful delete.
+                            playlists.remove(playlist);
+                            $(document).trigger(events.onPlaylistRemoved);
+                        },
+                        error: function (error) {
+                            console.error(error);
+                        }
+                    });
+                }
             }
         };
 

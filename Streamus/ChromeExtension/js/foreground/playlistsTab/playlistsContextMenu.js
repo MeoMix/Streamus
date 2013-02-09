@@ -10,7 +10,7 @@ define(['contextMenu'], function (contextMenu) {
                 //TODO: I need to gray out the option to delete, but still show it.
                 //Should I gray out when clicking on last playlist or current playlist?
                 if (playlist !== null && !playlist.get('selected')) {
-                    chrome.extension.getBackgroundPage().YoutubePlayer.removePlaylistById(playlist.get('id'));
+                    chrome.extension.getBackgroundPage().PlaylistManager.removePlaylistById(playlist.get('id'));
                 }
             });
         }
