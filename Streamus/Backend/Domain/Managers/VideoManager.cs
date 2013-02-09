@@ -40,6 +40,7 @@ namespace Streamus.Backend.Domain.Managers
             catch (Exception exception)
             {
                 Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }
@@ -61,6 +62,7 @@ namespace Streamus.Backend.Domain.Managers
             catch (Exception exception)
             {
                 Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }
@@ -84,6 +86,7 @@ namespace Streamus.Backend.Domain.Managers
             catch (Exception exception)
             {
                 Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }
@@ -98,6 +101,7 @@ namespace Streamus.Backend.Domain.Managers
             catch (Exception exception)
             {
                 Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }
@@ -112,6 +116,7 @@ namespace Streamus.Backend.Domain.Managers
             catch (Exception exception)
             {
                 Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }

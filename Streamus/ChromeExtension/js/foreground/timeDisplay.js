@@ -9,13 +9,14 @@ define(['helpers'], function(helpers) {
     currentTimeLabel.text(helpers.prettyPrintTime(timeInSeconds));
 
     //  Only need to update totalTime whenever the playlistItem changes.
-    youtubePlayer.items.on('change:selected', function(item, isSelected) {
+    var items = chrome.extension.getBackgroundPage().PlaylistManager.activePlaylist.get('items');
+    items.on('change:selected', function(item, isSelected) {
         if (isSelected) {
             setTotalTime(item);
         }
     });
     
-    var selectedItem = youtubePlayer.items.find(function (item) {
+    var selectedItem = items.find(function (item) {
         return item.get('selected');
     });
 
@@ -26,7 +27,6 @@ define(['helpers'], function(helpers) {
     function setTotalTime(playlistItem) {
         var videoId = playlistItem.get('videoId');
         var currentVideo = chrome.extension.getBackgroundPage().VideoManager.getLoadedVideoById(videoId);
-
         var totalTime = currentVideo.get('duration');
 
         totalTimeLabel.text(helpers.prettyPrintTime(totalTime));

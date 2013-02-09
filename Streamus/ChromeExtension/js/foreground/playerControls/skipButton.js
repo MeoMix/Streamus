@@ -14,13 +14,13 @@ define(function(){
         //  Prevent spamming by only allowing a next click once a second.
         setTimeout(function () { 
             skipButton.off('click').one('click', skipVideo);
-        }, 1000);
+        }, 500);
     }
     
     function refresh() {
-        var player = chrome.extension.getBackgroundPage().YoutubePlayer;
+        var playlistManager = chrome.extension.getBackgroundPage().PlaylistManager;
         
-        if (player.items.length > 0) {
+        if (playlistManager.activePlaylist.get('items').length > 0) {
             //  Paint the skipButton's path black and bind its click event.
             //  TODO: Use underscore's throttle here to prevent spam clicking.
             

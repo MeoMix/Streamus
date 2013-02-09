@@ -7,7 +7,7 @@ define(['ytHelper',
         'programState'
     ], function(ytHelper, PlaylistItems, PlaylistItemsHistory, PlaylistItem, programState) {
         'use strict';
-        
+
         var Playlist = Backbone.Model.extend({
             defaults: function() {
                 return {
@@ -17,8 +17,7 @@ define(['ytHelper',
                     selected: false,
                     position: -1,
                     history: new PlaylistItemsHistory(),
-                    items: new PlaylistItems(),
-                    shuffledItems: new PlaylistItems()
+                    items: new PlaylistItems()
                 };
             },
 
@@ -54,10 +53,6 @@ define(['ytHelper',
                 //  Now we for sure have a PlaylistItem collection.
                 var itemCollection = this.get('items');
                 
-                itemCollection.on('change:selected', function (event, callback, context) {
-                    console.log("change selected on!", event, callback, context);
-                });
-
                 if (itemCollection.length > 0) {
                     //  Playlists store selected item client-side because it can change so often.
                     var localStorageKey = this.get('id') + '_selectedItemId';
@@ -66,6 +61,22 @@ define(['ytHelper',
                     //  Select the most recently selected item during initalization.
                     this.selectItemById(savedItemId);
                 }
+                
+                this.on('change:title', function () {
+                    $.ajax({
+                        url: programState.getBaseUrl() + 'Playlist/UpdateTitle',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            playlistId: this.get('id'),
+                            title: this.get('title')
+                        },
+                        error: function (error) {
+                            //  TODO: Rollback client-side transaction somehow?
+                            console.error("Error saving title", error);
+                        }
+                    });
+                });
 
             },
 
@@ -73,6 +84,9 @@ define(['ytHelper',
             save: function(attributes, options) {
                 //  Keep track of the selected item in localStorage.
                 var selectedItem = this.getSelectedItem();
+
+                console.log("Selected item:", selectedItem);
+
                 var selectedItemId = selectedItem ? selectedItem.get('id') : null;
 
                 var selectedItemStorageKey = this.get('id') + '_selectedItemId';
@@ -82,6 +96,7 @@ define(['ytHelper',
             },
 
             selectItemById: function (id) {
+                console.log("calling selectItemById");
                 //  Deselect the currently selected item, then select the new item to have selected.
                 var selectedItem = this.getSelectedItem();
 
@@ -92,21 +107,21 @@ define(['ytHelper',
                 }
 
                 var item = this.getItemById(id);
-
+                console.log("item in selectItemById:", item);
                 if (item != null && item.get('selected') === false) {
                     console.log("Selecting a new current item.");
                     item.set('selected', true);
+                    item.set('playedRecently', true);
 
                     var history = this.get('history');
                     //  Unshift won't have an effect if item exists in history.
                     history.remove(item, { silent: true });
                     history.unshift(item);
 
-                    syncShuffledItems.call(this, id);
                     localStorage.setItem(this.get('id') + '_selectedItemId', id);
                 }
 
-                console.log("returning the selected item.");
+                console.log("returning the selected item.", item);
                 return item;
             },
 
@@ -122,13 +137,25 @@ define(['ytHelper',
                 return randomRelatedVideo;
             },
             
-            //TODO: This method name sucks and the method itself is doing too much. Refactor!
+            //  TODO: This method name sucks and the method itself is doing too much. Refactor!
             gotoNextItem: function() {
                 var nextItem = null;
                 var isShuffleEnabled = JSON.parse(localStorage.getItem('isShuffleEnabled') || false);
 
                 if (isShuffleEnabled === true) {
-                    nextItem = this.get('shuffledItems').at(0);
+                    var items = this.get('items');
+                    var itemsNotPlayedRecently = items.where(function (item) {
+                        return !item.playedRecently;
+                    });
+                    
+                    if (itemsNotPlayedRecently.length === 0) {
+                        items.each(function(item) {
+                            item.set('playedRecently', false);
+                            itemsNotPlayedRecently.push(item);
+                        });
+                    }
+
+                    nextItem = _.shuffle(itemsNotPlayedRecently)[0];
                 } else {
                     console.log("History:", this.get('history'));
                     var selectedItem = this.get('history').at(0);
@@ -151,14 +178,9 @@ define(['ytHelper',
             
             //  TODO: This method name sucks and the method itself is doing too much. Refactor!
             gotoPreviousItem: function() {
-                //  Move the currently playing item out of history and into the front of shuffledItems so that if
-                //  a user clicks 'next' or plays forward the item that was ahead will still be ahead instead of random item.
-
                 var selectedItem = this.get('history').shift();
-                this.get('shuffledItems').unshift(selectedItem);
-
-                //  Get the previous item by history if possible.
                 var previousItem = this.get('history').shift();
+                
                 //  If no previous item was found in the history, then just go back one item by index.
                 if (!previousItem) {
                     //  Goes to the end of the current playlist.
@@ -192,10 +214,6 @@ define(['ytHelper',
                     });
 
                     self.get('items').push(playlistItem);
-
-                    var shuffledItems = self.get('shuffledItems');
-                    shuffledItems.push(playlistItem);
-                    shuffledItems.shuffle();
 
                     //  Ensure the first playlistItem is selected if adding a bunch of new ones.
                     if (self.get('items').length === 1) {
@@ -246,11 +264,6 @@ define(['ytHelper',
 
                 this.get('items').push(playlistItem);
 
-                var shuffledItems = this.get('shuffledItems');
-                shuffledItems.push(playlistItem);
-                //TODO: Can I chain?
-                shuffledItems.shuffle();
-
                 if (selected) {
                     var playlistItemId = playlistItem.get('id');
                     this.selectItemById(playlistItemId);
@@ -283,8 +296,6 @@ define(['ytHelper',
                 //  TODO: How do I handle a scenario where the server fails to delete by ID?
                 this.get('items').remove(item);
 
-                syncShuffledItems.call(this, itemId);
-
                 item.destroy({
                     success: callback,
                     error: function (error) {
@@ -294,68 +305,48 @@ define(['ytHelper',
             },
             
             moveItem: function (itemId, newPosition, callback) {
-                var playlistItems = this.get('items');
+                console.log("items before moving:", this.get('items'));
 
-                var movedItem = playlistItems.get(itemId);
+                var movedItem = this.get('items').get(itemId);
+                
                 var oldPosition = movedItem.get('position');
-                console.log("old position:", oldPosition);
+                var movementDirection = oldPosition > newPosition ? 1 : -1;
+                console.log("movementDirection:", movementDirection);
 
                 var distance = Math.abs(oldPosition - newPosition);
+                console.log("Old position and new position:in ", oldPosition, newPosition);
 
-                console.log("Distance being moved:", distance);
-
-                while (distance > 0) {
-                    
-                    //  Determine if the item moved forward or backward in the list.
-                    var itemBeingIteratedUpon;
-                    var newItemPosition;
-
-                    if (oldPosition > newPosition) {
-                        //  Every item with a position from one less than old position to new position gets incremented by one.
-
-                        itemBeingIteratedUpon = playlistItems.at(distance - 1);
-                        newItemPosition = itemBeingIteratedUpon.get('position') + 1;
-                    } else {
-                        //  Every item from old position to one less than new position gets decremented by one.
-
-                        var positionIndex = newPosition - (distance - 1);
-                        console.log("position index:", positionIndex);
-
-                        itemBeingIteratedUpon = playlistItems.at(positionIndex);
-                        newItemPosition = itemBeingIteratedUpon.get('position') - 1;
-                    }
-
-                    itemBeingIteratedUpon.set('position', newItemPosition);
-                    console.log("Setting " + itemBeingIteratedUpon.get('title') + " to " + newItemPosition);
-                    distance--;
+                for (; distance > 0; distance--) {
+                    //  Get a new index based on moving forward or backward.
+                    var itemIndex = oldPosition > newPosition ? distance - 1 : newPosition - (distance - 1);
+                    console.log("item index:", itemIndex);
+                    var item = this.get('items').at(itemIndex);
+                    console.log("item:", item);
+                    var movedItemPosition = item.get('position') + movementDirection;
+                    console.log("Setting " + item.get('title') + "\'s position to " + movedItemPosition);
+                    item.set('position', movedItemPosition);
                 }
 
-                console.log("Setting " + movedItem.get('title') + " to:", newPosition);
+                console.log("Setting " + movedItem.get('title') + "\'s position to " + newPosition);
                 movedItem.set('position', newPosition);
 
-                var playlistId = this.get('id');
+                console.log("items after moving:", this.get('items'));
 
-                //  Need to update positions server-side with a save after updating client-side list.
-                $.ajax({
-                    url: programState.getBaseUrl() + 'Playlist/UpdateItemPosition',
-                    type: 'POST',
-                    dataType: 'json',
-                    contentType: 'application/json; charset=utf-8',
-                    data: JSON.stringify({
-                        playlistId: playlistId,
-                        detachedItems: playlistItems
-                    }),
+                var self = this;
+                this.save({}, {
                     success: function () {
-                        callback(true);
-                    },
-                    error: function (error) {
-                        //  TODO: Rollback client-side transaction somehow?
-                        console.error(error);
-                        callback(false);
-                    }
-                });
+                        console.log("Items after save:", self.get('items'));
 
+                        if (callback) {
+                            callback();
+                        }
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }                    
+                });
             },
+            
             //  Returns the currently selected playlistItem or null if no item was found.
             getSelectedItem: function() {
                 var items = this.get('items');
@@ -363,71 +354,10 @@ define(['ytHelper',
                 return selectedItem;
             }
         });
-        
-
-        //  Called whenever Player loads/cues a video. Takes shuffledItems, finds an item to remove by id,
-        //  and then if there's nothing left in shuffled items -- reloads the available videos.
-        //  Helps ensure an even distribution of shuffled items for less repeats.
-
-        function syncShuffledItems(itemId) {
-            var shuffledItems = this.get('shuffledItems');
-
-            var item = shuffledItems.get(itemId);
-            shuffledItems.remove(item);
-
-            //  TODO: Event listener?
-            //  When all videos have been played once in shuffle mode, reset the shuffle playlist. Helps provide even distribution of 'random'
-            if (shuffledItems.length === 0) {
-                var items = this.get('items');
-                loadShuffledItems.call(this, items);
-            }
-        }
-
-        function loadShuffledItems(items) {
-            console.log("loadShuffledItems items", items);
-            //  I keep track of shuffledItems in its own collection because the logic for keeping
-            //  track of shuffled state gets a bit more complicated than one would expect.
-            var shuffledItemPositions = _.shuffle(items.pluck('position'));
-
-            //  TODO: Can I improve the O(n) of this? It's pretty atrocious.
-            var shuffledItemArray = _.map(shuffledItemPositions, function (position) {
-                return items.at(position);
-            });
-
-            console.log("shuffledItemArray:", shuffledItemArray);
-            
-            if (shuffledItemArray.length > 0) {
-                this.get('shuffledItems').reset(shuffledItemArray);
-            } else {
-                this.get('shuffledItems').reset();
-            }
-        }
 
         return function(config) {
             var playlist = new Playlist(config);
-            console.log("Created playlist with config:", playlist, config);
-
-            //  Call this after initialize because items has to be for sure a Backbone.Collection
-            var items = playlist.get('items');
-
-            loadShuffledItems.call(playlist, items);
-
-            playlist.on('change:title', function() {
-                $.ajax({
-                    url: programState.getBaseUrl() + 'Playlist/UpdateTitle',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        playlistId: this.get('id'),
-                        title: this.get('title')
-                    },
-                    error: function(error) {
-                        //  TODO: Rollback client-side transaction somehow?
-                        console.error("Error saving title", error);
-                    }
-                });
-            });
-
+            
             return playlist;
         };
     });

@@ -22,14 +22,14 @@ namespace Streamus.Controllers
             return new JsonDataContractActionResult(playlist);
         }
 
-        //[HttpPut]
-        //public ActionResult Update(Playlist playlist)
-        //{
-        //    var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
-        //    playlistManager.Update(playlist);
+        [HttpPut]
+        public ActionResult Update(Playlist playlist)
+        {
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
+            playlistManager.Update(playlist);
 
-        //    return new JsonDataContractActionResult(playlist);
-        //}
+            return new JsonDataContractActionResult(playlist);
+        }
 
         [HttpGet]
         public ActionResult Get(Guid id)

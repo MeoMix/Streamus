@@ -35,7 +35,7 @@ define(['playlistsContextMenu', 'ytHelper'], function(contextMenu, ytHelper){
                     });
                 }
                 else{
-                    //Only add the playlist if a name was provided.
+                    //  Only add the playlist if a name was provided.
                     if(userInput.trim() !== ''){
                         chrome.extension.getBackgroundPage().YoutubePlayer.addPlaylist(userInput);
                         if(onValidInputEvent){
@@ -60,7 +60,7 @@ define(['playlistsContextMenu', 'ytHelper'], function(contextMenu, ytHelper){
             };
 
             //Build up each row.
-            var playlists = chrome.extension.getBackgroundPage().YoutubePlayer.playlists;
+            var playlists = chrome.extension.getBackgroundPage().PlaylistManager.playlists;
 
             playlists.each(function(playlist){
                 var listItem = $('<li/>').appendTo(playlistList);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using FluentValidation;
 using Streamus.Backend.Domain.Validators;
@@ -23,6 +24,17 @@ namespace Streamus.Backend.Domain
 
         [DataMember(Name = "videoId")]
         public string VideoId { get; set; }
+
+        // These properties aren't persisted to the database, but are necessary to keep Backbone happy
+
+        [DataMember(Name = "selected")]
+        public bool Selected { get; set; }
+
+        [DataMember(Name = "playedRecently")]
+        public bool PlayedRecently { get; set; }
+
+        [DataMember(Name = "relatedVideos")]
+        public IEnumerable<Video> RelatedVideos { get; set; }
 
         public PlaylistItem()
         {

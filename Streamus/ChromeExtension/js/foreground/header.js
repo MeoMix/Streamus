@@ -23,7 +23,7 @@ define(function(){
     });
     
     function updateTitle() {
-        var selectedItem = chrome.extension.getBackgroundPage().YoutubePlayer.selectedItem;
+        var selectedItem = chrome.extension.getBackgroundPage().PlaylistManager.activePlaylist.getSelectedItem();
         var text = selectedItem ? selectedItem.get('title') : defaultCaption;
         headerTitle.text(text);
     }

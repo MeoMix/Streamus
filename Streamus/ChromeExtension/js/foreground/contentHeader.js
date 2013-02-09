@@ -9,11 +9,11 @@ define(function(){
 
         var processTitle = function(playlistTitle){
             if(playlistTitle !== ''){
-                chrome.extension.getBackgroundPage().YoutubePlayer.playlistTitle = playlistTitle;
+                chrome.extension.getBackgroundPage().PlaylistManager.playlistTitle = playlistTitle;
             }
         };
 
-        var headerText = chrome.extension.getBackgroundPage().YoutubePlayer ? chrome.extension.getBackgroundPage().YoutubePlayer.playlistTitle : '';
+        var headerText = chrome.extension.getBackgroundPage().PlaylistManager ? chrome.extension.getBackgroundPage().PlaylistManager.playlistTitle : '';
         var headerInput = $('<input/>', {
             'class': 'headerInput',
             type: 'text',

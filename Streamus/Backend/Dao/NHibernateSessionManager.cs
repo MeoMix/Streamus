@@ -93,7 +93,11 @@ namespace Streamus.Backend.Dao
 
             if (session != null && session.IsOpen)
             {
-                session.Flush();
+                if (session.Transaction.IsActive)
+                {
+                    session.Flush();
+                }
+                
                 session.Close();
             }
 

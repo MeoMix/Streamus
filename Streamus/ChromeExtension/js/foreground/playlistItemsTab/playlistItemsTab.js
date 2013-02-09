@@ -13,7 +13,7 @@ define(['contentHeader', 'playlistItemsDisplay', 'playlistItemInput'], function 
 
     return {
         reload: function() {
-            var playlistTitle = chrome.extension.getBackgroundPage().YoutubePlayer.playlistTitle;
+            var playlistTitle = chrome.extension.getBackgroundPage().PlaylistManager.playlistTitle;
             contentHeader.title = playlistTitle;
             playlistItemsDisplay.reload();
         }

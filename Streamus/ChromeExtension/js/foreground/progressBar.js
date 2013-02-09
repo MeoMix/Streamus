@@ -60,13 +60,15 @@ define(function( ){
     var currentTime = youtubePlayer.currentTime;
 
     //  Only need to update totalTime whenever the playlistItem changes.
-    youtubePlayer.items.on('change:selected', function (item, isSelected) {
+    //  TODO: This might have a bug in it. What happens if my activePlaylist changes? Probably not bound?
+    var items = chrome.extension.getBackgroundPage().PlaylistManager.activePlaylist.get('items');
+    items.on('change:selected', function (item, isSelected) {
         if (isSelected) {
             setTotalTime(item);
         }
     });
 
-    var selectedItem = youtubePlayer.items.find(function(item) {
+    var selectedItem = items.find(function(item) {
         return item.get('selected');
     });
     

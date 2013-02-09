@@ -74,6 +74,8 @@ define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistM
             });
         })();
 
+        playlistManager.onActivePlaylistTitleChange(refreshUI);
+
         function refreshUI() {
             if (port && port.postMessage) {
                 port.postMessage();
@@ -131,35 +133,11 @@ define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistM
         return {
             isSeeking: false,
             wasPlayingBeforeSeek: false,
-            get playlistTitle() {
-                return playlistManager.activePlaylist.get('title');
-            },
-            
-            set playlistTitle(value) {
-                playlistManager.activePlaylist.set('title', value);
-                refreshUI();
-            },
-            
-            get playlists() {
-                return playlistManager.playlists;
-            },
-            
+
             get playerState() {
                 return (player && player.getPlayerState) ? player.getPlayerState() : PlayerStates.UNSTARTED;
             },
-            
-            get items() {
-                return playlistManager.activePlaylist.get('items');
-            },
-            
-            get currentPlaylistId() {
-                return playlistManager.activePlaylist.get('id');
-            },
-            
-            get selectedItem() {
-                return playlistManager.activePlaylist.getSelectedItem();
-            },
-            
+
             //  Returns the elapsed time of the currently loaded video. Returns 0 if no video is playing.
             get currentTime() {
                 var currentTime = 0;
@@ -333,11 +311,9 @@ define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistM
             },
             
             addNewItem: function (videoInformation) {
-                var video = videoManager.createVideo(videoInformation, this.currentPlaylistId);
+                var video = videoManager.createVideo(videoInformation, playlistManager.activePlaylist.get('id'));
                 addItemByVideo(video);
-            },
-            
-            moveItem: playlistManager.activePlaylist.moveItem
+            }
         };
     })();
 });

@@ -40,8 +40,10 @@ define(function(){
         else if (!player.playerIsSeeking) {
             setToPlay();
         }
+
+	    var playlistManager = chrome.extension.getBackgroundPage().PlaylistManager;
 	    
-        if (player.selectedItem) {
+        if (playlistManager.activePlaylist.getSelectedItem()) {
 
             //  Paint playPauseButton's path black and allow it to be clicked.
             playPauseButton.removeClass('disabled');

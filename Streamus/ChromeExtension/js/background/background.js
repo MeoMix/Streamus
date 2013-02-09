@@ -50,7 +50,7 @@
     chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         switch(request.method){
             case 'getPlaylists':
-                sendResponse({playlists: YoutubePlayer.playlists});
+                sendResponse({ playlists: playlistManager.playlists });
             break;
             case 'addVideoByIdToPlaylist':
                 YoutubePlayer.addVideoByIdToPlaylist(request.id, request.playlistId);

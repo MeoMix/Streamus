@@ -13,7 +13,7 @@ define(['playlistItemsContextMenu'], function (contextMenu) {
             var movedItemId = ui.item.data('itemid');
             var newPosition = ui.item.index();
 
-            chrome.extension.getBackgroundPage().YoutubePlayer.moveItem(movedItemId, newPosition);
+            chrome.extension.getBackgroundPage().PlaylistManager.activePlaylist.moveItem(movedItemId, newPosition);
         }
     });
 
@@ -28,10 +28,10 @@ define(['playlistItemsContextMenu'], function (contextMenu) {
         reload: function () {
             playlistItemList.empty();
 
-            var player = chrome.extension.getBackgroundPage().YoutubePlayer;
+            var playlistManager = chrome.extension.getBackgroundPage().PlaylistManager;
 
             //  Build up the ul of li's representing each playlistItem.
-            player.items.each(function(item) {
+            playlistManager.activePlaylist.get('items').each(function (item) {
                 var listItem = $('<li/>', {
                     'data-itemid': item.get('id')
                 }).appendTo(playlistItemList);
@@ -57,7 +57,7 @@ define(['playlistItemsContextMenu'], function (contextMenu) {
                 return false;
             });
 
-            var selectedItem = player.selectedItem;
+            var selectedItem = playlistManager.activePlaylist.getSelectedItem();
             //  Since we emptied our list we lost the selection, reselect.
             if (selectedItem) {
                 selectRow(selectedItem.get('id'));

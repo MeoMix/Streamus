@@ -1,3 +1,6 @@
+//  TODO: Exposed globally for the foreground. Is there a better way?
+var PlaylistManager = null;
+
 //Manages an array of Playlist objects.
 define(['playlist',
         'playlists',
@@ -5,16 +8,17 @@ define(['playlist',
         'playlistItems',
         'loginManager',
         'programState'
-       ], function (Playlist, Playlists, PlaylistItem, PlaylistItems, loginManager, programState) {
+    ], function(Playlist, Playlists, PlaylistItem, PlaylistItems, loginManager, programState) {
         'use strict';
         var playlists = new Playlists();
         var isReady = false;
 
         var events = {
-            onReady: 'playlistManager.onReady'
+            onReady: 'playlistManager.onReady',
+            onActivePlaylistTitleChange: 'playlistManager.onActivePlaylistTitleChange'
         };
-           
-        loginManager.once('loggedIn', function () {
+
+        loginManager.once('loggedIn', function() {
             var userId = loginManager.get('user').get('id');
 
             $.ajax({
@@ -24,12 +28,12 @@ define(['playlist',
                 data: {
                     userId: userId
                 },
-                success: function (data) {
+                success: function(data) {
                     playlists.reset(data);
 
                     //PlaylistManager will remember the selected playlist via localStorage.
                     var savedId = localStorage.getItem('selectedPlaylistId');
-                    
+
                     if (savedId === null) {
                         var playlist = playlists.at(0);
                         selectPlaylistById(playlist.get('id'));
@@ -59,7 +63,7 @@ define(['playlist',
             var selectedPlaylist = playlists.find(function(playlist) {
                 return playlist.get('selected');
             });
-            
+
             return selectedPlaylist;
         }
 
@@ -75,8 +79,8 @@ define(['playlist',
             localStorage.setItem('selectedPlaylistId', playlistToSelect.get('id'));
         }
 
-        return {
-            onReady: function (event) {
+        PlaylistManager = {
+            onReady: function(event) {
                 console.log("onReady called. isReady:", isReady);
                 if (isReady) {
                     event();
@@ -84,11 +88,22 @@ define(['playlist',
                     $(document).on(events.onReady, event);
                 }
             },
+            //  TODO: Replace when more backboney
+            onActivePlaylistTitleChange: function(event) {
+                $(document).on(events.onActivePlaylistTitleChange, event);
+            },
             get playlists() {
                 return playlists;
             },
             get activePlaylist() {
                 return getSelectedPlaylist();
+            },
+            get playlistTitle() {
+                return this.activePlaylist.get('title');
+            },
+            set playlistTitle(value) {
+                this.activePlaylist.set('title', value);
+                $(document).trigger(events.onActivePlaylistTitleChange);
             },
             set activePlaylist(value) {
                 console.log("calling setActivePlaylist with value", value);
@@ -98,7 +113,8 @@ define(['playlist',
                 var playlist = playlists.get(id);
                 setSelectedPlaylist(playlist);
             },
-            addPlaylist: function (playlistTitle, callback) {
+
+            addPlaylist: function(playlistTitle, callback) {
                 var userId = loginManager.get('user').get('id');
 
                 var playlist = new Playlist({
@@ -109,14 +125,14 @@ define(['playlist',
 
                 //  Save the playlist, but push after version from server because the ID will have changed.
                 playlist.save(new Array(), {
-                    success: function () {
+                    success: function() {
                         playlists.push(playlist);
 
                         if (callback) {
                             callback(playlist);
                         }
                     },
-                    error: function (error) {
+                    error: function(error) {
                         console.error(error);
                     }
                 });
@@ -124,7 +140,7 @@ define(['playlist',
             removePlaylistById: function(playlistId) {
                 console.log("playlist id:", playlistId);
                 var playlist = playlists.get(playlistId);
-               
+
                 playlist.destroy({
                     success: function() {
                         //  Remove from playlists clientside only after server responds with successful delete.
@@ -136,4 +152,6 @@ define(['playlist',
                 });
             }
         };
+
+        return PlaylistManager;
     });

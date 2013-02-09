@@ -13,13 +13,13 @@ define(function(){
         //  Prevent spamming by only allowing a next click once a second.
         setTimeout(function () { 
             previousButton.off('click').one('click', skipVideo);
-        }, 1000);
+        }, 500);
     }
     
     function refresh() {
-        var player = chrome.extension.getBackgroundPage().YoutubePlayer;
+        var playlistManager = chrome.extension.getBackgroundPage().PlaylistManager;
 
-        if (player.items.length > 0) {
+        if (playlistManager.activePlaylist.get('items').length > 0) {
             //  Paint the skipButton's path black and bind its click event.
             previousButton.prop('src', 'images/skip.png').removeClass('disabled');
             previousButton.find('.path').css('fill', 'black');

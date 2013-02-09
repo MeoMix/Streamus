@@ -2,6 +2,9 @@
 define(['helpers', 'programState', 'loginManager'], function(helpers, programState, loginManager) {
     'use strict';
     
+    //  TODO: Need to figure out why overriding parse doesn't seem to matter.
+    //  I don't want to send selected / playedRecently / relatedVideos in my requests, but I can't figure out how to prevent save from overriding them with
+    //  default values -- so I am sending and then getting the exact same value back from server and writing it back to the item. Bleh.
     var PlaylistItem = Backbone.Model.extend({
         defaults: function() {
             return {
@@ -12,6 +15,8 @@ define(['helpers', 'programState', 'loginManager'], function(helpers, programSta
                 videoId: '',
                 title: '',
                 selected: false,
+                //  Used to weight randomness in shuffle.
+                playedRecently: false,
                 //  Not stoked about having these here, but doing it for convenience for now.
                 relatedVideos: [] 
             };

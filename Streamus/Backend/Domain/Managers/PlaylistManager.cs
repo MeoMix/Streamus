@@ -33,33 +33,38 @@ namespace Streamus.Backend.Domain.Managers
             catch (Exception exception)
             {
                 Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }
 
-        //public void UpdatePlaylist(Playlist detachedPlaylist)
-        //{
-        //    try
-        //    {
-        //        NHibernateSessionManager.Instance.BeginTransaction();
+        public void Update(Playlist playlist)
+        {
+            try
+            {
+                NHibernateSessionManager.Instance.BeginTransaction();
+                playlist.ValidateAndThrow();
 
-        //        Playlist playlist = PlaylistDao.Get(detachedPlaylist.Id);
-        //        if (playlist == null)
-        //        {
-        //            throw new Exception("Shouldn't be null inside of UpdatePlaylist");
-        //        }
+                Playlist knownPlaylist = PlaylistDao.Get(playlist.Id);
 
-        //        playlist.CopyFromDetached(detachedPlaylist);
-        //        playlist.ValidateAndThrow();
+                if (knownPlaylist == null)
+                {
+                    PlaylistDao.Update(playlist);
+                }
+                else
+                {
+                    PlaylistDao.Merge(playlist);
+                }
 
-        //        NHibernateSessionManager.Instance.CommitTransaction();
-        //    }
-        //    catch (Exception exception)
-        //    {
-        //        Logger.Error(exception);
-        //        throw;
-        //    }
-        //}
+                NHibernateSessionManager.Instance.CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
+                throw;
+            }
+        }
 
         public void DeletePlaylistById(Guid id)
         {
@@ -74,6 +79,7 @@ namespace Streamus.Backend.Domain.Managers
             catch (Exception exception)
             {
                 Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }
@@ -103,6 +109,7 @@ namespace Streamus.Backend.Domain.Managers
             catch (Exception exception)
             {
                 Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
 
@@ -110,11 +117,20 @@ namespace Streamus.Backend.Domain.Managers
 
         public void UpdateTitle(Guid playlistId, string title)
         {
-            NHibernateSessionManager.Instance.BeginTransaction();
-            Playlist playlist = PlaylistDao.Get(playlistId);
-            playlist.Title = title;
-            PlaylistDao.Update(playlist);
-            NHibernateSessionManager.Instance.CommitTransaction();
+            try
+            {
+                NHibernateSessionManager.Instance.BeginTransaction();
+                Playlist playlist = PlaylistDao.Get(playlistId);
+                playlist.Title = title;
+                PlaylistDao.Update(playlist);
+                NHibernateSessionManager.Instance.CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
+                throw;
+            }
         }
 
         public void DeleteItem(Guid itemId, Guid playlistId, Guid userId)
@@ -148,6 +164,7 @@ namespace Streamus.Backend.Domain.Managers
             catch (Exception exception)
             {
                 Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }
@@ -165,13 +182,14 @@ namespace Streamus.Backend.Domain.Managers
                 }
                 catch (GenericADOException exception)
                 {
-                    //Got beat to saving this entity. Not sure if this is a big deal or not...
+                    //  Got beat to saving this entity. Not sure if this is a big deal or not...
                     Logger.Error(exception);
                 }
             }
             catch (Exception exception)
             {
                 Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }
@@ -203,6 +221,7 @@ namespace Streamus.Backend.Domain.Managers
             catch (Exception exception)
             {
                 Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }
@@ -225,6 +244,7 @@ namespace Streamus.Backend.Domain.Managers
             catch (Exception exception)
             {
                 Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }

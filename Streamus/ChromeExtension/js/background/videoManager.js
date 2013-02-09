@@ -26,10 +26,8 @@ define(['video',
 
             return loadedVideo;
         },
-        cacheVideo: function(video) {
-            loadedVideos.add(video);
-        },
-        cacheVideos: function(videos) {
+        //  Could be just a video or an array of videos, either way is fine.
+        cache: function(videos) {
             loadedVideos.add(videos);
         },
         loadVideo: function (id, callback) {

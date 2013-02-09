@@ -209,7 +209,7 @@
 
             // The user can drag-and-drop PlaylistItems around in the Playlist. After
             // such an event, the Playlist needs to reorder itself to match the given positions.
-            it("updates an item position itself", function() {
+            xit("updates an item position itself", function() {
                 var firstItem = savedPlaylist.get('items').at(0);
                 var secondItem = savedPlaylist.get('items').at(1);
 
