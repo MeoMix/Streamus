@@ -1,13 +1,11 @@
 //  Playlist holds a collection of PlaylistItems as well as properties pertaining to a playlist such as its title and
 //  history of videos played. Provides methods to work with PlaylistItems such as getting, removing, updating, etc..
 define(['ytHelper',
-        'videoManager',
         'playlistItems',
         'playlistItemsHistory',
         'playlistItem',
-        'programState',
-        'loginManager'
-    ], function(ytHelper, videoManager, PlaylistItems, PlaylistItemsHistory, PlaylistItem, programState, loginManager) {
+        'programState'
+    ], function(ytHelper, PlaylistItems, PlaylistItemsHistory, PlaylistItem, programState) {
         'use strict';
         
         var Playlist = Backbone.Model.extend({
@@ -55,6 +53,10 @@ define(['ytHelper',
 
                 //  Now we for sure have a PlaylistItem collection.
                 var itemCollection = this.get('items');
+                
+                itemCollection.on('change:selected', function (event, callback, context) {
+                    console.log("change selected on!", event, callback, context);
+                });
 
                 if (itemCollection.length > 0) {
                     //  Playlists store selected item client-side because it can change so often.
@@ -80,21 +82,21 @@ define(['ytHelper',
             },
 
             selectItemById: function (id) {
-                console.log("SELECTING ITEM BY ID:", id);
                 //  Deselect the currently selected item, then select the new item to have selected.
                 var selectedItem = this.getSelectedItem();
-                console.log("CURRENTLY SELECTED:", selectedItem);
+
                 //  currentlySelected is not defined for a brand new playlist since we have no items yet selected.
                 if (selectedItem != null && selectedItem.get('id') !== id) {
+                    console.log("Deselecting the current item.");
                     selectedItem.set('selected', false);
                 }
 
                 var item = this.getItemById(id);
 
-                console.log("Selecting an item by ID:", item);
                 if (item != null && item.get('selected') === false) {
+                    console.log("Selecting a new current item.");
                     item.set('selected', true);
-                    console.log("unshifting item onto history", item);
+
                     var history = this.get('history');
                     //  Unshift won't have an effect if item exists in history.
                     history.remove(item, { silent: true });
@@ -104,6 +106,7 @@ define(['ytHelper',
                     localStorage.setItem(this.get('id') + '_selectedItemId', id);
                 }
 
+                console.log("returning the selected item.");
                 return item;
             },
 
@@ -201,7 +204,7 @@ define(['ytHelper',
                     }
                 });
 
-                videoManager.saveVideos(videos);
+                videos.save();
                 this.createItems(createdPlaylistItems, callback);
             },
 
@@ -242,7 +245,6 @@ define(['ytHelper',
                 });
 
                 this.get('items').push(playlistItem);
-                videoManager.cacheVideo(video);
 
                 var shuffledItems = this.get('shuffledItems');
                 shuffledItems.push(playlistItem);

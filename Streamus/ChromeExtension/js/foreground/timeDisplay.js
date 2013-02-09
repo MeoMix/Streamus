@@ -4,33 +4,47 @@ define(['helpers'], function(helpers) {
     var currentTimeLabel = $('#CurrentTimeLabel');
     var totalTimeLabel = $('#TotalTimeLabel');
 
-    function updateLabel(currentTime, totalTime) {
-        currentTimeLabel.text(currentTime);
-        totalTimeLabel.text(totalTime);
-    }
+    var youtubePlayer = chrome.extension.getBackgroundPage().YoutubePlayer;
+    var timeInSeconds = youtubePlayer.currentTime;
+    currentTimeLabel.text(helpers.prettyPrintTime(timeInSeconds));
 
-    (function initialize() {
-        //Generally player will always be defined here, but if someone's internet is slow and they quickly open the UI it might not be.
-        var currentTime = chrome.extension.getBackgroundPage().YoutubePlayer.currentTime;
-        var totalTime = chrome.extension.getBackgroundPage().YoutubePlayer.totalTime;
-        updateLabel(helpers.prettyPrintTime(currentTime), helpers.prettyPrintTime(totalTime));
-        //Update the time every half a second.
-        setInterval(function() {
-            update();
-        }, 500);
-    }());
-
-    //In charge of updating the time labels
-    var update = function(currentTimeInSeconds) {
-        var playerIsSeeking = chrome.extension.getBackgroundPage().YoutubePlayer.isSeeking;
-
-        //Do not update from automatic updates if the progress bar is being dragged.
-        if (currentTimeInSeconds || !playerIsSeeking) {
-            //If told to update to a specific time (by user interaction) then use that time, otherwise get the players current time (automatic update)
-            var totalTime = chrome.extension.getBackgroundPage().YoutubePlayer.totalTime;
-            var currentTime = currentTimeInSeconds ? currentTimeInSeconds : chrome.extension.getBackgroundPage().YoutubePlayer.currentTime;
-            updateLabel(helpers.prettyPrintTime(currentTime), helpers.prettyPrintTime(totalTime));
+    //  Only need to update totalTime whenever the playlistItem changes.
+    youtubePlayer.items.on('change:selected', function(item, isSelected) {
+        if (isSelected) {
+            setTotalTime(item);
         }
+    });
+    
+    var selectedItem = youtubePlayer.items.find(function (item) {
+        return item.get('selected');
+    });
+
+    if (selectedItem) {
+        setTotalTime(selectedItem);
+    }
+   
+    function setTotalTime(playlistItem) {
+        var videoId = playlistItem.get('videoId');
+        var currentVideo = chrome.extension.getBackgroundPage().VideoManager.getLoadedVideoById(videoId);
+
+        var totalTime = currentVideo.get('duration');
+
+        totalTimeLabel.text(helpers.prettyPrintTime(totalTime));
+    }
+    
+    //  Update the current time every half a second.
+    setInterval(function () {
+        
+        //  Do not update if the progress bar is being dragged.
+        if (!youtubePlayer.isSeeking) {
+            update(youtubePlayer.currentTime);
+        }
+        
+    }, 500);
+
+    //  In charge of updating the currentTime label
+    var update = function (timeInSeconds) {
+        currentTimeLabel.text(helpers.prettyPrintTime(timeInSeconds));
     };
 
     return {

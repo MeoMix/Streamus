@@ -24,7 +24,7 @@ define(['helpers', 'programState', 'loginManager'], function(helpers, programSta
 
             // Call Model.destroy().
             // We are reusing the existing functionality from Backbone.Model.destroy().
-            Backbone.Model.prototype.destroy.apply(this, arguments);
+            Backbone.Model.prototype.destroy.apply(this, options);
         }
     });
 

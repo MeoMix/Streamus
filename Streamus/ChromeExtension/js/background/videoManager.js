@@ -1,4 +1,5 @@
-﻿//  TODO: This entire entity needs revisiting now that video doesn't depend on a GUID.
+﻿//  TODO: Exposed globally for the foreground. Is there a better way?
+var VideoManager = null;
 
 define(['video',
         'videos',
@@ -10,7 +11,7 @@ define(['video',
     var loadedVideos = new Videos();
     var lastVideoRetrieved = null;
 
-    return {
+    VideoManager = {
         //  Optimized this because I call getTotalTime twice a second against it... :s
         //  I need to rewrite this so that when the current item's video forsure has an ID it is loaded instead of polling.
         getLoadedVideoById: function (id) {
@@ -27,6 +28,9 @@ define(['video',
         },
         cacheVideo: function(video) {
             loadedVideos.add(video);
+        },
+        cacheVideos: function(videos) {
+            loadedVideos.add(videos);
         },
         loadVideo: function (id, callback) {
             if (loadedVideos.get(id) == null) {
@@ -64,6 +68,7 @@ define(['video',
                     success: function (data) {
                         //  TODO: Pass merge paramater if videos can update properties, they can't currently
                         loadedVideos.add(data);
+                        console.log("loaded some videos:", loadedVideos);
 
                         if (callback) {
                             callback(data);
@@ -75,6 +80,7 @@ define(['video',
                 });
             }
         },
+        //  TODO: I think the video constructor should handle this.
         //  Call createVideo for any video intended to be saved to the DB. Otherwise, just go straight to the Video constructor
         //  for displaying video information elsewhere (suggested videos, users selecting a video from dropdown, etc)
         createVideo: function (videoInformation, playlistId) {
@@ -92,26 +98,6 @@ define(['video',
 
             return video;
         },
-        saveVideos: function (videos, callback) {
-            console.log("Calling save videos! Need to convert to backbone.");
-            $.ajax({
-                type: 'POST',
-                url: programState.getBaseUrl() + 'Video/SaveVideos',
-                dataType: 'json',
-                contentType: 'application/json; charset=utf-8',
-                data: JSON.stringify(videos),
-                success: function (data) {
-                    loadedVideos.add(data);
-
-                    if (callback) {
-                        callback(data);
-                    }
-                },
-                error: function (error) {
-                    console.error(error);
-                }
-            });
-        },
         loadVideosIncrementally: function (playlistId, callback) {
             var startIndex = 1;
             var maxResultsPerSearch = 50;
@@ -122,18 +108,25 @@ define(['video',
 
             var getVideosInterval = setInterval(function () {
                 $.ajax({
-                    //  TODO: Convert to using data paramater.
-                    url: "https://gdata.youtube.com/feeds/api/playlists/" + playlistId + "?v=2&alt=json&max-results=" + maxResultsPerSearch + "&start-index=" + startIndex,
+
+                    type: 'GET',
+                    url: 'https://gdata.youtube.com/feeds/api/playlists/' + playlistId,
+                    dataType: 'json',
+                    data: {
+                        v: 2,
+                        alt: 'json',
+                        'max-results': maxResultsPerSearch,
+                        'start-index': startIndex,
+                    },
                     success: function (result) {
 
                         _.each(result.feed.entry, function (entry) {
-
                             //  If the title is blank the video has been deleted from the playlist, no data to fetch.
                             if (entry.title.$t !== "") {
                                 var videoId = entry.media$group.yt$videoid.$t;
                                 ytHelper.getVideoInformation(videoId, function (videoInformation) {
 
-                                    //Video Information will be null if the video has been banned on copyright grounds.
+                                    //  Video Information will be null if the video has been banned on copyright grounds.
                                     if (videoInformation !== null) {
                                         var video = self.createVideo(videoInformation, playlistId);
                                         videos.add(video);
@@ -144,6 +137,9 @@ define(['video',
                                         }
 
                                     } else {
+
+                                        console.log("Video was null, finding playable by title:", entry.title.$t);
+
                                         ytHelper.findPlayableByTitle(entry.title.$t, function (foundVideo) {
                                             videos.push(foundVideo);
                                             totalVideosProcessed++;
@@ -155,6 +151,7 @@ define(['video',
                                     }
                                 });
                             } else {
+                                console.log("title is totally empty");
                                 totalVideosProcessed++;
 
                                 if (totalVideosProcessed == result.feed.entry.length) {
@@ -166,17 +163,21 @@ define(['video',
                         //If X videos are received and X+C videos were requested, stop because no more videos in playlist.
                         //TODO: Maybe I just always want to return.
                         if (result.feed.entry.length < maxResultsPerSearch) {
+                            console.log("clearing because didn't get enough so at the end", result.feed.entry.length);
                             clearInterval(getVideosInterval);
                         }
 
                         startIndex += maxResultsPerSearch;
                     },
-                    error: function () {
+                    error: function (error) {
+                        console.error(error);
+                        console.log("clearing interval on error");
                         clearInterval(getVideosInterval);
-                        callback();
                     }
                 });
             }, 5000);
         }
     };
+           
+    return VideoManager;
 });

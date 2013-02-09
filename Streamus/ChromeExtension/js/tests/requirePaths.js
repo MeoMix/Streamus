@@ -21,11 +21,11 @@ var require = {
         'player': 'js/background/player',
         'playlistManager': 'js/background/playlistManager',
         'loginManager': 'js/background/loginManager',
-        'videoManager': 'js/background/videoManager',
         'playerBuilder': 'js/background/playerBuilder',
         'playlist': 'js/background/playlist',
         'playlists': 'js/background/playlists',
         'user': 'js/background/user',
+        'videoManager': 'js/background/videoManager',
 
         'video': 'js/video',
         'videos': 'js/videos',

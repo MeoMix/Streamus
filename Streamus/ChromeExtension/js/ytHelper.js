@@ -1,25 +1,14 @@
-//A global object which abstracts more difficult implementations of retrieving data from YouTube.
+//  A global object which abstracts more difficult implementations of retrieving data from YouTube.
 define(['geoplugin', 'levenshtein', 'video', 'videos'], function (geoplugin, levDist, Video, Videos) {
     'use strict';
 
-    var findPlayableByTitle = function (title, callback) {
-        search(title, null, function (videos) {
-            videos.sort(function (a, b) {
-                return levDist(a.title, title) - levDist(b.title, title);
-            });
-            
-            var video = videos.length ? videos[0] : null;
-            callback(video);
-        });
-    };
-
-    //Be sure to filter out videos and suggestions which are restricted by the users geographic location.
-    var buildSearchUrl = function (searchIndex, maxResults, searchText) {
+    //  Be sure to filter out videos and suggestions which are restricted by the users geographic location.
+    function buildSearchUrl(searchIndex, maxResults, searchText) {
         return "https://gdata.youtube.com/feeds/api/videos?category=Music&orderBy=relevance&start-index=" + searchIndex + "&time=all_time&max-results=" + maxResults + "&format=5&v=2&alt=json&callback=?&restriction=" + geoplugin.countryCode + "&q=" + searchText;
     };
 
-    //Performs a search of YouTube with the provided text and returns a list of playable videos (<= max-results)
-    var search = function (text, playlistId, callback) {
+    //  Performs a search of YouTube with the provided text and returns a list of playable videos (<= max-results)
+    function search(text, playlistId, callback) {
 
         var searchIndex = 1;
         var timeInterval = 200;
@@ -62,13 +51,26 @@ define(['geoplugin', 'levenshtein', 'video', 'videos'], function (geoplugin, lev
         }, timeInterval);
     };
 
-    //Takes a videoId which is presumed to have content restrictions and looks through YouTube
-    //for a video with a similiar name that might be the right video to play.
-    var findPlayableByVideoId = function (videoId, callback) {
+    //  Takes a videoId which is presumed to have content restrictions and looks through YouTube
+    //  for a video with a similiar name that might be the right video to play.
+    function findPlayableByVideoId(videoId, callback) {
         this.getVideoInformation(videoId, function (videoInformation) {
             if (videoInformation) {
                 findPlayableByTitle(videoInformation.title.$t, callback);
             }
+        });
+    };
+    
+    function findPlayableByTitle(title, callback) {
+        search(title, null, function (videos) {
+            videos.comparator = function (firstVideo, secondVideo) {
+                return levDist(firstVideo.get('title'), title) - levDist(secondVideo.get('title'), title);
+            };
+
+            videos.sort();
+
+            var video = videos.at(0) || null;
+            callback(video);
         });
     };
 
@@ -79,7 +81,13 @@ define(['geoplugin', 'levenshtein', 'video', 'videos'], function (geoplugin, lev
 
             //  Do an async request for the videos's related videos. There isn't a hard dependency on them existing right as a video is created.
             $.ajax({
-                url: 'https://gdata.youtube.com/feeds/api/videos/' + videoId + '/related?v=2&alt=json',
+                type: 'GET',
+                url: 'https://gdata.youtube.com/feeds/api/videos/' + videoId + '/related',
+                dataType: 'json',
+                data: {
+                    v: 2,
+                    alt: 'json'
+                },
                 success: function(result) {
                     //  Don't set length to 0 here because relatedVideos property probably doesn't exist since it just came from server.
                     var relatedVideos = [];
@@ -142,13 +150,18 @@ define(['geoplugin', 'levenshtein', 'video', 'videos'], function (geoplugin, lev
         
         getPlaylistTitle: function (playlistId, callback) {
             $.ajax({
-                url: "https://gdata.youtube.com/feeds/api/playlists/" + playlistId + "?v=2&alt=json",
+                type: 'GET',
+                url: "https://gdata.youtube.com/feeds/api/playlists/" + playlistId,
+                dataType: 'json',
+                data: {
+                    v: 2,
+                    alt: 'json'
+                },
                 success: function(result) {
                     callback(result.feed.title.$t);
                 },
                 error: function (error) {
                     console.error(error);
-                    callback(null);
                 }
             });
         },
@@ -156,14 +169,21 @@ define(['geoplugin', 'levenshtein', 'video', 'videos'], function (geoplugin, lev
         // Returns NULL if the request throws a 403 error if videoId has been banned on copyright grounds.
         getVideoInformation: function (videoId, callback) {
             $.ajax({
-                url: 'https://gdata.youtube.com/feeds/api/videos/' + videoId + '?v=2&alt=json',
+                type: 'GET',
+                url: 'https://gdata.youtube.com/feeds/api/videos/' + videoId,
+                dataType: 'json',
+                data: {
+                    v: 2,
+                    alt: 'json'
+                },
                 success: function (result) {
+                    console.log("Success:", result);
                     callback(result.entry);
                 },
-                error: function () {
+                error: function (error) {
+                    console.error(error);
                     callback(null);
-                },
-                dataType: "json"
+                }
             });
         },
         findPlayableByTitle: findPlayableByTitle

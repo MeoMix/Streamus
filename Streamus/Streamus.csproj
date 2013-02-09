@@ -216,7 +216,6 @@
     <Content Include="ChromeExtension\js\background\main.js" />
     <Content Include="ChromeExtension\js\background\player.js" />
     <Content Include="ChromeExtension\js\background\playlist.js" />
-    <Content Include="ChromeExtension\js\background\playlistDataProvider.js" />
     <Content Include="ChromeExtension\js\background\playlistItem.js" />
     <Content Include="ChromeExtension\js\background\playlistItems.js" />
     <Content Include="ChromeExtension\js\background\playlistManager.js" />

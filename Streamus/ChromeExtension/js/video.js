@@ -9,7 +9,11 @@ define(['programState'], function(programState){
             title: '',
             duration: -1
         },
-        urlRoot: programState.getBaseUrl() + 'Video/'
+        urlRoot: programState.getBaseUrl() + 'Video/',
+        save: function (attributes, options) {
+            chrome.extension.getBackgroundPage().VideoManager.cache(this);
+            Backbone.Model.prototype.save.apply(this, attributes, options);
+        }
     });
 
     return function (config) {

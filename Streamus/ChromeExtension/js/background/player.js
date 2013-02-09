@@ -1,5 +1,5 @@
 var YoutubePlayer = null;
-define(['playlistManager', 'videoManager', 'playerBuilder', 'ytHelper'], function (playlistManager, videoManager, playerBuilder, ytHelper) {
+define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistManager, videoManager, playerBuilder) {
     'use strict';
 
     //  Handles communications between the GUI and the YT Player API.
@@ -175,23 +175,7 @@ define(['playlistManager', 'videoManager', 'playerBuilder', 'ytHelper'], functio
 
                 return currentTime;
             },
-            
-            //  Gets the total time of the currently loaded video. Returns 0 if there is no video loaded.
-            //  TODO: I really don't like how this has to query videoManager every time.
-            get totalTime() {
-                var totalTime = 0;
-                var selectedItem = playlistManager.activePlaylist.getSelectedItem();
-
-                if (selectedItem) {
-                    var selectedVideoId = selectedItem.get('videoId');
-                    var currentVideo = videoManager.getLoadedVideoById(selectedVideoId);
-                    console.log("Current video", currentVideo);
-                    totalTime = currentVideo ? currentVideo.get('duration') : 0;
-                }
-
-                return totalTime;
-            },
-            
+           
             //  Return undefined until player has state VIDCUED
             get volume() {
                 return (player && player.getVolume) ? player.getVolume() : 0;

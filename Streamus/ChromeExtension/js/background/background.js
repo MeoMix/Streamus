@@ -1,6 +1,4 @@
-﻿define(['playlistManager',
-        'programState'
-       ], function (playlistManager, programState) {
+﻿define(['playlistManager'], function (playlistManager) {
     'use strict';
     //  Bypass YouTube's content restrictions by looking like I'm a website.
     chrome.webRequest.onBeforeSendHeaders.addListener(function (info) {
@@ -22,52 +20,6 @@
     playlistManager.onReady(function () {
         require(['player'], function() {});
     });
-    
-
-    //function onFacebookLogin() {
-    //	var successURL = 'https://www.facebook.com/connect/login_success.html';
-
-    //	// if (!localStorage.params) {
-    //		chrome.tabs.getAllInWindow(null, function(tabs) {
-    //			for (var i = 0; i < tabs.length; i++) {
-    //				if (tabs[i].url.indexOf(successURL) == 0) {
-    //					chrome.tabs.onUpdated.removeListener(onFacebookLogin);
-
-    //                    var accessToken = Helpers.getUrlParamaterValueByName(tabs[i].url, "access_token");
-    //                    $.ajax({
-    //                        url: programState.getBaseUrl() + 'backend/fb/setAccessToken.php',
-    //                        data: {
-    //                            accessToken: accessToken
-    //                        },
-    //                        error: function(error) {
-    //                            console.error(error);
-    //                        },
-    //                        success: function (json) {
-    //                            var authKey = JSON.parse(json);
-    //                        }
-    //                    });
-
-    //					return;
-    //				}
-    //			}
-    //		});
-    //	// }
-    // //    else{
-    // //        $.ajax({
-    // //            type: 'GET',
-    // //            url: 'https://graph.facebook.com/me',
-    // //            data: {
-    // //                access_token: localStorage.params['access_token']
-    // //            },
-    // //            success: function(a, e){
-    // //            }
-    // //        });
-    // //    }
-    //}
-
-    //chrome.tabs.onUpdated.addListener(onFacebookLogin);
-
-
 
     //  http://stackoverflow.com/questions/5235719/how-to-copy-text-to-clipboard-from-a-google-chrome-extension
     //  Copies text to the clipboard. Has to happen on background page due to elevated privs.

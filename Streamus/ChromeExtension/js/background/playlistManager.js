@@ -101,21 +101,15 @@ define(['playlist',
             addPlaylist: function (playlistTitle, callback) {
                 var userId = loginManager.get('user').get('id');
 
-                console.log("Playlist's length: ", playlists.length);
-                console.trace();
-
                 var playlist = new Playlist({
                     title: playlistTitle,
                     position: playlists.length,
                     userId: userId
                 });
 
-                console.log("Calling save with playlist", playlist);
-                
                 //  Save the playlist, but push after version from server because the ID will have changed.
                 playlist.save(new Array(), {
                     success: function () {
-                        console.log("Save successful");
                         playlists.push(playlist);
 
                         if (callback) {
