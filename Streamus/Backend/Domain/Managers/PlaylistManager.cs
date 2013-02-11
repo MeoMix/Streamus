@@ -135,7 +135,7 @@ namespace Streamus.Backend.Domain.Managers
             }
         }
 
-        public void DeleteItem(Guid itemId, Guid playlistId, Guid collectionId)
+        public void DeleteItem(Guid itemId, Guid playlistId)
         {
             try
             {
@@ -145,12 +145,6 @@ namespace Streamus.Backend.Domain.Managers
                 if (playlist == null)
                 {
                     string errorMessage = string.Format("No playlist found with id: {0}", playlistId);
-                    throw new ApplicationException(errorMessage);
-                }
-
-                if (playlist.Collection.Id != collectionId)
-                {
-                    string errorMessage = string.Format("The playlist {0} is not a child of the collection {1}", playlist, collectionId);
                     throw new ApplicationException(errorMessage);
                 }
 

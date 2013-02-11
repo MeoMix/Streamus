@@ -48,10 +48,10 @@ namespace Streamus.Controllers
         }
 
         [HttpDelete]
-        public EmptyResult Delete(Guid id, Guid playlistId, Guid collectionId)
+        public EmptyResult Delete(Guid id, Guid playlistId)
         {
             var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
-            playlistManager.DeleteItem(id, playlistId, collectionId);
+            playlistManager.DeleteItem(id, playlistId);
 
             return new EmptyResult();
         }

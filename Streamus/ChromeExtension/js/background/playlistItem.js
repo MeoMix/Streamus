@@ -1,5 +1,5 @@
 ﻿//  PlaylistItems have a one-to-one relationship with a Video object via the videoId property.
-define(['helpers', 'programState', 'loginManager'], function(helpers, programState, loginManager) {
+define(['helpers', 'programState'], function(helpers, programState) {
     'use strict';
     
     //  TODO: Need to figure out why overriding parse doesn't seem to matter.
@@ -25,7 +25,7 @@ define(['helpers', 'programState', 'loginManager'], function(helpers, programSta
         destroy: function (options) {
             //  Override URL
             options || (options = {});
-            options.url = this.url() + '/' + this.get('playlistId') + '/' + loginManager.get('user').get('id');
+            options.url = this.url() + '/' + this.get('playlistId');
 
             // Call Model.destroy().
             // We are reusing the existing functionality from Backbone.Model.destroy().

@@ -8,8 +8,6 @@ define(['ytHelper',
     ], function(ytHelper, PlaylistItems, PlaylistItemsHistory, PlaylistItem, programState) {
         'use strict';
 
-        console.log("initializing a playlist", PlaylistItems, PlaylistItem);
-
         var Playlist = Backbone.Model.extend({
             defaults: function() {
                 return {

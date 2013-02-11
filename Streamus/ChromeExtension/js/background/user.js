@@ -8,7 +8,7 @@ define(['playlistCollections', 'programState'], function(PlaylistCollections, pr
     //  User data will be loaded either from cache or server.
     var User = Backbone.Model.extend({
         defaults: {
-            id: 'A5A97E11-7EC5-421E-AEEA-8ECC7133E105', //localStorage.getItem(userIdKey),
+            id: '408c53eb-4c0a-4d1f-b82d-5d98fb7b022a', //localStorage.getItem(userIdKey),
             name: '',
             playlistCollections: new PlaylistCollections()
         },
@@ -69,10 +69,10 @@ define(['playlistCollections', 'programState'], function(PlaylistCollections, pr
                 console.log("Creating a new PlaylistCollections from: ", model);
                 var playlistCollections = new PlaylistCollections(model.get('playlistCollections'));
 
-                //self.set('playlistCollections', playlistCollections, {
-                //    //  Silent operation because the playlistCollections isn't technically changing - just being made correct.
-                //    silent: true
-                //});
+                self.set('playlistCollections', playlistCollections, {
+                    //  Silent operation because the playlistCollections isn't technically changing - just being made correct.
+                    silent: true
+                });
 
                 //  TODO: Error handling for writing to sync too much.
                 //  Write to sync as little as possible because it has restricted read/write limits per hour.

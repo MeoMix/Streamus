@@ -9,20 +9,36 @@ define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistM
 
         //  A communication port to the foreground. Needs to be re-established everytime foreground opens.
         var port = null;
+        
+        playlistManager.onActivePlaylistTitleChange(refreshUI);
+        playlistManager.onPlaylistRemoved(refreshUI);
 
-        //  Initialize the player
-        (function () {
-            var onReady = function () {
-                //  If there is a playlistItem to cue might as well have it ready to go.
-                if (playlistManager.activePlaylist.get('items').length > 0) {
-                    var selectedItem = playlistManager.activePlaylist.getSelectedItem();
-                    cueItem(selectedItem);
+        //  Initialize the player by creating YT player iframe.
+        playerBuilder.buildPlayer('MusicHolder', onReady, onStateChange, onPlayerError, function (builtPlayer) {
+            player = builtPlayer;
+
+            //  Detect flash crashing and recover.
+            setInterval(function () {
+                try {
+                    player.getPlayerState();
+                } catch (e) {
+                    console.error("FLASH HAS CRASHED GO GO GO!");
+                    return;
                 }
-                
-                refreshUI();
-            };
+            }, 1000);
+        });
 
-            var onStateChange = function(playerState) {
+        function onReady() {
+            //  If there is a playlistItem to cue might as well have it ready to go.
+            if (playlistManager.activePlaylist.get('items').length > 0) {
+                var selectedItem = playlistManager.activePlaylist.getSelectedItem();
+                cueItem(selectedItem);
+            }
+                
+            refreshUI();
+        };
+
+        function onStateChange(playerState) {
                 //If the video stopped playing and there's another playlistItem to skip to, do so.
                 if (playerState.data === PlayerStates.ENDED) {
                     //Don't pass message to UI if it is closed. Handle sock change in the background.
@@ -42,9 +58,9 @@ define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistM
                 }
 
                 refreshUI();
-            };
+        };
 
-            var onPlayerError = function (error) {
+        function onPlayerError(error) {
                 console.error("An error was encountered.", error);
 
                 switch (error.data) {
@@ -57,25 +73,6 @@ define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistM
                     break;
                 }
             };
-
-            //  Create YT player iframe.
-            playerBuilder.buildPlayer('MusicHolder', onReady, onStateChange, onPlayerError, function(builtPlayer) {
-                player = builtPlayer;
-                
-                //  Detect flash crashing and recover.
-                setInterval(function() {
-                    try {
-                        player.getPlayerState();
-                    } catch (e) {
-                        console.error("FLASH HAS CRASHED GO GO GO!");
-                        return;
-                    }
-                }, 1000);
-            });
-        })();
-
-        playlistManager.onActivePlaylistTitleChange(refreshUI);
-        playlistManager.onPlaylistRemoved(refreshUI);
 
         function refreshUI() {
             if (port && port.postMessage) {

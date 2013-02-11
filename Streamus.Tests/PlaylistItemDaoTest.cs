@@ -103,7 +103,7 @@ namespace Streamus.Tests
             //  Only add after successfully saving.
             Playlist.Items.Add(secondItem);
 
-            PlaylistManager.DeleteItem(firstItem.Id, firstItem.PlaylistId, Playlist.Collection.Id);
+            PlaylistManager.DeleteItem(firstItem.Id, firstItem.PlaylistId);
 
             //  Remove entity from NHibernate cache to force DB query to ensure actually created.
             NHibernateSessionManager.Instance.Clear();
