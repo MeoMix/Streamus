@@ -10,6 +10,9 @@ define(['playlist',
         'programState'
     ], function(Playlist, Playlists, PlaylistItem, PlaylistItems, loginManager, programState) {
         'use strict';
+
+        console.log("inside the start of playlistManager", PlaylistItems);
+
         var playlists = new Playlists();
         var isReady = false;
 

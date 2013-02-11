@@ -1,15 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Web.Mvc;
 using Streamus.Backend.Dao;
 using Streamus.Backend.Domain;
 using Streamus.Backend.Domain.Interfaces;
 using Streamus.Backend.Domain.Managers;
+using log4net;
 
 namespace Streamus.Controllers
 {
     public class VideoController : Controller
     {
-        private readonly IVideoDao VideoDao = new VideoDao();
+        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly IVideoDao VideoDao;
+
+        public VideoController()
+        {
+            try
+            {
+                VideoDao = new VideoDao();
+            }
+            catch (TypeInitializationException exception)
+            {
+                Logger.Error(exception.InnerException);
+                throw exception.InnerException;
+            }
+        }
 
         /// <summary>
         ///     Save's a Video. It's a PUT because the video's ID will already

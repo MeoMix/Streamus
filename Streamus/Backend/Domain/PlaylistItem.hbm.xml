@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Streamus" namespace="Streamus.Backend.Domain">
+  
   <class name="PlaylistItem" table="[PlaylistItems]" lazy="false" >
     <composite-id>
       <key-property name="Id" />
@@ -10,4 +11,5 @@
     <property name="Title" not-null="true" />
     <property name="VideoId" not-null="true"/>
   </class>
+  
 </hibernate-mapping>

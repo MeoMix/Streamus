@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using NUnit.Framework;
 using Streamus.Backend.Dao;
 using Streamus.Backend.Domain;
@@ -34,7 +35,7 @@ namespace Streamus.Tests
                 throw exception.InnerException;
             }
 
-            User = new UserManager(new UserDao(), new PlaylistDao()).CreateUser();
+            User = new UserManager(new UserDao()).CreateUser();
 
             Video = new Video("s91jgcmQoB0", "Tristam - Chairs", 219);
             new VideoManager(VideoDao).Save(Video);
@@ -53,7 +54,9 @@ namespace Streamus.Tests
         [Test]
         public void Updates()
         {
-            var playlist = new Playlist(User.Id, "New Playlist 001", PlaylistDao.GetAll().Count);
+            var playlistCollection = User.PlaylistCollections.First();
+            var playlist = playlistCollection.CreatePlaylist();
+
             PlaylistManager.Save(playlist);
 
             PlaylistManager.UpdateTitle(playlist.Id, "Existing Playlist 001");
@@ -70,7 +73,9 @@ namespace Streamus.Tests
         [Test]
         public void Deletes()
         {
-            var playlist = new Playlist(User.Id, "New Playlist 001", PlaylistDao.GetAll().Count);
+            var playlistCollection = User.PlaylistCollections.First();
+            var playlist = playlistCollection.CreatePlaylist();
+
             PlaylistManager.Save(playlist);
 
             //  Usually created client-side, but for testing it is OK to create server-side.

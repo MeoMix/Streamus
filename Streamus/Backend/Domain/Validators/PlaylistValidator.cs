@@ -19,7 +19,7 @@ namespace Streamus.Backend.Domain.Validators
         private bool HasUniquePosition(Playlist playlist)
         {
             //  Ask the database for a playlist at the current position for the given user and make sure not going to overwrite something.
-            Playlist fromDatabase = PlaylistDao.GetByPosition(playlist.UserId, playlist.Position);
+            Playlist fromDatabase = PlaylistDao.GetByPosition(playlist.Collection.Id, playlist.Position);
             return fromDatabase == null || fromDatabase.Id == playlist.Id;
         }
     }

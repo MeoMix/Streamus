@@ -6,6 +6,10 @@ var require = {
         'background': 'background/background',
         'playerStates': 'playerStates',
         'player': 'background/player',
+        'playlistItem': 'background/playlistItem',
+        'playlistItems': 'background/playlistItems',
+        'playlistCollection': 'background/playlistCollection',
+        'playlistCollections': 'background/playlistCollections',
         'playlist': 'background/playlist',
         'playlists': 'background/playlists',
         'playlistManager': 'background/playlistManager',
@@ -24,8 +28,6 @@ var require = {
         'underscore': 'thirdParty/underscore',
         'user': 'background/user',
         'oauth2': 'thirdParty/oauth2/oauth2',
-        'playlistItem': 'background/playlistItem',
-        'playlistItems': 'background/playlistItems',
         'playlistItemsHistory': 'background/playlistItemsHistory',
         'backbone': 'thirdParty/backbone'
     }

@@ -8,11 +8,13 @@ define(['ytHelper',
     ], function(ytHelper, PlaylistItems, PlaylistItemsHistory, PlaylistItem, programState) {
         'use strict';
 
+        console.log("initializing a playlist", PlaylistItems, PlaylistItem);
+
         var Playlist = Backbone.Model.extend({
             defaults: function() {
                 return {
                     id: null,
-                    userId: null,
+                    collectionId: null,
                     title: 'New Playlist',
                     selected: false,
                     position: -1,
@@ -24,6 +26,7 @@ define(['ytHelper',
             urlRoot: programState.getBaseUrl() + 'Playlist/',
             
             parse: function (data) {
+                console.log("parsing");
                 if (data.items.length > 0) {
                     //  Reset will load the server's response into items as a Backbone.Collection
                     this.get('items').reset(data.items);
@@ -38,13 +41,13 @@ define(['ytHelper',
                 return data;
             },
             initialize: function () {
+                console.log("Initializing a playlist");
                 var items = this.get('items');
 
                 //  Our playlistItem data was fetched from the server with the playlist. Need to convert the collection to Backbone Model entities.
                 if (!(items instanceof Backbone.Collection)) {
-                    var playlistItems = new PlaylistItems(items);
-
-                    this.set('items', playlistItems, {
+                    
+                    this.set('items', new PlaylistItems(items), {
                         //  Silent operation because the playlist isn't technically changing - just being made correct.
                         silent: true
                     });
@@ -357,7 +360,9 @@ define(['ytHelper',
             }
         });
 
-        return function(config) {
+        return function (config) {
+            console.log("Creating a new Playlist with config:", config);
+
             var playlist = new Playlist(config);
             
             return playlist;

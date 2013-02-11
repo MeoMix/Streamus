@@ -1,39 +1,16 @@
 //  A singleton representing the sole logged on user for the program.
 //  Tries to load itself by ID stored in localStorage and then by chrome.storage.sync.
 //  If still unloaded, tells the server to create a new user and assumes that identiy.
-define(['programState'], function(programState) {
+define(['playlistCollections', 'programState'], function(PlaylistCollections, programState) {
     'use strict';
     var userIdKey = 'UserId';
-
-    //  Loads user data by ID from the server, writes the ID
-    //  to client-side storage locations for future loading and then announces
-    //  that the user has been loaded fully.
-
-    function fetchUser(shouldSetSyncStorage) {
-        this.fetch({
-            success: function(model) {
-                //  TODO: Error handling for writing to sync too much.
-                //  Write to sync as little as possible because it has restricted read/write limits per hour.
-                if (shouldSetSyncStorage) {
-                    chrome.storage.sync.set({ userIdKey: model.get('id') });
-                }
-
-                localStorage.setItem(userIdKey, model.get('id'));
-
-                //  Announce that user has loaded so managers can use it to fetch data.
-                model.trigger('loaded');
-            },
-            error: function (error) {
-                console.error(error);
-            }
-        });
-    }
 
     //  User data will be loaded either from cache or server.
     var User = Backbone.Model.extend({
         defaults: {
-            id: 'fee83611-6f4f-484d-83e6-3b5ebcd98d42', //localStorage.getItem(userIdKey),
-            name: '' 
+            id: 'A5A97E11-7EC5-421E-AEEA-8ECC7133E105', //localStorage.getItem(userIdKey),
+            name: '',
+            playlistCollections: new PlaylistCollections()
         },
         
         urlRoot: programState.getBaseUrl() + 'User/',
@@ -78,6 +55,43 @@ define(['programState'], function(programState) {
             }
         }
     });
+    
+
+    //  Loads user data by ID from the server, writes the ID
+    //  to client-side storage locations for future loading and then announces
+    //  that the user has been loaded fully.
+
+    function fetchUser(shouldSetSyncStorage) {
+        var self = this;
+        this.fetch({
+            success: function (model) {
+                //  Have to manually convert the JSON array into a Backbone.Collection
+                console.log("Creating a new PlaylistCollections from: ", model);
+                var playlistCollections = new PlaylistCollections(model.get('playlistCollections'));
+
+                //self.set('playlistCollections', playlistCollections, {
+                //    //  Silent operation because the playlistCollections isn't technically changing - just being made correct.
+                //    silent: true
+                //});
+
+                //  TODO: Error handling for writing to sync too much.
+                //  Write to sync as little as possible because it has restricted read/write limits per hour.
+                if (shouldSetSyncStorage) {
+                    chrome.storage.sync.set({ userIdKey: model.get('id') });
+                }
+
+                localStorage.setItem(userIdKey, model.get('id'));
+
+                console.log("Fetched a user. Model:", model);
+
+                //  Announce that user has loaded so managers can use it to fetch data.
+                model.trigger('loaded');
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
+    }
 
     //  Only ever instantiate one User.
     return _.once(function(config) {

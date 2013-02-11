@@ -14,7 +14,6 @@ namespace Streamus.Tests
     {
         private Configuration Configuration { get; set; }
         private IUserDao UserDao { get; set; }
-        private IPlaylistDao PlaylistDao { get; set; }
         private UserManager UserManager { get; set; }
 
         /// <summary>
@@ -26,7 +25,6 @@ namespace Streamus.Tests
             try
             {
                 UserDao = new UserDao();
-                PlaylistDao = new PlaylistDao();
             }
             catch (TypeInitializationException exception)
             {
@@ -53,7 +51,7 @@ namespace Streamus.Tests
         public void SetupContext()
         {
             //  Create managers here because every client request will require new managers.
-            UserManager = new UserManager(UserDao, PlaylistDao);
+            UserManager = new UserManager(UserDao);
         }
 
         [Test]
@@ -66,8 +64,10 @@ namespace Streamus.Tests
 
             User userFromDatabase = UserDao.Get(user.Id);
             //  Test that the product was successfully inserted
-            Assert.IsNotNull(userFromDatabase);
             Assert.AreNotSame(user, userFromDatabase);
+
+            Assert.IsNotNull(userFromDatabase);
+            Assert.IsNotEmpty(userFromDatabase.PlaylistCollections);
         }
     }
 }

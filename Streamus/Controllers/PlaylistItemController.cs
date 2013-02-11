@@ -1,16 +1,33 @@
 ﻿using System;
+using System.Reflection;
 using System.Web.Mvc;
 using Streamus.Backend.Dao;
 using Streamus.Backend.Domain;
 using Streamus.Backend.Domain.Interfaces;
 using Streamus.Backend.Domain.Managers;
+using log4net;
 
 namespace Streamus.Controllers
 {
     public class PlaylistItemController : Controller
     {
-        private readonly IPlaylistDao PlaylistDao = new PlaylistDao();
-        private readonly IPlaylistItemDao PlaylistItemDao = new PlaylistItemDao();
+        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly IPlaylistDao PlaylistDao;
+        private readonly IPlaylistItemDao PlaylistItemDao;
+
+        public PlaylistItemController()
+        {
+            try
+            {
+                PlaylistDao = new PlaylistDao();
+                PlaylistItemDao = new PlaylistItemDao();
+            }
+            catch (TypeInitializationException exception)
+            {
+                Logger.Error(exception.InnerException);
+                throw exception.InnerException;
+            }
+        }
 
         [HttpPost]
         public ActionResult Create(PlaylistItem playlistItem)
@@ -31,10 +48,10 @@ namespace Streamus.Controllers
         }
 
         [HttpDelete]
-        public EmptyResult Delete(Guid id, Guid playlistId, Guid userId)
+        public EmptyResult Delete(Guid id, Guid playlistId, Guid collectionId)
         {
             var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
-            playlistManager.DeleteItem(id, playlistId, userId);
+            playlistManager.DeleteItem(id, playlistId, collectionId);
 
             return new EmptyResult();
         }

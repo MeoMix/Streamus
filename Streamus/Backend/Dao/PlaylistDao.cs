@@ -31,24 +31,14 @@ namespace Streamus.Backend.Dao
             return playlist;
         }
 
-        public IList<Playlist> GetByUserId(Guid userId)
-        {
-            ICriteria criteria = NHibernateSession
-                .CreateCriteria(typeof (Playlist), "Playlist")
-                .Add(Restrictions.Eq("Playlist.UserId", userId));
-
-            return criteria.List<Playlist>();
-        }
-
-        public Playlist GetByPosition(Guid userId, int position)
+        public Playlist GetByPosition(Guid collectionId, int position)
         {
             ICriteria criteria = NHibernateSession
                 .CreateCriteria(typeof (Playlist), "Playlist")
                 .Add(Restrictions.Eq("Position", position))
-                .Add(Restrictions.Eq("UserId", userId))
-                .SetMaxResults(1);
+                .Add(Restrictions.Eq("Collection.Id", collectionId));
 
-            Playlist playlist = criteria.List<Playlist>().FirstOrDefault();
+            Playlist playlist = criteria.UniqueResult<Playlist>();
 
             return playlist;
         }

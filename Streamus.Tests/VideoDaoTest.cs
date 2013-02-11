@@ -12,10 +12,6 @@ namespace Streamus.Tests
     public class VideoDaoTest
     {
         private IVideoDao VideoDao { get; set; }
-        private IPlaylistDao PlaylistDao { get; set; }
-        private IPlaylistItemDao PlaylistItemDao { get; set; }
-        private User User { get; set; }
-        private Playlist Playlist { get; set; }
         private VideoManager VideoManager { get; set; }
 
         /// <summary>
@@ -26,8 +22,6 @@ namespace Streamus.Tests
         {
             try
             {
-                PlaylistDao = new PlaylistDao();
-                PlaylistItemDao = new PlaylistItemDao();
                 VideoDao = new VideoDao();
             }
             catch (TypeInitializationException exception)
@@ -35,9 +29,7 @@ namespace Streamus.Tests
                 throw exception.InnerException;
             }
 
-            User = new UserManager(new UserDao(), new PlaylistDao()).CreateUser();
-            Playlist = new Playlist(User.Id, "New Playlist 001", PlaylistDao.GetAll().Count);
-            new PlaylistManager(PlaylistDao, PlaylistItemDao).Save(Playlist);
+            new UserManager(new UserDao()).CreateUser();
         }
 
         /// <summary>

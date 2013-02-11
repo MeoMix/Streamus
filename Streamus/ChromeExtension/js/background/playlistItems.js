@@ -1,23 +1,23 @@
 ﻿define(['playlistItem', 'ytHelper', 'videoManager'],
     function (PlaylistItem, ytHelper, videoManager) {
-    'use strict';
+        'use strict';
 
     var PlaylistItems = Backbone.Collection.extend({
         model: PlaylistItem,
         comparator: function(playlistItem) {
             return playlistItem.get('position');
         },
-        getSelectedItem: function () {
+        getSelectedItem: function() {
             var selectedItem = this.find(function(item) {
                 return item.get('selected');
             }) || null;
-            
+
             return selectedItem;
         },
-        getRelatedVideos: function () {
+        getRelatedVideos: function() {
             //  Take each playlist item's array of related videos, pluck them all out into a collection of arrays
             //  then flatten the arrays into a collection of videos.
-            
+
             var relatedVideos = _.flatten(this.map(function(item) {
                 return item.get('relatedVideos');
             }));
@@ -27,9 +27,10 @@
     });
 
     //  Public exposure of a constructor for building new PlaylistItem objects.
-    return function (config) {
+    return function(config) {
+        console.log("Here I am!");
         var playlistItems = new PlaylistItems(config);
-        
+
         //  Run the following code aftewards because initialization converts config to Backbone.Models
         var videoIds = [];
 
@@ -40,7 +41,7 @@
             var videoId = item.get('videoId');
             videoIds.push(videoId);
 
-            ytHelper.getRelatedVideos(videoId, function (relatedVideos) {
+            ytHelper.getRelatedVideos(videoId, function(relatedVideos) {
                 item.set('relatedVideos', relatedVideos);
             });
         });

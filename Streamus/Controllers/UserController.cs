@@ -1,16 +1,31 @@
 ﻿using System;
+using System.Reflection;
 using System.Web.Mvc;
 using Streamus.Backend.Dao;
 using Streamus.Backend.Domain;
 using Streamus.Backend.Domain.Interfaces;
 using Streamus.Backend.Domain.Managers;
+using log4net;
 
 namespace Streamus.Controllers
 {
     public class UserController : Controller
     {
-        private readonly IUserDao UserDao = new UserDao();
-        private readonly IPlaylistDao PlaylistDao = new PlaylistDao();
+        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly IUserDao UserDao;
+
+        public UserController()
+        {
+            try
+            {
+                UserDao = new UserDao();
+            }
+            catch (TypeInitializationException exception)
+            {
+                Logger.Error(exception.InnerException);
+                throw exception.InnerException;
+            }
+        }
 
         /// <summary>
         ///     Creates a new User object and writes it to the database.
@@ -19,7 +34,7 @@ namespace Streamus.Controllers
         [HttpPost]
         public ActionResult Create()
         {
-            var userManager = new UserManager(UserDao, PlaylistDao);
+            var userManager = new UserManager(UserDao);
             User user = userManager.CreateUser();
 
             return new JsonDataContractActionResult(user);

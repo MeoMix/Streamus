@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Linq;
+using NUnit.Framework;
 using Streamus.Backend.Dao;
 using Streamus.Backend.Domain;
 using Streamus.Backend.Domain.Interfaces;
@@ -37,7 +38,7 @@ namespace Streamus.Tests
                 throw exception.InnerException;
             }
 
-            User = new UserManager(UserDao, PlaylistDao).CreateUser();
+            User = new UserManager(UserDao).CreateUser();
             Video = new Video("s91jgcmQoB0", "Tristam - Chairs", 219);
             new VideoManager(VideoDao).Save(Video);
         }
@@ -51,8 +52,11 @@ namespace Streamus.Tests
             //  Create managers here because every client request will require new managers.
             PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
 
+            var playlistCollection = User.PlaylistCollections.First();
+
             //  Make a new Playlist object each time to ensure no side-effects from previous test case.
-            Playlist = new Playlist(User.Id, "New Playlist 001", PlaylistDao.GetAll().Count);
+            Playlist = playlistCollection.CreatePlaylist();
+            
             PlaylistManager.Save(Playlist);
         }
 
@@ -99,7 +103,7 @@ namespace Streamus.Tests
             //  Only add after successfully saving.
             Playlist.Items.Add(secondItem);
 
-            PlaylistManager.DeleteItem(firstItem.PlaylistId, firstItem.Id, Playlist.UserId);
+            PlaylistManager.DeleteItem(firstItem.Id, firstItem.PlaylistId, Playlist.Collection.Id);
 
             //  Remove entity from NHibernate cache to force DB query to ensure actually created.
             NHibernateSessionManager.Instance.Clear();

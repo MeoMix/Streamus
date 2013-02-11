@@ -1,17 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Web.Mvc;
 using Streamus.Backend.Dao;
 using Streamus.Backend.Domain;
 using Streamus.Backend.Domain.Interfaces;
 using Streamus.Backend.Domain.Managers;
+using log4net;
 
 namespace Streamus.Controllers
 {
     public class PlaylistController : Controller
     {
-        private readonly IPlaylistDao PlaylistDao = new PlaylistDao();
-        private readonly IPlaylistItemDao PlaylistItemDao = new PlaylistItemDao();
+        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly IPlaylistDao PlaylistDao;
+        private readonly IPlaylistItemDao PlaylistItemDao;
+
+        public PlaylistController()
+        {
+            try
+            {
+                PlaylistDao = new PlaylistDao();
+                PlaylistItemDao = new PlaylistItemDao();
+            }
+            catch (TypeInitializationException exception)
+            {
+                Logger.Error(exception.InnerException);
+                throw exception.InnerException;
+            }
+        }
 
         [HttpPost]
         public ActionResult Create(Playlist playlist)
@@ -64,14 +81,6 @@ namespace Streamus.Controllers
             playlistManager.UpdateTitle(playlistId, title);
 
             return new EmptyResult();
-        }
-
-        [HttpGet]
-        public ActionResult GetPlaylistsByUserId(Guid userId)
-        {
-            IList<Playlist> playlists = PlaylistDao.GetByUserId(userId);
-
-            return new JsonDataContractActionResult(playlists);
         }
 
         [HttpPost]

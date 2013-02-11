@@ -71,9 +71,11 @@ namespace Streamus.Backend.Domain.Managers
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
-                Playlist playlist = PlaylistDao.Get(id);
 
+                Playlist playlist = PlaylistDao.Get(id);
+                playlist.Collection.RemovePlaylist(playlist);
                 PlaylistDao.Delete(playlist);
+
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
             catch (Exception exception)
@@ -133,23 +135,30 @@ namespace Streamus.Backend.Domain.Managers
             }
         }
 
-        public void DeleteItem(Guid itemId, Guid playlistId, Guid userId)
+        public void DeleteItem(Guid itemId, Guid playlistId, Guid collectionId)
         {
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
                 Playlist playlist = PlaylistDao.Get(playlistId);
 
-                if (playlist.UserId != userId)
+                if (playlist == null)
                 {
-                    const string errorMessage = "The specified playlist is not for the given user.";
+                    string errorMessage = string.Format("No playlist found with id: {0}", playlistId);
+                    throw new ApplicationException(errorMessage);
+                }
+
+                if (playlist.Collection.Id != collectionId)
+                {
+                    string errorMessage = string.Format("The playlist {0} is not a child of the collection {1}", playlist, collectionId);
                     throw new ApplicationException(errorMessage);
                 }
 
                 PlaylistItem playlistItem = playlist.Items.First(item => item.Id == itemId);
 
                 //  Be sure to remove from Playlist first so that cascade doesn't re-save.
-                playlist.Items.Remove(playlistItem);
+                playlist.RemoveItem(playlistItem);
+                PlaylistItemDao.Delete(playlistItem);
 
                 //  Update all playlistItems positions which would be affected by the remove.
                 foreach (PlaylistItem item in playlist.Items.Where(i => i.Position > playlistItem.Position))

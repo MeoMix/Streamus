@@ -1,56 +1,77 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Web;
 using FluentValidation;
 using Streamus.Backend.Domain.Validators;
 
 namespace Streamus.Backend.Domain
-{
+{        
+    //  TODO: Currently there is only the ability to have a single PlaylistCollection.
+    //  Should create PlaylistCollection objects as a LinkedList so that adding and removing is possible.
     [DataContract]
-    public class User
+    public class PlaylistCollection
     {
         [DataMember(Name = "id")]
         public Guid Id { get; set; }
 
-        [DataMember(Name = "name")]
-        public string Name { get; set; }
+        [DataMember(Name = "userId")]
+        public Guid UserId
+        {
+            get { return User.Id; }
+            set { User.Id = value; }
+        }
+
+        public User User { get; set; }
+
+        [DataMember(Name = "title")]
+        public string Title { get; set; }
 
         //  Use collection interfaces so NHibernate can inject with its own collection implementation.
-        [DataMember(Name = "playlistCollections")]
-        public IList<PlaylistCollection> PlaylistCollections { get; set; }
+        [DataMember(Name = "playlists")]
+        public IList<Playlist> Playlists { get; set; }
 
-        public User()
+        public PlaylistCollection()
         {
-            Name = string.Empty;
-            PlaylistCollections = new List<PlaylistCollection>();
+            Id = Guid.Empty;
+            Title = string.Empty;
+            Playlists = new List<Playlist>();
 
-            //  A user should always have at least one PlaylistCollection.
-            CreatePlaylistCollection();
+            //  A collection should always have at least one Playlist.
+            CreatePlaylist();
         }
 
-        public PlaylistCollection CreatePlaylistCollection()
+        public PlaylistCollection(string title) 
+            : this()
         {
-            string title = string.Format("New Playlist Collection {0:D4}", PlaylistCollections.Count);
-            var playlistCollection = new PlaylistCollection(title);
-            return AddPlaylistCollection(playlistCollection);
+            Title = title;
         }
 
-        public PlaylistCollection AddPlaylistCollection(PlaylistCollection playlistCollection)
+        public Playlist CreatePlaylist()
         {
-            playlistCollection.User = this;
-            PlaylistCollections.Add(playlistCollection);
-
-            return playlistCollection;
+            string title = string.Format("New Playlist {0:D4}", Playlists.Count);
+            var playlist = new Playlist(title);
+            return AddPlaylist(playlist);
         }
 
-        public void RemovePlaylistCollection(PlaylistCollection playlistCollection)
+        public Playlist AddPlaylist(Playlist playlist)
         {
-            PlaylistCollections.Remove(playlistCollection);
+            playlist.Collection = this;
+            playlist.Position = Playlists.Count;
+
+            Playlists.Add(playlist);
+            return playlist;
+        }
+
+        public void RemovePlaylist(Playlist playlist)
+        {
+            Playlists.Remove(playlist);
         }
 
         public void ValidateAndThrow()
         {
-            var validator = new UserValidator();
+            var validator = new PlaylistCollectionValidator();
             validator.ValidateAndThrow(this);
         }
 
@@ -75,7 +96,7 @@ namespace Streamus.Backend.Domain
 
         public override bool Equals(object obj)
         {
-            User other = obj as User;
+            PlaylistCollection other = obj as PlaylistCollection;
             if (other == null)
                 return false;
 
@@ -87,5 +108,6 @@ namespace Streamus.Backend.Domain
 
             return other.Id.Equals(Id);
         }
+
     }
 }

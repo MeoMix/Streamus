@@ -134,8 +134,11 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Backend\Dao\PlaylistCollectionDao.cs" />
     <Compile Include="Backend\Dao\PlaylistItemDao.cs" />
+    <Compile Include="Backend\Domain\Interfaces\IPlaylistCollectionDao.cs" />
     <Compile Include="Backend\Domain\Interfaces\IPlaylistItemDao.cs" />
+    <Compile Include="Backend\Domain\PlaylistCollection.cs" />
     <Compile Include="Backend\Domain\PlaylistItem.cs" />
     <Compile Include="Backend\Domain\Interfaces\IUserDao.cs" />
     <Compile Include="Backend\Domain\Interfaces\IPlaylistDao.cs" />
@@ -145,6 +148,7 @@
     <Compile Include="Backend\Domain\Managers\PlaylistManager.cs" />
     <Compile Include="Backend\Domain\Managers\UserManager.cs" />
     <Compile Include="Backend\Domain\Playlist.cs" />
+    <Compile Include="Backend\Domain\Validators\PlaylistCollectionValidator.cs" />
     <Compile Include="Backend\Domain\Validators\PlaylistItemValidator.cs" />
     <Compile Include="Backend\Domain\Validators\PlaylistValidator.cs" />
     <Compile Include="Backend\Domain\Validators\UserValidator.cs" />
@@ -177,6 +181,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Backend\Domain\Playlist.hbm.xml" />
+    <EmbeddedResource Include="Backend\Domain\PlaylistCollection.hbm.xml" />
     <Content Include="bin\Antlr3.Runtime.dll" />
     <Content Include="bin\EntityFramework.dll" />
     <Content Include="bin\FluentValidation.dll" />
@@ -216,6 +221,8 @@
     <Content Include="ChromeExtension\js\background\main.js" />
     <Content Include="ChromeExtension\js\background\player.js" />
     <Content Include="ChromeExtension\js\background\playlist.js" />
+    <Content Include="ChromeExtension\js\background\playlistCollection.js" />
+    <Content Include="ChromeExtension\js\background\playlistCollections.js" />
     <Content Include="ChromeExtension\js\background\playlistItem.js" />
     <Content Include="ChromeExtension\js\background\playlistItems.js" />
     <Content Include="ChromeExtension\js\background\playlistManager.js" />
