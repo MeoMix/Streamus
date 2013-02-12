@@ -6,12 +6,9 @@ define(['playlist',
         'playlists',
         'playlistItem',
         'playlistItems',
-        'loginManager',
-        'programState'
-    ], function(Playlist, Playlists, PlaylistItem, PlaylistItems, loginManager, programState) {
+        'loginManager'
+    ], function(Playlist, Playlists, PlaylistItem, PlaylistItems, loginManager) {
         'use strict';
-
-        console.log("inside the start of playlistManager", PlaylistItems);
 
         var playlists = new Playlists();
         var isReady = false;
@@ -22,46 +19,20 @@ define(['playlist',
             onPlaylistRemoved: 'playlistManager.onPlaylistRemoved'
         };
 
-        loginManager.once('loggedIn', function() {
-            var userId = loginManager.get('user').get('id');
+        loginManager.once('loggedIn', function () {
+            playlists = loginManager.get('user').get('playlistCollections').at(0).get('playlists');
 
-            $.ajax({
-                type: 'GET',
-                url: programState.getBaseUrl() + 'Playlist/GetPlaylistsByUserId',
-                dataType: 'json',
-                data: {
-                    userId: userId
-                },
-                success: function(data) {
-                    playlists.reset(data);
+            //  PlaylistManager will remember the selected playlist via localStorage.
+            var savedId = localStorage.getItem('selectedPlaylistId');
+            var playlistToSelect = playlists.get(savedId) || playlists.at(0);
+            
+            setSelectedPlaylist(playlistToSelect);
 
-                    //PlaylistManager will remember the selected playlist via localStorage.
-                    var savedId = localStorage.getItem('selectedPlaylistId');
-
-                    if (savedId === null) {
-                        var playlist = playlists.at(0);
-                        selectPlaylistById(playlist.get('id'));
-                    } else {
-                        selectPlaylistById(savedId);
-                    }
-
-                    $(document).trigger(events.onReady);
-                    isReady = true;
-                },
-                error: function(error) {
-                    console.error(error);
-                }
-            });
+            $(document).trigger(events.onReady);
+            isReady = true;
         });
 
         loginManager.login();
-
-        function selectPlaylistById(id) {
-            var playlist = playlists.get(id);
-            if (playlist != null) {
-                setSelectedPlaylist(playlist);
-            }
-        }
 
         function getSelectedPlaylist() {
             var selectedPlaylist = playlists.find(function(playlist) {

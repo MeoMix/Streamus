@@ -8,7 +8,7 @@ define(['playlistCollections', 'programState'], function(PlaylistCollections, pr
     //  User data will be loaded either from cache or server.
     var User = Backbone.Model.extend({
         defaults: {
-            id: '408c53eb-4c0a-4d1f-b82d-5d98fb7b022a', //localStorage.getItem(userIdKey),
+            id: 'a5a97e11-7ec5-421e-aeea-8ecc7133e105', //localStorage.getItem(userIdKey),
             name: '',
             playlistCollections: new PlaylistCollections()
         },
@@ -66,7 +66,7 @@ define(['playlistCollections', 'programState'], function(PlaylistCollections, pr
         this.fetch({
             success: function (model) {
                 //  Have to manually convert the JSON array into a Backbone.Collection
-                console.log("Creating a new PlaylistCollections from: ", model);
+
                 var playlistCollections = new PlaylistCollections(model.get('playlistCollections'));
 
                 self.set('playlistCollections', playlistCollections, {
@@ -81,8 +81,6 @@ define(['playlistCollections', 'programState'], function(PlaylistCollections, pr
                 }
 
                 localStorage.setItem(userIdKey, model.get('id'));
-
-                console.log("Fetched a user. Model:", model);
 
                 //  Announce that user has loaded so managers can use it to fetch data.
                 model.trigger('loaded');

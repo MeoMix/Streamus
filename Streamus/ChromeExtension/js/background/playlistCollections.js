@@ -6,7 +6,6 @@
     });
 
     return function (config) {
-        console.log("Creating a new PlaylistCollections", config);
         var playlistCollections = new PlaylistCollections(config);
 
         return playlistCollections;
