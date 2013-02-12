@@ -56,7 +56,7 @@ define(['playlist',
 
         PlaylistManager = {
             onReady: function(event) {
-                console.log("onReady called. isReady:", isReady);
+
                 if (isReady) {
                     event();
                 } else {
@@ -91,7 +91,12 @@ define(['playlist',
                 var playlist = playlists.get(id);
                 setSelectedPlaylist(playlist);
             },
-
+            
+            addVideoByIdToPlaylist: function (id, playlistId) {
+                var playlist = this.getPlaylistById(playlistId);
+                playlist.addVideoById(id);
+            },
+            
             addPlaylist: function(playlistTitle, callback) {
                 var userId = loginManager.get('user').get('id');
 

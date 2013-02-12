@@ -16,16 +16,6 @@ define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistM
         //  Initialize the player by creating YT player iframe.
         playerBuilder.buildPlayer('MusicHolder', onReady, onStateChange, onPlayerError, function (builtPlayer) {
             player = builtPlayer;
-
-            //  Detect flash crashing and recover.
-            setInterval(function () {
-                try {
-                    player.getPlayerState();
-                } catch (e) {
-                    console.error("FLASH HAS CRASHED GO GO GO!");
-                    return;
-                }
-            }, 1000);
         });
 
         function onReady() {
@@ -39,10 +29,10 @@ define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistM
         };
 
         function onStateChange(playerState) {
-                //If the video stopped playing and there's another playlistItem to skip to, do so.
+                //  If the video stopped playing and there's another playlistItem to skip to, do so.
                 if (playerState.data === PlayerStates.ENDED) {
-                    //Don't pass message to UI if it is closed. Handle sock change in the background.
-                    //The player can be playing in the background and UI changes may try and be posted to the UI, need to prevent.
+                    //  Don't pass message to UI if it is closed. Handle sock change in the background.
+                    //  The player can be playing in the background and UI changes may try and be posted to the UI, need to prevent.
                     var isRadioModeEnabled = JSON.parse(localStorage.getItem('isRadioModeEnabled')) || false;
 
                     if (isRadioModeEnabled) {
@@ -61,20 +51,21 @@ define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistM
         };
 
         function onPlayerError(error) {
-                console.error("An error was encountered.", error);
+            console.error("An error was encountered.", error);
 
-                switch (error.data) {
-                case 100:
-                    alert("Video requested is not found. This occurs when a video has been removed or it has been marked as private.");
-                    break;
-                case 101:
-                case 150:
-                    alert("Video requested does not allow playback in the embedded players.");
-                    break;
-                }
-            };
+            switch (error.data) {
+            case 100:
+                alert("Video requested is not found. This occurs when a video has been removed or it has been marked as private.");
+                break;
+            case 101:
+            case 150:
+                alert("Video requested does not allow playback in the embedded players.");
+                break;
+            }
+        };
 
         function refreshUI() {
+            //  Port won't be open when the UI is open so don't post messages then.
             if (port && port.postMessage) {
                 port.postMessage();
             }
@@ -90,44 +81,6 @@ define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistM
             player.loadVideoById(selectedItem.get('videoId'));
         };
         
-        function loadItemById(id) {
-            var selectedItem = playlistManager.activePlaylist.selectItemById(id);
-            player.loadVideoById(selectedItem.get('videoId'));
-        }
-
-        function addItemByVideo(video) {
-            var isFirstVideo = playlistManager.activePlaylist.get('items').length === 0;
-            var addedItem = playlistManager.activePlaylist.addItem(video, isFirstVideo);
-
-            if (isFirstVideo) {
-                cueItem(addedItem);
-            }
-            
-            refreshUI();
-            return addedItem;
-        };
-
-        function removeItem(item) {
-            var selectedItem = playlistManager.activePlaylist.getSelectedItem();
-            if (selectedItem && selectedItem === item) {
-                var nextItem = playlistManager.activePlaylist.gotoNextItem();
-                
-                //nextItem will equal item sometimes because gotoNextItem loops around to front of list.
-                if (nextItem != null && nextItem !== item) {
-                    if (player.getPlayerState() == PlayerStates.PLAYING) {
-                        loadItem(nextItem);
-                    } else {
-                        cueItem(nextItem);
-                    }
-                } else {
-                    player.pauseVideo();
-                }
-            }
-            
-            playlistManager.activePlaylist.removeItem(item);
-            refreshUI();
-        };
-
         return {
             isSeeking: false,
             wasPlayingBeforeSeek: false,
@@ -164,6 +117,11 @@ define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistM
                     player.mute();
                 }
             },
+            
+            loadItem: loadItem,
+            cueItem: cueItem,
+            play: player.playVideo,
+            pause: player.pauseVideo,
             
             connect: function() {
                 //Open a connection between the background and foreground. The connection will become invalid every time the foreground closes.
@@ -206,20 +164,7 @@ define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistM
                     }
                 });
             },
-            
-            addVideoByIdToPlaylist: function(id, playlistId){
-                var playlist = playlistManager.getPlaylistById(playlistId);
-                playlist.addVideoById(id);
-            },
-            
-            getItemById: function(id) {
-                return playlistManager.activePlaylist.getItemById(id);
-            },
-            
-            orderByPositions: function (positions) {
-                playlistManager.activePlaylist.orderByPositions(positions);
-            },
-            
+
             //  Called when the user clicks mousedown on the progress bar dragger.
             seekStart: function() {
                 this.isSeeking = true;
@@ -246,31 +191,30 @@ define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistM
                 }
             },
             
-            loadItem: loadItem,
-            loadItemById: loadItemById,
-            
-            cueItem: cueItem,
-            
-            removeItem: removeItem,
-            
-            //  Adds a video to the activePlaylist. If it is the first video in the activePlaylist, that video is loaded as the current video.
-            addItemByVideo: addItemByVideo,
-            
-            play: function () {
-                player.playVideo();
+            loadItemById: function (id) {
+                var selectedItem = playlistManager.activePlaylist.selectItemById(id);
+                player.loadVideoById(selectedItem.get('videoId'));
             },
             
-            pause: function () {
-                player.pauseVideo();
-            },
+            removeItem: function (item) {
+                var selectedItem = playlistManager.activePlaylist.getSelectedItem();
+                if (selectedItem && selectedItem === item) {
+                    var nextItem = playlistManager.activePlaylist.gotoNextItem();
+                
+                    //  nextItem will equal item sometimes because gotoNextItem loops around to front of list.
+                    if (nextItem != null && nextItem !== item) {
+                        if (player.getPlayerState() == PlayerStates.PLAYING) {
+                            loadItem(nextItem);
+                        } else {
+                            cueItem(nextItem);
+                        }
+                    } else {
+                        player.pauseVideo();
+                    }
+                }
             
-            toggleVideo: function () {
-                if( player.getPlayerState() === PlayerStates.PLAYING ){
-                    this.pause();
-                }
-                else{
-                    this.play();
-                }
+                playlistManager.activePlaylist.removeItem(item);
+                refreshUI();
             },
             
             //  Skips to the next video. Will start playing the video if the player was already playing.
@@ -288,7 +232,7 @@ define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistM
 
                         nextItem = playlistManager.activePlaylist.gotoNextItem();
                     }
-                } else { //(where == "previous")
+                } else {
                     nextItem = playlistManager.activePlaylist.gotoPreviousItem();
                 }
 
@@ -301,7 +245,16 @@ define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistM
             
             addNewItem: function (videoInformation) {
                 var video = videoManager.createVideo(videoInformation, playlistManager.activePlaylist.get('id'));
-                addItemByVideo(video);
+                
+                var isFirstVideo = playlistManager.activePlaylist.get('items').length === 0;
+                var addedItem = playlistManager.activePlaylist.addItem(video, isFirstVideo);
+
+                if (isFirstVideo) {
+                    cueItem(addedItem);
+                }
+
+                refreshUI();
+                return addedItem;
             }
         };
     })();

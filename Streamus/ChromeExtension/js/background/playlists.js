@@ -6,7 +6,6 @@
     });
 
     return function (config) {
-        console.log("Creating a new Playlists", config);
         var playlists = new Playlists(config);
 
         return playlists;

@@ -39,7 +39,6 @@ define(['ytHelper',
                 return data;
             },
             initialize: function () {
-                console.log("Initializing a playlist");
                 var items = this.get('items');
 
                 //  Our playlistItem data was fetched from the server with the playlist. Need to convert the collection to Backbone Model entities.
@@ -97,20 +96,19 @@ define(['ytHelper',
             },
 
             selectItemById: function (id) {
-                console.log("calling selectItemById");
                 //  Deselect the currently selected item, then select the new item to have selected.
                 var selectedItem = this.getSelectedItem();
 
                 //  currentlySelected is not defined for a brand new playlist since we have no items yet selected.
                 if (selectedItem != null && selectedItem.get('id') !== id) {
-                    console.log("Deselecting the current item.");
+
                     selectedItem.set('selected', false);
                 }
 
                 var item = this.getItemById(id);
-                console.log("item in selectItemById:", item);
+
                 if (item != null && item.get('selected') === false) {
-                    console.log("Selecting a new current item.");
+
                     item.set('selected', true);
                     item.set('playedRecently', true);
 
@@ -122,7 +120,6 @@ define(['ytHelper',
                     localStorage.setItem(this.get('id') + '_selectedItemId', id);
                 }
 
-                console.log("returning the selected item.", item);
                 return item;
             },
 
@@ -359,8 +356,6 @@ define(['ytHelper',
         });
 
         return function (config) {
-            console.log("Creating a new Playlist with config:", config);
-
             var playlist = new Playlist(config);
             
             return playlist;

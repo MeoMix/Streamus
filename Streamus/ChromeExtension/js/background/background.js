@@ -43,7 +43,11 @@
                 YoutubePlayer.skipVideo("previous");
             break;
             case 'toggleVideo':
-                YoutubePlayer.toggleVideo();
+                if (YoutubePlayer.playerState === PlayerStates.PLAYING) {
+                    YoutubePlayer.play();
+                } else {
+                    YoutubePlayer.pause();
+                }
         }
     });
 
@@ -53,7 +57,7 @@
                 sendResponse({ playlists: playlistManager.playlists });
             break;
             case 'addVideoByIdToPlaylist':
-                YoutubePlayer.addVideoByIdToPlaylist(request.id, request.playlistId);
+                playlistManager.addVideoByIdToPlaylist(request.id, request.playlistId);
             break;
             default:
                 console.error("Unhandled request method:", request.method);

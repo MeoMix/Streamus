@@ -66,7 +66,6 @@ define(['video',
                     success: function (data) {
                         //  TODO: Pass merge paramater if videos can update properties, they can't currently
                         loadedVideos.add(data);
-                        console.log("loaded some videos:", loadedVideos);
 
                         if (callback) {
                             callback(data);

@@ -9,7 +9,7 @@ define(['onYouTubePlayerApiReady', 'jquery'], function () {
 
     //This code will trigger onYouTubePlayerAPIReady
     $(window).load(function () {
-        console.log("Injecting script during window load");
+
         $('script:first').before($('<script/>', {
             src: 'https://www.youtube.com/iframe_api'
         }));

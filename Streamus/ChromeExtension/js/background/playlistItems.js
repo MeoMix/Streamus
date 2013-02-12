@@ -28,7 +28,6 @@
 
     //  Public exposure of a constructor for building new PlaylistItem objects.
     return function(config) {
-        console.log("Here I am!");
         var playlistItems = new PlaylistItems(config);
 
         //  Run the following code aftewards because initialization converts config to Backbone.Models
@@ -45,8 +44,6 @@
                 item.set('relatedVideos', relatedVideos);
             });
         });
-
-        console.log("About to load some videos into videoManager:", videoIds);
 
         if (videoIds.length > 0) {
             //  Cache in our video manager all the related songs for our items. This will allow for tooltips with
