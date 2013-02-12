@@ -18,20 +18,6 @@
             });
         }
 
-        //  Creates a Video object after going out to YouTube's API for videoInformation based on videoId.
-        //  The Video object has its PlaylistId property set upon instantiation, and then the created video
-        //  is returned.
-        function createVideoFromVideoId(videoId, playlistId, callback) {
-            console.log("createdVideoFromVideoId", videoId);
-            ytHelper.getVideoInformation(videoId, function (videoInformation) {
-                var video = videoManager.createVideo(videoInformation, playlistId);
-
-                if (callback) {
-                    callback(video);
-                }
-            });
-        }
-
         // A few preliminary tests which do not require a Playlist existing in the database.
         describe('The unsaved Playlist', function() {
 
@@ -120,7 +106,7 @@
                 console.log("playlist at start:", savedPlaylist);
 
                 runs(function() {
-                    createVideoFromVideoId(videoId, savedPlaylist.get('id'), function (video) {
+                    ytHelper.getVideoFromId(videoId, function (video) {
                         console.log("video created, adding item");
                         item = savedPlaylist.addItem(video, true);
                         addedItemSuccessfully = true;
@@ -146,13 +132,11 @@
                 var initialItemCount = savedPlaylist.get('items').length;
 
                 runs(function() {
-                    var playlistId = savedPlaylist.get('id');
-
-                    createVideoFromVideoId('s91jgcmQoB0', playlistId, function(video) {
+                    ytHelper.getVideoFromId('s91jgcmQoB0', function(video) {
                         savedPlaylist.addItem(video, false);
                     });
 
-                    createVideoFromVideoId('n_3mUnxCusM', playlistId, function(video) {
+                    ytHelper.getVideoFromId('n_3mUnxCusM', function(video) {
                         savedPlaylist.addItem(video, false);
                     });
                 });
@@ -169,12 +153,11 @@
                 var videos = new Videos();
 
                 runs(function () {
-                    var playlistId = savedPlaylist.get('id');
-                    createVideoFromVideoId('s91jgcmQoB0', playlistId, function (video) {
+                    ytHelper.getVideoFromId('s91jgcmQoB0', function (video) {
                         videos.push(video);
                     });
 
-                    createVideoFromVideoId('n_3mUnxCusM', playlistId, function (video) {
+                    ytHelper.getVideoFromId('n_3mUnxCusM', function (video) {
                         videos.push(video);
                     });
                 });
@@ -258,7 +241,7 @@
                 var videoId = '8qffkPaCttY';
                 
                 runs(function () {
-                    createVideoFromVideoId(videoId, savedPlaylist.get('id'), function (video) {
+                    ytHelper.getVideoFromId(videoId, function (video) {
                         savedPlaylist.addItem(video, false);
                         hasAddedItem = true;
                     });

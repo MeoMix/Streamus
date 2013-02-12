@@ -31,12 +31,21 @@ define(['ytHelper', 'dialogs', 'helpers'],
         
         function handleValidInput(videoId) {
             $(document).trigger('validInputEvent');
-            ytHelper.getVideoInformation(videoId, function (videoInformation) {
-                if (typeof videoInformation === "undefined") {
+
+            ytHelper.getVideoFromId(videoId, function(video) {
+                if (video === null) {
                     dialogs.showBannedVideoDialog();
-                }
-                else {
-                    chrome.extension.getBackgroundPage().YoutubePlayer.addNewItem(videoInformation);
+                } else {
+                    var playlistManager = chrome.extension.getBackgroundPage().PlaylistManager;
+                    
+                    var isFirstVideo = playlistManager.activePlaylist.get('items').length === 0;
+                    var addedItem = playlistManager.activePlaylist.addItem(video, isFirstVideo);
+                    
+                    if (isFirstVideo) {
+                        chrome.extension.getBackgroundPage().YoutubePlayer.cueItem(addedItem);
+                        // TODO: I previously called refreshUI here -- do I need to do that? I don't think so..
+                    }
+
                 }
             });
         }

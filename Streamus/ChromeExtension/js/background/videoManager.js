@@ -101,7 +101,6 @@ define(['video',
             var totalVideosProcessed = 0;
 
             var videos = new Videos();
-            var self = this;
 
             var getVideosInterval = setInterval(function () {
                 $.ajax({
@@ -121,20 +120,11 @@ define(['video',
                             //  If the title is blank the video has been deleted from the playlist, no data to fetch.
                             if (entry.title.$t !== "") {
                                 var videoId = entry.media$group.yt$videoid.$t;
-                                ytHelper.getVideoInformation(videoId, function (videoInformation) {
 
-                                    //  Video Information will be null if the video has been banned on copyright grounds.
-                                    if (videoInformation !== null) {
-                                        var video = self.createVideo(videoInformation, playlistId);
-                                        videos.add(video);
-                                        totalVideosProcessed++;
-                                        
-                                        if (totalVideosProcessed == result.feed.entry.length) {
-                                            callback(videos);
-                                        }
-
-                                    } else {
-
+                                ytHelper.getVideoFromId(videoId, function(video) {
+                                    //  Video will be null if it has been banned on copyright grounds
+  
+                                    if (video === null) {
                                         console.log("Video was null, finding playable by title:", entry.title.$t);
 
                                         ytHelper.findPlayableByTitle(entry.title.$t, function (foundVideo) {
@@ -145,7 +135,17 @@ define(['video',
                                                 callback(videos);
                                             }
                                         });
+                                        
+                                    } else {
+
+                                        videos.add(video);
+                                        totalVideosProcessed++;
+
+                                        if (totalVideosProcessed == result.feed.entry.length) {
+                                            callback(videos);
+                                        }
                                     }
+
                                 });
                             } else {
                                 console.log("title is totally empty");

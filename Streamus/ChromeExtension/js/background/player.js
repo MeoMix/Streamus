@@ -64,6 +64,7 @@ define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistM
             }
         };
 
+        //  TODO: refreshUI needs to die. It's coupling me too much to player.js
         function refreshUI() {
             //  Port won't be open when the UI is open so don't post messages then.
             if (port && port.postMessage) {
@@ -241,20 +242,6 @@ define(['playlistManager', 'videoManager', 'playerBuilder'], function (playlistM
                 } else {
                     cueItem(nextItem);
                 }
-            },
-            
-            addNewItem: function (videoInformation) {
-                var video = videoManager.createVideo(videoInformation, playlistManager.activePlaylist.get('id'));
-                
-                var isFirstVideo = playlistManager.activePlaylist.get('items').length === 0;
-                var addedItem = playlistManager.activePlaylist.addItem(video, isFirstVideo);
-
-                if (isFirstVideo) {
-                    cueItem(addedItem);
-                }
-
-                refreshUI();
-                return addedItem;
             }
         };
     })();

@@ -54,9 +54,9 @@ define(['geoplugin', 'levenshtein', 'video', 'videos'], function (geoplugin, lev
     //  Takes a videoId which is presumed to have content restrictions and looks through YouTube
     //  for a video with a similiar name that might be the right video to play.
     function findPlayableByVideoId(videoId, callback) {
-        this.getVideoInformation(videoId, function (videoInformation) {
-            if (videoInformation) {
-                findPlayableByTitle(videoInformation.title.$t, callback);
+        this.getVideoFromId(videoId, function (video) {
+            if (video) {
+                findPlayableByTitle(video.title, callback);
             }
         });
     };
@@ -165,9 +165,9 @@ define(['geoplugin', 'levenshtein', 'video', 'videos'], function (geoplugin, lev
                 }
             });
         },
-
-        // Returns NULL if the request throws a 403 error if videoId has been banned on copyright grounds.
-        getVideoInformation: function (videoId, callback) {
+        
+        //  Returns NULL if the request throws a 403 error if videoId has been banned on copyright grounds.
+        getVideoFromId: function (videoId, callback) {
             $.ajax({
                 type: 'GET',
                 url: 'https://gdata.youtube.com/feeds/api/videos/' + videoId,
@@ -178,7 +178,19 @@ define(['geoplugin', 'levenshtein', 'video', 'videos'], function (geoplugin, lev
                 },
                 success: function (result) {
                     console.log("Success:", result);
-                    callback(result.entry);
+                    
+                    //  Strip out the id. An example of $t's contents: tag:youtube.com,2008:video:UwHQp8WWMlg
+                    var id = result.media$group.yt$videoid.$t;
+                    var durationInSeconds = parseInt(result.media$group.yt$duration.seconds, 10);
+
+                    var video = new Video({
+                        id: id,
+                        //playlistId: playlistId,
+                        title: result.title.$t,
+                        duration: durationInSeconds
+                    });
+
+                    callback(video);
                 },
                 error: function (error) {
                     console.error(error);
@@ -186,6 +198,7 @@ define(['geoplugin', 'levenshtein', 'video', 'videos'], function (geoplugin, lev
                 }
             });
         },
+
         findPlayableByTitle: findPlayableByTitle
 
         //findVideo: function (videoTitle, callback) {
