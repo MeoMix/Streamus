@@ -16,7 +16,8 @@ define(['playlist',
         var events = {
             onReady: 'playlistManager.onReady',
             onActivePlaylistTitleChange: 'playlistManager.onActivePlaylistTitleChange',
-            onPlaylistRemoved: 'playlistManager.onPlaylistRemoved'
+            onPlaylistRemoved: 'playlistManager.onPlaylistRemoved',
+            onActivePlaylistChange: 'playlistManager.onActivePlaylistChange'
         };
 
         loginManager.once('loggedIn', function () {
@@ -52,6 +53,7 @@ define(['playlist',
             //First time loading up there won't be a playlist selected yet, so just go ahead and set.
             playlistToSelect.set('selected', true);
             localStorage.setItem('selectedPlaylistId', playlistToSelect.get('id'));
+            $(document).trigger(events.onActivePlaylistChange, playlistToSelect);
         }
 
         PlaylistManager = {
@@ -62,6 +64,9 @@ define(['playlist',
                 } else {
                     $(document).on(events.onReady, event);
                 }
+            },
+            onActivePlaylistChange: function() {
+                $(document).on(events.onActivePlaylistChange, event);
             },
             //  TODO: Replace when more backboney
             onActivePlaylistTitleChange: function(event) {
