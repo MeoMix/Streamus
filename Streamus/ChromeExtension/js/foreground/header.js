@@ -3,7 +3,7 @@ define(function(){
     'use strict';
     var header = $('#Header');
     var headerTitle = $('#HeaderTitle');
-    var defaultCaption = 'Welcome to Streamus';
+    var defaultTitle = 'Welcome to Streamus';
 
     //  Scroll the playlistItem title if its too long to read.
     headerTitle.mouseover(function () {
@@ -19,19 +19,20 @@ define(function(){
         });
 
     }).mouseout(function () {
-        $(this).stop(true).animate({ marginLeft: "0px" });
+        $(this).stop(true).animate({ marginLeft: 0 });
     });
     
-    function updateTitle() {
-        var selectedItem = chrome.extension.getBackgroundPage().PlaylistManager.activePlaylist.getSelectedItem();
-        var text = selectedItem ? selectedItem.get('title') : defaultCaption;
-        headerTitle.text(text);
-    }
-
+    var playlistManager = chrome.extension.getBackgroundPage().PlaylistManager;
+    
+    playlistManager.onActivePlaylistTitleChange(function(activePlaylist) {
+        headerTitle.text(activePlaylist.getSelectedItem().get('title'));
+    });
+    
     //  Initialize the title because might be re-opening with a playlistItem already loaded.
-    updateTitle(); 
-
-    return {
-        updateTitle: updateTitle
-    };
+    //  TODO: This is a lot of data for foreground to know of
+    var selectedItem = playlistManager.activePlaylist.getSelectedItem();
+    
+    if (selectedItem) {
+        headerTitle.text(selectedItem.get('title'));
+    }
 });
