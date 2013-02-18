@@ -7,7 +7,6 @@ define(['skipButton'], function(skipButton){
 
     enableRadioModeCheckBox.change(function () {
         localStorage.setItem('isRadioModeEnabled', this.checked);
-        skipButton.refresh();
     }).trigger('change');
 });
 

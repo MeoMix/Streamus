@@ -5,8 +5,6 @@ var require = {
         'playerStates': 'playerStates',
         'programState': 'programState',
         'foreground': 'foreground/foreground',
-        'uiElements': 'foreground/uiElements',
-        'playerControls': 'foreground/playerControls/playerControls',
         'volumeSlider': 'foreground/playerControls/volumeSlider',
         'playPauseButton': 'foreground/playerControls/playPauseButton',
         'skipButton': 'foreground/playerControls/skipButton',
@@ -14,12 +12,11 @@ var require = {
         'shuffleButton': 'foreground/playerControls/shuffleButton',
         'header': 'foreground/header',
         'settings': 'foreground/settingsTab/settings',
-        'playlistItemsTab': 'foreground/playlistItemsTab/playlistItemsTab',
         'playlistItemsContextMenu': 'foreground/playlistItemsTab/playlistItemsContextMenu',
         'playlistItemsDisplay': 'foreground/playlistItemsTab/playlistItemsDisplay',
         'playlistItemInput': 'foreground/playlistItemsTab/playlistItemInput',
-        'playlistsTab': 'foreground/playlistsTab/playlistsTab',
         'playlistsDisplay': 'foreground/playlistsTab/playlistsDisplay',
+        'playlistInput': 'foreground/playlistsTab/playlistInput',
         'playlistsContextMenu': 'foreground/playlistsTab/playlistsContextMenu',
         'contextMenu': 'foreground/contextMenu',
         'contentHeader': 'foreground/contentHeader',
@@ -40,6 +37,9 @@ var require = {
         'levenshtein': 'thirdParty/levenshtein',
         'underscore': 'thirdParty/underscore',
         'oauth2': 'thirdParty/oauth2/oauth2',
-        'backbone': 'thirdParty/backbone'
+        'backbone': 'thirdParty/backbone',
+        'playlistManager': 'foreground/playlistManager',
+        'videoManager': 'foreground/videoManager',
+        'player': 'foreground/player'
     }
 };

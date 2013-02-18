@@ -1,8 +1,10 @@
 //Responsible for controlling the volume indicator of the UI.
-define(function(){
+define(['player'], function (player) {
+    'use strict';
+    
 	var muteButton = $('#MuteButton');
-	'use strict';
-	var MUTED_KEY = 'musicMuted', VOLUME_KEY = 'musicVolume';  
+	var MUTED_KEY = 'musicMuted';
+    var VOLUME_KEY = 'musicVolume';
 
 	//Whenever the mute button is clicked toggle the muted state.
 	muteButton.click(function(){
@@ -78,15 +80,16 @@ define(function(){
 	var updateWithVolume = function(volume){
 		isMuted = volume === 0;
 		
-		localStorage.setItem(MUTED_KEY, JSON.stringify(isMuted));
+        //  TODO: localStorage is undefined when foreground is destroyed.
+		localStorage && localStorage.setItem(MUTED_KEY, JSON.stringify(isMuted));
 		if (volume) {
 			//Remember old music value if muting so that unmute is possible.
 			musicVolume = volume;
-			localStorage.setItem(VOLUME_KEY, JSON.stringify(musicVolume));
+			localStorage && localStorage.setItem(VOLUME_KEY, JSON.stringify(musicVolume));
 		}
 
 		updateSoundIcon(volume);
-		chrome.extension.getBackgroundPage().YoutubePlayer.volume = volume;
+		player.volume = volume;
 	};
 	
 	var setVolume = function(volume){
@@ -94,18 +97,16 @@ define(function(){
 		updateWithVolume(volume);
 	};
     
-    function refresh() {
-        var player = chrome.extension.getBackgroundPage().YoutubePlayer;
-        if (player.playerState === PlayerStates.PLAYING) {
+	player.onStateChange(function (event, playerState) {
+	    setVolumeIfPlaying(playerState);
+	});
+
+    setVolumeIfPlaying(player.playerState);
+    
+    function setVolumeIfPlaying(playerState) {
+        if (playerState === PlayerStates.PLAYING) {
             //Volume only becomes available once a video has become cued or when popup reopens.
             setVolume(player.volume);
         }
     }
-    
-    //Initialize
-    refresh();
-
-	return {
-	    refresh: refresh
-	};
 })

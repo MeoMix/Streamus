@@ -27,7 +27,7 @@ define(['video',
             return loadedVideo;
         },
         //  Could be just a video or an array of videos, either way is fine.
-        cache: function(videos) {
+        cache: function (videos) {
             loadedVideos.add(videos);
         },
         loadVideo: function (id, callback) {
@@ -125,8 +125,7 @@ define(['video',
                                     //  Video will be null if it has been banned on copyright grounds
   
                                     if (video === null) {
-                                        console.log("Video was null, finding playable by title:", entry.title.$t);
-
+                                        
                                         ytHelper.findPlayableByTitle(entry.title.$t, function (foundVideo) {
                                             videos.push(foundVideo);
                                             totalVideosProcessed++;
@@ -148,7 +147,7 @@ define(['video',
 
                                 });
                             } else {
-                                console.log("title is totally empty");
+
                                 totalVideosProcessed++;
 
                                 if (totalVideosProcessed == result.feed.entry.length) {
@@ -160,7 +159,7 @@ define(['video',
                         //If X videos are received and X+C videos were requested, stop because no more videos in playlist.
                         //TODO: Maybe I just always want to return.
                         if (result.feed.entry.length < maxResultsPerSearch) {
-                            console.log("clearing because didn't get enough so at the end", result.feed.entry.length);
+
                             clearInterval(getVideosInterval);
                         }
 
@@ -168,7 +167,6 @@ define(['video',
                     },
                     error: function (error) {
                         console.error(error);
-                        console.log("clearing interval on error");
                         clearInterval(getVideosInterval);
                     }
                 });

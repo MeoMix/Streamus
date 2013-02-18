@@ -3,17 +3,15 @@ define(['programState'], function(programState){
     'use strict';
 
     var Video = Backbone.Model.extend({
-        defaults: {
-            //  Provided by YouTube's API.
-            id: '',
-            title: '',
-            duration: -1
+        defaults: function () {
+            return {
+                //  Provided by YouTube's API.
+                id: '',
+                title: '',
+                duration: -1
+            };
         },
-        urlRoot: programState.getBaseUrl() + 'Video/',
-        save: function (attributes, options) {
-            chrome.extension.getBackgroundPage().VideoManager.cache(this);
-            return Backbone.Model.prototype.save.call(this, attributes, options);
-        }
+        urlRoot: programState.getBaseUrl() + 'Video/'
     });
 
     return function (config) {

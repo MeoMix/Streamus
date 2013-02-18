@@ -1,5 +1,5 @@
 //  Responsible for showing options when interacting with a Video in PlaylistItemList.
-define(['contextMenu'], function(contextMenu) {
+define(['contextMenu', 'playlistManager'], function (contextMenu, playlistManager) {
     'use strict';
     var playlistItemsContextMenu = { };
 
@@ -9,13 +9,14 @@ define(['contextMenu'], function(contextMenu) {
 
             this.addContextMenuItem('Copy URL', function() {
                 if (item != null) {
+                    //  TODO: oh crap this might not work now cuz port isnt open.
                     chrome.extension.sendMessage({ text: 'http://youtu.be/' + item.get('videoId') });
                 }
             });
 
             this.addContextMenuItem('Delete', function() {
                 if (item != null) {
-                    chrome.extension.getBackgroundPage().YoutubePlayer.removeItem(item);
+                    playlistManager.removeItem(item);
                 }
             });
         }

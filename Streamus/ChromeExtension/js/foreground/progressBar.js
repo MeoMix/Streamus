@@ -1,6 +1,6 @@
 ﻿//  A progress bar which shows the elapsed time as compared to the total time of the current video.
 //  Changes colors based on player state -- yellow when paused, green when playing.
-define(function( ){
+define(['playlistManager', 'videoManager', 'player'], function (playlistManager, videoManager, player) {
     'use strict';
     var selector = $('#VideoTimeProgressBar');
     var mousewheelTimeout = null, mousewheelValue = -1;
@@ -9,11 +9,9 @@ define(function( ){
         onManualTimeChange: 'onManualTimeChange'
     };
     
-    var youtubePlayer = chrome.extension.getBackgroundPage().YoutubePlayer;
-    
     selector.mousewheel(function(event, delta){
         clearTimeout(mousewheelTimeout);
-        youtubePlayer.seekStart();
+        player.seekStart();
 
         if(mousewheelValue === -1){
             mousewheelValue = parseInt(selector.val(), 10);
@@ -25,19 +23,25 @@ define(function( ){
         repaint();
 
         mousewheelTimeout = setTimeout(function(){
-            youtubePlayer.seekTo(mousewheelValue);
+            player.seekTo(mousewheelValue);
             mousewheelValue = -1;
         }, 250);
 
         selector.trigger(events.onManualTimeChange, mousewheelValue);
     });
 
-    selector.mousedown(function(){
-        youtubePlayer.seekStart();
-    }).mouseup(function(){
-        //Bind to selector mouse-up to support dragging as well as clicking.
-        //I don't want to send a message until drag ends, so mouseup works nicely. 
-        youtubePlayer.seekTo(selector.val());
+    selector.mousedown(function (event) {
+        //  1 is primary mouse button, usually left
+        if (event.which === 1) {
+            player.seekStart();
+        }
+        
+    }).mouseup(function (event) {
+        if (event.which === 1) {
+            //Bind to selector mouse-up to support dragging as well as clicking.
+            //I don't want to send a message until drag ends, so mouseup works nicely. 
+            player.seekTo(selector.val());
+        }
     }).change(function(){
         repaint();
     });
@@ -50,52 +54,45 @@ define(function( ){
         //  Don't divide by 0.
         var fill = totalTime !== '0' ? elapsedTime / totalTime : 0;
 
-        console.log("fill:", fill);
-
         var backgroundImage = '-webkit-gradient(linear,left top, right top, from(#ccc), color-stop('+ fill +',#ccc), color-stop('+ fill+',rgba(0,0,0,0)), to(rgba(0,0,0,0)))';
         selector.css('background-image', backgroundImage);
     };
 
-    //  If a video is currently playing when the GUI opens then initialize with those values.
-    var currentTime = youtubePlayer.currentTime;
-
-    //  Only need to update totalTime whenever the playlistItem changes.
-    //  TODO: This might have a bug in it. What happens if my activePlaylist changes? Probably not bound?
-    var items = chrome.extension.getBackgroundPage().PlaylistManager.activePlaylist.get('items');
-    items.on('change:selected', function (item, isSelected) {
-        if (isSelected) {
+    playlistManager.onActivePlaylistSelectedItemChanged(function (event, item) {
+        if (item == null || item.get('selected')) {
             setTotalTime(item);
         }
     });
+    
+    //  Only need to update totalTime whenever the playlistItem changes.
+    //  TODO: This might have a bug in it. What happens if my activePlaylist changes? Probably not bound?
+    setTotalTime(playlistManager.activePlaylist.getSelectedItem());
 
-    var selectedItem = items.find(function(item) {
-        return item.get('selected');
-    });
-    
-    if (selectedItem) {
-        setTotalTime(selectedItem);
-    }
-    
     function setTotalTime(playlistItem) {
-        var videoId = playlistItem.get('videoId');
-        var currentVideo = chrome.extension.getBackgroundPage().VideoManager.getLoadedVideoById(videoId);
-        var totalTime = currentVideo.get('duration');
-
+        var totalTime = 0;
+        
+        if (playlistItem) {
+            var videoId = playlistItem.get('videoId');
+            var currentVideo = videoManager.getLoadedVideoById(videoId);
+            totalTime = currentVideo.get('duration');
+        }
+        
         selector.prop('max', totalTime);
         repaint();
     }
-
-    if(currentTime){
-        selector.val(currentTime);
+    
+    //  If a video is currently playing when the GUI opens then initialize with those values.
+    if(player.currentTime){
+        selector.val(player.currentTime);
         repaint();
     }
 
     //  Pause the GUI's refreshes for updating the timers while the user is dragging the video time slider around.
     var update = function () {
-        var playerIsSeeking = youtubePlayer.isSeeking;
+        var playerIsSeeking = player.isSeeking;
 
-        if(!playerIsSeeking) {
-            selector.val(youtubePlayer.currentTime);
+        if (!playerIsSeeking && player.playerState !== PlayerStates.PAUSED) {
+            selector.val(player.currentTime);
             repaint();
         }
     };
@@ -103,6 +100,7 @@ define(function( ){
     //  A nieve way of keeping the progress bar up to date. 
     setInterval(update, 500);
 
+    //  TODO: I don't think these are all used anymore.
     return {
         id: selector.prop('id'),
         onManualTimeChange: function (event) {

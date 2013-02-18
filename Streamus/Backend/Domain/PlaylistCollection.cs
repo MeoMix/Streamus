@@ -58,6 +58,7 @@ namespace Streamus.Backend.Domain
         public Playlist AddPlaylist(Playlist playlist)
         {
             playlist.Collection = this;
+            //playlist.CollectionId = Id;
             playlist.Position = Playlists.Count;
 
             Playlists.Add(playlist);

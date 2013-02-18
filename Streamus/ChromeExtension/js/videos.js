@@ -10,13 +10,7 @@
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 data: JSON.stringify(self),
-                success: function (data) {
-                    chrome.extension.getBackgroundPage().VideoManager.cache(data);
-
-                    if (callback) {
-                        callback(data);
-                    }
-                },
+                success: callback,
                 error: function (error) {
                     console.error(error);
                 }

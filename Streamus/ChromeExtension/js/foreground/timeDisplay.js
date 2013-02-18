@@ -1,33 +1,38 @@
 //Holds onto the currentTime and totalTime video labels as well as the elapsed time progress bar.
-define(['helpers'], function(helpers) {
+define(['helpers', 'progressBar', 'playlistManager', 'videoManager', 'player'], function (helpers, progressBar, playlistManager, videoManager, player) {
     'use strict';
+    
     var currentTimeLabel = $('#CurrentTimeLabel');
     var totalTimeLabel = $('#TotalTimeLabel');
 
-    var youtubePlayer = chrome.extension.getBackgroundPage().YoutubePlayer;
-    var timeInSeconds = youtubePlayer.currentTime;
-    currentTimeLabel.text(helpers.prettyPrintTime(timeInSeconds));
+    currentTimeLabel.text(helpers.prettyPrintTime(player.currentTime));
 
     //  Only need to update totalTime whenever the playlistItem changes.
-    var items = chrome.extension.getBackgroundPage().PlaylistManager.activePlaylist.get('items');
-    items.on('change:selected', function(item, isSelected) {
-        if (isSelected) {
+    playlistManager.onActivePlaylistSelectedItemChanged(function (event, item) {
+        if (item.get('selected')) {
             setTotalTime(item);
         }
     });
+
+    playlistManager.onActivePlaylistEmptied(function() {
+        totalTimeLabel.text(helpers.prettyPrintTime(0));
+    });
     
-    var selectedItem = items.find(function (item) {
-        return item.get('selected');
+    playlistManager.onActivePlaylistChange(function (event, playlist) {
+        setTotalTime(playlist.getSelectedItem());
     });
 
-    if (selectedItem) {
-        setTotalTime(selectedItem);
-    }
-   
+    var selectedItem = playlistManager.activePlaylist.getSelectedItem();
+    setTotalTime(selectedItem);
+
     function setTotalTime(playlistItem) {
-        var videoId = playlistItem.get('videoId');
-        var currentVideo = chrome.extension.getBackgroundPage().VideoManager.getLoadedVideoById(videoId);
-        var totalTime = currentVideo.get('duration');
+
+        var totalTime = 0;
+        if (playlistItem != null) {
+            var videoId = playlistItem.get('videoId');
+            var currentVideo = videoManager.getLoadedVideoById(videoId);
+            totalTime = currentVideo.get('duration');
+        }
 
         totalTimeLabel.text(helpers.prettyPrintTime(totalTime));
     }
@@ -36,18 +41,20 @@ define(['helpers'], function(helpers) {
     setInterval(function () {
         
         //  Do not update if the progress bar is being dragged.
-        if (!youtubePlayer.isSeeking) {
-            update(youtubePlayer.currentTime);
+        if (!player.isSeeking) {
+            updateTimeInSeconds(player.currentTime);
         }
         
     }, 500);
-
+    
+    //  Keep the current time display in sync with progressBar (i.e. when user is dragging progressBar)
+    progressBar.onManualTimeChange(updateTimeInSeconds);
+    progressBar.onChange(function () {
+        updateTimeInSeconds(this.value);
+    });
+    
     //  In charge of updating the currentTime label
-    var update = function (timeInSeconds) {
-        currentTimeLabel.text(helpers.prettyPrintTime(timeInSeconds));
-    };
-
-    return {
-        update: update
+    function updateTimeInSeconds(time) {
+        currentTimeLabel.text(helpers.prettyPrintTime(time));
     };
 });

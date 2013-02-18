@@ -1,4 +1,12 @@
-require(['jquery', 'jqueryUi', 'backbone', 'jqueryMousewheel', 'playerStates', 'helpers', 'underscore', 'oauth2'], function () {
+require(['jquery',
+        'jqueryUi',
+        'backbone',
+        'jqueryMousewheel',
+        'playerStates',
+        'helpers',
+        'underscore',
+        'oauth2'
+    ], function () {
     'use strict';
     $(function () {
         //If the foreground is opened before the background has had a chance to load, wait for the background.

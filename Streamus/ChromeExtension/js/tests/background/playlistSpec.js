@@ -14,7 +14,7 @@
             //  onReady will fire immediately if playlistManager is already ready.
             playlistManager.onReady(function () {
                 console.log("playlistManager is ready, adding playlist!");
-                playlistManager.addPlaylist('Test Title', callback);
+                playlistManager.addPlaylist('Test Title', null, callback);
             });
         }
 

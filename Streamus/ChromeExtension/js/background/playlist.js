@@ -4,8 +4,9 @@ define(['ytHelper',
         'playlistItems',
         'playlistItemsHistory',
         'playlistItem',
-        'programState'
-    ], function(ytHelper, PlaylistItems, PlaylistItemsHistory, PlaylistItem, programState) {
+        'programState',
+        'videoManager'
+    ], function(ytHelper, PlaylistItems, PlaylistItemsHistory, PlaylistItem, programState, videoManager) {
         'use strict';
 
         var Playlist = Backbone.Model.extend({
@@ -24,7 +25,7 @@ define(['ytHelper',
             urlRoot: programState.getBaseUrl() + 'Playlist/',
             
             parse: function (data) {
-                console.log("parsing");
+
                 if (data.items.length > 0) {
                     //  Reset will load the server's response into items as a Backbone.Collection
                     this.get('items').reset(data.items);
@@ -85,8 +86,6 @@ define(['ytHelper',
                 //  Keep track of the selected item in localStorage.
                 var selectedItem = this.getSelectedItem();
 
-                console.log("Selected item:", selectedItem);
-
                 var selectedItemId = selectedItem ? selectedItem.get('id') : null;
 
                 var selectedItemStorageKey = this.get('id') + '_selectedItemId';
@@ -96,6 +95,8 @@ define(['ytHelper',
             },
 
             selectItemById: function (id) {
+                
+
                 //  Deselect the currently selected item, then select the new item to have selected.
                 var selectedItem = this.getSelectedItem();
 
@@ -155,20 +156,18 @@ define(['ytHelper',
 
                     nextItem = _.shuffle(itemsNotPlayedRecently)[0];
                 } else {
-                    console.log("History:", this.get('history'));
+
                     var selectedItem = this.get('history').at(0);
-                    console.log("Selected item from history:", selectedItem);
+
                     if (selectedItem) {
 
                         var nextItemPosition = selectedItem.get('position') + 1;
                         //  2 items in a playlist, positions 0 and 1. Position 1 is the last item, 1 + 1 = playlist length, loop back to front.
                         if (this.get('items').length === nextItemPosition) {
-                            console.log("resetting my position to 0");
                             nextItemPosition = 0;
                         }
 
                         nextItem = this.get('items').at(nextItemPosition);
-                        console.log("NEXT ITEM:", nextItem);
                     }
                 }
                 return nextItem;
@@ -196,6 +195,9 @@ define(['ytHelper',
             addItems: function(videos, callback) {
                 var createdPlaylistItems = [];
                 var self = this;
+                
+                videoManager.cache(videos);
+
                 videos.each(function(video) {
                     var playlistItem = new PlaylistItem({
                         playlistId: self.get('id'),
@@ -221,6 +223,7 @@ define(['ytHelper',
                 });
 
                 videos.save();
+                
                 this.createItems(createdPlaylistItems, callback);
             },
 
@@ -259,20 +262,21 @@ define(['ytHelper',
                 ytHelper.getRelatedVideos(videoId, function (relatedVideos) {
                     playlistItem.set('relatedVideos', relatedVideos);
                 });
-
+                
+                //  TODO: Why do I have to cache video.attributes and not video?
+                videoManager.cache(video.attributes);
                 this.get('items').push(playlistItem);
 
                 //  TODO: Should probably be saving a Video as part of playlistItem, maybe?
                 //  TODO: Backbone documentation conflicts implementation -- need to pass in empty {} here to call save properly.
-                console.log("Saving a video.")
                 video.save({}, {
                     success: function () {
-                        console.log("Saving playlistItem");
+
                         //  Need to ensure that a video saves to the database before trying to save the item for it.
                         playlistItem.save();
                     }
                 });
-                
+  
                 if (selected) {
                     var playlistItemId = playlistItem.get('id');
                     this.selectItemById(playlistItemId);
@@ -305,38 +309,28 @@ define(['ytHelper',
             },
             
             moveItem: function (itemId, newPosition, callback) {
-                console.log("items before moving:", this.get('items'));
-
                 var movedItem = this.get('items').get(itemId);
                 
                 var oldPosition = movedItem.get('position');
                 var movementDirection = oldPosition > newPosition ? 1 : -1;
-                console.log("movementDirection:", movementDirection);
-
+                
                 var distance = Math.abs(oldPosition - newPosition);
-                console.log("Old position and new position:in ", oldPosition, newPosition);
 
                 for (; distance > 0; distance--) {
                     //  Get a new index based on moving forward or backward.
                     var itemIndex = oldPosition > newPosition ? distance - 1 : newPosition - (distance - 1);
-                    console.log("item index:", itemIndex);
+
                     var item = this.get('items').at(itemIndex);
-                    console.log("item:", item);
+
                     var movedItemPosition = item.get('position') + movementDirection;
-                    console.log("Setting " + item.get('title') + "\'s position to " + movedItemPosition);
+
                     item.set('position', movedItemPosition);
                 }
 
-                console.log("Setting " + movedItem.get('title') + "\'s position to " + newPosition);
                 movedItem.set('position', newPosition);
 
-                console.log("items after moving:", this.get('items'));
-
-                var self = this;
                 this.save({}, {
                     success: function () {
-                        console.log("Items after save:", self.get('items'));
-
                         if (callback) {
                             callback();
                         }

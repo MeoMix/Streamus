@@ -1,5 +1,5 @@
 ﻿//  Displays the currently playing playlistItem's title or a default welcome message.
-define(function(){
+define(['playlistManager'], function (playlistManager) {
     'use strict';
     var header = $('#Header');
     var headerTitle = $('#HeaderTitle');
@@ -9,12 +9,12 @@ define(function(){
     headerTitle.mouseover(function () {
         var distanceToMove = $(this).width() - header.width();
 
-        //  Just a feel good value; scales as the text gets longer.
-        var duration = 15 * distanceToMove; 
+        
         $(this).animate({
             marginLeft: "-" + distanceToMove + "px"
         }, {
-            duration: duration,
+            //  Just a feel good value; scales as the text gets longer
+            duration:  15 * distanceToMove,
             easing: 'linear'
         });
 
@@ -22,17 +22,29 @@ define(function(){
         $(this).stop(true).animate({ marginLeft: 0 });
     });
     
-    var playlistManager = chrome.extension.getBackgroundPage().PlaylistManager;
-    
-    playlistManager.onActivePlaylistTitleChange(function(activePlaylist) {
+    playlistManager.onActivePlaylistTitleChange(function(event, activePlaylist) {
         headerTitle.text(activePlaylist.getSelectedItem().get('title'));
     });
-    
+
+    playlistManager.onActivePlaylistSelectedItemChanged(function(event, item) {
+        setTitle(item);
+    });
+
+    playlistManager.onActivePlaylistEmptied(function() {
+        headerTitle.text(defaultTitle);
+    });
+
+    playlistManager.onActivePlaylistChange(function(event, playlist) {
+        setTitle(playlist.getSelectedItem());
+    });
+
     //  Initialize the title because might be re-opening with a playlistItem already loaded.
-    //  TODO: This is a lot of data for foreground to know of
+
     var selectedItem = playlistManager.activePlaylist.getSelectedItem();
+    setTitle(selectedItem);
     
-    if (selectedItem) {
-        headerTitle.text(selectedItem.get('title'));
+    function setTitle(item) {
+        var titleText = item == null ? defaultTitle : item.get('title');
+        headerTitle.text(titleText);
     }
 });

@@ -180,15 +180,20 @@ define(['geoplugin', 'levenshtein', 'video', 'videos'], function (geoplugin, lev
                     console.log("Success:", result);
                     
                     //  Strip out the id. An example of $t's contents: tag:youtube.com,2008:video:UwHQp8WWMlg
-                    var id = result.media$group.yt$videoid.$t;
-                    var durationInSeconds = parseInt(result.media$group.yt$duration.seconds, 10);
+                    var mediaGroup = result.entry.media$group;
+                    
+                    var id = mediaGroup.yt$videoid.$t;
+                    var durationInSeconds = parseInt(mediaGroup.yt$duration.seconds, 10);
+
+                    console.log("duration in seconds:", durationInSeconds);
 
                     var video = new Video({
                         id: id,
-                        //playlistId: playlistId,
-                        title: result.title.$t,
+                        title: result.entry.title.$t,
                         duration: durationInSeconds
                     });
+
+                    console.log("returning video:", video);
 
                     callback(video);
                 },

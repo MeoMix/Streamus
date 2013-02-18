@@ -17,7 +17,7 @@
                     self.trigger('loggedIn');
                 });
             } else {
-                //   TODO: I am not sure if it is smart to trigger an event when already logged in.
+                //  TODO: I am not sure if it is smart to trigger an event when already logged in.
                 this.trigger('loggedIn');
             }
         }

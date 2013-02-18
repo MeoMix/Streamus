@@ -17,10 +17,6 @@
     //  Build iframe AFTER onBeforeSendHeaders listener.
     $('<iframe id="MusicHolder" width="640" height="390" src="http://www.youtube.com/embed/dummy?enablejsapi=1"></iframe>').appendTo('body');
 
-    playlistManager.onReady(function () {
-        require(['player'], function() {});
-    });
-
     //  http://stackoverflow.com/questions/5235719/how-to-copy-text-to-clipboard-from-a-google-chrome-extension
     //  Copies text to the clipboard. Has to happen on background page due to elevated privs.
     chrome.extension.onMessage.addListener(function (msg, sender, sendResponse) {
@@ -37,10 +33,10 @@
     chrome.commands.onCommand.addListener(function(command) {
         switch(command){
             case 'nextVideo':
-                YoutubePlayer.skipVideo("next");
+                playlistManager.skipItem("next");
                 break;
             case 'previousVideo':
-                YoutubePlayer.skipVideo("previous");
+                playlistManager.skipItem("previous");
             break;
             case 'toggleVideo':
                 if (YoutubePlayer.playerState === PlayerStates.PLAYING) {

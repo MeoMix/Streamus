@@ -1,39 +1,39 @@
 //  When clicked -- skips to the next video. Skips from the end of the list to the front again.
-define(function(){
+define(['playlistManager'], function (playlistManager) {
     'use strict';
     var skipButton = $('#SkipButton');
 
-    //  Initialize
-    refresh();
-
-    skipButton.one('click', skipVideo);
-
-    function skipVideo() {
-        console.log("Skipping video");
-        chrome.extension.getBackgroundPage().YoutubePlayer.skipVideo('next');
-        //  Prevent spamming by only allowing a next click once a second.
-        setTimeout(function () { 
-            skipButton.off('click').one('click', skipVideo);
-        }, 500);
-    }
+    //  Prevent spamming by only allowing a next click once every 100ms.
+    skipButton.click(_.debounce(function () {
+        playlistManager.skipItem('next');
+    }, 100, true));
     
-    function refresh() {
-        var playlistManager = chrome.extension.getBackgroundPage().PlaylistManager;
-        
-        if (playlistManager.activePlaylist.get('items').length > 0) {
-            //  Paint the skipButton's path black and bind its click event.
-            //  TODO: Use underscore's throttle here to prevent spam clicking.
-            
-            skipButton.prop('src', 'images/skip.png').removeClass('disabled');
-            skipButton.find('.path').css('fill', 'black');
-        } else {
-            //  Paint the skipButton's path gray and unbind its click event.
-            skipButton.prop('src', 'images/skip-disabled.png').addClass('disabled');
-            $(skipButton).find('.path').css('fill', 'gray');
+    playlistManager.onActivePlaylistEmptied(disableButton);
+    playlistManager.onActivePlaylistItemAdd(enableButton);
+    
+    playlistManager.onActivePlaylistChange(function (event, playlist) {
+        enableIfItemsInPlaylist(playlist);
+    });
+
+    enableIfItemsInPlaylist(playlistManager.activePlaylist);
+    
+    function enableIfItemsInPlaylist(playlist) {
+        var itemCount = playlist.get('items').length;
+
+        if (itemCount > 0) {
+            enableButton();
         }
     }
 
-    return {
-        refresh: refresh
-    };
+    //  Paint the button's path black and bind its click event.
+    function enableButton() {
+        skipButton.prop('src', 'images/skip.png').removeClass('disabled');
+        skipButton.find('.path').css('fill', 'black');
+    }
+    
+    //  Paint the button's path gray and unbind its click event.
+    function disableButton() {
+        skipButton.prop('src', 'images/skip-disabled.png').addClass('disabled');
+        $(skipButton).find('.path').css('fill', 'gray');
+    }
 });

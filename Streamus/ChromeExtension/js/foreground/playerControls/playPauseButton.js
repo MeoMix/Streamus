@@ -1,69 +1,69 @@
 //The play/pause icon.
-define(function(){
+define(['playlistManager', 'player'], function (playlistManager, player) {
 	'use strict';
 	var playPauseButton = $('#PlayPauseButton');
 	var pauseIcon = $('#PauseIcon');
 	var playIcon = $('#PlayIcon');
-    
-    //  Change the music button to the 'Play' image and cause a video to play upon click.
-	function setToPlay() {
-	    pauseIcon.hide();
-	    playIcon.show();
 
-	    playPauseButton.click(function () {
-	        chrome.extension.getBackgroundPage().YoutubePlayer.play();
-	        
-	        pauseIcon.show();
-	        playIcon.hide();
-	    });
-	}
-    
-    //  Change the music button to the 'Pause' image and cause a video to pause upon click.
-	function setToPause() {
-	    pauseIcon.show();
-	    playIcon.hide();
+    //  Only allow changing once every 100ms to preent spamming.
+    playPauseButton.click(_.debounce(function () {
+        if (player.playerState == PlayerStates.PLAYING) {
+            player.pause();
+        } else {
+            player.play();
+        }
 
-	    playPauseButton.click(function () {
-	        chrome.extension.getBackgroundPage().YoutubePlayer.pause();
-	        
-	        pauseIcon.hide();
-	        playIcon.show();
-	    });
-	}
+	    pauseIcon.toggle();
+	    playIcon.toggle();
+	}, 100, true));
+   
+    player.onStateChange(function (event, playerState) {
+	    makeIconReflectPlayerState(playerState);
+	});
+	makeIconReflectPlayerState(player.playerState);
+
+    playlistManager.onActivePlaylistEmptied(disableButton);
+    playlistManager.onActivePlaylistItemAdd(enableButton);
     
-	function refresh() {
-	    var player = chrome.extension.getBackgroundPage().YoutubePlayer;
-	    
-        if (player.playerState === PlayerStates.PLAYING) {
+    var itemCount = playlistManager.activePlaylist.get('items').length;
+
+    if (itemCount > 0) {
+        enableButton();
+    }
+
+    //  Whenever the YouTube player changes playing state -- update whether ico shows play or pause.
+    function makeIconReflectPlayerState(playerState) {
+        if (playerState === PlayerStates.PLAYING) {
             setToPause();
         }
         else if (!player.playerIsSeeking) {
             setToPlay();
         }
-
-	    var playlistManager = chrome.extension.getBackgroundPage().PlaylistManager;
-	    
-        if (playlistManager.activePlaylist.getSelectedItem()) {
-
-            //  Paint playPauseButton's path black and allow it to be clicked.
-            playPauseButton.removeClass('disabled');
-            playPauseButton.find('.path').css('fill', 'black');
-
-        } else {
-            
-            //  Disable the button such that it cannot be clicked.
-            //  NOTE: Pause button will never be displayed disabled.
-            setToPlay();
-
-            playPauseButton.addClass('disabled').off('click');
-            playPauseButton.find('.path').css('fill', 'gray');
-        }
-	}
+    }
     
-    //Initialize
-    refresh();
+    //  Paint button's path black and allow it to be clicked
+    function enableButton() {
+        playPauseButton.removeClass('disabled');
+        playPauseButton.find('.path').css('fill', 'black');
+    }
     
-	return {
-	    refresh: refresh
-	};
+    //  Paint the button's path gray and disallow it to be clicked
+    function disableButton() {
+        playPauseButton.addClass('disabled').off('click');
+        playPauseButton.find('.path').css('fill', 'gray');
+    }
+
+    
+    //  Change the music button to the 'Play' image
+    function setToPlay() {
+        pauseIcon.hide();
+        playIcon.show();
+    }
+
+    //  Change the music button to the 'Pause' image
+    function setToPause() {
+        pauseIcon.show();
+        playIcon.hide();
+    }
+ 
 });

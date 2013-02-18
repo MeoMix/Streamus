@@ -1,37 +1,39 @@
 //  When clicked -- skips to the last video. Skips from the begining of the list to the end.
-define(function(){
+define(['playlistManager'], function(playlistManager){
     'use strict';
     var previousButton = $('#PreviousButton');
     
-    //  Initialize
-    refresh();
+    //  Prevent spamming by only allowing a previous click once every 100ms.
+    previousButton.click(_.debounce(function() {
+        playlistManager.skipItem('previous');
+    }, 100, true));
 
-    previousButton.one('click', skipVideo);
+    playlistManager.onActivePlaylistEmptied(disableButton);
+    playlistManager.onActivePlaylistItemAdd(enableButton);
 
-    function skipVideo() {
-        chrome.extension.getBackgroundPage().YoutubePlayer.skipVideo('previous');
-        //  Prevent spamming by only allowing a next click once a second.
-        setTimeout(function () { 
-            previousButton.off('click').one('click', skipVideo);
-        }, 500);
-    }
+    playlistManager.onActivePlaylistChange(function (event, playlist) {
+        enableIfItemsInPlaylist(playlist);
+    });
+
+    enableIfItemsInPlaylist(playlistManager.activePlaylist);
     
-    function refresh() {
-        var playlistManager = chrome.extension.getBackgroundPage().PlaylistManager;
+    function enableIfItemsInPlaylist(playlist) {
+        var itemCount = playlist.get('items').length;
 
-        if (playlistManager.activePlaylist.get('items').length > 0) {
-            //  Paint the skipButton's path black and bind its click event.
-            previousButton.prop('src', 'images/skip.png').removeClass('disabled');
-            previousButton.find('.path').css('fill', 'black');
-        }
-        else {
-            //  Paint the skipButton's path gray and unbind its click event.
-            previousButton.prop('src', 'images/skip-disabled.png').addClass('disabled');
-            $(previousButton).find('.path').css('fill', 'gray');
+        if (itemCount > 0) {
+            enableButton();
         }
     }
 
-    return {
-        refresh: refresh
-    };
+    //  Paint the button's path black and bind its click event.
+    function enableButton() {
+        previousButton.prop('src', 'images/skip.png').removeClass('disabled');
+        previousButton.find('.path').css('fill', 'black');
+    }
+
+    //  Paint the button's path gray and unbind its click event.
+    function disableButton() {
+        previousButton.prop('src', 'images/skip-disabled.png').addClass('disabled');
+        $(previousButton).find('.path').css('fill', 'gray');
+    }
 });

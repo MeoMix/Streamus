@@ -3,7 +3,8 @@
 define(function(){
 	'use strict';
 	var shuffleButton = $('#ShuffleButton').click(shuffleVideo);
-	//localStorage serializes bools to strings.
+
+	//  localStorage serializes bools to strings.
 	if(JSON.parse(localStorage.getItem('isShuffleEnabled') || false)){
 		shuffleButton.addClass('pressed');
 	}

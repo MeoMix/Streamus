@@ -1,5 +1,5 @@
 ﻿//  Represents the videos in a given playlist
-define(['playlistItemsContextMenu'], function (contextMenu) {
+define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (contextMenu, playlistManager, player) {
     'use strict';
     var playlistItemList = $('#PlaylistItemList ul');
 
@@ -13,7 +13,7 @@ define(['playlistItemsContextMenu'], function (contextMenu) {
             var movedItemId = ui.item.data('itemid');
             var newPosition = ui.item.index();
 
-            chrome.extension.getBackgroundPage().PlaylistManager.activePlaylist.moveItem(movedItemId, newPosition);
+            playlistManager.activePlaylist.moveItem(movedItemId, newPosition);
         }
     });
 
@@ -22,46 +22,52 @@ define(['playlistItemsContextMenu'], function (contextMenu) {
         playlistItemList.find('li').removeClass('current');
         playlistItemList.find('li[data-itemid="' + itemId + '"]').addClass('current');
     };
+    
+    //  TODO: Need to be a lot more fine-grained then just spamming reload. Will come back around to it.
+    playlistManager.onActivePlaylistChange(reload);
+    playlistManager.onActivePlaylistItemAdd(reload);
+    playlistManager.onActivePlaylistItemRemove(reload);
+    playlistManager.onActivePlaylistSelectedItemChanged(reload);
 
-    return {
-        //  Refresh all the videos displayed to ensure they GUI matches background's data.
-        reload: function () {
-            playlistItemList.empty();
+    reload();
 
-            var playlistManager = chrome.extension.getBackgroundPage().PlaylistManager;
+    //  Refresh all the videos displayed to ensure they GUI matches background's data.
+    function reload() {
+        playlistItemList.empty();
 
-            //  Build up the ul of li's representing each playlistItem.
-            playlistManager.activePlaylist.get('items').each(function (item) {
-                var listItem = $('<li/>', {
-                    'data-itemid': item.get('id')
-                }).appendTo(playlistItemList);
+        //  Build up the ul of li's representing each playlistItem.
+        playlistManager.activePlaylist.get('items').each(function (item) {
+            var listItem = $('<li/>', {
+                'data-itemid': item.get('id')
+            }).appendTo(playlistItemList);
 
-                $('<a/>', {
-                    text: item.get('title'),
-                    contextmenu: function (e) {
-                        contextMenu.initialize(item);
-                        contextMenu.show(e.pageY, e.pageX);
+            $('<a/>', {
+                text: item.get('title'),
+                contextmenu: function (e) {
+                    contextMenu.initialize(item);
+                    contextMenu.show(e.pageY, e.pageX);
 
-                        //  Prevent default context menu display.
-                        return false;
-                    }
-                }).appendTo(listItem);
-            });
+                    //  Prevent default context menu display.
+                    return false;
+                }
+            }).appendTo(listItem);
+        });
 
-            //  Load and start playing a video if it is clicked.
-            //  TODO: double click
-            playlistItemList.children().click(function () {
-                var itemId = $(this).data('itemid');
- 
-                chrome.extension.getBackgroundPage().YoutubePlayer.loadItemById(itemId);
-                return false;
-            });
+        //  Load and start playing a video if it is clicked.
+        //  TODO: double click
+        playlistItemList.children().click(function () {
+            var itemId = $(this).data('itemid');
+            
+            var item = playlistManager.activePlaylist.selectItemById(itemId);
+            player.loadVideoById(item.get('videoId'));
+            
+            return false;
+        });
 
-            var selectedItem = playlistManager.activePlaylist.getSelectedItem();
-            //  Since we emptied our list we lost the selection, reselect.
-            if (selectedItem) {
-                selectRow(selectedItem.get('id'));
-            }
+        var selectedItem = playlistManager.activePlaylist.getSelectedItem();
+        //  Since we emptied our list we lost the selection, reselect.
+        if (selectedItem) {
+            selectRow(selectedItem.get('id'));
         }
-    };
+    }
 });

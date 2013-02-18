@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using FluentValidation;
+using Streamus.Backend.Dao;
 using Streamus.Backend.Domain.Validators;
 
 namespace Streamus.Backend.Domain
@@ -16,8 +17,20 @@ namespace Streamus.Backend.Domain
         [DataMember(Name = "collectionId")]
         public Guid CollectionId
         {
-            get { return Collection.Id; }
-            set { Collection.Id = value; }
+            get
+            {
+                Guid collectionId = Guid.Empty;
+                if (Collection != null)
+                {
+                    collectionId = Collection.Id;
+                }
+
+                return collectionId;
+            }
+            set
+            {
+                Collection = new PlaylistCollectionDao().Get(value);
+            }
         }
 
         public PlaylistCollection Collection { get; set; }

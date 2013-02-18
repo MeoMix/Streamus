@@ -1,5 +1,5 @@
 //Responsible for showing options when interacting with a Playlist in Playlist_List.
-define(['contextMenu'], function (contextMenu) {
+define(['contextMenu', 'playlistManager'], function (contextMenu, playlistManager) {
     'use strict';
     var playlistContextMenu = {};
 
@@ -10,7 +10,7 @@ define(['contextMenu'], function (contextMenu) {
                 //TODO: I need to gray out the option to delete, but still show it.
                 //Should I gray out when clicking on last playlist or current playlist?
                 if (playlist !== null && !playlist.get('selected')) {
-                    chrome.extension.getBackgroundPage().PlaylistManager.removePlaylistById(playlist.get('id'));
+                    playlistManager.removePlaylistById(playlist.get('id'));
                 }
             });
         }
