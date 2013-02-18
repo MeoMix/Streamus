@@ -1,5 +1,6 @@
-﻿define(['playlistManager'], function (playlistManager) {
+﻿define(['playlistManager', 'player'], function (playlistManager, player) {
     'use strict';
+
     //  Bypass YouTube's content restrictions by looking like I'm a website.
     chrome.webRequest.onBeforeSendHeaders.addListener(function (info) {
         info.requestHeaders.push({
@@ -34,16 +35,18 @@
         switch(command){
             case 'nextVideo':
                 playlistManager.skipItem("next");
-                break;
+            break;
             case 'previousVideo':
                 playlistManager.skipItem("previous");
             break;
             case 'toggleVideo':
-                if (YoutubePlayer.playerState === PlayerStates.PLAYING) {
-                    YoutubePlayer.play();
+                if (player.playerState === PlayerStates.PLAYING) {
+                    player.play();
                 } else {
-                    YoutubePlayer.pause();
+                    player.pause();
                 }
+            break;
+
         }
     });
 

@@ -91,6 +91,7 @@ define(['playerBuilder'], function (playerBuilder) {
         play: function() {
             player.playVideo();
         },
+        
         pause: function() {
             player.pauseVideo();
         },
@@ -105,14 +106,14 @@ define(['playerBuilder'], function (playerBuilder) {
         },
             
         seekTo: function(timeInSeconds) {
-            //Once the user has seeked to the new value let our update function run again.
-            //Wrapped in a set timeout because there is some delay before the seekTo finishes executing and I want to prevent flickering.
+            //  Once the user has seeked to the new value let our update function run again.
+            //  Wrapped in a set timeout because there is some delay before the seekTo finishes executing and I want to prevent flickering.
             var self = this;
             setTimeout(function() {
                 self.isSeeking = false;
             }, 1500);
 
-            //allowSeekAhead determines whether the player will make a new request to the server if the time specified is outside of the currently buffered video data.
+            //  allowSeekAhead determines whether the player will make a new request to the server if the time specified is outside of the currently buffered video data.
             player.seekTo(timeInSeconds, true);
             if (this.wasPlayingBeforeSeek) {
                 this.play();
