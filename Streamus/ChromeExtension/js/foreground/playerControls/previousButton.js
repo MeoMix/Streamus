@@ -4,8 +4,12 @@ define(['playlistManager'], function(playlistManager){
     var previousButton = $('#PreviousButton');
     
     //  Prevent spamming by only allowing a previous click once every 100ms.
-    previousButton.click(_.debounce(function() {
-        playlistManager.skipItem('previous');
+    previousButton.click(_.debounce(function () {
+        
+        if (!$(this).hasClass('disabled')) {
+            playlistManager.skipItem('previous');
+        }
+        
     }, 100, true));
 
     playlistManager.onActivePlaylistEmptied(disableButton);

@@ -14,11 +14,13 @@ namespace Streamus.Backend.Domain.Managers
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private IPlaylistDao PlaylistDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
+        private IVideoDao VideoDao { get; set; }
 
-        public PlaylistManager(IPlaylistDao playlistDao, IPlaylistItemDao playlistItemDao)
+        public PlaylistManager(IPlaylistDao playlistDao, IPlaylistItemDao playlistItemDao, IVideoDao videoDao)
         {
             PlaylistDao = playlistDao;
             PlaylistItemDao = playlistItemDao;
+            VideoDao = videoDao;
         }
 
         public void Save(Playlist playlist)
@@ -172,30 +174,34 @@ namespace Streamus.Backend.Domain.Managers
             }
         }
 
-        public void CreatePlaylistItem(PlaylistItem playlistItem)
-        {
-            try
-            {
-                NHibernateSessionManager.Instance.BeginTransaction();
-                playlistItem.ValidateAndThrow();
-                PlaylistItemDao.Save(playlistItem);
-                try
-                {
-                    NHibernateSessionManager.Instance.CommitTransaction();
-                }
-                catch (GenericADOException exception)
-                {
-                    //  Got beat to saving this entity. Not sure if this is a big deal or not...
-                    Logger.Error(exception);
-                }
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
-                throw;
-            }
-        }
+        //public void CreatePlaylistItem(PlaylistItem playlistItem)
+        //{
+        //    try
+        //    {
+        //        NHibernateSessionManager.Instance.BeginTransaction();
+        //        playlistItem.ValidateAndThrow();
+
+        //        playlistItem.Video.ValidateAndThrow();
+        //        VideoDao.Save(playlistItem.Video);
+
+        //        PlaylistItemDao.Save(playlistItem);
+        //        try
+        //        {
+        //            NHibernateSessionManager.Instance.CommitTransaction();
+        //        }
+        //        catch (GenericADOException exception)
+        //        {
+        //            //  Got beat to saving this entity. Not sure if this is a big deal or not...
+        //            Logger.Error(exception);
+        //        }
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        Logger.Error(exception);
+        //        NHibernateSessionManager.Instance.RollbackTransaction();
+        //        throw;
+        //    }
+        //}
 
         public void UpdatePlaylistItem(PlaylistItem playlistItem)
         {
@@ -210,6 +216,15 @@ namespace Streamus.Backend.Domain.Managers
                 //  sets PlaylistItem's ID so its difficult to tell server-side.
                 if (knownPlaylistItem == null)
                 {
+                    playlistItem.Video.ValidateAndThrow();
+                    //  TODO: Is this hitting the database? Surely it's not.
+                    Video videoInSession = VideoDao.Get(playlistItem.Video.Id);
+
+                    if (videoInSession == null)
+                    {
+                        VideoDao.Save(playlistItem.Video);
+                    }
+
                     PlaylistItemDao.Save(playlistItem);
                 }
                 else

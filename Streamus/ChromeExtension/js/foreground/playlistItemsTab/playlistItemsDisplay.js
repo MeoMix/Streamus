@@ -57,14 +57,21 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
         //  TODO: double click
         playlistItemList.children().click(function () {
             var itemId = $(this).data('itemid');
-            
-            var item = playlistManager.activePlaylist.selectItemById(itemId);
-            player.loadVideoById(item.get('videoId'));
+
+            var selectedItemId = playlistManager.activePlaylist.getSelectedItem().get('id');
+            //  If the item is already selected then it is cued up -- so just play it.
+            if (selectedItemId == itemId) {
+                player.play();
+            } else {
+                var item = playlistManager.activePlaylist.selectItemById(itemId);
+                player.loadVideoById(item.get('video').get('id'));
+            }
             
             return false;
         });
 
         var selectedItem = playlistManager.activePlaylist.getSelectedItem();
+        
         //  Since we emptied our list we lost the selection, reselect.
         if (selectedItem) {
             selectRow(selectedItem.get('id'));

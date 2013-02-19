@@ -13,8 +13,6 @@ define(['playlistManager'], function(playlistManager){
             }
         }
 
-        console.log("Text:", playlistManager.activePlaylist.get('title'));
-
         var headerInput = $('<input/>', {
             'class': 'headerInput',
             type: 'text',

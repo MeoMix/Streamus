@@ -28,8 +28,8 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'playlistManager', 'p
         select: function (event, ui) {
             //  Don't change the text when user clicks their video selection.
             event.preventDefault();
-
-            handleValidInput(ui.item.value.id);
+            contentHeader.flashMessage('Thanks!', 2000);
+            playlistManager.activePlaylist.addItemByInformation(ui.item.value);
         }
     });
 
@@ -64,18 +64,11 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'playlistManager', 'p
     function handleValidInput(videoId) {
         contentHeader.flashMessage('Thanks!', 2000);
 
-        ytHelper.getVideoFromId(videoId, function (video) {
-            if (video === null) {
+        ytHelper.getVideoInformationFromId(videoId, function (videoInformation) {
+            if (videoInformation == null) {
                 dialogs.showBannedVideoDialog();
             } else {
-                var isFirstVideo = playlistManager.activePlaylist.get('items').length === 0;
-                var addedItem = playlistManager.activePlaylist.addItem(video, isFirstVideo);
-
-                if (isFirstVideo) {
-                    playlistManager.activePlaylist.selectItemById(addedItem.get('id'));
-                    player.cueVideoById(addedItem.get('videoId'));
-                }
-
+                playlistManager.activePlaylist.addItemByInformation(videoInformation);
             }
         });
     }
@@ -95,18 +88,18 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'playlistManager', 'p
         
     //  Searches youtube for video results based on the given text.
     function showVideoSuggestions(text) {
-        ytHelper.search(text, null, function (videos) {
+        ytHelper.search(text, function (videoInformationList) {
 
             if (!userIsTyping) {
-                var videoDisplayObjects = videos.map(function (video) {
+                var videoDisplayObjects = _.map(videoInformationList, function (videoInformation) {
                     //  I wanted the label to be duration | title to help delinate between typing suggestions and actual videos.
-                    var videoDuration = video.get('duration');
-                    var videoTitle = video.get('title');
+                    var videoDuration = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
+                    var videoTitle = videoInformation.title.$t;
                     var label = helpers.prettyPrintTime(videoDuration) + " | " + videoTitle;
 
                     return {
                         label: label,
-                        value: video
+                        value: videoInformation
                     };
                 });
 

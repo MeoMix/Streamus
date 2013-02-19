@@ -5,8 +5,8 @@ define(['ytHelper',
         'playlistItemsHistory',
         'playlistItem',
         'programState',
-        'videoManager'
-    ], function(ytHelper, PlaylistItems, PlaylistItemsHistory, PlaylistItem, programState, videoManager) {
+        'video'
+    ], function(ytHelper, PlaylistItems, PlaylistItemsHistory, PlaylistItem, programState, Video) {
         'use strict';
 
         var Playlist = Backbone.Model.extend({
@@ -95,21 +95,17 @@ define(['ytHelper',
             },
 
             selectItemById: function (id) {
-                
-
                 //  Deselect the currently selected item, then select the new item to have selected.
                 var selectedItem = this.getSelectedItem();
 
                 //  currentlySelected is not defined for a brand new playlist since we have no items yet selected.
                 if (selectedItem != null && selectedItem.get('id') !== id) {
-
                     selectedItem.set('selected', false);
                 }
 
                 var item = this.getItemById(id);
 
                 if (item != null && item.get('selected') === false) {
-
                     item.set('selected', true);
                     item.set('playedRecently', true);
 
@@ -195,22 +191,20 @@ define(['ytHelper',
             addItems: function(videos, callback) {
                 var createdPlaylistItems = [];
                 var self = this;
-                
-                videoManager.cache(videos);
 
                 videos.each(function(video) {
                     var playlistItem = new PlaylistItem({
                         playlistId: self.get('id'),
                         position: self.get('items').length,
-                        videoId: video.get('id'),
+                        video: video,
                         title: video.get('title'),
-                        relatedVideos: [],
+                        relatedVideoInformation: [],
                         selected: false
                     });
                     createdPlaylistItems.push(playlistItem);
 
-                    ytHelper.getRelatedVideos(playlistItem.get('videoId'), function(relatedVideos) {
-                        playlistItem.set('relatedVideos', relatedVideos);
+                    ytHelper.getRelatedVideoInformation(playlistItem.get('video').get('id'), function (relatedVideoInformation) {
+                        playlistItem.set('relatedVideoInformation', relatedVideoInformation);
                     });
 
                     self.get('items').push(playlistItem);
@@ -244,40 +238,44 @@ define(['ytHelper',
                     }
                 });
             },
+            
+            //  This is generally called from the foreground to not couple the Video object with the foreground.
+            addItemByInformation: function (videoInformation) {
 
-            addItem: function(video, selected) {
+                //  Strip out the id. An example of $t's contents: tag:youtube.com,2008:video:UwHQp8WWMlg
+                var id = videoInformation.media$group.yt$videoid.$t;
+                var durationInSeconds = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
 
+                var video = new Video({
+                    id: id,
+                    title: videoInformation.title.$t,
+                    duration: durationInSeconds
+                });
+                
+                return this.addItem(video);
+            },
+
+            addItem: function(video) {
                 var playlistId = this.get('id');
                 var itemCount = this.get('items').length;
-                var videoId = video.get('id');
 
                 var playlistItem = new PlaylistItem({
                     playlistId: playlistId,
                     position: itemCount,
-                    videoId: videoId,
+                    video: video,
                     title: video.get('title'),
-                    relatedVideos: []
+                    relatedVideoInformation: []
                 });
 
-                ytHelper.getRelatedVideos(videoId, function (relatedVideos) {
-                    playlistItem.set('relatedVideos', relatedVideos);
+                ytHelper.getRelatedVideoInformation(video.get('id'), function (relatedVideoInformation) {
+                    playlistItem.set('relatedVideoInformation', relatedVideoInformation);
                 });
-                
-                //  TODO: Why do I have to cache video.attributes and not video?
-                videoManager.cache(video.attributes);
+
                 this.get('items').push(playlistItem);
 
-                //  TODO: Should probably be saving a Video as part of playlistItem, maybe?
-                //  TODO: Backbone documentation conflicts implementation -- need to pass in empty {} here to call save properly.
-                video.save({}, {
-                    success: function () {
+                playlistItem.save();
 
-                        //  Need to ensure that a video saves to the database before trying to save the item for it.
-                        playlistItem.save();
-                    }
-                });
-  
-                if (selected) {
+                if (this.get('items').length === 1) {
                     var playlistItemId = playlistItem.get('id');
                     this.selectItemById(playlistItemId);
                 }

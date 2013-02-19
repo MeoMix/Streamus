@@ -1,6 +1,6 @@
 ﻿//  A progress bar which shows the elapsed time as compared to the total time of the current video.
 //  Changes colors based on player state -- yellow when paused, green when playing.
-define(['playlistManager', 'videoManager', 'player'], function (playlistManager, videoManager, player) {
+define(['playlistManager', 'player'], function (playlistManager, player) {
     'use strict';
     var selector = $('#VideoTimeProgressBar');
     var mousewheelTimeout = null, mousewheelValue = -1;
@@ -47,7 +47,7 @@ define(['playlistManager', 'videoManager', 'player'], function (playlistManager,
     });
 
     //  Repaints the progress bar's filled-in amount based on the % of time elapsed for current video.
-    var repaint = function(){
+    function repaint(){
         var elapsedTime = selector.val();
         var totalTime = selector.prop('max');
 
@@ -63,6 +63,10 @@ define(['playlistManager', 'videoManager', 'player'], function (playlistManager,
             setTotalTime(item);
         }
     });
+
+    playlistManager.onActivePlaylistEmptied(function() {
+        setTotalTime(0);
+    });
     
     //  Only need to update totalTime whenever the playlistItem changes.
     //  TODO: This might have a bug in it. What happens if my activePlaylist changes? Probably not bound?
@@ -72,9 +76,7 @@ define(['playlistManager', 'videoManager', 'player'], function (playlistManager,
         var totalTime = 0;
         
         if (playlistItem) {
-            var videoId = playlistItem.get('videoId');
-            var currentVideo = videoManager.getLoadedVideoById(videoId);
-            totalTime = currentVideo.get('duration');
+            totalTime = playlistItem.get('video').get('duration');
         }
         
         selector.prop('max', totalTime);
@@ -88,7 +90,7 @@ define(['playlistManager', 'videoManager', 'player'], function (playlistManager,
     }
 
     //  Pause the GUI's refreshes for updating the timers while the user is dragging the video time slider around.
-    var update = function () {
+    function update () {
         var playerIsSeeking = player.isSeeking;
 
         if (!playerIsSeeking && player.playerState !== PlayerStates.PAUSED) {
@@ -100,17 +102,12 @@ define(['playlistManager', 'videoManager', 'player'], function (playlistManager,
     //  A nieve way of keeping the progress bar up to date. 
     setInterval(update, 500);
 
-    //  TODO: I don't think these are all used anymore.
     return {
-        id: selector.prop('id'),
         onManualTimeChange: function (event) {
             selector.on(events.onManualTimeChange, event);
         },
         onChange: function (event) {
             selector.change(event);
-        },
-        get value(){
-            return selector.val();
         }
     };
 });

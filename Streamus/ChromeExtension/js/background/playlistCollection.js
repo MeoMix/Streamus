@@ -15,11 +15,11 @@ define(['playlists','programState'], function (Playlists, programState) {
         initialize: function () {
             var playlists = this.get('playlists');
 
-            //  Our playlists data was fetched from the server. Need to convert the collection to Backbone Model entities.
+            // Data was fetched from the server. Need to convert to Backbone.
             if (!(playlists instanceof Backbone.Collection)) {
 
                 this.set('playlists', new Playlists(playlists), {
-                    //  Silent operation because the playlists isn't technically changing - just being made correct.
+                    //  Silent operation because it isn't technically changing - just being made correct.
                     silent: true
                 });
             }

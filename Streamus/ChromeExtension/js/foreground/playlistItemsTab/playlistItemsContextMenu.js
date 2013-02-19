@@ -10,7 +10,7 @@ define(['contextMenu', 'playlistManager'], function (contextMenu, playlistManage
             this.addContextMenuItem('Copy URL', function() {
                 if (item != null) {
                     //  TODO: oh crap this might not work now cuz port isnt open.
-                    chrome.extension.sendMessage({ text: 'http://youtu.be/' + item.get('videoId') });
+                    chrome.extension.sendMessage({ text: 'http://youtu.be/' + item.get('video').get('id') });
                 }
             });
 

@@ -1,10 +1,9 @@
 ﻿define(['playlist',
         'playlistManager',
-        'videoManager',
         'loginManager',
         'videos',
         'ytHelper'],
-    function (Playlist, playlistManager, videoManager, loginManager, Videos, ytHelper) {
+    function (Playlist, playlistManager, loginManager, Videos, ytHelper) {
         'use strict';
         var savedPlaylist = null;
         

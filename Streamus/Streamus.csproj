@@ -228,7 +228,6 @@
     <Content Include="ChromeExtension\js\background\playlistManager.js" />
     <Content Include="ChromeExtension\js\background\playlists.js" />
     <Content Include="ChromeExtension\js\background\requirePaths.js" />
-    <Content Include="ChromeExtension\js\background\videoManager.js" />
     <Content Include="ChromeExtension\js\background\user.js" />
     <Content Include="ChromeExtension\js\foreground\contentButtons.js" />
     <Content Include="ChromeExtension\js\foreground\contentHeader.js" />
@@ -254,7 +253,6 @@
     <Content Include="ChromeExtension\js\foreground\playlistItemsTab\playlistItemsContextMenu.js" />
     <Content Include="ChromeExtension\js\foreground\playlistItemsTab\playlistItemsDisplay.js" />
     <Content Include="ChromeExtension\js\foreground\timeDisplay.js" />
-    <Content Include="ChromeExtension\js\foreground\videoManager.js" />
     <Content Include="ChromeExtension\js\inject.js" />
     <Content Include="ChromeExtension\js\playerStates.js" />
     <Content Include="ChromeExtension\js\background\playlistItemsHistory.js" />
@@ -277,8 +275,7 @@
     <Content Include="manifest.json" />
     <Content Include="README.md" />
     <Content Include="ChromeExtension\js\helpers.js" />
-    <Content Include="ChromeExtension\js\playerBuilder.js" />
-    <Content Include="ChromeExtension\js\video.js" />
+    <Content Include="ChromeExtension\js\background\video.js" />
     <Content Include="ChromeExtension\js\thirdParty\geoplugin.js" />
     <Content Include="ChromeExtension\js\thirdParty\googleAnalytics.js" />
     <Content Include="ChromeExtension\js\thirdParty\jasmine.js" />
@@ -300,7 +297,7 @@
     <Content Include="ChromeExtension\js\tests\requirePaths.js" />
     <Content Include="ChromeExtension\js\thirdParty\underscore.js" />
     <Content Include="ChromeExtension\js\thirdParty\ytPlayerApiHelper.js" />
-    <Content Include="ChromeExtension\js\videos.js" />
+    <Content Include="ChromeExtension\js\background\videos.js" />
     <Content Include="ChromeExtension\js\ytHelper.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">

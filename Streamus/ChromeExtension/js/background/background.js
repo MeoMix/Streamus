@@ -5,8 +5,7 @@
     chrome.webRequest.onBeforeSendHeaders.addListener(function (info) {
         info.requestHeaders.push({
             name: "Referer",
-            //  hehehe
-            value: "http://stackoverflow.com/questions/12829590/how-does-facebook-play-a-youtube-video-which-has-been-banned-from-embedding"
+            value: "http://youtube.com"
         });
         return { requestHeaders: info.requestHeaders };
     }, {
@@ -14,9 +13,15 @@
     },
         ["blocking", "requestHeaders"]
     );
-
+    
     //  Build iframe AFTER onBeforeSendHeaders listener.
-    $('<iframe id="MusicHolder" width="640" height="390" src="http://www.youtube.com/embed/dummy?enablejsapi=1"></iframe>').appendTo('body');
+    $('<iframe>', {
+        id: 'MusicHolder',
+        type: 'text/html',
+        width: 640,
+        height: 390,
+        src: 'http://www.youtube.com/embed/dummy?enablejsapi=1'
+    }).appendTo('body');
 
     //  http://stackoverflow.com/questions/5235719/how-to-copy-text-to-clipboard-from-a-google-chrome-extension
     //  Copies text to the clipboard. Has to happen on background page due to elevated privs.

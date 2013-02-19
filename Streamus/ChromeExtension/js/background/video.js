@@ -3,13 +3,11 @@ define(['programState'], function(programState){
     'use strict';
 
     var Video = Backbone.Model.extend({
-        defaults: function () {
-            return {
-                //  Provided by YouTube's API.
-                id: '',
-                title: '',
-                duration: -1
-            };
+        defaults: {
+            //  Provided by YouTube's API.
+            id: '',
+            title: '',
+            duration: -1
         },
         urlRoot: programState.getBaseUrl() + 'Video/'
     });

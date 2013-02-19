@@ -7,12 +7,11 @@ define(['playlist',
         'playlistItem',
         'playlistItems',
         'loginManager',
-        'videoManager',
-        'player'
-    ], function(Playlist, Playlists, PlaylistItem, PlaylistItems, loginManager, videoManager, player) {
+        'player',
+        'ytHelper',
+        'videos'
+    ], function(Playlist, Playlists, PlaylistItem, PlaylistItems, loginManager, player, ytHelper, Videos) {
         'use strict';
-
-        console.log("loaded stuff:", player);
 
         var playlists = new Playlists();
         var activePlaylist = null;
@@ -28,24 +27,42 @@ define(['playlist',
             onActivePlaylistEmptied: 'playlistManager.onActivePlaylistEmptied'
         };
 
-        loginManager.once('loggedIn', function () {
+        loginManager.once('change:user', function () {
+            if (player.isReady) {
+                initializeWithUser();
+            } else {
+                player.onReady(function() {
+                    initializeWithUser();
+                });
+            }
+        });
+        
+        loginManager.login();
+        
+        function initializeWithUser() {
             playlists = loginManager.get('user').get('playlistCollections').at(0).get('playlists');
-            
+
             playlists.on('change:selected', function (playlist, isSelected) {
                 if (isSelected) {
                     activePlaylist = playlist;
                     activePlaylist.get('items').on('change:selected', function (item) {
+
+                        if (item.get('selected')) {
+                            player.cueVideoById(item.get('video').get('id'));
+                        }
+
                         $(document).trigger(events.onActivePlaylistSelectedItemChanged, item);
                     });
 
-                    activePlaylist.get('items').on('add', function(item) {
+                    activePlaylist.get('items').on('add', function (item) {
                         $(document).trigger(events.onActivePlaylistItemAdd, item);
                     });
 
                     activePlaylist.get('items').on('remove', function (item) {
                         $(document).trigger(events.onActivePlaylistItemRemove, item);
-                        
+
                         if (activePlaylist.get('items').length == 0) {
+                            player.stop();
                             $(document).trigger(events.onActivePlaylistEmptied, item);
                         }
                     });
@@ -57,11 +74,11 @@ define(['playlist',
                 }
             });
 
-            playlists.on('remove', function() {
+            playlists.on('remove', function () {
                 $(document).trigger(events.onPlaylistRemoved);
             });
 
-            playlists.on('add', function() {
+            playlists.on('add', function () {
                 $(document).trigger(events.onPlaylistAdded);
             });
 
@@ -74,19 +91,20 @@ define(['playlist',
             //  If there is a playlistItem to cue might as well have it ready to go.
             if (activePlaylist.get('items').length > 0) {
                 var selectedItem = activePlaylist.getSelectedItem();
-                player.cueVideoById(selectedItem.get('videoId'));
+
+                if (selectedItem == null) {
+                    selectedItem = activePlaylist.get('items').at(0);
+                    activePlaylist.selectItemById(selectedItem.get('id'));
+                    console.error("Failed to find a selected item in a playlist with items, gracefully recovering.");
+                }
+
+                player.cueVideoById(selectedItem.get('video').get('id'));
             }
-        });
-
+        }
         
-        //  TODO: Should be able to login asynchronously.
-        player.onReady(function () {
-            loginManager.login();
-        });
-
         player.onStateChange(function(event, playerState) {
             //  If the video stopped playing and there's another playlistItem to skip to, do so.
-            if (playerState.data === PlayerStates.ENDED) {
+            if (playerState === PlayerStates.ENDED) {
                 //  Don't pass message to UI if it is closed. Handle sock change in the background.
                 //  The player can be playing in the background and UI changes may try and be posted to the UI, need to prevent.
                 var isRadioModeEnabled = JSON.parse(localStorage.getItem('isRadioModeEnabled')) || false;
@@ -101,12 +119,13 @@ define(['playlist',
                 }
                 
                 var selectedItem = activePlaylist.selectItemById(nextItem.get('id'));
-                player.loadVideoById(selectedItem.get('videoId'));
+                player.loadVideoById(selectedItem.get('video').get('id'));
             }
 
         });
 
         function setSelectedPlaylist(playlistToSelect) {
+
             if (activePlaylist != null && activePlaylist.get('id') != playlistToSelect.get('id')) {
                 activePlaylist.set({ selected: false });
             }
@@ -187,9 +206,9 @@ define(['playlist',
 
                 activePlaylist.selectItemById(nextItem.get('id'));
                 if (this.playerState === PlayerStates.PLAYING) {
-                    player.loadVideoById(nextItem.get('videoId'));
+                    player.loadVideoById(nextItem.get('video').get('id'));
                 } else {
-                    player.cueVideoById(nextItem.get('videoId'));
+                    player.cueVideoById(nextItem.get('video').get('id'));
                 }
             },
             
@@ -202,15 +221,16 @@ define(['playlist',
                     //  nextItem will equal item sometimes because gotoNextItem loops around to front of list.
                     if (nextItem != null && nextItem !== item) {
                         activePlaylist.selectItemById(nextItem.get('id'));
+                        var videoId = nextItem.get('video').get('id');
                         
-                        if (player.getPlayerState() == PlayerStates.PLAYING) {
-                            player.loadVideoById(nextItem.get('videoId'));
+                        if (player.playerState == PlayerStates.PLAYING) {
+                            player.loadVideoById(videoId);
                             
                         } else {
-                            player.cueVideoById(nextItem.get('videoId'));
+                            player.cueVideoById(videoId);
                         }
                     } else {
-                        player.pauseVideo();
+                        player.pause();
                     }
                 }
 
@@ -221,7 +241,7 @@ define(['playlist',
                 if (activePlaylist.get('id') !== playlistId) {
                     player.pause();
 
-                    var playlist = playlists.get(id);
+                    var playlist = playlists.get(playlistId);
                     setSelectedPlaylist(playlist);
 
                     //  TODO: Need to implement the ability to select without playing.
@@ -229,7 +249,7 @@ define(['playlist',
                     var firstItem = activePlaylist.get('items').at(0);
                     if (firstItem != null) {
                         activePlaylist.selectItemById(firstItem.get('id'));
-                        player.cueVideoById(firstItem.get('videoId'));
+                        player.cueVideoById(firstItem.get('video').get('id'));
                     }
                 }
             },
@@ -258,13 +278,92 @@ define(['playlist',
                     }
                 });
                 
+                //  TODO: Refactor/simplify. This loads a bulk collection of videos for a YouTube playlist.
                 if (optionalPlaylistId) {
-                    videoManager.loadVideosIncrementally(optionalPlaylistId, function (loadedVideos) {
+                    
+                    var startIndex = 1;
+                    var maxResultsPerSearch = 50;
+                    var totalVideosProcessed = 0;
 
-                        if (loadedVideos) {
-                            playlist.addItems(loadedVideos);
-                        }
-                    });
+                    var videos = new Videos();
+
+                    var getVideosInterval = setInterval(function () {
+                        $.ajax({
+
+                            type: 'GET',
+                            url: 'https://gdata.youtube.com/feeds/api/playlists/' + optionalPlaylistId,
+                            dataType: 'json',
+                            data: {
+                                v: 2,
+                                alt: 'json',
+                                'max-results': maxResultsPerSearch,
+                                'start-index': startIndex,
+                            },
+                            success: function (result) {
+
+                                _.each(result.feed.entry, function (entry) {
+                                    //  If the title is blank the video has been deleted from the playlist, no data to fetch.
+                                    if (entry.title.$t !== "") {
+                                        var videoId = entry.media$group.yt$videoid.$t;
+
+                                        ytHelper.getVideoInformationFromId(videoId, function (videoInformation) {
+                                            //  videoInformation will be null if it has been banned on copyright grounds
+
+                                            if (videoInformation === null) {
+
+                                                ytHelper.findPlayableByTitle(entry.title.$t, function (playableVideoInformation) {
+                                                    var id = playableVideoInformation.media$group.yt$videoid.$t;
+                                                    var durationInSeconds = parseInt(playableVideoInformation.media$group.yt$duration.seconds, 10);
+
+                                                    videos.push({
+                                                        id: id,
+                                                        playlistId: playlistId,
+                                                        title: playableVideoInformation.title.$t,
+                                                        duration: durationInSeconds
+                                                    });
+                                                    
+                                                    totalVideosProcessed++;
+
+                                                    if (totalVideosProcessed == result.feed.entry.length) {
+                                                        playlist.addItems(videos);
+                                                    }
+                                                });
+
+                                            } else {
+
+                                                videos.add(video);
+                                                totalVideosProcessed++;
+
+                                                if (totalVideosProcessed == result.feed.entry.length) {
+                                                    playlist.addItems(videos);
+                                                }
+                                            }
+
+                                        });
+                                    } else {
+
+                                        totalVideosProcessed++;
+
+                                        if (totalVideosProcessed == result.feed.entry.length) {
+                                            playlist.addItems(videos);
+                                        }
+                                    }
+                                });
+
+                                //If X videos are received and X+C videos were requested, stop because no more videos in playlist.
+                                //TODO: Maybe I just always want to return.
+                                if (result.feed.entry.length < maxResultsPerSearch) {
+                                    clearInterval(getVideosInterval);
+                                }
+
+                                startIndex += maxResultsPerSearch;
+                            },
+                            error: function (error) {
+                                console.error(error);
+                                clearInterval(getVideosInterval);
+                            }
+                        });
+                    }, 5000); 
                 }
             },
             

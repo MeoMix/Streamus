@@ -1,27 +1,26 @@
-﻿define(['user'], function(User) {
+﻿//  TODO: Exposed globally for the foreground. Is there a better way?
+var LoginManager = null;
+
+define(['user'], function(User) {
     'use strict';
 
-    var LoginManager = Backbone.Model.extend({
+    var loginManagerModel = Backbone.Model.extend({
         defaults: {
-            loggedIn: false,
             user: null
         },
         login: function() {
-            if (!this.get('loggedIn')) {
+            if (this.get('user') === null) {
                 var user = new User();
                 var self = this;
 
                 user.on('loaded', function() {
-                    self.set('loggedIn', true);
                     self.set('user', this);
-                    self.trigger('loggedIn');
                 });
-            } else {
-                //  TODO: I am not sure if it is smart to trigger an event when already logged in.
-                this.trigger('loggedIn');
             }
         }
     });
 
-    return new LoginManager();
+    LoginManager = new loginManagerModel();
+
+    return LoginManager;
 });

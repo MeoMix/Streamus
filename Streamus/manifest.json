@@ -28,6 +28,11 @@
 	],
   "content_scripts": [
     {
+      "matches": ["<all_urls>"],
+      "js": ["ChromeExtension/js/thirdParty/jquery.js"],
+	  "all_frames": true
+	},
+    {
       "matches": ["http://www.youtube.com/watch?v*"],
       "css": ["ChromeExtension/css/inject.css"],
       "js": ["ChromeExtension/js/thirdParty/underscore.js", "ChromeExtension/js/thirdParty/jquery.js", "ChromeExtension/js/inject.js"]

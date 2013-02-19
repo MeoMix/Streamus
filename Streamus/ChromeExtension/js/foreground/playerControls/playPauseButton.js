@@ -6,15 +6,19 @@ define(['playlistManager', 'player'], function (playlistManager, player) {
 	var playIcon = $('#PlayIcon');
 
     //  Only allow changing once every 100ms to preent spamming.
-    playPauseButton.click(_.debounce(function () {
-        if (player.playerState == PlayerStates.PLAYING) {
-            player.pause();
-        } else {
-            player.play();
+	playPauseButton.click(_.debounce(function () {
+	    
+        if (!$(this).hasClass('disabled')) {
+            if (player.playerState == PlayerStates.PLAYING) {
+                player.pause();
+            } else {
+                player.play();
+            }
+
+            pauseIcon.toggle();
+            playIcon.toggle();
         }
 
-	    pauseIcon.toggle();
-	    playIcon.toggle();
 	}, 100, true));
    
     player.onStateChange(function (event, playerState) {
@@ -31,7 +35,7 @@ define(['playlistManager', 'player'], function (playlistManager, player) {
         enableButton();
     }
 
-    //  Whenever the YouTube player changes playing state -- update whether ico shows play or pause.
+    //  Whenever the YouTube player changes playing state -- update whether icon shows play or pause.
     function makeIconReflectPlayerState(playerState) {
         if (playerState === PlayerStates.PLAYING) {
             setToPause();
@@ -49,11 +53,10 @@ define(['playlistManager', 'player'], function (playlistManager, player) {
     
     //  Paint the button's path gray and disallow it to be clicked
     function disableButton() {
-        playPauseButton.addClass('disabled').off('click');
+        playPauseButton.addClass('disabled');
         playPauseButton.find('.path').css('fill', 'gray');
     }
 
-    
     //  Change the music button to the 'Play' image
     function setToPlay() {
         pauseIcon.hide();

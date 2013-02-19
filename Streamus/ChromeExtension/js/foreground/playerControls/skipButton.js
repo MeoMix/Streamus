@@ -5,7 +5,11 @@ define(['playlistManager'], function (playlistManager) {
 
     //  Prevent spamming by only allowing a next click once every 100ms.
     skipButton.click(_.debounce(function () {
-        playlistManager.skipItem('next');
+
+        if (!$(this).hasClass('disabled')) {
+            playlistManager.skipItem('next');
+        }
+
     }, 100, true));
     
     playlistManager.onActivePlaylistEmptied(disableButton);

@@ -50,7 +50,7 @@ namespace Streamus.Tests
         public void SetupContext()
         {
             //  Create managers here because every client request will require new managers.
-            PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
+            PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
 
             var playlistCollection = User.PlaylistCollections.First();
 

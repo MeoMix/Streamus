@@ -21,16 +21,14 @@ var require = {
         'player': 'js/background/player',
         'playlistManager': 'js/background/playlistManager',
         'loginManager': 'js/background/loginManager',
-        'playerBuilder': 'js/background/playerBuilder',
         'playlist': 'js/background/playlist',
         'playlists': 'js/background/playlists',
         'playlistCollection': 'background/playlistCollection',
         'playlistCollections': 'background/playlistCollections',
         'user': 'js/background/user',
-        'videoManager': 'js/background/videoManager',
 
-        'video': 'js/video',
-        'videos': 'js/videos',
+        'video': 'js/background/video',
+        'videos': 'js/background/videos',
         'ytHelper': 'js/ytHelper',
         'helpers': 'js/helpers'
     }

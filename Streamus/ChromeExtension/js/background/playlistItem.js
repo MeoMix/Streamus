@@ -1,9 +1,9 @@
 ﻿//  PlaylistItems have a one-to-one relationship with a Video object via the videoId property.
-define(['helpers', 'programState'], function(helpers, programState) {
+define(['helpers', 'programState', 'video'], function(helpers, programState, Video) {
     'use strict';
     
     //  TODO: Need to figure out why overriding parse doesn't seem to matter.
-    //  I don't want to send selected / playedRecently / relatedVideos in my requests, but I can't figure out how to prevent save from overriding them with
+    //  I don't want to send selected / playedRecently / relatedVideoInformation in my requests, but I can't figure out how to prevent save from overriding them with
     //  default values -- so I am sending and then getting the exact same value back from server and writing it back to the item. Bleh.
     var PlaylistItem = Backbone.Model.extend({
         defaults: function() {
@@ -12,13 +12,13 @@ define(['helpers', 'programState'], function(helpers, programState) {
                 id: helpers.generateGuid(),
                 playlistId: null,
                 position: -1,
-                videoId: '',
+                video: null,
                 title: '',
                 selected: false,
                 //  Used to weight randomness in shuffle.
                 playedRecently: false,
                 //  Not stoked about having these here, but doing it for convenience for now.
-                relatedVideos: [] 
+                relatedVideoInformation: [] 
             };
         },
         urlRoot: programState.getBaseUrl() + 'PlaylistItem/',
@@ -30,12 +30,34 @@ define(['helpers', 'programState'], function(helpers, programState) {
             // Call Model.destroy().
             // We are reusing the existing functionality from Backbone.Model.destroy().
             Backbone.Model.prototype.destroy.apply(this, arguments);
+        },
+        parse: function (data) {
+            // take json of video and set into model.
+            this.get('video').set(data.video);
+            delete data.video;
+
+            return data;
+        },
+        initialize: function () {
+
+            var video = this.get('video');
+            
+            // Data was fetched from the server. Need to convert to Backbone.
+            if (!(video instanceof Backbone.Model)) {
+
+                this.set('video', new Video(video), {
+                    //  Silent operation because it isn't technically changing - just being made correct.
+                    silent: true
+                });
+                
+            }
         }
     });
 
     //  Public exposure of a constructor for building new PlaylistItem objects.
     return function (config) {
         var playlistItem = new PlaylistItem(config);
+
         return playlistItem;
     };
 });

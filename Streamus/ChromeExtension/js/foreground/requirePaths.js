@@ -27,8 +27,6 @@ var require = {
         'ytPlayerApiHelper': 'thirdParty/ytPlayerApiHelper',
         'onYouTubePlayerApiReady': 'thirdParty/onYouTubePlayerApiReady',
         'jqueryMousewheel': 'thirdParty/jqueryMousewheel',
-        'video': 'video',
-        'videos': 'videos',
         'ytHelper': 'ytHelper',
         'helpers': 'helpers',
         'jquery': 'thirdParty/jquery',
@@ -39,7 +37,6 @@ var require = {
         'oauth2': 'thirdParty/oauth2/oauth2',
         'backbone': 'thirdParty/backbone',
         'playlistManager': 'foreground/playlistManager',
-        'videoManager': 'foreground/videoManager',
         'player': 'foreground/player'
     }
 };

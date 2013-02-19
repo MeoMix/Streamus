@@ -15,6 +15,7 @@ namespace Streamus.Controllers
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IPlaylistDao PlaylistDao;
         private readonly IPlaylistItemDao PlaylistItemDao;
+        private readonly IVideoDao VideoDao;
 
         public PlaylistController()
         {
@@ -22,6 +23,7 @@ namespace Streamus.Controllers
             {
                 PlaylistDao = new PlaylistDao();
                 PlaylistItemDao = new PlaylistItemDao();
+                VideoDao = new VideoDao();
             }
             catch (TypeInitializationException exception)
             {
@@ -33,7 +35,7 @@ namespace Streamus.Controllers
         [HttpPost]
         public ActionResult Create(Playlist playlist)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
             playlistManager.Save(playlist);
 
             return new JsonDataContractActionResult(playlist);
@@ -42,7 +44,7 @@ namespace Streamus.Controllers
         [HttpPut]
         public ActionResult Update(Playlist playlist)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
             playlistManager.Update(playlist);
 
             return new JsonDataContractActionResult(playlist);
@@ -59,7 +61,7 @@ namespace Streamus.Controllers
         [HttpDelete]
         public EmptyResult Delete(Guid id)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
             playlistManager.DeletePlaylistById(id);
 
             return new EmptyResult();
@@ -68,7 +70,7 @@ namespace Streamus.Controllers
         [HttpPost]
         public EmptyResult UpdateItemPosition(Guid playlistId, List<PlaylistItem> detachedItems)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
             playlistManager.UpdateItemPosition(playlistId, detachedItems);
 
             return new EmptyResult();
@@ -77,25 +79,25 @@ namespace Streamus.Controllers
         [HttpPost]
         public EmptyResult UpdateTitle(Guid playlistId, string title)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
             playlistManager.UpdateTitle(playlistId, title);
 
             return new EmptyResult();
         }
 
-        [HttpPost]
-        public ActionResult CreateItem(PlaylistItem playlistItem)
-        {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
-            playlistManager.CreatePlaylistItem(playlistItem);
+        //[HttpPost]
+        //public ActionResult CreateItem(PlaylistItem playlistItem)
+        //{
+        //    var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
+        //    playlistManager.CreatePlaylistItem(playlistItem);
 
-            return new JsonDataContractActionResult(playlistItem);
-        }
+        //    return new JsonDataContractActionResult(playlistItem);
+        //}
 
         [HttpPost]
         public ActionResult CreateItems(IEnumerable<PlaylistItem> playlistItems)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
             playlistManager.CreatePlaylistItems(playlistItems);
 
             return new JsonDataContractActionResult(playlistItems);
