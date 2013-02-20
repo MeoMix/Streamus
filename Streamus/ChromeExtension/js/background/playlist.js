@@ -24,6 +24,8 @@ define(['ytHelper',
 
             urlRoot: programState.getBaseUrl() + 'Playlist/',
             
+            //  Convert data which is sent from the server back to a proper Backbone.Model.
+            //  Need to recreate submodels as Backbone.Models else they will just be regular Objects.
             parse: function (data) {
 
                 if (data.items.length > 0) {
@@ -197,13 +199,14 @@ define(['ytHelper',
                         playlistId: self.get('id'),
                         position: self.get('items').length,
                         video: video,
+                        //  PlaylistItem title is mutable, video title is immutable.
                         title: video.get('title'),
                         relatedVideoInformation: [],
                         selected: false
                     });
                     createdPlaylistItems.push(playlistItem);
 
-                    ytHelper.getRelatedVideoInformation(playlistItem.get('video').get('id'), function (relatedVideoInformation) {
+                    ytHelper.getRelatedVideoInformation(video.get('id'), function (relatedVideoInformation) {
                         playlistItem.set('relatedVideoInformation', relatedVideoInformation);
                     });
 

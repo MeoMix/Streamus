@@ -17,7 +17,6 @@ define(['helpers', 'programState', 'video'], function(helpers, programState, Vid
                 selected: false,
                 //  Used to weight randomness in shuffle.
                 playedRecently: false,
-                //  Not stoked about having these here, but doing it for convenience for now.
                 relatedVideoInformation: [] 
             };
         },
