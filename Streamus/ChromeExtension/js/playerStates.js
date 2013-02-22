@@ -1,5 +1,5 @@
-﻿//A list of states the YouTube player may broadcast.
-//https://developers.google.com/youtube/js_api_reference#Playback_status
+﻿//  A list of states the YouTube player may broadcast.
+//  https://developers.google.com/youtube/js_api_reference#Playback_status
 var PlayerStates = Object.freeze({
     UNSTARTED: -1,
     ENDED: 0,

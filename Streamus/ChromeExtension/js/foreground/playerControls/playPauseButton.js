@@ -21,7 +21,7 @@ define(['playlistManager', 'player'], function (playlistManager, player) {
 
 	}, 100, true));
    
-    player.onStateChange(function (event, playerState) {
+	player.onStateChange(function (event, playerState) {
 	    makeIconReflectPlayerState(playerState);
 	});
 	makeIconReflectPlayerState(player.playerState);

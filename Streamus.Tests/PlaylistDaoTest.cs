@@ -81,7 +81,7 @@ namespace Streamus.Tests
             //  Usually created client-side, but for testing it is OK to create server-side.
             Guid firstItemId = Guid.NewGuid();
             var playlistItem = new PlaylistItem(playlist.Id, firstItemId, playlist.Items.Count, Video.Title, Video.Id);
-            PlaylistManager.CreatePlaylistItem(playlistItem);
+            PlaylistManager.UpdatePlaylistItem(playlistItem);
 
             //  Only add after successfully saving.
             playlist.Items.Add(playlistItem);

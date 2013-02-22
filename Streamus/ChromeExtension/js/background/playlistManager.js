@@ -48,7 +48,14 @@ define(['playlist',
                     activePlaylist.get('items').on('change:selected', function (item) {
 
                         if (item.get('selected')) {
-                            player.cueVideoById(item.get('video').get('id'));
+                            var videoId = item.get('video').get('id');
+                            
+                            //  Maintain the playing state by loading if playing. 
+                            if (player.playerState === PlayerStates.PLAYING) {
+                                player.loadVideoById(videoId);
+                            } else {
+                                player.cueVideoById(videoId);
+                            } 
                         }
 
                         $(document).trigger(events.onActivePlaylistSelectedItemChanged, item);
@@ -62,7 +69,7 @@ define(['playlist',
                         $(document).trigger(events.onActivePlaylistItemRemove, item);
 
                         if (activePlaylist.get('items').length == 0) {
-                            player.stop();
+                            player.pause();
                             $(document).trigger(events.onActivePlaylistEmptied, item);
                         }
                     });
@@ -96,9 +103,10 @@ define(['playlist',
                     selectedItem = activePlaylist.get('items').at(0);
                     activePlaylist.selectItemById(selectedItem.get('id'));
                     console.error("Failed to find a selected item in a playlist with items, gracefully recovering.");
+                } else {
+                    player.cueVideoById(selectedItem.get('video').get('id'));
                 }
 
-                player.cueVideoById(selectedItem.get('video').get('id'));
             }
         }
         
@@ -205,11 +213,6 @@ define(['playlist',
                 }
 
                 activePlaylist.selectItemById(nextItem.get('id'));
-                if (this.playerState === PlayerStates.PLAYING) {
-                    player.loadVideoById(nextItem.get('video').get('id'));
-                } else {
-                    player.cueVideoById(nextItem.get('video').get('id'));
-                }
             },
             
             removeItem: function (item) {
@@ -221,14 +224,6 @@ define(['playlist',
                     //  nextItem will equal item sometimes because gotoNextItem loops around to front of list.
                     if (nextItem != null && nextItem !== item) {
                         activePlaylist.selectItemById(nextItem.get('id'));
-                        var videoId = nextItem.get('video').get('id');
-                        
-                        if (player.playerState == PlayerStates.PLAYING) {
-                            player.loadVideoById(videoId);
-                            
-                        } else {
-                            player.cueVideoById(videoId);
-                        }
                     } else {
                         player.pause();
                     }

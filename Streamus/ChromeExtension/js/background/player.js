@@ -5,6 +5,7 @@ define(['ytPlayerApiHelper'], function (ytPlayerApiHelper) {
     //  The actual youtubePlayer API object.
     var player = null;
     var isReady;
+    var lastStateWasVidCued;
 
     //  Initialize the player by creating YT player iframe.
     ytPlayerApiHelper.onApiReady(function () {
@@ -19,7 +20,13 @@ define(['ytPlayerApiHelper'], function (ytPlayerApiHelper) {
                     $(document).trigger('player.onReady');
                 },
                 'onStateChange': function (playerState) {
-                    $(document).trigger('player.onStateChange', playerState.data);
+                    //  The vidcued event is no good for us because player sends a pause event when transitioning
+                    //  from vidcued to play. Consume this pause event.
+                    if (!lastStateWasVidCued || playerState.data !== PlayerStates.PAUSED) {
+                        $(document).trigger('player.onStateChange', playerState.data);
+                    }
+
+                    lastStateWasVidCued = playerState.data === PlayerStates.VIDCUED;
                 },
                 'onError': function(error) {
                     console.error("An error was encountered.", error);
@@ -41,11 +48,7 @@ define(['ytPlayerApiHelper'], function (ytPlayerApiHelper) {
     //  Handles communications between the GUI and the YT Player API.
     YoutubePlayer = {
         isSeeking: false,
-        isStopped: true,
-        get isReady() {
-            return isReady;
-        },
-            
+
         wasPlayingBeforeSeek: false,
             
         onReady: function(event) {
@@ -55,18 +58,28 @@ define(['ytPlayerApiHelper'], function (ytPlayerApiHelper) {
         onStateChange: function(event) {
             $(document).on('player.onStateChange', event);
         },
+        
+        get isReady() {
+            return isReady;
+        },
             
         get playerState() {
-            return (player && player.getPlayerState) ? player.getPlayerState() : PlayerStates.UNSTARTED;
+            var state = PlayerStates.UNSTARTED;
+            
+            if (player && player.getPlayerState) {
+                state = player.getPlayerState();
+            }
+
+            return state;
         },
 
         //  Returns the elapsed time of the currently loaded video. Returns 0 if no video is playing.
         get currentTime() {
             var currentTime = 0;
             
-            if (player && player.getCurrentTime && !this.isStopped) {
+            if (player && player.getCurrentTime) {
                 var playerCurrentTime = player.getCurrentTime();
-                        
+
                 if (!isNaN(playerCurrentTime)) {
                     currentTime = Math.ceil(playerCurrentTime);
                 }
@@ -98,15 +111,10 @@ define(['ytPlayerApiHelper'], function (ytPlayerApiHelper) {
             
         play: function() {
             player.playVideo();
-            this.isStopped = false;
         },
         
         pause: function() {
             player.pauseVideo();
-        },
-        
-        stop: function () {
-            this.isStopped = true;
         },
 
         //  Called when the user clicks mousedown on the progress bar dragger.

@@ -25,7 +25,11 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                 var searchUrl = buildSearchUrl(searchIndex, maxResultsPerSearch, text);
 
                 $.getJSON(searchUrl, function (response) {
-                    videoInformationList = videoInformationList.concat(response.feed.entry);
+                    console.log("response.feed.entry in search:", response.feed.entry);
+                    
+                    if (response.feed.entry) {
+                        videoInformationList = videoInformationList.concat(response.feed.entry);
+                    }
  
                     searchIndex += maxResultsPerSearch;
                 });

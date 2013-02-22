@@ -1,7 +1,7 @@
 //  The videos tab header. Users may add videos by clicking on Add Videos.
 //  Clicking Add Videos will allow the user to either search w/ auto-complete suggestions, or to paste youtube URLs into the input.
-define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'playlistManager', 'player'],
-    function (ContentHeader, ytHelper, dialogs, helpers, playlistManager, player) {
+define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'playlistManager'],
+    function (ContentHeader, ytHelper, dialogs, helpers, playlistManager) {
     'use strict';
 
     var contentHeader = new ContentHeader('#CurrentPlaylistItemDisplay', 'Add Videos', 'Search for artists or videos');
@@ -33,8 +33,8 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'playlistManager', 'p
         }
     });
 
-    //Validate URL input on enter key.
-    //Otherwise show suggestions. Use keyup event because input's val is updated at that point.
+    //  Validate URL input on enter key.
+    //  Otherwise show suggestions. Use keyup event because input's val is updated at that point.
     addInput.keyup(function (e) {
         userIsTyping = true;
         var code = e.which;
@@ -43,7 +43,7 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'playlistManager', 'p
 
         typingTimeout = setTimeout(function () {
             userIsTyping = false;
-            //User can navigate suggestions with up/down. 
+            //  User can navigate suggestions with up/down. 
             if (code !== $.ui.keyCode.UP && code !== $.ui.keyCode.DOWN) {
                 if (usersText === '') {
                     addInput.autocomplete("option", "source", []);
@@ -92,6 +92,7 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'playlistManager', 'p
 
             if (!userIsTyping) {
                 var videoDisplayObjects = _.map(videoInformationList, function (videoInformation) {
+
                     //  I wanted the label to be duration | title to help delinate between typing suggestions and actual videos.
                     var videoDuration = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
                     var videoTitle = videoInformation.title.$t;

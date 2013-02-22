@@ -347,7 +347,9 @@ define(['ytHelper',
                 var items = this.get('items');
                 var selectedItem = items.getSelectedItem();
                 return selectedItem;
-            }
+            },
+            
+
         });
 
         return function (config) {

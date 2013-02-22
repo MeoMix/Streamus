@@ -20,7 +20,6 @@ var require = {
         'playlistsContextMenu': 'foreground/playlistsTab/playlistsContextMenu',
         'contextMenu': 'foreground/contextMenu',
         'contentHeader': 'foreground/contentHeader',
-        'timeDisplay': 'foreground/timeDisplay',
         'dialogs': 'foreground/dialogs',
         'contentButtons': 'foreground/contentButtons',
         'progressBar': 'foreground/progressBar',

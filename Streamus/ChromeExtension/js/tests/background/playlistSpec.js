@@ -9,10 +9,9 @@
         
         //  Utility Methods:
         function addPlaylist(callback) {
-            console.log("executing addPlaylist function");
+
             //  onReady will fire immediately if playlistManager is already ready.
             playlistManager.onReady(function () {
-                console.log("playlistManager is ready, adding playlist!");
                 playlistManager.addPlaylist('Test Title', null, callback);
             });
         }
@@ -54,9 +53,9 @@
             //  Future test cases will work upon this created Playlist object.
             it("creates", function() {
                 runs(function () {
-                    console.log("running addPlaylist");
+
                     addPlaylist(function (addedPlaylist) {
-                        console.log("Added playlist:", addedPlaylist);
+
                         //  Here I set an outside-scope variable to use in my nested describe.
                         savedPlaylist = addedPlaylist;
                     });
@@ -102,11 +101,9 @@
                 var addedItemSuccessfully = false;
                 var item = null;
                 var initialItemCount = savedPlaylist.get('items').length;
-                console.log("playlist at start:", savedPlaylist);
 
                 runs(function() {
                     ytHelper.getVideoFromId(videoId, function (video) {
-                        console.log("video created, adding item");
                         item = savedPlaylist.addItem(video, true);
                         addedItemSuccessfully = true;
                     });
@@ -332,9 +329,7 @@
             
             //  Deletes an item and saves the Playlist, updating the Position of all the other items.
             xit("removes an item", function () {
-                console.log("initial shuffledItems:", savedPlaylist.get('shuffledItems').length);
                 var initialItemCount = savedPlaylist.get('items').length;
-                console.log("initial item count:", initialItemCount);
                 var deleteResult = false;
                 runs(function () {
                     var item = savedPlaylist.get('items').at(0);
@@ -348,7 +343,6 @@
                 });
 
                 runs(function () {
-                    console.log("post shuffledItems:", savedPlaylist.get('shuffledItems').length);
                     expect(savedPlaylist.get('items').length).toEqual(initialItemCount - 1);
 
                     var shuffledItemsLength = savedPlaylist.get('shuffledItems').length;
