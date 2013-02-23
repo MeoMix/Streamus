@@ -15,7 +15,7 @@ define(['playlists','programState'], function (Playlists, programState) {
         initialize: function () {
             var playlists = this.get('playlists');
 
-            // Data was fetched from the server. Need to convert to Backbone.
+            //  Data was fetched from the server. Need to convert to Backbone.
             if (!(playlists instanceof Backbone.Collection)) {
 
                 this.set('playlists', new Playlists(playlists), {

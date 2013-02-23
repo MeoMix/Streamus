@@ -12,13 +12,13 @@ define(['playlistManager', 'player', 'helpers'], function (playlistManager, play
         var currentTime = $(this).val();
         var totalTime = parseInt($(this).prop('max'), 10);
 
-        window.console && console.log("Current time:", currentTime);
-        window.console && console.log("Total time:", totalTime);
+        window && console.log("Current time:", currentTime);
+        window && console.log("Total time:", totalTime);
         
         //  Don't divide by 0.
         var fill = totalTime !== 0 ? currentTime / totalTime : 0;
         
-        window.console && console.log("Fill:", fill);
+        window && console.log("Fill:", fill);
 
         var backgroundImage = '-webkit-gradient(linear,left top, right top, from(#ccc), color-stop(' + fill + ',#ccc), color-stop(' + fill + ',rgba(0,0,0,0)), to(rgba(0,0,0,0)))';
         $(this).css('background-image', backgroundImage);
@@ -81,7 +81,9 @@ define(['playlistManager', 'player', 'helpers'], function (playlistManager, play
     }, 500);
     
     function setCurrentTime(currentTime) {
+
         if (currentTime > progressBar.prop('max')) {
+            window && console.log("CurrentTime and TotalTime:", currentTime, progressBar.prop('max'));
             throw "Need to update max time before setting current time!";
         }
 
@@ -89,6 +91,7 @@ define(['playlistManager', 'player', 'helpers'], function (playlistManager, play
     }
     
     function setTotalTime(totalTime) {
+        window && console.log("setting total time to: ", totalTime);
         progressBar.prop('max', totalTime).trigger('change');
     }
     

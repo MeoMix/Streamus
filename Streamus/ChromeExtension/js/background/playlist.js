@@ -76,7 +76,7 @@ define(['ytHelper',
                         },
                         error: function (error) {
                             //  TODO: Rollback client-side transaction somehow?
-                            console.error("Error saving title", error);
+                            window && console.error("Error saving title", error);
                         }
                     });
                 });
@@ -237,7 +237,7 @@ define(['ytHelper',
                         }
                     },
                     error: function(error) {
-                        console.error("Saving items was unsuccessful", error);
+                        window && console.error("Saving items was unsuccessful", error);
                     }
                 });
             },
@@ -304,7 +304,7 @@ define(['ytHelper',
                 item.destroy({
                     success: callback,
                     error: function (error) {
-                        console.error(error);
+                        window && console.error(error);
                     }
                 });
             },
@@ -337,7 +337,7 @@ define(['ytHelper',
                         }
                     },
                     error: function(error) {
-                        console.error(error);
+                        window && console.error(error);
                     }                    
                 });
             },

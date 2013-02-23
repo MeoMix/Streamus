@@ -2,11 +2,6 @@
 define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
     'use strict';
 
-    //  Be sure to filter out videos and suggestions which are restricted by the users geographic location.
-    function buildSearchUrl(searchIndex, maxResults, searchText) {
-        return "https://gdata.youtube.com/feeds/api/videos?category=Music&orderBy=relevance&start-index=" + searchIndex + "&time=all_time&max-results=" + maxResults + "&format=5&v=2&alt=json&callback=?&restriction=" + geoplugin.countryCode + "&q=" + searchText;
-    };
-
     //  Performs a search of YouTube with the provided text and returns a list of playable videos (<= max-results)
     function search(text, callback) {
 
@@ -22,16 +17,36 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
             elapsedTime += timeInterval;
 
             if (elapsedTime < timeToSpendSearching) {
-                var searchUrl = buildSearchUrl(searchIndex, maxResultsPerSearch, text);
+                //  Be sure to filter out videos and suggestions which are restricted by the users geographic location.
+                $.ajax({
+                    type: 'GET',
+                    url: 'https://gdata.youtube.com/feeds/api/videos',
+                    dataType: 'json',
+                    data: {
+                        category: 'Music',
+                        time: 'all_time',
+                        'max-results': maxResultsPerSearch,
+                        'start-index': searchIndex,
+                        format: 5,
+                        v: 2,
+                        alt: 'json',
+                        restriction: geoplugin.countryCode,
+                        q: text,
+                        fields: 'entry(title,media:group(yt:videoid,yt:duration))',
+                        strict: true
+                    },
+                    success: function(result) {
+                        console.log("response.feed.entry in search:", result.feed.entry);
 
-                $.getJSON(searchUrl, function (response) {
-                    console.log("response.feed.entry in search:", response.feed.entry);
-                    
-                    if (response.feed.entry) {
-                        videoInformationList = videoInformationList.concat(response.feed.entry);
+                        if (result.feed.entry) {
+                            videoInformationList = videoInformationList.concat(result.feed.entry);
+                        }
+
+                        searchIndex += maxResultsPerSearch;
+                    },
+                    error: function(error) {
+                        window && console.error(error);
                     }
- 
-                    searchIndex += maxResultsPerSearch;
                 });
             }
             else {
@@ -43,7 +58,6 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
     };
     
     return {
-        //  TODO: Do I need to debounce this?
         //  When a video comes from the server it won't have its related videos, so need to fetch and populate.
         getRelatedVideoInformation: function (videoId, callback) {
 
@@ -54,16 +68,19 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                 dataType: 'json',
                 data: {
                     v: 2,
-                    alt: 'json'
+                    alt: 'json',
+                    fields: 'entry(title,media:group(yt:videoid,yt:duration))',
+                    //  Don't really need that many suggested videos, take 5.
+                    'max-results': 5,
+                    strict: true
                 },
                 success: function (result) {
                     if (callback) {
-                        //  Don't really need that many suggested videos, take 5.
-                        callback(result.feed.entry.slice(0, 5));
+                        callback(result.feed.entry);
                     }
                 },
                 error: function(error) {
-                    console.error("Error getting related videos", error);
+                    window && console.error(error);
                 }
             });
         },
@@ -96,19 +113,24 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
         },
         
         getPlaylistTitle: function (playlistId, callback) {
+            
             $.ajax({
                 type: 'GET',
                 url: "https://gdata.youtube.com/feeds/api/playlists/" + playlistId,
                 dataType: 'json',
                 data: {
                     v: 2,
-                    alt: 'json'
+                    alt: 'json',
+                    fields: 'title',
+                    strict: true
                 },
-                success: function(result) {
-                    callback(result.feed.title.$t);
+                success: function (result) {
+                    if (callback) {
+                        callback(result.feed.title.$t);
+                    }
                 },
                 error: function (error) {
-                    console.error(error);
+                    window && console.error(error);
                 }
             });
         },
@@ -121,15 +143,18 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                 dataType: 'json',
                 data: {
                     v: 2,
-                    alt: 'json'
+                    alt: 'json',
+                    fields: 'title,media:group(yt:videoid,yt:duration)',
+                    strict: true
                 },
-                success: function(result) {
+                success: function (result) {
+                    console.log("RESULT:", result);
                     if (callback) {
                         callback(result.entry);
                     }
                 },
                 error: function (error) {
-                    console.error(error);
+                    window && console.error(error);
                     callback(null);
                 }
             });

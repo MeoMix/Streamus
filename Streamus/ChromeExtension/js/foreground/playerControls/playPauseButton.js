@@ -4,6 +4,7 @@ define(['playlistManager', 'player'], function (playlistManager, player) {
 	var playPauseButton = $('#PlayPauseButton');
 	var pauseIcon = $('#PauseIcon');
 	var playIcon = $('#PlayIcon');
+    var loadingSpinner = $('#LoadingSpinner');
 
     //  Only allow changing once every 100ms to preent spamming.
 	playPauseButton.click(_.debounce(function () {
@@ -11,15 +12,20 @@ define(['playlistManager', 'player'], function (playlistManager, player) {
         if (!$(this).hasClass('disabled')) {
             if (player.playerState == PlayerStates.PLAYING) {
                 player.pause();
+                pauseIcon.hide();
+                playIcon.show();
             } else {
                 player.play();
             }
-
-            pauseIcon.toggle();
-            playIcon.toggle();
         }
 
 	}, 100, true));
+
+	player.onBufferVideo(function () {
+	    playIcon.hide();
+	    pauseIcon.hide();
+        loadingSpinner.show();
+    });
    
 	player.onStateChange(function (event, playerState) {
 	    makeIconReflectPlayerState(playerState);
@@ -37,10 +43,13 @@ define(['playlistManager', 'player'], function (playlistManager, player) {
 
     //  Whenever the YouTube player changes playing state -- update whether icon shows play or pause.
     function makeIconReflectPlayerState(playerState) {
+        
         if (playerState === PlayerStates.PLAYING) {
+            loadingSpinner.hide();
+            pauseIcon.show();
             setToPause();
         }
-        else if (!player.playerIsSeeking) {
+        else if (!player.isSeeking && !player.isBuffering) {
             setToPlay();
         }
     }

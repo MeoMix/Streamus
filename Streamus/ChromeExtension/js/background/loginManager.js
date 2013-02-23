@@ -8,15 +8,20 @@ define(['user'], function(User) {
         defaults: {
             user: null
         },
-        login: function() {
+        onLoggedIn: function(event) {
             if (this.get('user') === null) {
-                var user = new User();
-                var self = this;
-
-                user.on('loaded', function() {
-                    self.set('user', this);
-                });
+                this.once('change:user', event);
+            } else {
+                event();
             }
+        },
+        initialize: function() {
+            var user = new User();
+            var self = this;
+
+            user.on('loaded', function () {
+                self.set('user', this);
+            });
         }
     });
 

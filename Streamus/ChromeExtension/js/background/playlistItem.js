@@ -2,9 +2,6 @@
 define(['helpers', 'programState', 'video'], function(helpers, programState, Video) {
     'use strict';
     
-    //  TODO: Need to figure out why overriding parse doesn't seem to matter.
-    //  I don't want to send selected / playedRecently / relatedVideoInformation in my requests, but I can't figure out how to prevent save from overriding them with
-    //  default values -- so I am sending and then getting the exact same value back from server and writing it back to the item. Bleh.
     var PlaylistItem = Backbone.Model.extend({
         defaults: function() {
             return {
@@ -26,12 +23,13 @@ define(['helpers', 'programState', 'video'], function(helpers, programState, Vid
             options || (options = {});
             options.url = this.url() + '/' + this.get('playlistId');
 
-            // Call Model.destroy().
-            // We are reusing the existing functionality from Backbone.Model.destroy().
+            //  Call Model.destroy().
+            //  We are reusing the existing functionality from Backbone.Model.destroy().
             Backbone.Model.prototype.destroy.apply(this, arguments);
         },
         parse: function (data) {
-            // take json of video and set into model.
+            // Take json of video and set into model. Delete to prevent overriding on return of data object.
+            
             this.get('video').set(data.video);
             delete data.video;
 
@@ -41,7 +39,7 @@ define(['helpers', 'programState', 'video'], function(helpers, programState, Vid
 
             var video = this.get('video');
             
-            // Data was fetched from the server. Need to convert to Backbone.
+            //  Data was fetched from the server. Need to convert to Backbone.
             if (!(video instanceof Backbone.Model)) {
 
                 this.set('video', new Video(video), {

@@ -64,7 +64,7 @@
                 playlistManager.addVideoByIdToPlaylist(request.id, request.playlistId);
             break;
             default:
-                console.error("Unhandled request method:", request.method);
+                window && console.error("Unhandled request method:", request.method);
             break;
         }
     });

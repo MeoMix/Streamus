@@ -13,6 +13,8 @@ define(['playlist',
     ], function(Playlist, Playlists, PlaylistItem, PlaylistItems, loginManager, player, ytHelper, Videos) {
         'use strict';
 
+        ytHelper.getRelatedVideoInformation('QN7UAPOJZxM');
+
         var playlists = new Playlists();
         var activePlaylist = null;
 
@@ -27,17 +29,11 @@ define(['playlist',
             onActivePlaylistEmptied: 'playlistManager.onActivePlaylistEmptied'
         };
 
-        loginManager.once('change:user', function () {
-            if (player.isReady) {
+        loginManager.onLoggedIn(function() {
+            player.onReady(function() {
                 initializeWithUser();
-            } else {
-                player.onReady(function() {
-                    initializeWithUser();
-                });
-            }
+            });
         });
-        
-        loginManager.login();
         
         function initializeWithUser() {
             playlists = loginManager.get('user').get('playlistCollections').at(0).get('playlists');
@@ -102,7 +98,7 @@ define(['playlist',
                 if (selectedItem == null) {
                     selectedItem = activePlaylist.get('items').at(0);
                     activePlaylist.selectItemById(selectedItem.get('id'));
-                    console.error("Failed to find a selected item in a playlist with items, gracefully recovering.");
+                    window && console.error("Failed to find a selected item in a playlist with items, gracefully recovering.");
                 } else {
                     player.cueVideoById(selectedItem.get('video').get('id'));
                 }
@@ -269,7 +265,7 @@ define(['playlist',
                         }
                     },
                     error: function(error) {
-                        console.error(error);
+                        window && console.error(error);
                     }
                 });
                 
@@ -354,7 +350,7 @@ define(['playlist',
                                 startIndex += maxResultsPerSearch;
                             },
                             error: function (error) {
-                                console.error(error);
+                                window && console.error(error);
                                 clearInterval(getVideosInterval);
                             }
                         });
@@ -374,7 +370,7 @@ define(['playlist',
                             playlists.remove(playlist);
                         },
                         error: function (error) {
-                            console.error(error);
+                            window && console.error(error);
                         }
                     });
                 }

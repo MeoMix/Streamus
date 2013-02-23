@@ -25,11 +25,15 @@ define(['ytPlayerApiHelper'], function (ytPlayerApiHelper) {
                     if (!lastStateWasVidCued || playerState.data !== PlayerStates.PAUSED) {
                         $(document).trigger('player.onStateChange', playerState.data);
                     }
+                    
+                    if (playerState.data === PlayerStates.PLAYING) {
+                        YoutubePlayer.isBuffering = false;
+                    }
 
                     lastStateWasVidCued = playerState.data === PlayerStates.VIDCUED;
                 },
                 'onError': function(error) {
-                    console.error("An error was encountered.", error);
+                    window && console.error("An error was encountered.", error);
 
                     switch (error.data) {
                         case 100:
@@ -48,15 +52,24 @@ define(['ytPlayerApiHelper'], function (ytPlayerApiHelper) {
     //  Handles communications between the GUI and the YT Player API.
     YoutubePlayer = {
         isSeeking: false,
+        isBuffering: false,
 
         wasPlayingBeforeSeek: false,
             
-        onReady: function(event) {
-            $(document).on('player.onReady', event);
+        onReady: function (event) {
+            if (isReady) {
+                event();
+            } else {
+                $(document).on('player.onReady', event);
+            }
         },
             
         onStateChange: function(event) {
             $(document).on('player.onStateChange', event);
+        },
+        
+        onBufferVideo: function (event) {
+            $(document).on('player.onBufferVideo', event);
         },
         
         get isReady() {
@@ -106,10 +119,14 @@ define(['ytPlayerApiHelper'], function (ytPlayerApiHelper) {
         },
             
         loadVideoById: function (videoId) {
+            $(document).trigger('player.onBufferVideo');
+            this.isBuffering = true;
             player.loadVideoById(videoId);
         },
             
-        play: function() {
+        play: function () {
+            $(document).trigger('player.onBufferVideo');
+            this.isBuffering = true;
             player.playVideo();
         },
         

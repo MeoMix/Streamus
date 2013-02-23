@@ -12,7 +12,7 @@
                 data: JSON.stringify(self),
                 success: callback,
                 error: function (error) {
-                    console.error(error);
+                    window && console.error(error);
                 }
             });
         }

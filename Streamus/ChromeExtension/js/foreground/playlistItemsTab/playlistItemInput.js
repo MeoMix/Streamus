@@ -52,7 +52,7 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'playlistManager'],
                     showVideoSuggestions(usersText);
                 }
             }
-        }, 100);
+        }, 200);
 
     }).keydown(function () {
         userIsTyping = true;
@@ -89,6 +89,8 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'playlistManager'],
     //  Searches youtube for video results based on the given text.
     function showVideoSuggestions(text) {
         ytHelper.search(text, function (videoInformationList) {
+
+            console.log("videoInformationList:", videoInformationList.length);
 
             if (!userIsTyping) {
                 var videoDisplayObjects = _.map(videoInformationList, function (videoInformation) {

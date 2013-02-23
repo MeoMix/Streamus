@@ -365,7 +365,7 @@
                             wasRemoveSuccessfull = true;
                         },
                         error: function () {
-                            console.error("There was an error removing the playlist.");
+                            window && console.error("There was an error removing the playlist.");
                         }
                     });
                 });

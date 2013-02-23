@@ -23,7 +23,7 @@ define(['loginManager'], function (loginManager) {
 
         //  Makes sure a user loads. A bad test case because the user's loadability is dependent on code
         //  that isn't modifiable by this method, so I can only infer current state.
-        it('loads', function () {
+        xit('loads', function () {
 
             runs(function() {
                 loginManager.login();
