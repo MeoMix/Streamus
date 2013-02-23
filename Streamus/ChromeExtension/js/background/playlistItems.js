@@ -1,5 +1,5 @@
-﻿define(['playlistItem', 'ytHelper', 'video'],
-    function (PlaylistItem, ytHelper, Video) {
+﻿define(['playlistItem', 'ytHelper', 'video', 'levenshtein'],
+    function (PlaylistItem, ytHelper, Video, levDistance) {
         'use strict';
 
     var PlaylistItems = Backbone.Collection.extend({
@@ -20,7 +20,6 @@
             //  then flatten the arrays into a collection of videos.
 
             var relatedVideos = _.flatten(this.map(function (item) {
-
                 var videoInformationList = item.get('relatedVideoInformation');
 
                 return _.map(videoInformationList, function(videoInformation) {
@@ -39,6 +38,18 @@
                 });
 
             }));
+
+            //  Don't add any videos that are already in playlist.
+            var self = this;
+            relatedVideos = _.filter(relatedVideos, function (relatedVideo) {
+                var alreadyExistingItem = self.find(function (item) {
+                    var sameVideoId = item.get('video').get('id') === relatedVideo.get('id');
+                    var similiarVideoName = levDistance(item.get('video').get('title'), relatedVideo.get('title')) < 3;
+
+                    return sameVideoId || similiarVideoName;
+                });
+                return alreadyExistingItem == null;
+            });
 
             return relatedVideos;
         }
