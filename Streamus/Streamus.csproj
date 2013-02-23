@@ -216,6 +216,7 @@
     <Content Include="ChromeExtension\css\inject.css" />
     <Content Include="ChromeExtension\foreground.htm" />
     <Content Include="ChromeExtension\icon.png" />
+    <Content Include="ChromeExtension\images\spinner.svg" />
     <Content Include="ChromeExtension\js\background\background.js" />
     <Content Include="ChromeExtension\js\background\loginManager.js" />
     <Content Include="ChromeExtension\js\background\main.js" />
