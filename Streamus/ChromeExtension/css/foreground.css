@@ -598,3 +598,27 @@
 .sidebar-button:hover {
 	opacity: 1;
 }
+
+#LoadingSpinner {
+    background-image: url(../images/spinner.svg);
+    width: 48px;
+    height: 48px;
+    background-size: contain;
+    margin-top: 11px;
+    margin-left: 11px;
+    opacity: .7;
+    -webkit-animation:rotate 1.5s infinite steps(12);
+    display: none;
+}
+
+@-webkit-keyframes "rotate" {
+ from {
+   -webkit-transform: rotate(0);
+   transform: rotate(0);
+ }
+ to {
+   -webkit-transform: rotate(360deg);
+   transform: rotate(360deg);
+ }
+
+}
