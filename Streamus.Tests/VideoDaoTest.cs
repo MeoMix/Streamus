@@ -29,7 +29,7 @@ namespace Streamus.Tests
                 throw exception.InnerException;
             }
 
-            new UserManager(new UserDao()).CreateUser();
+            new UserManager(new UserDao(), new PlaylistCollectionDao()).CreateUser();
         }
 
         /// <summary>

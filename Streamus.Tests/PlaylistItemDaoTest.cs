@@ -15,6 +15,7 @@ namespace Streamus.Tests
         private IPlaylistDao PlaylistDao { get; set; }
         private IVideoDao VideoDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
+        private IPlaylistCollectionDao PlaylistCollectionDao { get; set; }
         private User User { get; set; }
         private Playlist Playlist { get; set; }
         private Video Video { get; set; }
@@ -31,6 +32,7 @@ namespace Streamus.Tests
                 UserDao = new UserDao();
                 PlaylistDao = new PlaylistDao();
                 PlaylistItemDao = new PlaylistItemDao();
+                PlaylistCollectionDao = new PlaylistCollectionDao();
                 VideoDao = new VideoDao();
             }
             catch (TypeInitializationException exception)
@@ -38,7 +40,7 @@ namespace Streamus.Tests
                 throw exception.InnerException;
             }
 
-            User = new UserManager(UserDao).CreateUser();
+            User = new UserManager(UserDao, PlaylistCollectionDao).CreateUser();
             Video = new Video("s91jgcmQoB0", "Tristam - Chairs", 219);
             new VideoManager(VideoDao).Save(Video);
         }
@@ -50,7 +52,7 @@ namespace Streamus.Tests
         public void SetupContext()
         {
             //  Create managers here because every client request will require new managers.
-            PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
+            PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, PlaylistCollectionDao, VideoDao);
 
             var playlistCollection = User.PlaylistCollections.First();
 
@@ -65,11 +67,10 @@ namespace Streamus.Tests
         {
             //  Usually created client-side, but for testing it is OK to create server-side.
             Guid playlistItemId = Guid.NewGuid();
-            var playlistItem = new PlaylistItem(Playlist.Id, playlistItemId, Playlist.Items.Count, Video.Title, Video.Id);
-            PlaylistManager.UpdatePlaylistItem(playlistItem);
+            var playlistItem = new PlaylistItem(Playlist.Id, playlistItemId, Video.Title, Video.Id);
 
-            //  Only add after successfully saving.
-            Playlist.Items.Add(playlistItem);
+            Playlist.AddItem(playlistItem);
+            PlaylistManager.UpdatePlaylistItem(playlistItem);
 
             playlistItem.Title = "New Title 001";
             PlaylistManager.UpdatePlaylistItem(playlistItem);
@@ -89,34 +90,34 @@ namespace Streamus.Tests
         {
             //  Usually created client-side, but for testing it is OK to create server-side.
             Guid firstItemId = Guid.NewGuid();
-            var firstItem = new PlaylistItem(Playlist.Id, firstItemId, Playlist.Items.Count, Video.Title, Video.Id);
-            PlaylistManager.UpdatePlaylistItem(firstItem);
+            var firstItem = new PlaylistItem(Playlist.Id, firstItemId, Video.Title, Video.Id);
 
-            //  Only add after successfully saving.
-            Playlist.Items.Add(firstItem);
+            Playlist.AddItem(firstItem);
+            PlaylistManager.UpdatePlaylistItem(firstItem);
 
             //  Usually created client-side, but for testing it is OK to create server-side.
             Guid secondItemId = Guid.NewGuid();
-            var secondItem = new PlaylistItem(Playlist.Id, secondItemId, Playlist.Items.Count, Video.Title, Video.Id);
+            var secondItem = new PlaylistItem(Playlist.Id, secondItemId, Video.Title, Video.Id);
+
+            Playlist.AddItem(secondItem);
             PlaylistManager.UpdatePlaylistItem(secondItem);
 
-            //  Only add after successfully saving.
-            Playlist.Items.Add(secondItem);
-
             PlaylistManager.DeleteItem(firstItem.Id, firstItem.PlaylistId);
-
+                
             //  Remove entity from NHibernate cache to force DB query to ensure actually created.
             NHibernateSessionManager.Instance.Clear();
 
             PlaylistItem deletedPlaylistItem = PlaylistItemDao.Get(firstItem.PlaylistId, firstItem.Id);
             Assert.IsNull(deletedPlaylistItem);
 
-            // Remove entity from NHibernate cache to ensure position was updated.
+            // Remove entity from NHibernate cache to make sure getting data from DB.
             NHibernateSessionManager.Instance.Clear();
 
             PlaylistItem updatedPlaylistItem = PlaylistItemDao.Get(secondItem.PlaylistId, secondItem.Id);
 
-            Assert.AreEqual(updatedPlaylistItem.Position, 0);
+            //  TODO: Not sure if this is right. Only works if the playlist only had 2 items in it.
+            Assert.AreEqual(updatedPlaylistItem.Id, updatedPlaylistItem.PreviousItemId);
+            Assert.AreEqual(updatedPlaylistItem.Id, updatedPlaylistItem.NextItemId);
         } 
     }
 }
