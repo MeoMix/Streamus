@@ -1,10 +1,9 @@
-﻿using System;
+﻿using FluentValidation;
+using Streamus.Backend.Domain.Validators;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Web;
-using FluentValidation;
-using Streamus.Backend.Domain.Validators;
 
 namespace Streamus.Backend.Domain
 {        
@@ -32,6 +31,9 @@ namespace Streamus.Backend.Domain
         [DataMember(Name = "playlists")]
         public IList<Playlist> Playlists { get; set; }
 
+        [DataMember(Name = "firstListId")]
+        public Guid FirstListId { get; set; }
+
         public PlaylistCollection()
         {
             Id = Guid.Empty;
@@ -57,9 +59,26 @@ namespace Streamus.Backend.Domain
 
         public Playlist AddPlaylist(Playlist playlist)
         {
+            if (Playlists.Count == 0)
+            {
+                playlist.NextListId = playlist.Id;
+                playlist.PreviousListId = playlist.Id;
+                FirstListId = playlist.Id;
+            }
+            else
+            {
+                Playlist firstList = Playlists.First(list => list.Id == FirstListId);
+                Playlist lastList = Playlists.First(list => list.Id == firstList.PreviousListId);
+
+                //  Adjust our linked list and add the item.
+                lastList.NextListId = playlist.Id;
+                playlist.PreviousListId = lastList.Id;
+
+                firstList.PreviousListId = playlist.Id;
+                playlist.NextListId = firstList.Id;
+            }
+
             playlist.Collection = this;
-            //playlist.CollectionId = Id;
-            playlist.Position = Playlists.Count;
 
             Playlists.Add(playlist);
             return playlist;
@@ -67,6 +86,19 @@ namespace Streamus.Backend.Domain
 
         public void RemovePlaylist(Playlist playlist)
         {
+            if (FirstListId == playlist.Id)
+            {
+                //  Move the firstListId to the next playlist
+                FirstListId = playlist.NextListId;
+            }
+
+            Playlist previousList = Playlists.First(list => list.Id == playlist.PreviousListId);
+            Playlist nextList = Playlists.First(list => list.Id == playlist.NextListId);
+
+            //  Remove the list from our linked list.
+            previousList.NextListId = nextList.Id;
+            nextList.PreviousListId = previousList.Id;
+
             Playlists.Remove(playlist);
         }
 

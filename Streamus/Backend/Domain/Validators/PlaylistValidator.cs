@@ -1,26 +1,21 @@
-﻿using FluentValidation;
-using Streamus.Backend.Dao;
-using Streamus.Backend.Domain.Interfaces;
+﻿using System;
+using FluentValidation;
 
 namespace Streamus.Backend.Domain.Validators
 {
     public class PlaylistValidator : AbstractValidator<Playlist>
     {
-        private readonly IPlaylistDao PlaylistDao = new PlaylistDao();
-
         public PlaylistValidator()
         {
             RuleFor(playlist => playlist.Title).Length(0, 255);
-            RuleFor(playlist => playlist.Position).GreaterThanOrEqualTo(0);
-            RuleFor(playlist => playlist.Position).Must((playlist, position) => HasUniquePosition(playlist))
-                                                  .WithMessage("There must be only one Playlist at a given position.");
-        }
 
-        private bool HasUniquePosition(Playlist playlist)
-        {
-            //  Ask the database for a playlist at the current position for the given user and make sure not going to overwrite something.
-            Playlist fromDatabase = PlaylistDao.GetByPosition(playlist.Collection.Id, playlist.Position);
-            return fromDatabase == null || fromDatabase.Id == playlist.Id;
+            RuleFor(playlist => playlist.NextListId)
+                .NotEqual(Guid.Empty)
+                .When(playlist => playlist.Id != Guid.Empty);
+
+            RuleFor(playlist => playlist.PreviousListId)
+                .NotEqual(Guid.Empty)
+                .When(playlist => playlist.Id != Guid.Empty);
         }
     }
 }

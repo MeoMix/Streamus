@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Web.Mvc;
+﻿using log4net;
 using Streamus.Backend.Dao;
 using Streamus.Backend.Domain;
 using Streamus.Backend.Domain.Interfaces;
 using Streamus.Backend.Domain.Managers;
-using log4net;
+using System;
+using System.Reflection;
+using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
@@ -15,6 +14,7 @@ namespace Streamus.Controllers
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IPlaylistDao PlaylistDao;
         private readonly IPlaylistItemDao PlaylistItemDao;
+        private readonly IPlaylistCollectionDao PlaylistCollectionDao;
         private readonly IVideoDao VideoDao;
 
         public PlaylistController()
@@ -23,6 +23,7 @@ namespace Streamus.Controllers
             {
                 PlaylistDao = new PlaylistDao();
                 PlaylistItemDao = new PlaylistItemDao();
+                PlaylistCollectionDao = new PlaylistCollectionDao();
                 VideoDao = new VideoDao();
             }
             catch (TypeInitializationException exception)
@@ -35,7 +36,7 @@ namespace Streamus.Controllers
         [HttpPost]
         public ActionResult Create(Playlist playlist)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, PlaylistCollectionDao, VideoDao);
             playlistManager.Save(playlist);
 
             return new JsonDataContractActionResult(playlist);
@@ -44,7 +45,7 @@ namespace Streamus.Controllers
         [HttpPut]
         public ActionResult Update(Playlist playlist)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, PlaylistCollectionDao, VideoDao);
             playlistManager.Update(playlist);
 
             return new JsonDataContractActionResult(playlist);
@@ -61,17 +62,8 @@ namespace Streamus.Controllers
         [HttpDelete]
         public EmptyResult Delete(Guid id)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, PlaylistCollectionDao, VideoDao);
             playlistManager.DeletePlaylistById(id);
-
-            return new EmptyResult();
-        }
-
-        [HttpPost]
-        public EmptyResult UpdateItemPosition(Guid playlistId, List<PlaylistItem> detachedItems)
-        {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
-            playlistManager.UpdateItemPosition(playlistId, detachedItems);
 
             return new EmptyResult();
         }
@@ -79,28 +71,19 @@ namespace Streamus.Controllers
         [HttpPost]
         public EmptyResult UpdateTitle(Guid playlistId, string title)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, PlaylistCollectionDao, VideoDao);
             playlistManager.UpdateTitle(playlistId, title);
 
             return new EmptyResult();
         }
 
-        //[HttpPost]
-        //public ActionResult CreateItem(PlaylistItem playlistItem)
-        //{
-        //    var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
-        //    playlistManager.CreatePlaylistItem(playlistItem);
-
-        //    return new JsonDataContractActionResult(playlistItem);
-        //}
-
         [HttpPost]
-        public ActionResult CreateItems(IEnumerable<PlaylistItem> playlistItems)
+        public EmptyResult UpdateFirstItemId(Guid playlistId, Guid firstItemId)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
-            playlistManager.CreatePlaylistItems(playlistItems);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, PlaylistCollectionDao, VideoDao);
+            playlistManager.UpdateFirstItemId(playlistId, firstItemId);
 
-            return new JsonDataContractActionResult(playlistItems);
+            return new EmptyResult();
         }
     }
 }

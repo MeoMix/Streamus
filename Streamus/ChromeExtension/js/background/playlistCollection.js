@@ -8,7 +8,8 @@ define(['playlists','programState'], function (Playlists, programState) {
                 id: null,
                 userId: null,
                 title: '',
-                playlists: new Playlists()
+                playlists: new Playlists(),
+                firstListId: null
             };
         },
         urlRoot: programState.getBaseUrl() + 'Video/',

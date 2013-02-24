@@ -8,7 +8,8 @@ define(['helpers', 'programState', 'video'], function(helpers, programState, Vid
                 //  Backend saves as composite key with playlistId, so its OK to generate id client-side.
                 id: helpers.generateGuid(),
                 playlistId: null,
-                position: -1,
+                nextItemId: null,
+                previousItemId: null,
                 video: null,
                 title: '',
                 selected: false,

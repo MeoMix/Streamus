@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using FluentValidation;
 using Streamus.Backend.Dao;
@@ -38,18 +39,26 @@ namespace Streamus.Backend.Domain
         [DataMember(Name = "title")]
         public string Title { get; set; }
 
-        [DataMember(Name = "position")]
-        public int Position { get; set; }
-
         //  Use collection interfaces so NHibernate can inject with its own collection implementation.
         [DataMember(Name = "items")]
         public IList<PlaylistItem> Items { get; set; }
 
+        [DataMember(Name = "firstItemId")]
+        public Guid FirstItemId { get; set; }
+
+        [DataMember(Name = "nextListId")]
+        public Guid NextListId { get; set; }
+
+        [DataMember(Name = "previousListId")]
+        public Guid PreviousListId { get; set; }
+
         public Playlist()
         {
             Id = Guid.Empty;
+            FirstItemId = Guid.Empty;
+            NextListId = Guid.Empty;
+            PreviousListId = Guid.Empty;
             Title = string.Empty;
-            Position = -1;
             Items = new List<PlaylistItem>();
         }
 
@@ -59,8 +68,46 @@ namespace Streamus.Backend.Domain
             Title = title;
         }
 
+        public void AddItem(PlaylistItem playlistItem)
+        {
+            if (Items.Count == 0)
+            {
+                playlistItem.NextItemId = playlistItem.Id;
+                playlistItem.PreviousItemId = playlistItem.Id;
+                FirstItemId = playlistItem.Id;
+            }
+            else
+            {
+
+                PlaylistItem firstItem = Items.First(item => item.Id == FirstItemId);
+                PlaylistItem lastItem = Items.First(item => item.Id == firstItem.PreviousItemId);
+
+                //  Adjust our linked list and add the item.
+                lastItem.NextItemId = playlistItem.Id;
+                playlistItem.PreviousItemId = lastItem.Id;
+
+                firstItem.PreviousItemId = playlistItem.Id;
+                playlistItem.NextItemId = firstItem.Id;
+            }
+
+            Items.Add(playlistItem);
+        }
+
         public void RemoveItem(PlaylistItem playlistItem)
         {
+            if (FirstItemId == playlistItem.Id)
+            {
+                //  Move the firstItemId to the next item if playlist still has other items in it.
+                FirstItemId = Items.Count == 1 ? Guid.Empty : playlistItem.NextItemId;
+            }
+
+            PlaylistItem previousItem = Items.First(item => item.Id == playlistItem.PreviousItemId);
+            PlaylistItem nextItem = Items.First(item => item.Id == playlistItem.NextItemId);
+
+            //  Remove the item from our linked list.
+            previousItem.NextItemId = nextItem.Id;
+            nextItem.PreviousItemId = previousItem.Id;
+
             Items.Remove(playlistItem);
         }
 

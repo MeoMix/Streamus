@@ -8,7 +8,7 @@ define(['playlistCollections', 'programState'], function(PlaylistCollections, pr
     //  User data will be loaded either from cache or server.
     var User = Backbone.Model.extend({
         defaults: {
-            id: 'A5A97E11-7EC5-421E-AEEA-8ECC7133E105', //localStorage.getItem(userIdKey),
+            id: 'C96D5CE0-62FB-4E84-8512-B51F554D1CB8', //localStorage.getItem(userIdKey),
             name: '',
             playlistCollections: new PlaylistCollections()
         },

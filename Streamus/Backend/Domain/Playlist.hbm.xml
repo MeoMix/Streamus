@@ -7,7 +7,9 @@
     </id>
     
     <property name="Title" not-null="true" />
-    <property name="Position" not-null="true" />
+    <property name="NextListId" not-null="true" />
+    <property name="PreviousListId" not-null="true" />
+    <property name="FirstItemId" not-null="true" />
 
     <bag name="Items" inverse="true" cascade="all-delete-orphan" >
       <key column="PlaylistId" />

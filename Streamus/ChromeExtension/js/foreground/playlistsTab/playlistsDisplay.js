@@ -14,32 +14,44 @@ define(['playlistsContextMenu', 'ytHelper', 'playlistManager', 'player'], functi
     function reload() {
         playlistList.empty();
 
+        var activeCollection = chrome.extension.getBackgroundPage().LoginManager.get('user').get('playlistCollections').at(0);
+
+        var firstListId = activeCollection.get('firstListId');
+        var currentList = activeCollection.get('playlists').get(firstListId);
+        
+        //  Build up each row.
+        do {
+            (function (list) {
+                var listItem = $('<li/>').appendTo(playlistList);
+
+                $('<a/>', {
+                    id: list.get('id'),
+                    href: '#' + list.get('id'),
+                    text: list.get('title'),
+                    contextmenu: function (e) {
+                        contextMenu.initialize(list);
+                        contextMenu.show(e.pageY, e.pageX);
+                        //  Prevent default context menu display.
+                        return false;
+                    }
+                }).appendTo(listItem);
+                
+                if (list.get('selected')) {
+                    selectRow(list.get('id'));
+                }
+
+            })(currentList);
+            
+            currentList = activeCollection.get('playlists').get(currentList.get('nextListId'));
+
+        } while(currentList.get('id') !== firstListId)
+
+        
         //  Removes the old 'current' marking and move it to the newly selected row.
-        var selectRow = function (id) {
+        function selectRow(id) {
             playlistList.find('li').removeClass('current');
             $('#' + id).parent().addClass('current');
         };
-
-        //  Build up each row.
-        playlistManager.playlists.each(function (playlist) {
-            var listItem = $('<li/>').appendTo(playlistList);
-
-            $('<a/>', {
-                id: playlist.get('id'),
-                href: '#' + playlist.get('id'),
-                text: playlist.get('title'),
-                contextmenu: function (e) {
-                    contextMenu.initialize(playlist);
-                    contextMenu.show(e.pageY, e.pageX);
-                    //  Prevent default context menu display.
-                    return false;
-                }
-            }).appendTo(listItem);
-
-            if (playlist.get('selected')) {
-                selectRow(playlist.get('id'));
-            }
-        });
 
         //  Clicking on a playlist will select that playlist.
         playlistList.children().click(function () {

@@ -1,12 +1,25 @@
-﻿define(['playlistItem', 'ytHelper', 'video', 'levenshtein'],
-    function (PlaylistItem, ytHelper, Video, levDistance) {
+﻿define(['playlistItem', 'ytHelper', 'video', 'levenshtein', 'programState'],
+    function (PlaylistItem, ytHelper, Video, levDistance, programState) {
         'use strict';
 
     var PlaylistItems = Backbone.Collection.extend({
         model: PlaylistItem,
-        comparator: function(playlistItem) {
-            return playlistItem.get('position');
+        
+        //  I've given this Collection its own Save implementation because when I add/delete from a Playlist
+        //  I have to save up to 3 items.   
+        save: function (attributes, options) {
+            var self = this;
+            $.ajax({
+                url: programState.getBaseUrl() + 'PlaylistItem/UpdateMultiple',
+                type: 'PUT',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(self),
+                success: options ? options.success : null,
+                error: options ? options.error : null
+            });
         },
+
         getSelectedItem: function() {
             var selectedItem = this.find(function(item) {
                 return item.get('selected');

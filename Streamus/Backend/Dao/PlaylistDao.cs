@@ -30,17 +30,5 @@ namespace Streamus.Backend.Dao
 
             return playlist;
         }
-
-        public Playlist GetByPosition(Guid collectionId, int position)
-        {
-            ICriteria criteria = NHibernateSession
-                .CreateCriteria(typeof (Playlist), "Playlist")
-                .Add(Restrictions.Eq("Position", position))
-                .Add(Restrictions.Eq("Collection.Id", collectionId));
-
-            Playlist playlist = criteria.UniqueResult<Playlist>();
-
-            return playlist;
-        }
     }
 }

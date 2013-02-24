@@ -16,7 +16,9 @@ define(['ytHelper',
                     collectionId: null,
                     title: 'New Playlist',
                     selected: false,
-                    position: -1,
+                    firstItemId: null,
+                    nextListId: null,
+                    previousListId: null,
                     history: new PlaylistItemsHistory(),
                     items: new PlaylistItems()
                 };
@@ -77,6 +79,23 @@ define(['ytHelper',
                         error: function (error) {
                             //  TODO: Rollback client-side transaction somehow?
                             window && console.error("Error saving title", error);
+                        }
+                    });
+                });
+                
+                this.on('change:firstItemId', function () {
+                    console.log("firstItemId has changed, updating");
+                    $.ajax({
+                        url: programState.getBaseUrl() + 'Playlist/UpdateFirstItemId',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            playlistId: this.get('id'),
+                            firstItemId: this.get('firstItemId')
+                        },
+                        error: function (error) {
+                            //  TODO: Rollback client-side transaction somehow?
+                            window && console.error("Error saving firstItemId", error);
                         }
                     });
                 });
@@ -158,53 +177,61 @@ define(['ytHelper',
                     var selectedItem = this.get('history').at(0);
 
                     if (selectedItem) {
-
-                        var nextItemPosition = selectedItem.get('position') + 1;
-                        //  2 items in a playlist, positions 0 and 1. Position 1 is the last item, 1 + 1 = playlist length, loop back to front.
-                        if (this.get('items').length === nextItemPosition) {
-                            nextItemPosition = 0;
-                        }
-
-                        nextItem = this.get('items').at(nextItemPosition);
+                        var nextItemId = selectedItem.get('nextItemId');
+                        nextItem = this.get('items').get(nextItemId);
                     }
                 }
                 return nextItem;
             },
             
-            //  TODO: This method name sucks and the method itself is doing too much. Refactor!
             gotoPreviousItem: function() {
                 var selectedItem = this.get('history').shift();
                 var previousItem = this.get('history').shift();
                 
-                //  If no previous item was found in the history, then just go back one item by index.
+                //  If no previous item was found in the history, then just go back one item
                 if (!previousItem) {
-                    //  Goes to the end of the current playlist.
-                    var previousItemPosition = selectedItem.get('position') - 1;
-                    if (previousItemPosition < 0) {
-                        previousItemPosition = this.get('items').length - 1;
-                    }
-
-                    previousItem = this.get('items').at(previousItemPosition);
+                    var previousItemId = selectedItem.get('previousItemId');
+                    previousItem = this.get('items').get(previousItemId);
                 }
 
                 return previousItem;
             },
 
             addItems: function(videos, callback) {
-                var createdPlaylistItems = [];
+                var createdItems = new PlaylistItems();
                 var self = this;
 
-                videos.each(function(video) {
+                videos.each(function (video) {
+
                     var playlistItem = new PlaylistItem({
                         playlistId: self.get('id'),
-                        position: self.get('items').length,
                         video: video,
                         //  PlaylistItem title is mutable, video title is immutable.
                         title: video.get('title'),
                         relatedVideoInformation: [],
                         selected: false
                     });
-                    createdPlaylistItems.push(playlistItem);
+
+                    var playlistItems = self.get('items');
+                    var playlistItemId = playlistItem.get('id');
+                    if (playlistItems.length === 0) {
+                        
+                        self.set('firstItemId', playlistItemId);
+                        playlistItem.set('nextItemId', playlistItemId);
+                        playlistItem.set('previousItemId', playlistItemId);
+                    } else {
+                        var firstItem = playlistItems.get(self.get('firstItemId'));
+                        var lastItem = playlistItems.get(firstItem.get('previousItemId'));
+
+                        lastItem.set('nextItemId', playlistItemId);
+                        playlistItem.set('previousItemId', lastItem.get('id'));
+
+                        firstItem.set('previousItemId', playlistItemId);
+                        playlistItemId.set('nextItemId', firstItem.get('id'));
+
+                    }
+
+                    createdItems.push(playlistItem);
 
                     ytHelper.getRelatedVideoInformation(video.get('id'), function (relatedVideoInformation) {
                         playlistItem.set('relatedVideoInformation', relatedVideoInformation);
@@ -214,34 +241,18 @@ define(['ytHelper',
 
                     //  Ensure the first playlistItem is selected if adding a bunch of new ones.
                     if (self.get('items').length === 1) {
-                        var firstItem = self.get('items').at(0);
-                        self.selectItemById(firstItem.get('id'));
+                        self.selectItemById(self.get('firstItemId'));
                     }
                 });
-
-                videos.save();
                 
-                this.createItems(createdPlaylistItems, callback);
-            },
-
-            createItems: function(items, callback) {
-                $.ajax({
-                    url: programState.getBaseUrl() + 'Playlist/CreateItems',
-                    type: 'POST',
-                    dataType: 'json',
-                    contentType: 'application/json; charset=utf-8',
-                    data: JSON.stringify(items),
-                    success: function() {
-                        if (callback) {
-                            callback();
-                        }
-                    },
+                createdItems.save({}, {
+                    success: callback,
                     error: function(error) {
-                        window && console.error("Saving items was unsuccessful", error);
+                        window && console.error(error);
                     }
                 });
             },
-            
+
             //  This is generally called from the foreground to not couple the Video object with the foreground.
             addItemByInformation: function (videoInformation) {
 
@@ -258,17 +269,40 @@ define(['ytHelper',
                 return this.addItem(video);
             },
 
-            addItem: function(video) {
+            addItem: function (video) {
+
+                var modifiedItems = new PlaylistItems();
+
                 var playlistId = this.get('id');
-                var itemCount = this.get('items').length;
 
                 var playlistItem = new PlaylistItem({
                     playlistId: playlistId,
-                    position: itemCount,
                     video: video,
                     title: video.get('title'),
                     relatedVideoInformation: []
                 });
+                
+                var playlistItems = this.get('items');
+                var playlistItemId = playlistItem.get('id');
+                if (playlistItems.length === 0) {
+                    console.log("setting firstItemId to:", playlistItemId);
+                    this.set('firstItemId', playlistItemId);
+                    playlistItem.set('nextItemId', playlistItemId);
+                    playlistItem.set('previousItemId', playlistItemId);
+                } else {
+                    var firstItem = playlistItems.get(this.get('firstItemId'));
+                    var lastItem = playlistItems.get(firstItem.get('previousItemId'));
+
+                    lastItem.set('nextItemId', playlistItemId);
+                    playlistItem.set('previousItemId', lastItem.get('id'));
+
+                    firstItem.set('previousItemId', playlistItemId);
+                    playlistItem.set('nextItemId', firstItem.get('id'));
+                    modifiedItems.push(firstItem);
+                    modifiedItems.push(lastItem);
+                }
+                
+                modifiedItems.push(playlistItem);
 
                 ytHelper.getRelatedVideoInformation(video.get('id'), function (relatedVideoInformation) {
                     playlistItem.set('relatedVideoInformation', relatedVideoInformation);
@@ -276,11 +310,12 @@ define(['ytHelper',
 
                 this.get('items').push(playlistItem);
 
-                playlistItem.save();
+                console.log("modified items:", modifiedItems);
 
+                modifiedItems.save();
+                
                 if (this.get('items').length === 1) {
-                    var playlistItemId = playlistItem.get('id');
-                    this.selectItemById(playlistItemId);
+                    this.selectItemById(this.get('firstItemId'));
                 }
 
                 return playlistItem;
@@ -295,6 +330,18 @@ define(['ytHelper',
                 if (localStorage.getItem(playlistId + '_selectedItemId') === itemId) {
                     localStorage.setItem(playlistId + '_selectedItemId', null);
                 }
+                
+                if (this.get('firstItemId') === itemId) {
+                    var newFirstItemId = this.get('items').length === 1 ? '00000000-0000-0000-0000-000000000000' : item.get('nextItemId');
+                    this.set('firstItemId', newFirstItemId);
+                }
+
+                var previousItem = this.get('items').get(item.get('previousItemId'));
+                var nextItem = this.get('items').get(item.get('nextItemId'));
+                
+                //  Remove the item from our linked list.
+                previousItem.set('nextItemId', nextItem.get('id'));
+                nextItem.set('previousItemId', previousItem.get('id'));
 
                 //  I'm removing the item client-side before issuing a command to the server for usability sake.
                 //  It is counter-intuitive to the user to click 'Delete' and have lag while the server responds.
@@ -309,47 +356,47 @@ define(['ytHelper',
                 });
             },
             
-            moveItem: function (itemId, newPosition, callback) {
-                var movedItem = this.get('items').get(itemId);
+            //TODO: Reimplement moveItem without using position.
+            //moveItem: function (itemId, newPosition, callback) {
+            //    var movedItem = this.get('items').get(itemId);
                 
-                var oldPosition = movedItem.get('position');
-                var movementDirection = oldPosition > newPosition ? 1 : -1;
+            //    var oldPosition = movedItem.get('position');
+            //    var movementDirection = oldPosition > newPosition ? 1 : -1;
                 
-                var distance = Math.abs(oldPosition - newPosition);
+            //    var distance = Math.abs(oldPosition - newPosition);
 
-                for (; distance > 0; distance--) {
-                    //  Get a new index based on moving forward or backward.
-                    var itemIndex = oldPosition > newPosition ? distance - 1 : newPosition - (distance - 1);
+            //    for (; distance > 0; distance--) {
+            //        //  Get a new index based on moving forward or backward.
+            //        var itemIndex = oldPosition > newPosition ? distance - 1 : newPosition - (distance - 1);
 
-                    var item = this.get('items').at(itemIndex);
+            //        var item = this.get('items').at(itemIndex);
 
-                    var movedItemPosition = item.get('position') + movementDirection;
+            //        var movedItemPosition = item.get('position') + movementDirection;
 
-                    item.set('position', movedItemPosition);
-                }
+            //        item.set('position', movedItemPosition);
+            //    }
 
-                movedItem.set('position', newPosition);
+            //    movedItem.set('position', newPosition);
 
-                this.save({}, {
-                    success: function () {
-                        if (callback) {
-                            callback();
-                        }
-                    },
-                    error: function(error) {
-                        window && console.error(error);
-                    }                    
-                });
-            },
+            //    this.save({}, {
+            //        success: function () {
+            //            if (callback) {
+            //                callback();
+            //            }
+            //        },
+            //        error: function(error) {
+            //            window && console.error(error);
+            //        }                    
+            //    });
+            //},
             
             //  Returns the currently selected playlistItem or null if no item was found.
             getSelectedItem: function() {
                 var items = this.get('items');
                 var selectedItem = items.getSelectedItem();
                 return selectedItem;
-            },
+            }
             
-
         });
 
         return function (config) {

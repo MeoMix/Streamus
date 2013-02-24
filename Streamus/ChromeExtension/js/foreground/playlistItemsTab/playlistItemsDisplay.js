@@ -10,10 +10,13 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
         delay: 100,
         //  Whenever a video row is moved inform the Player of the new video list order
         update: function (event, ui) {
-            var movedItemId = ui.item.data('itemid');
-            var newPosition = ui.item.index();
 
-            playlistManager.activePlaylist.moveItem(movedItemId, newPosition);
+            throw "Not implemented.";
+
+            //var movedItemId = ui.item.data('itemid');
+            //var newPosition = ui.item.index();
+
+            //playlistManager.activePlaylist.moveItem(movedItemId, newPosition);
         }
     });
 
@@ -34,24 +37,36 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
     //  Refresh all the videos displayed to ensure they GUI matches background's data.
     function reload() {
         playlistItemList.empty();
+        
+        var activePlaylist = playlistManager.activePlaylist;
+        var activePlaylistItems = activePlaylist.get('items');
+        if (activePlaylistItems.length === 0) return;
 
+        var firstItemId = activePlaylist.get('firstItemId');
+        var currentItem = activePlaylistItems.get(firstItemId);
+        
         //  Build up the ul of li's representing each playlistItem.
-        playlistManager.activePlaylist.get('items').each(function (item) {
-            var listItem = $('<li/>', {
-                'data-itemid': item.get('id')
-            }).appendTo(playlistItemList);
+        do {
+            (function (item) {
+                var listItem = $('<li/>', {
+                    'data-itemid': item.get('id')
+                }).appendTo(playlistItemList);
 
-            $('<a/>', {
-                text: item.get('title'),
-                contextmenu: function (e) {
-                    contextMenu.initialize(item);
-                    contextMenu.show(e.pageY, e.pageX);
+                $('<a/>', {
+                    text: item.get('title'),
+                    contextmenu: function (e) {
+                        contextMenu.initialize(item);
+                        contextMenu.show(e.pageY, e.pageX);
 
-                    //  Prevent default context menu display.
-                    return false;
-                }
-            }).appendTo(listItem);
-        });
+                        //  Prevent default context menu display.
+                        return false;
+                    }
+                }).appendTo(listItem);
+            })(currentItem);
+
+            currentItem = activePlaylistItems.get(currentItem.get('nextItemId'));
+
+        } while(currentItem.get('id') !== firstItemId)
 
         //  Load and start playing a video if it is clicked.
         //  TODO: double click
@@ -76,5 +91,6 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
         if (selectedItem) {
             selectRow(selectedItem.get('id'));
         }
+      
     }
 });

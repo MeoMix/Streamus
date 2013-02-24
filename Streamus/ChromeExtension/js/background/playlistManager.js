@@ -247,18 +247,38 @@ define(['playlist',
             
             addPlaylist: function (playlistTitle, optionalPlaylistId, callback) {
                 var user = loginManager.get('user');
-                var collectionId = user.get('playlistCollections').at(0).get('id');
+                var playlistCollection = user.get('playlistCollections').at(0);
 
                 var playlist = new Playlist({
                     title: playlistTitle,
-                    position: playlists.length,
-                    collectionId: collectionId
+                    collectionId: playlistCollection.get('id')
                 });
+
+                var currentPlaylists = playlistCollection.get('playlists');
 
                 //  Save the playlist, but push after version from server because the ID will have changed.
                 playlist.save(new Array(), {
                     success: function() {
-                        playlists.push(playlist);
+                        var playlistId = playlist.get('id');
+                        console.log("Save success:", playlistId);
+                        console.log("playlistCollection:", playlistCollection);
+
+                        if (currentPlaylists.length === 0) {
+                            playlistCollection.set('firstListId', playlistId);
+                            playlist.set('nextListId', playlistId);
+                            playlist.set('previousListId', playlistId);
+                        } else {
+                            var firstList = currentPlaylists.get(playlistCollection.get('firstListId'));
+                            var lastList = currentPlaylists.get(firstList.get('previousListId'));
+
+                            lastList.set('nextListId', playlistId);
+                            playlist.set('previousListId', lastList.get('id'));
+
+                            firstList.set('previousListId', playlistId);
+                            playlist.set('nextListId', firstList.get('id'));
+                        }
+                        
+                        currentPlaylists.push(playlist);
 
                         if (callback) {
                             callback(playlist);
@@ -363,6 +383,21 @@ define(['playlist',
                 //TODO: Perhaps just don't allow deleting the last playlist? More difficult.
                 if (activePlaylist.get('id') !== playlistId) {
                     var playlist = playlists.get(playlistId);
+                    
+                    var user = loginManager.get('user');
+                    var playlistCollection = user.get('playlistCollections').at(0);
+                    
+                    if (playlistCollection.get('firstListId') === playlistId) {
+                        var newFirstListId = playlist.get('nextListId');
+                        playlistCollection.set('firstListId', newFirstListId);
+                    }
+
+                    var previousList = playlistCollection.get('playlists').get(playlist.get('previousListId'));
+                    var nextList = playlistCollection.get('playlists').get(playlist.get('nextListId'));
+
+                    //  Remove the list from our linked list.
+                    previousList.set('nextListId', nextList.get('id'));
+                    nextList.set('previousListId', previousList.get('id'));
 
                     playlist.destroy({
                         success: function () {

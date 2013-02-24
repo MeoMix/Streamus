@@ -13,10 +13,12 @@ namespace Streamus.Backend.Domain.Managers
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private IUserDao UserDao { get; set; }
+        private IPlaylistCollectionDao PlaylistCollectionDao { get; set; }
 
-        public UserManager(IUserDao userDao)
+        public UserManager(IUserDao userDao, IPlaylistCollectionDao playlistCollectionDao)
         {
             UserDao = userDao;
+            PlaylistCollectionDao = playlistCollectionDao;
         }
 
         /// <summary>
@@ -34,6 +36,14 @@ namespace Streamus.Backend.Domain.Managers
                 user = new User();
                 user.ValidateAndThrow();
                 UserDao.Save(user);
+
+                //  TODO: Can this happen automatically with NHibernate?
+                PlaylistCollection playlistCollection = user.PlaylistCollections[0];
+
+                playlistCollection.FirstListId = playlistCollection.Playlists[0].Id;
+                playlistCollection.Playlists[0].NextListId = playlistCollection.Playlists[0].Id;
+                playlistCollection.Playlists[0].PreviousListId = playlistCollection.Playlists[0].Id;
+                PlaylistCollectionDao.Update(playlistCollection);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
