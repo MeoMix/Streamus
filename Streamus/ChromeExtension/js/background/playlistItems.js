@@ -61,7 +61,11 @@
 
                     return sameVideoId || similiarVideoName;
                 });
-                return alreadyExistingItem == null;
+                
+                //  Don't include 'playlist' songs -- assuming things >10m are playlists.
+                var isJustOneSong = relatedVideo.get('duration') < 36000;
+
+                return alreadyExistingItem == null && isJustOneSong;
             });
 
             return relatedVideos;

@@ -90,8 +90,6 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'playlistManager'],
     function showVideoSuggestions(text) {
         ytHelper.search(text, function (videoInformationList) {
 
-            console.log("videoInformationList:", videoInformationList.length);
-
             if (!userIsTyping) {
                 var videoDisplayObjects = _.map(videoInformationList, function (videoInformation) {
 

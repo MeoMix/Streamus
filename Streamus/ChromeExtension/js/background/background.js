@@ -1,9 +1,19 @@
 ﻿define(['playlistManager', 'player'], function (playlistManager, player) {
     'use strict';
-
-    //  Bypass YouTube's content restrictions by looking like I'm a website.
+    
     chrome.webRequest.onBeforeSendHeaders.addListener(function (info) {
-        info.requestHeaders.push({
+        
+        var cookieRequestHeader = _.find(info.requestHeaders, function(requestHeader) {
+            return requestHeader.name === 'Cookie';
+        });
+        
+        if (cookieRequestHeader) {
+            //  force youtube to gimmie the sexy html5 loader. muahaha!
+            cookieRequestHeader.value = cookieRequestHeader.value.replace('f3=40000', 'f2=40000000');
+        }
+
+        //  Bypass YouTube's embedded player content restrictions by looking like I'm ... youtube! 
+        info.requestHeaders.push({  
             name: "Referer",
             value: "http://youtube.com"
         });

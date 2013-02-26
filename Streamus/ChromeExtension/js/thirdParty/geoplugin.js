@@ -1,11 +1,11 @@
-//http://www.geoplugin.net/javascript.gp
-//Needed to figure out GeoLocation to filter out some video suggestions.
+//  http://www.geoplugin.net/javascript.gp
+//  Needed to figure out GeoLocation to filter out some video suggestions.
 //  TODO: I'm tempted to implement this with my server so I don't have to request more permissions... not sure if its worth it, though.
 define(function() {
     'use strict';
     var countryCode = 'US';
 
-    //Cross-Origin Resource Sharing unavailable from file://
+    //  Cross-Origin Resource Sharing unavailable from file://
     if (window.location.protocol !== 'file:') {
         if (window.location.protocol === 'chrome-extension:') {
             $.ajax({

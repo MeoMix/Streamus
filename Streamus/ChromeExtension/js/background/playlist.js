@@ -84,7 +84,7 @@ define(['ytHelper',
                 });
                 
                 this.on('change:firstItemId', function () {
-                    console.log("firstItemId has changed, updating");
+
                     $.ajax({
                         url: programState.getBaseUrl() + 'Playlist/UpdateFirstItemId',
                         type: 'POST',
@@ -285,7 +285,7 @@ define(['ytHelper',
                 var playlistItems = this.get('items');
                 var playlistItemId = playlistItem.get('id');
                 if (playlistItems.length === 0) {
-                    console.log("setting firstItemId to:", playlistItemId);
+
                     this.set('firstItemId', playlistItemId);
                     playlistItem.set('nextItemId', playlistItemId);
                     playlistItem.set('previousItemId', playlistItemId);
@@ -309,8 +309,6 @@ define(['ytHelper',
                 });
 
                 this.get('items').push(playlistItem);
-
-                console.log("modified items:", modifiedItems);
 
                 modifiedItems.save();
                 

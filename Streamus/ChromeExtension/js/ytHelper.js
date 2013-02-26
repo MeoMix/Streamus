@@ -30,13 +30,12 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                         format: 5,
                         v: 2,
                         alt: 'json',
-                        restriction: geoplugin.countryCode,
+                        //restriction: geoplugin.countryCode,
                         q: text,
                         fields: 'entry(title,media:group(yt:videoid,yt:duration))',
                         strict: true
                     },
                     success: function(result) {
-                        console.log("response.feed.entry in search:", result.feed.entry);
 
                         if (result.feed.entry) {
                             videoInformationList = videoInformationList.concat(result.feed.entry);
@@ -148,7 +147,7 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                     strict: true
                 },
                 success: function (result) {
-                    console.log("RESULT:", result);
+
                     if (callback) {
                         callback(result.entry);
                     }

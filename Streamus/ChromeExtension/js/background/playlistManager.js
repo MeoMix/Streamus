@@ -260,8 +260,6 @@ define(['playlist',
                 playlist.save(new Array(), {
                     success: function() {
                         var playlistId = playlist.get('id');
-                        console.log("Save success:", playlistId);
-                        console.log("playlistCollection:", playlistCollection);
 
                         if (currentPlaylists.length === 0) {
                             playlistCollection.set('firstListId', playlistId);
