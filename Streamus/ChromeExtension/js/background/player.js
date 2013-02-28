@@ -14,10 +14,10 @@ define(['ytPlayerApiHelper'], function (ytPlayerApiHelper) {
         //  After the API's JavaScript code loads, the API will call the onYouTubeIframeAPIReady function.
         //  At which point you can construct a YT.Player object to insert a video player on your page. 
         player = new YT.Player('MusicHolder', {
-            playerVars: { 'controls': 0 },
             events: {
                 'onReady': function () {
                     isReady = true;
+                    player.unMute();
                     $(document).trigger('player.onReady');
                 },
                 'onStateChange': function (playerState) {

@@ -36,6 +36,7 @@ var require = {
         'oauth2': 'thirdParty/oauth2/oauth2',
         'backbone': 'thirdParty/backbone',
         'playlistManager': 'foreground/playlistManager',
-        'player': 'foreground/player'
+        'player': 'foreground/player',
+        'videoDisplay': 'foreground/videoTab/videoDisplay'
     }
 };

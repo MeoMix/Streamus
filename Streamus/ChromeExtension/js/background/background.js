@@ -9,7 +9,7 @@
         
         if (cookieRequestHeader) {
             //  force youtube to gimmie the sexy html5 loader. muahaha!
-            cookieRequestHeader.value = cookieRequestHeader.value.replace('f3=40000', 'f2=40000000');
+            //cookieRequestHeader.value = cookieRequestHeader.value.replace('f3=40000', 'f2=40000000');
         }
 
         //  Bypass YouTube's embedded player content restrictions by looking like I'm ... youtube! 
@@ -27,10 +27,9 @@
     //  Build iframe AFTER onBeforeSendHeaders listener.
     $('<iframe>', {
         id: 'MusicHolder',
-        type: 'text/html',
-        width: 640,
-        height: 390,
-        src: 'http://www.youtube.com/embed/dummy?enablejsapi=1'
+        width: 475,
+        height: 286,
+        src: 'http://www.youtube.com/embed/undefined?enablejsapi=1'
     }).appendTo('body');
 
     //  http://stackoverflow.com/questions/5235719/how-to-copy-text-to-clipboard-from-a-google-chrome-extension

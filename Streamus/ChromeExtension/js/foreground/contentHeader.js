@@ -76,10 +76,9 @@ define(['playlistManager'], function(playlistManager){
         //  jQuery does not support appending paths to SVG elements. You MUST declare element inside of svg's HTML mark-up.
         addCancelIcon.append('<svg id="addCancelIconSvg"><path d="M0,2 L2,0 L12,10 L10,12z"/><path d="M12,2 L10,0 L0,10 L2,12z"/></svg>');
 
-
         function expand() {
             addCancelIcon.css('right', '0px').one('click', contract);
-            addButton.width('350px');
+            addButton.width('443');
             addInput.css('opacity', 1).css('cursor', "auto").focus();
         }
         

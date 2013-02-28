@@ -1,5 +1,5 @@
 ﻿body {
-  min-width:420px;
+  min-width: 513px;
   min-height:340px;
   background:#fff;
   -webkit-user-select: none;
@@ -231,6 +231,7 @@
 }
 
 #PlaylistsContent, 
+#VideoContent,
 #SettingsContent {
   display: none;
 }
@@ -612,13 +613,12 @@
 }
 
 @-webkit-keyframes "rotate" {
- from {
-   -webkit-transform: rotate(0);
-   transform: rotate(0);
- }
- to {
-   -webkit-transform: rotate(360deg);
-   transform: rotate(360deg);
- }
-
+    from {
+       -webkit-transform: rotate(0);
+       transform: rotate(0);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
 }

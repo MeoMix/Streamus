@@ -21,7 +21,7 @@ define(['onYouTubePlayerApiReady', 'jquery'], function () {
                 a.async = true;
                 var b = document.getElementsByTagName('script')[0];
                 b.parentNode.insertBefore(a, b);
-                YT.embed_template = "\u003ciframe width=\"425\" height=\"344\" src=\"\" frameborder=\"0\" allowfullscreen\u003e\u003c\/iframe\u003e";
+                YT.embed_template = "\u003ciframe width=\"475\" height=\"286\" src=\"\" frameborder=\"0\" allowfullscreen\u003e\u003c\/iframe\u003e";
             })();
         }
     });

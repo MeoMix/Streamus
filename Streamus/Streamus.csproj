@@ -253,6 +253,7 @@
     <Content Include="ChromeExtension\js\foreground\playlistItemsTab\playlistItemInput.js" />
     <Content Include="ChromeExtension\js\foreground\playlistItemsTab\playlistItemsContextMenu.js" />
     <Content Include="ChromeExtension\js\foreground\playlistItemsTab\playlistItemsDisplay.js" />
+    <Content Include="ChromeExtension\js\foreground\videoTab\videoDisplay.js" />
     <Content Include="ChromeExtension\js\inject.js" />
     <Content Include="ChromeExtension\js\playerStates.js" />
     <Content Include="ChromeExtension\js\background\playlistItemsHistory.js" />
