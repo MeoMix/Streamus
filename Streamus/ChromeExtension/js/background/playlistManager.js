@@ -13,8 +13,6 @@ define(['playlist',
     ], function(Playlist, Playlists, PlaylistItem, PlaylistItems, loginManager, player, ytHelper, Videos) {
         'use strict';
 
-        ytHelper.getRelatedVideoInformation('QN7UAPOJZxM');
-
         var playlists = new Playlists();
         var activePlaylist = null;
 
