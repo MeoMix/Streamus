@@ -9,7 +9,15 @@
         
         if (cookieRequestHeader) {
             //  force youtube to gimmie the sexy html5 loader. muahaha!
-            //cookieRequestHeader.value = cookieRequestHeader.value.replace('f3=40000', 'f2=40000000');
+            var flashCookieValue = 'f3=40000';
+            var html5CookieValue = 'f2=40000000';
+            
+            if (cookieRequestHeader.value.indexOf(flashCookieValue) !== -1) {
+                cookieRequestHeader.value = cookieRequestHeader.value.replace(flashCookieValue, html5CookieValue);
+            } else {
+                cookieRequestHeader.value += '&' + html5CookieValue;
+			}
+
         }
 
         //  Bypass YouTube's embedded player content restrictions by looking like I'm ... youtube! 
