@@ -1,51 +1,32 @@
 ﻿//  Provides an interface to the YouTube iFrame.
 //  Starts up Player object after receiving a ready response from the YouTube API.
-define(['onYouTubePlayerApiReady', 'jquery'], function () {
+define(['jquery'], function () {
     'use strict';
 
-    //var YTPlayerApiHelper = Backbone.Model.extend({
-    //    defaults: {
-    //        ready: false
-    //    },
-    //    initialize: function() {
-    //        this.on('change:ready')
-    //    }
-    //});
-
-    var isReady = false;
-    var events = {
-        onApiReady: 'onApiReady'
-    };
-
-    //  This code will trigger onYouTubePlayerAPIReady
-    $(function () {
+    var YTPlayerApiHelper = Backbone.Model.extend({
+        defaults: {
+            ready: false
+        },
         
-        if (!window['YT']) {
-            var YT = {};
-        }
-        
-        if (!YT.Player) {
-            $('<script>', {
-                src: 'https://s.ytimg.com/yts/jsbin/www-widgetapi-vflmz-CfK.js',
-                async: true
-            }).insertBefore($('script:first'));
+        initialize: function () {
+            var self = this;
+            
+            //  This function will be called when the API is fully loaded. Needs to be exposed globally so YouTube can call it.
+            window.onYouTubePlayerAPIReady = function () {
+                self.set('ready', true);
+            };
+
+            //  I get an error: Unable to post message to http://www.youtube.com. Recipient has origin chrome-extension://pfphaniogbicpiiennilpbbkfmciobch.
+            //  unless I wrap this in a document.ready.
+            $(function () {
+                //  This code will trigger onYouTubePlayerAPIReady
+                $('<script>', {
+                    src: 'https://s.ytimg.com/yts/jsbin/www-widgetapi-vflmz-CfK.js',
+                    async: true
+                }).insertBefore($('script:first'));
+            });
         }
     });
-
-    return {
-        ready: function () {
-            isReady = true;
-            $(this).trigger(events.onApiReady);
-        },
-        onApiReady: function (event) {
-            console.log("isReady:", isReady);
-            //  If the API is already loaded a trigger will never occur, so just fire event now.
-            if (event && isReady) {
-
-                event();
-            } else {
-                $(this).on(events.onApiReady, event);
-            }
-        }
-    };
+    
+    return new YTPlayerApiHelper();
 });

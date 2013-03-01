@@ -293,7 +293,6 @@
     <Content Include="ChromeExtension\js\thirdParty\oauth2\oauth2.js" />
     <Content Include="ChromeExtension\js\thirdParty\oauth2\oauth2_finish.js" />
     <Content Include="ChromeExtension\js\thirdParty\oauth2\oauth2_inject.js" />
-    <Content Include="ChromeExtension\js\thirdParty\onYouTubePlayerApiReady.js" />
     <Content Include="ChromeExtension\js\thirdParty\require.js" />
     <Content Include="ChromeExtension\js\tests\requirePaths.js" />
     <Content Include="ChromeExtension\js\thirdParty\underscore.js" />

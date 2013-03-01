@@ -24,7 +24,6 @@ var require = {
         'contentButtons': 'foreground/contentButtons',
         'progressBar': 'foreground/progressBar',
         'ytPlayerApiHelper': 'thirdParty/ytPlayerApiHelper',
-        'onYouTubePlayerApiReady': 'thirdParty/onYouTubePlayerApiReady',
         'jqueryMousewheel': 'thirdParty/jqueryMousewheel',
         'ytHelper': 'ytHelper',
         'helpers': 'helpers',

@@ -15,7 +15,6 @@ var require = {
         'playlistManager': 'background/playlistManager',
         'loginManager': 'background/loginManager',
         'ytPlayerApiHelper': 'thirdParty/ytPlayerApiHelper',
-        'onYouTubePlayerApiReady': 'thirdParty/onYouTubePlayerApiReady',
         'video': 'background/video',
         'videos': 'background/videos',
         'ytHelper': 'ytHelper',

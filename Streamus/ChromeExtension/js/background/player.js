@@ -7,8 +7,9 @@ define(['ytPlayerApiHelper'], function (ytPlayerApiHelper) {
     var isReady;
     var lastStateWasVidCued;
 
+    console.log("binding to onApiReady");
     //  Initialize the player by creating YT player iframe.
-    ytPlayerApiHelper.onApiReady(function () {
+    ytPlayerApiHelper.once('change:ready', function () {
 
         //  https://developers.google.com/youtube/iframe_api_reference#Loading_a_Video_Player
         //  After the API's JavaScript code loads, the API will call the onYouTubeIframeAPIReady function.
