@@ -1,6 +1,7 @@
 define(function(){
     'use strict';
 
+    // http://stackoverflow.com/questions/11919065/sort-an-array-by-the-levenshtein-distance-with-best-performance-in-javascript
     var levDist = function(s, t) {
         var d = []; //  2d matrix
 

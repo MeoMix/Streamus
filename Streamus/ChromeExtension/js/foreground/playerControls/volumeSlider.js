@@ -89,7 +89,7 @@ define(['player'], function (player) {
 		}
 
 		updateSoundIcon(volume);
-		player.volume = volume;
+		player.set('volume', volume);
 	};
 	
 	var setVolume = function(volume){
@@ -97,16 +97,16 @@ define(['player'], function (player) {
 		updateWithVolume(volume);
 	};
     
-	player.onStateChange(function (event, playerState) {
+	player.get('change:state', function (event, playerState) {
 	    setVolumeIfPlaying(playerState);
 	});
 
-    setVolumeIfPlaying(player.playerState);
+    setVolumeIfPlaying(player.get('state'));
     
     function setVolumeIfPlaying(playerState) {
         if (playerState === PlayerStates.PLAYING) {
             //Volume only becomes available once a video has become cued or when popup reopens.
-            setVolume(player.volume);
+            setVolume(player.get('volume'));
         }
     }
 })

@@ -11,7 +11,7 @@
                 playlistManager.skipItem("previous");
                 break;
             case 'toggleVideo':
-                if (player.playerState === PlayerStates.PLAYING) {
+                if (player.get('state') === PlayerStates.PLAYING) {
                     player.play();
                 } else {
                     player.pause();

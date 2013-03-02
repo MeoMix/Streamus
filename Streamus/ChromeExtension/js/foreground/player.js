@@ -1,5 +1,5 @@
 ﻿define(function () {
     'use strict';
 
-    return chrome.extension.getBackgroundPage().YoutubePlayer;
+    return chrome.extension.getBackgroundPage().YouTubePlayer;
 })

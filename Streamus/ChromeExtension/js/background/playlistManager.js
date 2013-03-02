@@ -27,10 +27,12 @@ define(['playlist',
             onActivePlaylistEmptied: 'playlistManager.onActivePlaylistEmptied'
         };
 
-        loginManager.onLoggedIn(function() {
-            player.onReady(function() {
+        loginManager.onLoggedIn(function () {
+            if (player.get('ready')) {
                 initializeWithUser();
-            });
+            } else {
+                player.once('change:ready', initializeWithUser);
+            } 
         });
         
         function initializeWithUser() {
@@ -45,7 +47,7 @@ define(['playlist',
                             var videoId = item.get('video').get('id');
                             
                             //  Maintain the playing state by loading if playing. 
-                            if (player.playerState === PlayerStates.PLAYING) {
+                            if (player.get('state') === PlayerStates.PLAYING) {
                                 player.loadVideoById(videoId);
                             } else {
                                 player.cueVideoById(videoId);
@@ -104,7 +106,9 @@ define(['playlist',
             }
         }
         
-        player.onStateChange(function(event, playerState) {
+        player.get('change:state', function (event, playerState) {
+            console.log("event playerstate:", event, playerState);
+
             //  If the video stopped playing and there's another playlistItem to skip to, do so.
             if (playerState === PlayerStates.ENDED) {
                 //  Don't pass message to UI if it is closed. Handle sock change in the background.

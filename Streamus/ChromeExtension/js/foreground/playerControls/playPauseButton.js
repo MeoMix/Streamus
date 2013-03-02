@@ -10,27 +10,33 @@ define(['playlistManager', 'player'], function (playlistManager, player) {
 	playPauseButton.click(_.debounce(function () {
 	    
         if (!$(this).hasClass('disabled')) {
-            if (player.playerState == PlayerStates.PLAYING) {
+            if (player.get('state') === PlayerStates.PLAYING) {
                 player.pause();
                 pauseIcon.hide();
                 playIcon.show();
             } else {
+                playIcon.hide();
+                pauseIcon.hide();
                 player.play();
             }
         }
 
 	}, 100, true));
 
-	player.onBufferVideo(function () {
-	    playIcon.hide();
-	    pauseIcon.hide();
-        loadingSpinner.show();
+	player.on('change:buffering', function (event, isBuffering) {
+	    console.log("change in buffeirng detected:", isBuffering);
+	    if (isBuffering) {
+	        loadingSpinner.show();
+	    } else {
+	        loadingSpinner.hide();
+	    }
     });
    
-	player.onStateChange(function (event, playerState) {
+    player.on('change:state', function (event, playerState) {
+        console.log("playerState:", playerState);
 	    makeIconReflectPlayerState(playerState);
 	});
-	makeIconReflectPlayerState(player.playerState);
+	makeIconReflectPlayerState(player.get('state'));
 
     playlistManager.onActivePlaylistEmptied(disableButton);
     playlistManager.onActivePlaylistItemAdd(enableButton);
@@ -45,11 +51,10 @@ define(['playlistManager', 'player'], function (playlistManager, player) {
     function makeIconReflectPlayerState(playerState) {
         
         if (playerState === PlayerStates.PLAYING) {
-            loadingSpinner.hide();
             pauseIcon.show();
             setToPause();
         }
-        else if (!player.isSeeking && !player.isBuffering) {
+        else if (!player.get('seeking') && !player.get('buffering')) {
             setToPlay();
         }
     }

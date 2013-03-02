@@ -296,7 +296,7 @@
     <Content Include="ChromeExtension\js\thirdParty\require.js" />
     <Content Include="ChromeExtension\js\tests\requirePaths.js" />
     <Content Include="ChromeExtension\js\thirdParty\underscore.js" />
-    <Content Include="ChromeExtension\js\thirdParty\ytPlayerApiHelper.js" />
+    <Content Include="ChromeExtension\js\youTubePlayerAPI.js" />
     <Content Include="ChromeExtension\js\background\videos.js" />
     <Content Include="ChromeExtension\js\ytHelper.js" />
     <Content Include="Web.config" />

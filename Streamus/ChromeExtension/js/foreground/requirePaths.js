@@ -23,7 +23,7 @@ var require = {
         'dialogs': 'foreground/dialogs',
         'contentButtons': 'foreground/contentButtons',
         'progressBar': 'foreground/progressBar',
-        'ytPlayerApiHelper': 'thirdParty/ytPlayerApiHelper',
+        'youTubePlayerAPI': 'youTubePlayerAPI',
         'jqueryMousewheel': 'thirdParty/jqueryMousewheel',
         'ytHelper': 'ytHelper',
         'helpers': 'helpers',

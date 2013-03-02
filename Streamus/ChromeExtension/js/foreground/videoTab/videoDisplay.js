@@ -1,4 +1,4 @@
-﻿define(['ytPlayerApiHelper', 'playlistManager', 'player'], function (ytPlayerApiHelper, playlistManager, player) {
+﻿define(['youTubePlayerAPI', 'playlistManager', 'player'], function (youTubePlayerAPI, playlistManager, player) {
     'use strict';
 
     //var selectedItem = playlistManager.activePlaylist.getSelectedItem();
@@ -19,7 +19,7 @@
     //var videoDisplay;
     
     ////  Initialize the player by creating YT player iframe.
-    //ytPlayerApiHelper.onApiReady(function () {
+    //youTubePlayerAPI.onApiReady(function () {
 
     //    //  https://developers.google.com/youtube/iframe_api_reference#Loading_a_Video_Player
     //    //  After the API's JavaScript code loads, the API will call the onYouTubeIframeAPIReady function.
@@ -28,9 +28,9 @@
     //        events: {
     //            'onReady': function () {
     //                videoDisplay.mute();
-    //                videoDisplay.seekTo(player.currentTime, true);
+    //                videoDisplay.seekTo(player.get('currnetTime'), true);
                     
-    //                if (player.playerState === PlayerStates.PLAYING) {
+    //                if (player.get('state') === PlayerStates.PLAYING) {
     //                    videoDisplay.play();
     //                }
 

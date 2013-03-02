@@ -3,7 +3,7 @@
 define(['jquery'], function () {
     'use strict';
 
-    var YTPlayerApiHelper = Backbone.Model.extend({
+    var YouTubePlayerAPI = Backbone.Model.extend({
         defaults: {
             ready: false
         },
@@ -28,5 +28,5 @@ define(['jquery'], function () {
         }
     });
     
-    return new YTPlayerApiHelper();
+    return new YouTubePlayerAPI();
 });

@@ -68,19 +68,18 @@ define(['playlistManager', 'player', 'helpers'], function (playlistManager, play
     //  If a video is currently playing when the GUI opens then initialize with those values.
     //  Set total time before current time because it affects the range's max.
     setTotalTime(getCurrentVideoDuration());
-    setCurrentTime(player.currentTime);
-
+    setCurrentTime(player.get('currentTime'));
+    
     //  Keep the progress bar up to date. 
-    setInterval(function () {
-        
+    player.on('change:currentTime', function(event, currentTime) {
         //  Pause the GUI's refreshes for updating the timers while the user is dragging the video time slider around.
-        if (!player.isSeeking && player.playerState !== PlayerStates.PAUSED) {
-            setCurrentTime(player.currentTime);
+        if (!player.get('seeking') && player.get('state') !== PlayerStates.PAUSED) {
+            setCurrentTime(currentTime);
         }
-        
-    }, 500);
+    });
     
     function setCurrentTime(currentTime) {
+        window && console.log('setting current time', currentTime, progressBar.prop('max'));
 
         if (currentTime > progressBar.prop('max')) {
             window && console.log("CurrentTime and TotalTime:", currentTime, progressBar.prop('max'));

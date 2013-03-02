@@ -3,7 +3,7 @@
 //  TODO: I'm tempted to implement this with my server so I don't have to request more permissions... not sure if its worth it, though.
 define(function() {
     'use strict';
-    var countryCode = 'US';
+    var countryCode;
 
     //  Cross-Origin Resource Sharing unavailable from file://
     if (window.location.protocol !== 'file:') {

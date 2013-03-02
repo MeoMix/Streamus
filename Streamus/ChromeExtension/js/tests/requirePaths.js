@@ -8,7 +8,7 @@ var require = {
         'jquery': 'js/thirdParty/jquery',
         'underscore': 'js/thirdParty/underscore',
         'backbone': 'js/thirdParty/backbone',
-        'ytPlayerApiHelper': 'js/thirdParty/ytPlayerApiHelper',
+        'youTubePlayerAPI': 'js/thirdParty/youTubePlayerAPI',
         'geoplugin': 'js/thirdParty/geoplugin',
         'levenshtein': 'js/thirdParty/levenshtein',
         
