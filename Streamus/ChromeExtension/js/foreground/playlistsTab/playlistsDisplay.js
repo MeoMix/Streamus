@@ -2,11 +2,12 @@
 define(['playlistsContextMenu', 'ytHelper', 'playlistManager', 'player'], function (contextMenu, ytHelper, playlistManager, player) {
     //  TODO: Make this sortable and should inherit from a common List object. 
     var playlistList = $('#PlaylistList ul');
-
     //  TODO: Need to be a lot more fine-grained then just spamming reload. Will come back around to it.
-    playlistManager.onActivePlaylistChange(reload);
-    playlistManager.onPlaylistRemoved(reload);
-    playlistManager.onPlaylistAdded(reload);
+    // TODO: This will need to be reworked to support >1 streams.
+    var stream = playlistManager.getStream();
+    stream.on('remove:playlists', reload);
+    stream.on('add:playlists', reload);
+    stream.on('change:activePlaylist', reload);
 
     reload();
 
@@ -14,10 +15,10 @@ define(['playlistsContextMenu', 'ytHelper', 'playlistManager', 'player'], functi
     function reload() {
         playlistList.empty();
 
-        var activeCollection = chrome.extension.getBackgroundPage().LoginManager.get('user').get('playlistCollections').at(0);
+        var activeStream = chrome.extension.getBackgroundPage().LoginManager.get('user').get('streams').at(0);
 
-        var firstListId = activeCollection.get('firstListId');
-        var currentList = activeCollection.get('playlists').get(firstListId);
+        var firstListId = activeStream.get('firstListId');
+        var currentList = activeStream.get('playlists').get(firstListId);
         
         //  Build up each row.
         do {
@@ -42,7 +43,7 @@ define(['playlistsContextMenu', 'ytHelper', 'playlistManager', 'player'], functi
 
             })(currentList);
             
-            currentList = activeCollection.get('playlists').get(currentList.get('nextListId'));
+            currentList = activeStream.get('playlists').get(currentList.get('nextListId'));
 
         } while(currentList.get('id') !== firstListId)
 

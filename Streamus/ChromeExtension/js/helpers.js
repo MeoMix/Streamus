@@ -48,21 +48,6 @@ define(function () {
             }
 
             return timeString;
-        },
-        
-        //  http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values/
-        getUrlParamaterValueByName: function(url, paramaterName) {
-            paramaterName = paramaterName.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-            //  Meo [Nov '12]: I added the '#' character to this regexp to match facebook query string urls. Hopefully doesn't break anything.
-            var regex = new RegExp("[\\#?&]" + paramaterName + "=([^&#]*)");
-            var results = regex.exec(url);
-
-            var returnValue = "";
-            if (results != null) {
-                returnValue = results[1];
-            }
-
-            return returnValue;
         }
     };
 });

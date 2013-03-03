@@ -22,8 +22,8 @@ var require = {
         'loginManager': 'js/background/loginManager',
         'playlist': 'js/background/playlist',
         'playlists': 'js/background/playlists',
-        'playlistCollection': 'background/playlistCollection',
-        'playlistCollections': 'background/playlistCollections',
+        'stream': 'background/stream',
+        'streams': 'background/streams',
         'user': 'js/background/user',
 
         'video': 'js/background/video',

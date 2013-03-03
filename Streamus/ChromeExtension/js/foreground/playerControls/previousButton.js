@@ -11,15 +11,15 @@ define(['playlistManager'], function(playlistManager){
         }
         
     }, 100, true));
-
-    playlistManager.onActivePlaylistEmptied(disableButton);
-    playlistManager.onActivePlaylistItemAdd(enableButton);
-
-    playlistManager.onActivePlaylistChange(function (event, playlist) {
+    
+    var stream = playlistManager.getStream();
+    stream.on('empty:activePlaylist', disableButton);
+    stream.get('activePlaylist').on('add:items', enableButton);
+    stream.on('change:activePlaylist', function (event, playlist) {
         enableIfItemsInPlaylist(playlist);
     });
 
-    enableIfItemsInPlaylist(playlistManager.activePlaylist);
+    enableIfItemsInPlaylist(stream.get('activePlaylist'));
     
     function enableIfItemsInPlaylist(playlist) {
         var itemCount = playlist.get('items').length;

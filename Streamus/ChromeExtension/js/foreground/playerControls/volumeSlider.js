@@ -1,4 +1,4 @@
-//Responsible for controlling the volume indicator of the UI.
+//  Responsible for controlling the volume indicator of the UI.
 define(['player'], function (player) {
     'use strict';
     
@@ -6,7 +6,7 @@ define(['player'], function (player) {
 	var MUTED_KEY = 'musicMuted';
     var VOLUME_KEY = 'musicVolume';
 
-	//Whenever the mute button is clicked toggle the muted state.
+	//  Whenever the mute button is clicked toggle the muted state.
 	muteButton.click(function(){
 		if(isMuted){
 			setVolume(musicVolume);
@@ -16,17 +16,18 @@ define(['player'], function (player) {
 		}
 	});
 
-	//Whenever the volume slider is interacted with by the user, change the volume to reflect.
-	var volumeSlider = $('#VolumeSlider').change(function(){ 
+	//  Whenever the volume slider is interacted with by the user, change the volume to reflect.
+	var volumeSlider = $('#VolumeSlider').change(function () {
+	    console.log("updating with volume:", this.value);
 		updateWithVolume(this.value); 
 	});
 
 	$('.volumeControl').mousewheel(function(event, delta){
-		//Convert current value from string to int, then go a few volume points in a given direction.
+		//  Convert current value from string to int, then go a few volume points in a given direction.
 		volumeSlider.val(parseInt(volumeSlider.val(), 10) + delta * 3).trigger('change');
 	});
 
-	//Show the volume slider control by expanding its parent whenever any of the volume controls are hovered.
+	//  Show the volume slider control by expanding its parent whenever any of the volume controls are hovered.
 	$('.volumeControl').mouseover(function(){
 		volumeSlider.parent().css("top","70px");
 	}).mouseout(function(){
@@ -34,7 +35,7 @@ define(['player'], function (player) {
 	});
 
 	var updateSoundIcon = function(volume){
-		//Repaint the amount of white filled in the bar showing the distance the grabber has been dragged.
+		//  Repaint the amount of white filled in the bar showing the distance the grabber has been dragged.
 		var backgroundImage = '-webkit-gradient(linear,left top, right top, from(#ccc), color-stop('+ volume/100 +',#ccc), color-stop('+ volume/100+',rgba(0,0,0,0)), to(rgba(0,0,0,0)))';
 		volumeSlider.css('background-image', backgroundImage);
 
@@ -48,7 +49,7 @@ define(['player'], function (player) {
 
 	};
 
-	//Initialize the muted state;
+	//  Initialize the muted state;
 	var isMuted = (function(){
 		var muted = false;
 
@@ -60,7 +61,7 @@ define(['player'], function (player) {
 		return muted;
 	})();
 
-	//Initialize player's volume and muted state to last known information or 100 / unmuted.
+	//  Initialize player's volume and muted state to last known information or 100 / unmuted.
 	var musicVolume = (function(){
 		var volume = 100;
 
@@ -83,12 +84,13 @@ define(['player'], function (player) {
         //  TODO: localStorage is undefined when foreground is destroyed.
 		localStorage && localStorage.setItem(MUTED_KEY, JSON.stringify(isMuted));
 		if (volume) {
-			//Remember old music value if muting so that unmute is possible.
+			//  Remember old music value if muting so that unmute is possible.
 			musicVolume = volume;
 			localStorage && localStorage.setItem(VOLUME_KEY, JSON.stringify(musicVolume));
 		}
 
 		updateSoundIcon(volume);
+	    console.log("setting volume", volume);
 		player.set('volume', volume);
 	};
 	
@@ -97,15 +99,12 @@ define(['player'], function (player) {
 		updateWithVolume(volume);
 	};
     
-	player.get('change:state', function (event, playerState) {
-	    setVolumeIfPlaying(playerState);
-	});
-
-    setVolumeIfPlaying(player.get('state'));
+	player.get('change:state', setVolumeIfVidCued);
+	setVolumeIfVidCued();
     
-    function setVolumeIfPlaying(playerState) {
-        if (playerState === PlayerStates.PLAYING) {
-            //Volume only becomes available once a video has become cued or when popup reopens.
+	function setVolumeIfVidCued() {
+        if (player.get('state') === PlayerStates.VIDCUED) {
+            //  Volume only becomes available once a video has become cued or when popup reopens.
             setVolume(player.get('volume'));
         }
     }

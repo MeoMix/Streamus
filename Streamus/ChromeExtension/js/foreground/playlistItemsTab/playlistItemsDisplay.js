@@ -16,7 +16,7 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
             //var movedItemId = ui.item.data('itemid');
             //var newPosition = ui.item.index();
 
-            //playlistManager.activePlaylist.moveItem(movedItemId, newPosition);
+            //playlistManager.getStream().get('activePlaylist').moveItem(movedItemId, newPosition);
         }
     });
 
@@ -27,10 +27,12 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
     };
     
     //  TODO: Need to be a lot more fine-grained then just spamming reload. Will come back around to it.
-    playlistManager.onActivePlaylistChange(reload);
-    playlistManager.onActivePlaylistItemAdd(reload);
-    playlistManager.onActivePlaylistItemRemove(reload);
-    playlistManager.onActivePlaylistSelectedItemChanged(reload);
+    // TODO: This will need to be reworked to support >1 streams.
+    var stream = playlistManager.getStream();
+    stream.on('change:activePlaylist', reload);
+    stream.get('activePlaylist').on('add:items', reload);
+    stream.get('activePlaylist').on('remove:items', reload);
+    stream.get('activePlaylist').on('change:items', reload);
 
     reload();
 
@@ -38,7 +40,7 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
     function reload() {
         playlistItemList.empty();
         
-        var activePlaylist = playlistManager.activePlaylist;
+        var activePlaylist = playlistManager.getStream().get('activePlaylist');
         var activePlaylistItems = activePlaylist.get('items');
         if (activePlaylistItems.length === 0) return;
 
@@ -71,21 +73,24 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
         //  Load and start playing a video if it is clicked.
         //  TODO: double click
         playlistItemList.children().click(function () {
+            console.log("click detected");
             var itemId = $(this).data('itemid');
 
-            var selectedItemId = playlistManager.activePlaylist.getSelectedItem().get('id');
+            var selectedItemId = playlistManager.getStream().get('activePlaylist').getSelectedItem().get('id');
             //  If the item is already selected then it is cued up -- so just play it.
             if (selectedItemId == itemId) {
+                console.log("Calling play");
                 player.play();
             } else {
-                var item = playlistManager.activePlaylist.selectItemById(itemId);
+                window && console.log("Playlist manager is about to select item with ID:", itemId);
+                var item = playlistManager.getStream().get('activePlaylist').selectItemById(itemId);
                 player.loadVideoById(item.get('video').get('id'));
             }
             
             return false;
         });
 
-        var selectedItem = playlistManager.activePlaylist.getSelectedItem();
+        var selectedItem = playlistManager.getStream().get('activePlaylist').getSelectedItem();
         
         //  Since we emptied our list we lost the selection, reselect.
         if (selectedItem) {

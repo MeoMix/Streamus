@@ -76,7 +76,7 @@
                     expect(savedPlaylist.get('id')).not.toEqual(null);
                     expect(savedPlaylist.get('userId')).toEqual(userId);
                     expect(savedPlaylist.get('position')).toBeGreaterThan(-1);
-                    expect(savedPlaylist.get('position')).toBeLessThan(playlistManager.playlists.length + 1);
+                    expect(savedPlaylist.get('position')).toBeLessThan(playlistManager.getStream().get('playlists').length + 1);
                 });
             });
         });

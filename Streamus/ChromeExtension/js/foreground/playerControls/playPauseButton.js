@@ -10,11 +10,12 @@ define(['playlistManager', 'player'], function (playlistManager, player) {
 	playPauseButton.click(_.debounce(function () {
 	    
         if (!$(this).hasClass('disabled')) {
-            if (player.get('state') === PlayerStates.PLAYING) {
+            if (player.isPlaying()) {
                 player.pause();
                 pauseIcon.hide();
                 playIcon.show();
             } else {
+                console.log("sending play event");
                 playIcon.hide();
                 pauseIcon.hide();
                 player.play();
@@ -23,38 +24,37 @@ define(['playlistManager', 'player'], function (playlistManager, player) {
 
 	}, 100, true));
 
-	player.on('change:buffering', function (event, isBuffering) {
-	    console.log("change in buffeirng detected:", isBuffering);
+	player.on('change:buffering', function (model, isBuffering) {
 	    if (isBuffering) {
+	        playIcon.hide();
+	        pauseIcon.hide();
 	        loadingSpinner.show();
 	    } else {
 	        loadingSpinner.hide();
 	    }
     });
    
-    player.on('change:state', function (event, playerState) {
-        console.log("playerState:", playerState);
-	    makeIconReflectPlayerState(playerState);
-	});
-	makeIconReflectPlayerState(player.get('state'));
+	player.on('change:state', makeIconReflectPlayerState);
+	makeIconReflectPlayerState();
 
-    playlistManager.onActivePlaylistEmptied(disableButton);
-    playlistManager.onActivePlaylistItemAdd(enableButton);
-    
-    var itemCount = playlistManager.activePlaylist.get('items').length;
+	var stream = playlistManager.getStream();
+
+	stream.get('activePlaylist').on('empty:items', disableButton);
+    stream.get('activePlaylist').on('add:items', enableButton);
+
+    var itemCount = stream.get('activePlaylist').get('items').length;
 
     if (itemCount > 0) {
         enableButton();
     }
 
     //  Whenever the YouTube player changes playing state -- update whether icon shows play or pause.
-    function makeIconReflectPlayerState(playerState) {
-        
-        if (playerState === PlayerStates.PLAYING) {
+    function makeIconReflectPlayerState() {
+        if (player.isPlaying()) {
             pauseIcon.show();
             setToPause();
         }
-        else if (!player.get('seeking') && !player.get('buffering')) {
+        else if (!player.get('buffering')) {
             setToPlay();
         }
     }

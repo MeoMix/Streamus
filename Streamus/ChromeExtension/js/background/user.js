@@ -1,16 +1,16 @@
 //  A singleton representing the sole logged on user for the program.
 //  Tries to load itself by ID stored in localStorage and then by chrome.storage.sync.
 //  If still unloaded, tells the server to create a new user and assumes that identiy.
-define(['playlistCollections', 'programState'], function(PlaylistCollections, programState) {
+define(['streams', 'programState'], function (Streams, programState) {
     'use strict';
     var userIdKey = 'UserId';
 
     //  User data will be loaded either from cache or server.
     var User = Backbone.Model.extend({
         defaults: {
-            id: 'b362751e-68cb-4155-a58f-531aa72a1249', //localStorage.getItem(userIdKey),
+            id: '49713F20-2ED0-4E01-A06A-CAA9A3A02408', //localStorage.getItem(userIdKey),
             name: '',
-            playlistCollections: new PlaylistCollections()
+            streams: new Streams()
         },
         
         urlRoot: programState.getBaseUrl() + 'User/',
@@ -67,10 +67,10 @@ define(['playlistCollections', 'programState'], function(PlaylistCollections, pr
             success: function (model) {
                 //  Have to manually convert the JSON array into a Backbone.Collection
 
-                var playlistCollections = new PlaylistCollections(model.get('playlistCollections'));
+                var streams = new Streams(model.get('streams'));
 
-                self.set('playlistCollections', playlistCollections, {
-                    //  Silent operation because the playlistCollections isn't technically changing - just being made correct.
+                self.set('streams', streams, {
+                    //  Silent operation because streams isn't technically changing - just being made correct.
                     silent: true
                 });
 

@@ -6,20 +6,16 @@ define(['playlistManager', 'player', 'helpers'], function (playlistManager, play
     var progressBar = $('#VideoTimeProgressBar');
     var currentTimeLabel = $('#CurrentTimeLabel');
     var totalTimeLabel = $('#TotalTimeLabel');
+    var isSeeking = false;
 
     //  Repaints the progress bar's filled-in amount based on the % of time elapsed for current video.
     progressBar.change(function () {
         var currentTime = $(this).val();
         var totalTime = parseInt($(this).prop('max'), 10);
 
-        window && console.log("Current time:", currentTime);
-        window && console.log("Total time:", totalTime);
-        
         //  Don't divide by 0.
         var fill = totalTime !== 0 ? currentTime / totalTime : 0;
         
-        window && console.log("Fill:", fill);
-
         var backgroundImage = '-webkit-gradient(linear,left top, right top, from(#ccc), color-stop(' + fill + ',#ccc), color-stop(' + fill + ',rgba(0,0,0,0)), to(rgba(0,0,0,0)))';
         $(this).css('background-image', backgroundImage);
         
@@ -32,8 +28,6 @@ define(['playlistManager', 'player', 'helpers'], function (playlistManager, play
     progressBar.mousewheel(function(event, delta){
         clearTimeout(mousewheelTimeout);
         
-        player.seekStart();
-
         setCurrentTime(progressBar.val() + delta);
 
         mousewheelTimeout = setTimeout(function(){
@@ -44,7 +38,7 @@ define(['playlistManager', 'player', 'helpers'], function (playlistManager, play
     progressBar.mousedown(function(event) {
         //  1 is primary mouse button, usually left
         if (event.which === 1) {
-            player.seekStart();
+            isSeeking = true;
         }
 
     }).mouseup(function(event) {
@@ -52,15 +46,18 @@ define(['playlistManager', 'player', 'helpers'], function (playlistManager, play
             //  Bind to progressBar mouse-up to support dragging as well as clicking.
             //  I don't want to send a message until drag ends, so mouseup works nicely. 
             player.seekTo($(this).val());
+            isSeeking = false;
         }
     });
-    
-    playlistManager.onActivePlaylistSelectedItemChanged(function () {
+
+    var stream = playlistManager.getStream();
+
+    stream.get('activePlaylist').get('items').on('change:selected', function() {
         setCurrentTime(0);
         setTotalTime(getCurrentVideoDuration());
     });
 
-    playlistManager.onActivePlaylistEmptied(function () {
+    stream.get('activePlaylist').on('empty:items', function() {
         setCurrentTime(0);
         setTotalTime(0);
     });
@@ -71,18 +68,15 @@ define(['playlistManager', 'player', 'helpers'], function (playlistManager, play
     setCurrentTime(player.get('currentTime'));
     
     //  Keep the progress bar up to date. 
-    player.on('change:currentTime', function(event, currentTime) {
-        //  Pause the GUI's refreshes for updating the timers while the user is dragging the video time slider around.
-        if (!player.get('seeking') && player.get('state') !== PlayerStates.PAUSED) {
+    player.on('change:currentTime', function (model, currentTime) {
+        if (!isSeeking) {
             setCurrentTime(currentTime);
         }
     });
     
     function setCurrentTime(currentTime) {
-        window && console.log('setting current time', currentTime, progressBar.prop('max'));
-
         if (currentTime > progressBar.prop('max')) {
-            window && console.log("CurrentTime and TotalTime:", currentTime, progressBar.prop('max'));
+            window && console.error("CurrentTime and TotalTime:", currentTime, progressBar.prop('max'));
             throw "Need to update max time before setting current time!";
         }
 
@@ -90,14 +84,13 @@ define(['playlistManager', 'player', 'helpers'], function (playlistManager, play
     }
     
     function setTotalTime(totalTime) {
-        window && console.log("setting total time to: ", totalTime);
         progressBar.prop('max', totalTime).trigger('change');
     }
     
     //  Return 0 or currently selected video's duration.
     function getCurrentVideoDuration() {
         var duration = 0;
-        var selectedItem = playlistManager.activePlaylist.getSelectedItem();
+        var selectedItem = playlistManager.getStream().get('activePlaylist').getSelectedItem();
 
         if (selectedItem != null) {
             duration = selectedItem.get('video').get('duration');

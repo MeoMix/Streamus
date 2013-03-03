@@ -29,7 +29,7 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'playlistManager'],
             //  Don't change the text when user clicks their video selection.
             event.preventDefault();
             contentHeader.flashMessage('Thanks!', 2000);
-            playlistManager.activePlaylist.addItemByInformation(ui.item.value);
+            playlistManager.getStream().get('activePlaylist').addItemByInformation(ui.item.value);
         }
     });
 
@@ -68,7 +68,7 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'playlistManager'],
             if (videoInformation == null) {
                 dialogs.showBannedVideoDialog();
             } else {
-                playlistManager.activePlaylist.addItemByInformation(videoInformation);
+                playlistManager.getStream().get('activePlaylist').addItemByInformation(videoInformation);
             }
         });
     }

@@ -13,7 +13,7 @@ define(['ytHelper',
             defaults: function() {
                 return {
                     id: null,
-                    collectionId: null,
+                    streamId: null,
                     title: 'New Playlist',
                     selected: false,
                     firstItemId: null,
@@ -47,34 +47,37 @@ define(['ytHelper',
                 var items = this.get('items');
 
                 //  Our playlistItem data was fetched from the server with the playlist. Need to convert the collection to Backbone Model entities.
+                //  TODO: Can I handle this inside of parse?
                 if (!(items instanceof Backbone.Collection)) {
+                    items = new PlaylistItems(items);
                     
-                    this.set('items', new PlaylistItems(items), {
+                    this.set('items', items, {
                         //  Silent operation because the playlist isn't technically changing - just being made correct.
                         silent: true
                     });
                 }
 
-                //  Now we for sure have a PlaylistItem collection.
-                var itemCollection = this.get('items');
-                
-                if (itemCollection.length > 0) {
+                console.log("initializing a playlist");
+                if (items.length > 0) {
+                    console.log("it has items");
                     //  Playlists store selected item client-side because it can change so often.
                     var localStorageKey = this.get('id') + '_selectedItemId';
                     var savedItemId = localStorage.getItem(localStorageKey);
+
+                    console.log("saved item ID:", savedItemId);
 
                     //  Select the most recently selected item during initalization.
                     this.selectItemById(savedItemId);
                 }
                 
-                this.on('change:title', function () {
+                this.on('change:title', function (model, title) {
                     $.ajax({
                         url: programState.getBaseUrl() + 'Playlist/UpdateTitle',
                         type: 'POST',
                         dataType: 'json',
                         data: {
-                            playlistId: this.get('id'),
-                            title: this.get('title')
+                            playlistId: model.get('id'),
+                            title: title
                         },
                         error: function (error) {
                             //  TODO: Rollback client-side transaction somehow?
@@ -83,15 +86,15 @@ define(['ytHelper',
                     });
                 });
                 
-                this.on('change:firstItemId', function () {
+                this.on('change:firstItemId', function (model, firstItemId) {
 
                     $.ajax({
                         url: programState.getBaseUrl() + 'Playlist/UpdateFirstItemId',
                         type: 'POST',
                         dataType: 'json',
                         data: {
-                            playlistId: this.get('id'),
-                            firstItemId: this.get('firstItemId')
+                            playlistId: model.get('id'),
+                            firstItemId: firstItemId
                         },
                         error: function (error) {
                             //  TODO: Rollback client-side transaction somehow?
@@ -114,9 +117,9 @@ define(['ytHelper',
 
                 return Backbone.Model.prototype.save.call(this, attributes, options);
             },
-
+            
+            //  Deselect the currently selected item, then select the new item by its id
             selectItemById: function (id) {
-                //  Deselect the currently selected item, then select the new item to have selected.
                 var selectedItem = this.getSelectedItem();
 
                 //  currentlySelected is not defined for a brand new playlist since we have no items yet selected.
@@ -126,12 +129,16 @@ define(['ytHelper',
 
                 var item = this.getItemById(id);
 
+                console.log("Item got by ID:", item);
+
                 if (item != null && item.get('selected') === false) {
+
                     item.set('selected', true);
+                    //  TODO: bind this to the change selected to true event of an item.
                     item.set('playedRecently', true);
 
                     var history = this.get('history');
-                    //  Unshift won't have an effect if item exists in history.
+                    //  Unshift won't have an effect if item exists in history, so remove silently.
                     history.remove(item, { silent: true });
                     history.unshift(item);
 
@@ -150,6 +157,9 @@ define(['ytHelper',
 
                 var randomIndex = Math.floor(Math.random() * relatedVideos.length);
                 var randomRelatedVideo = relatedVideos[randomIndex];
+
+                console.log("random related video duration:", randomRelatedVideo.get('duration'));
+
                 return randomRelatedVideo;
             },
             

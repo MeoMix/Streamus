@@ -62,10 +62,14 @@
                     return sameVideoId || similiarVideoName;
                 });
                 
-                //  Don't include 'playlist' songs -- assuming things >10m are playlists.
-                var isJustOneSong = relatedVideo.get('duration') < 36000;
+                //  Don't include 'playlist' songs -- assuming things >8m are playlists.
+                var isJustOneSong = relatedVideo.get('duration') < 480;
+                console.log("RelatedVideo duration:", relatedVideo.get('duration'));
 
-                return alreadyExistingItem == null && isJustOneSong;
+                
+                var isNotLive = relatedVideo.get('title').toLowerCase().indexOf('live') === -1;
+
+                return alreadyExistingItem == null && isJustOneSong && isNotLive;
             });
 
             return relatedVideos;
@@ -76,6 +80,7 @@
     return function(config) {
         var playlistItems = new PlaylistItems(config);
 
+        //  TODO: Can I move this to an initialize?
         playlistItems.each(function(item) {
             //  Fetch all the related videos for videos on load. I don't want to save these to the DB because they're bulky and constantly change.
             //  Data won't appear immediately as it is an async request, I just want to get the process started now.

@@ -1,7 +1,7 @@
 ﻿define(['youTubePlayerAPI', 'playlistManager', 'player'], function (youTubePlayerAPI, playlistManager, player) {
     'use strict';
 
-    //var selectedItem = playlistManager.activePlaylist.getSelectedItem();
+    //var selectedItem = playlistManager.getStream().get('activePlaylist').getSelectedItem();
     //var videoId = 'undefined';
     
     //if (selectedItem !== null) {
@@ -30,7 +30,7 @@
     //                videoDisplay.mute();
     //                videoDisplay.seekTo(player.get('currnetTime'), true);
                     
-    //                if (player.get('state') === PlayerStates.PLAYING) {
+    //                if (player.isPlaying()) {
     //                    videoDisplay.play();
     //                }
 

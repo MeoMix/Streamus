@@ -21,26 +21,28 @@ define(['playlistManager'], function (playlistManager) {
     }).mouseout(function () {
         $(this).stop(true).animate({ marginLeft: 0 });
     });
-    
-    playlistManager.onActivePlaylistTitleChange(function(event, activePlaylist) {
+
+    var stream = playlistManager.getStream();
+
+    stream.get('activePlaylist').on('change:title', function(event, activePlaylist) {
         headerTitle.text(activePlaylist.getSelectedItem().get('title'));
     });
 
-    playlistManager.onActivePlaylistSelectedItemChanged(function(event, item) {
+    stream.get('activePlaylist').get('items').on('change:selected', function(event, item) {
         setTitle(item);
     });
 
-    playlistManager.onActivePlaylistEmptied(function() {
+    stream.get('activePlaylist').on('empty:items', function() {
         headerTitle.text(defaultTitle);
     });
 
-    playlistManager.onActivePlaylistChange(function(event, playlist) {
+    stream.on('change:activePlaylist', function(event, playlist) {
         setTitle(playlist.getSelectedItem());
     });
 
     //  Initialize the title because might be re-opening with a playlistItem already loaded.
 
-    var selectedItem = playlistManager.activePlaylist.getSelectedItem();
+    var selectedItem = stream.get('activePlaylist').getSelectedItem();
     setTitle(selectedItem);
     
     function setTitle(item) {

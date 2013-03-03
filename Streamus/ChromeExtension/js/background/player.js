@@ -1,6 +1,6 @@
 //  TODO: Exposed globally so that Chrome Extension's foreground can access through chrome.extension.getBackgroundPage()
 var YouTubePlayer = null;
-define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
+define(['youTubePlayerAPI', 'ytHelper'], function (youTubePlayerAPI, ytHelper) {
     'use strict';
 
     var YouTubePlayerModel = Backbone.Model.extend({
@@ -8,9 +8,7 @@ define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
             buffering: false,
             //  Returns the elapsed time of the currently loaded video. Returns 0 if no video is playing
             currentTime: 0,
-            lastStateWasVidCued: false,
             ready: false,
-            seeking: false,
             state: PlayerStates.UNSTARTED,
             //  Starts at 0, but is set when a video is set to VIDCUED.
             volume: 0,
@@ -29,21 +27,18 @@ define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
                 self.set('youTubePlayer', new window.YT.Player('MusicHolder', {
                     events: {
                         'onReady': function () {
-                            self.set('ready', true);
-                            //  TODO: Is this necessary?
-                            self.get('youTubePlayer').unMute();
-
-                            //  Start monitoring YouTube for current time changes.
+                            console.log("ready");
+                            //  Start monitoring YouTube for current time changes, foreground will pick up on currentTime changes.
                             setInterval(function () {
                                 var currentTime = self.get('youTubePlayer').getCurrentTime();
-                                        
+
                                 if (!isNaN(currentTime)) {
                                     self.set('currentTime', Math.ceil(currentTime));
                                 }
                             }, 500);
 
                             //  Update the volume whenever the UI modifies the volume property.
-                            self.on('change:volume', function(volume) {
+                            self.on('change:volume', function (model, volume) {
                                 var youTubePlayer = self.get('youTubePlayer');
                                 
                                 if (volume) {
@@ -52,32 +47,30 @@ define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
                                     youTubePlayer.muted();
                                 }
                             });
+
+                            self.on('change:state', function (model, state) {
+                                console.log("change state detected:", state);
+                                if (state === PlayerStates.PLAYING) {
+                                    self.set('buffering', false);
+                                }
+                            });
+                            
+                            //  Keep the player out of UNSTARTED state because seekTo will start playing if in UNSTARTED and not PAUSED
+                            self.pause();
+                            
+                            //  Announce that the YouTube Player is ready to go.
+                            self.set('ready', true);
                         },
                         'onStateChange': function (playerState) {
-                            console.log("onStateChange received:", playerState.data);
-                            //  The vidcued event is no good for us because player sends a pause event when transitioning
-                            //  from vidcued to play. Consume this pause event.
-                                
-                            //  If the last state was vidcued AND the current state is paused -- don't go.
-                            if (!(self.get('lastStateWasVidCued') && playerState.data === PlayerStates.PAUSED)) {
-                                console.log("setting state to:", playerState.data);
-                                self.set('state', playerState.data);
-                            }
-                                
-                            switch (playerState.data) {
-                                case PlayerStates.PLAYING:
-                                    self.set('buffering', false);
-                                    break;
-                                case PlayerStates.VIDCUED:
-                                    //  Returns undefined until youTubePlayer is in VIDCUED state.
-                                    var volume = self.get('youTubePlayer').getVolume();
-                                    self.set('volume', volume);
-                                    self.set('lastStateWasVidCued', true);
-                                    break;
-                                default:
-                                    break;
+                            if (playerState.data === PlayerStates.BUFFERING) {
+                                self.set('buffering', true);
                             }
 
+                            //  The vidcued -> paused transition needs to be partially consumed to be visually pleasing.
+                            //  If the last state was vidcued AND the current state is paused -- skip.
+                            if (!(self.get('state') === PlayerStates.VIDCUED && playerState.data === PlayerStates.PAUSED)) {
+                                self.set('state', playerState.data);
+                            }
                         },
                         'onError': function (error) {
                             window && console.error("An error was encountered.", error);
@@ -98,6 +91,8 @@ define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
         },
             
         cueVideoById: function (videoId) {
+            this.pause();
+
             this.get('youTubePlayer').cueVideoById({
                 videoId: videoId,
                 startSeconds: 0,
@@ -114,42 +109,44 @@ define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
                 suggestedQuality: 'default'
             });
         },
+        
+        isPlaying: function () {
+            return this.get('state') === PlayerStates.PLAYING;
+        },
 
         pause: function () {
+            this.set('buffering', false);
             this.get('youTubePlayer').pauseVideo();
         },
             
         play: function () {
-            this.set('buffering', true);
-            this.get('youTubePlayer').playVideo();
-        },
-
-        //  Called when the user clicks mousedown on the progress bar dragger.
-        seekStart: function () {
-            this.set('seeking', true);
-            //  Need to record this to decide if should be playing after seek ends. You'd think that seek would handle this, but
-            //  it does it incorrectly when a video hasn't been started. It will start to play a video if you seek in an unplayed video.
-            this.wasPlayingBeforeSeek = this.playerState === PlayerStates.PLAYING;
-            this.pause();
+            if (!this.isPlaying()) {
+                
+                this.set('buffering', true);
+                this.get('youTubePlayer').playVideo();
+            }
         },
 
         seekTo: function (timeInSeconds) {
-            //  Once the user has seeked to the new value let our update function run again.
-            //  Wrapped in a set timeout because there is some delay before the seekTo finishes executing and I want to prevent flickering.
-            var self = this;
-            //  TODO: Check this... Its probably just bad coding.
-            setTimeout(function () {
-                self.set('seeking', false);
-            }, 1500);
 
-            //  The true paramater allows the youTubePlayer to seek ahead past its buffered video.
-            this.get('youTubePlayer').seekTo(timeInSeconds, true);
-
-            if (this.get('playingBeforeSeek')) {
-                this.play();
+            var youTubePlayer = this.get('youTubePlayer');
+            //  YouTube documentation states that SeekTo will start playing when transitioning from the UNSTARTED state.
+            //  This is counter-intuitive because UNSTARTED and PAUSED are the same to a user, but result in different effects.
+            //  As such, I re-cue the video with a different start time if the user seeks.
+            if (this.get('state') === PlayerStates.UNSTARTED) {
+                var videoId = ytHelper.parseVideoIdFromUrl(youTubePlayer.getVideoUrl());
+ 
+                youTubePlayer.cueVideoById({
+                    videoId: videoId,
+                    startSeconds: timeInSeconds,
+                    suggestedQuality: 'default'
+                });
+                
             } else {
-                this.pause();
+                //  The true paramater allows the youTubePlayer to seek ahead past its buffered video.
+                youTubePlayer.seekTo(timeInSeconds, true);
             }
+            
         }
     });
 

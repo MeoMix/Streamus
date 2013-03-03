@@ -8,15 +8,15 @@ define(['playlistManager'], function(playlistManager){
         }).appendTo(contentHeader);
 
         function processTitle(playlistTitle){
-            if(playlistTitle !== ''){
-                playlistManager.activePlaylist.set('title', playlistTitle);
+            if (playlistTitle !== '') {
+                playlistManager.getStream().get('activePlaylist').set('title', playlistTitle);
             }
         }
 
         var headerInput = $('<input/>', {
             'class': 'headerInput',
             type: 'text',
-            value: playlistManager.activePlaylist.get('title'),
+            value: playlistManager.getStream().get('activePlaylist').get('title'),
             originalValue: '',
             mouseover: function(){
                 this.originalValue = $(this).val();
@@ -43,11 +43,12 @@ define(['playlistManager'], function(playlistManager){
         
         headerInput.appendTo(headerTitle);
         
-        playlistManager.onActivePlaylistTitleChange(function (event, title) {
+        var stream = playlistManager.getStream();
+        stream.get('activePlaylist').on('change:title', function (event, title) {
             headerInput.val(title);
         });
 
-        playlistManager.onActivePlaylistChange(function (event, playlist) {
+        stream.on('change:activePlaylist', function(event, playlist) {
             headerInput.val(playlist.get('title'));
         });
 

@@ -11,11 +11,12 @@
                 playlistManager.skipItem("previous");
                 break;
             case 'toggleVideo':
-                if (player.get('state') === PlayerStates.PLAYING) {
-                    player.play();
-                } else {
+                if (player.isPlaying()) {
                     player.pause();
+                } else {
+                    player.play();
                 }
+
                 break;
 
         }
@@ -37,7 +38,7 @@
     chrome.extension.onRequest.addListener(function (request, sender, sendResponse) {
         switch (request.method) {
             case 'getPlaylists':
-                sendResponse({ playlists: playlistManager.playlists });
+                sendResponse({ playlists: playlistManager.getStream().get('playlists') });
                 break;
             case 'addVideoByIdToPlaylist':
                 playlistManager.addVideoByIdToPlaylist(request.id, request.playlistId);
