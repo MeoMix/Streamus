@@ -24,25 +24,34 @@ define(['playlistManager'], function (playlistManager) {
 
     var stream = playlistManager.getStream();
 
-    stream.get('activePlaylist').on('change:title', function(event, activePlaylist) {
-        headerTitle.text(activePlaylist.getSelectedItem().get('title'));
+    stream.getSelectedPlaylist().on('change:title', function (playlist, title) {
+        headerTitle.text(title);
     });
 
-    stream.get('activePlaylist').get('items').on('change:selected', function(event, item) {
-        setTitle(item);
+    stream.getSelectedPlaylist().get('items').on('change:selected', function (item, isSelected) {
+        
+        if (isSelected) {
+            setTitle(item);
+        }
     });
 
-    stream.get('activePlaylist').on('empty:items', function() {
-        headerTitle.text(defaultTitle);
+    stream.getSelectedPlaylist().get('items').on('remove', function (model, collection) {
+        if (collection.length === 0) {
+            headerTitle.text(defaultTitle);
+        }
     });
+    
+    stream.getSelectedPlaylist().on('change:selected', function (playlist, isSelected) {
 
-    stream.on('change:activePlaylist', function(event, playlist) {
-        setTitle(playlist.getSelectedItem());
+        if (isSelected) {
+            setTitle(playlist.getSelectedItem());
+        }
+
     });
 
     //  Initialize the title because might be re-opening with a playlistItem already loaded.
 
-    var selectedItem = stream.get('activePlaylist').getSelectedItem();
+    var selectedItem = stream.getSelectedPlaylist().getSelectedItem();
     setTitle(selectedItem);
     
     function setTitle(item) {

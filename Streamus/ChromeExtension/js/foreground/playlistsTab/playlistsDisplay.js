@@ -5,9 +5,12 @@ define(['playlistsContextMenu', 'ytHelper', 'playlistManager', 'player'], functi
     //  TODO: Need to be a lot more fine-grained then just spamming reload. Will come back around to it.
     // TODO: This will need to be reworked to support >1 streams.
     var stream = playlistManager.getStream();
-    stream.on('remove:playlists', reload);
-    stream.on('add:playlists', reload);
-    stream.on('change:activePlaylist', reload);
+
+    stream.get('playlists').on('remove', reload);
+    stream.get('playlists').on('add', reload);
+    stream.get('playlists').on('change:selected', reload);
+    stream.get('playlists').on('change:title', reload);
+    //TODO: on stream change.
 
     reload();
 
@@ -59,7 +62,7 @@ define(['playlistsContextMenu', 'ytHelper', 'playlistManager', 'player'], functi
             var clickedId = $(this).children()[0].id;
             selectRow(clickedId);
             
-            playlistManager.selectPlaylist(clickedId);
+            playlistManager.getStream().selectPlaylist(clickedId);
             return false;
         });
     }

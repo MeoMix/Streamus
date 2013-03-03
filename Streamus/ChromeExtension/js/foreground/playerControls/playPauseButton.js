@@ -15,7 +15,7 @@ define(['playlistManager', 'player'], function (playlistManager, player) {
                 pauseIcon.hide();
                 playIcon.show();
             } else {
-                console.log("sending play event");
+
                 playIcon.hide();
                 pauseIcon.hide();
                 player.play();
@@ -38,11 +38,32 @@ define(['playlistManager', 'player'], function (playlistManager, player) {
 	makeIconReflectPlayerState();
 
 	var stream = playlistManager.getStream();
+    var selectedPlaylist = stream.getSelectedPlaylist();
 
-	stream.get('activePlaylist').on('empty:items', disableButton);
-    stream.get('activePlaylist').on('add:items', enableButton);
+    selectedPlaylist.get('items').on('remove', function (model, collection) {
+	    if (collection.length === 0) {
+	        disableButton();
+	    }
+	});
 
-    var itemCount = stream.get('activePlaylist').get('items').length;
+    selectedPlaylist.get('items').on('add', enableButton);
+
+    stream.get('playlists').on('change:selected', function (playlist, isSelected) {
+        if (isSelected) {
+            playlist.get('items').on('remove', function(model, collection) {
+                if (collection.length === 0) {
+                    disableButton();
+                }
+            });
+            
+            playlist.get('items').on('add', enableButton);
+        } else {
+            playlist.get('items').off('remove add');
+        }
+
+    });
+
+    var itemCount = selectedPlaylist.get('items').length;
 
     if (itemCount > 0) {
         enableButton();

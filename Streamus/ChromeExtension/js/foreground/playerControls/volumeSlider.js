@@ -18,7 +18,6 @@ define(['player'], function (player) {
 
 	//  Whenever the volume slider is interacted with by the user, change the volume to reflect.
 	var volumeSlider = $('#VolumeSlider').change(function () {
-	    console.log("updating with volume:", this.value);
 		updateWithVolume(this.value); 
 	});
 
@@ -90,7 +89,6 @@ define(['player'], function (player) {
 		}
 
 		updateSoundIcon(volume);
-	    console.log("setting volume", volume);
 		player.set('volume', volume);
 	};
 	

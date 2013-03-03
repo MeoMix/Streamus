@@ -64,9 +64,7 @@
                 
                 //  Don't include 'playlist' songs -- assuming things >8m are playlists.
                 var isJustOneSong = relatedVideo.get('duration') < 480;
-                console.log("RelatedVideo duration:", relatedVideo.get('duration'));
 
-                
                 var isNotLive = relatedVideo.get('title').toLowerCase().indexOf('live') === -1;
 
                 return alreadyExistingItem == null && isJustOneSong && isNotLive;

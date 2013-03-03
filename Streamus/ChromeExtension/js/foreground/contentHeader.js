@@ -9,14 +9,14 @@ define(['playlistManager'], function(playlistManager){
 
         function processTitle(playlistTitle){
             if (playlistTitle !== '') {
-                playlistManager.getStream().get('activePlaylist').set('title', playlistTitle);
+                playlistManager.getStream().getSelectedPlaylist().set('title', playlistTitle);
             }
         }
 
         var headerInput = $('<input/>', {
             'class': 'headerInput',
             type: 'text',
-            value: playlistManager.getStream().get('activePlaylist').get('title'),
+            value: playlistManager.getStream().getSelectedPlaylist().get('title'),
             originalValue: '',
             mouseover: function(){
                 this.originalValue = $(this).val();
@@ -44,12 +44,23 @@ define(['playlistManager'], function(playlistManager){
         headerInput.appendTo(headerTitle);
         
         var stream = playlistManager.getStream();
-        stream.get('activePlaylist').on('change:title', function (event, title) {
+        stream.getSelectedPlaylist().on('change:title', function (event, title) {
             headerInput.val(title);
         });
+        
+        stream.get('playlists').on('change:selected', function (playlist, isSelected) {
+            
+            if (isSelected) {
+                headerInput.val(playlist.get('title'));
 
-        stream.on('change:activePlaylist', function(event, playlist) {
-            headerInput.val(playlist.get('title'));
+                playlist.on('change:title', function(event, title) {
+                    headerInput.val(title);
+                });
+
+            } else {
+                playlist.off('change:title');
+            }
+
         });
 
         var addButton = $('<div/>', {

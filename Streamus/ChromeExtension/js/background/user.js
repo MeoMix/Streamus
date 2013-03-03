@@ -8,7 +8,7 @@ define(['streams', 'programState'], function (Streams, programState) {
     //  User data will be loaded either from cache or server.
     var User = Backbone.Model.extend({
         defaults: {
-            id: '49713F20-2ED0-4E01-A06A-CAA9A3A02408', //localStorage.getItem(userIdKey),
+            id: '49713f20-2ed0-4e01-a06a-caa9a3a02408', //localStorage.getItem(userIdKey),
             name: '',
             streams: new Streams()
         },
@@ -17,6 +17,8 @@ define(['streams', 'programState'], function (Streams, programState) {
         
         //  TODO: I am doing too much work in this initialize constructor. 
         initialize: function () {
+            window && console.log("user is initializing");
+
             //  If user's ID wasn't found in local storage, check sync because its a pc-shareable location, but doesn't work synchronously.
             if (this.isNew()) {
                 var self = this;
@@ -66,7 +68,7 @@ define(['streams', 'programState'], function (Streams, programState) {
         this.fetch({
             success: function (model) {
                 //  Have to manually convert the JSON array into a Backbone.Collection
-
+                console.log("converting Streams to a backbone.collection");
                 var streams = new Streams(model.get('streams'));
 
                 self.set('streams', streams, {

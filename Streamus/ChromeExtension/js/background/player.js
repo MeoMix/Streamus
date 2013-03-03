@@ -27,7 +27,7 @@ define(['youTubePlayerAPI', 'ytHelper'], function (youTubePlayerAPI, ytHelper) {
                 self.set('youTubePlayer', new window.YT.Player('MusicHolder', {
                     events: {
                         'onReady': function () {
-                            console.log("ready");
+
                             //  Start monitoring YouTube for current time changes, foreground will pick up on currentTime changes.
                             setInterval(function () {
                                 var currentTime = self.get('youTubePlayer').getCurrentTime();
@@ -49,7 +49,7 @@ define(['youTubePlayerAPI', 'ytHelper'], function (youTubePlayerAPI, ytHelper) {
                             });
 
                             self.on('change:state', function (model, state) {
-                                console.log("change state detected:", state);
+
                                 if (state === PlayerStates.PLAYING) {
                                     self.set('buffering', false);
                                 }

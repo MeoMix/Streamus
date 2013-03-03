@@ -27,14 +27,14 @@
 
                 ytHelper.getPlaylistTitle(youtubePlaylistId, function (playlistTitle) {
                     if (playlistTitle) {
-                        playlistManager.addPlaylist(playlistTitle, youtubePlaylistId);
+                        playlistManager.getStream().addPlaylist(playlistTitle, youtubePlaylistId);
                     }
                 });
             }
             else {
                 //  Only add the playlist if a name was provided.
                 if (userInput.trim() !== '') {
-                    playlistManager.addPlaylist(userInput);
+                    playlistManager.getStream().addPlaylist(userInput);
                     contentHeader.flashMessage('Thanks!', 2000);
                 }
             }

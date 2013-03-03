@@ -7,19 +7,41 @@ define(['playlistManager'], function(playlistManager){
     previousButton.click(_.debounce(function () {
         
         if (!$(this).hasClass('disabled')) {
-            playlistManager.skipItem('previous');
+            playlistManager.getStream().getSelectedPlaylist().skipItem('previous');
         }
         
     }, 100, true));
     
     var stream = playlistManager.getStream();
-    stream.on('empty:activePlaylist', disableButton);
-    stream.get('activePlaylist').on('add:items', enableButton);
-    stream.on('change:activePlaylist', function (event, playlist) {
-        enableIfItemsInPlaylist(playlist);
+    var selectedPlaylist = stream.getSelectedPlaylist();
+    selectedPlaylist.get('items').on('remove', function (model, collection) {
+        if (collection.length === 0) {
+            disableButton();
+        }
+    });
+    
+    selectedPlaylist.get('items').on('add', enableButton);
+    
+    stream.get('playlists').on('change:selected', function (playlist, isSelected) {
+
+        if (isSelected) {
+            enableIfItemsInPlaylist(playlist);
+
+            playlist.get('items').on('remove', function(model, collection) {
+                if (collection.length === 0) {
+                    disableButton();
+                }
+            });
+
+            playlist.get('items').on('add', enableButton);
+
+        } else {
+            playlist.get('items').off('remove add');
+        }
+
     });
 
-    enableIfItemsInPlaylist(stream.get('activePlaylist'));
+    enableIfItemsInPlaylist(selectedPlaylist);
     
     function enableIfItemsInPlaylist(playlist) {
         var itemCount = playlist.get('items').length;

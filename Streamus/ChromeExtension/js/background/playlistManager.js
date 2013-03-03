@@ -16,14 +16,7 @@ define(['playlist',
             //  PlaylistManager will remember the selected playlist via localStorage.
             var savedId = localStorage.getItem('selectedPlaylistId');
             var stream = loginManager.get('user').get('streams').at(0);
-            
-            if (player.get('ready')) {
-                stream.selectPlaylist(savedId);
-            } else {
-                player.once('change:ready', function() {
-                    stream.selectPlaylist(savedId);
-                });
-            } 
+            stream.selectPlaylist(savedId);
         });
         
         player.on('change:state', function (model, playerState) {
@@ -34,19 +27,17 @@ define(['playlist',
                 //  The player can be playing in the background and UI changes may try and be posted to the UI, need to prevent.
                 var isRadioModeEnabled = JSON.parse(localStorage.getItem('isRadioModeEnabled')) || false;
 
+                var selectedPlaylist = loginManager.get('user').get('streams').at(0).getSelectedPlaylist();
                 var nextItem;
                 if (isRadioModeEnabled) {
-                    var nextVideo = activePlaylist.getRelatedVideo();
-                    nextItem = activePlaylist.addItem(nextVideo);
+                    var nextVideo = selectedPlaylist.getRelatedVideo();
+                    nextItem = selectedPlaylist.addItem(nextVideo);
 
                 } else {
-                    nextItem = activePlaylist.gotoNextItem();
+                    nextItem = selectedPlaylist.gotoNextItem();
                 }
-                
-                console.log("going to next item:", nextItem);
-                var selectedItem = activePlaylist.selectItemById(nextItem.get('id'));
 
-                console.log("selectedItem:", selectedItem);
+                var selectedItem = selectedPlaylist.selectItemById(nextItem.get('id'));
                 player.loadVideoById(selectedItem.get('video').get('id'));
             }
 
@@ -56,50 +47,6 @@ define(['playlist',
             //  TODO: How can I remove this dependency?
             getStream: function () {
                 return loginManager.get('user').get('streams').at(0);
-            },
-            
-            addVideoByIdToPlaylist: function (id, playlistId) {
-                var user = loginManager.get('user');
-                var stream = user.get('streams').at(0);
-
-                stream.addVideoByIdToPlaylist(id, playlistId);
-            },
-                        
-            //  Skips to the next playlistItem. Will start playing the video if the player was already playing.
-            //  if where == "next" it'll skip to the next item otherwise it will skip to the previous.
-            skipItem: function (where) {
-                var user = loginManager.get('user');
-                var stream = user.get('streams').at(0);
-
-                stream.skipItem(where);
-            },
-            
-            removeItem: function (item) {
-                var user = loginManager.get('user');
-                var stream = user.get('streams').at(0);
-
-                stream.removeItem(item);
-            },
-            
-            selectPlaylist: function (playlistId) {
-                var user = loginManager.get('user');
-                var stream = user.get('streams').at(0);
-
-                stream.selectPlaylist(playlistId);
-            },
-            
-            addPlaylist: function (playlistTitle, optionalPlaylistId, callback) {
-                var user = loginManager.get('user');
-                var stream = user.get('streams').at(0);
-
-                stream.addPlaylist(playlistTitle, optionalPlaylistId, callback);
-            },
-            
-            removePlaylistById: function (playlistId) {
-                var user = loginManager.get('user');
-                var stream = user.get('streams').at(0);
-
-                stream.removePlaylistById(playlistId);
             }
         };
 

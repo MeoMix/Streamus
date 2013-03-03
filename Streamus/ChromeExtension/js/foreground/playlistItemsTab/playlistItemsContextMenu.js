@@ -15,7 +15,7 @@ define(['contextMenu', 'playlistManager'], function (contextMenu, playlistManage
 
             this.addContextMenuItem('Delete', function() {
                 if (item != null) {
-                    playlistManager.removeItem(item);
+                    playlistManager.getStream().getSelectedPlaylist().removeItem(item);
                 }
             });
         }

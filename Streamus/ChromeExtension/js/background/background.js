@@ -1,25 +1,58 @@
-﻿define(['playlistManager', 'player'], function (playlistManager, player) {
+﻿define(['player', 'loginManager'], function (player, loginManager) {
     'use strict';
-    
-    //  Receive keyboard shortcuts from users.
-    chrome.commands.onCommand.addListener(function (command) {
-        switch (command) {
-            case 'nextVideo':
-                playlistManager.skipItem("next");
-                break;
-            case 'previousVideo':
-                playlistManager.skipItem("previous");
-                break;
-            case 'toggleVideo':
-                if (player.isPlaying()) {
-                    player.pause();
-                } else {
-                    player.play();
+
+    //  The YouTube Player API must be ready before loading playlistManager because user loads with streams which, when initialized
+    //  will try and affect the player.
+    player.once('change:ready', function () {
+
+        loginManager.login();
+
+        require(['playlistManager'], function (playlistManager) {
+
+            //  Receive keyboard shortcuts from users.
+            chrome.commands.onCommand.addListener(function (command) {
+                switch (command) {
+                    case 'nextVideo':
+                        playlistManager.getStream().getSelectedPlaylist().skipItem("next");
+                        break;
+                    case 'previousVideo':
+                        playlistManager.getStream().getSelectedPlaylist().skipItem("previous");
+                        break;
+                    case 'toggleVideo':
+                        if (player.isPlaying()) {
+                            player.pause();
+                        } else {
+                            player.play();
+                        }
+
+                        break;
+
                 }
+            });
+            
+            chrome.extension.onRequest.addListener(function (request, sender, sendResponse) {
+                switch (request.method) {
+                    case 'getPlaylists':
+                        sendResponse({ playlists: playlistManager.getStream().get('playlists') });
+                        break;
+                    case 'addVideoByIdToPlaylist':
+                        playlistManager.getStream().addVideoByIdToPlaylist(request.id, request.playlistId);
+                        break;
+                    default:
+                        window && console.error("Unhandled request method:", request.method);
+                        break;
+                }
+            });
 
-                break;
-
-        }
+            loginManager.onLoggedIn(function() {
+                //  TODO: How do I break this ugly chain?
+                playlistManager.getStream().getSelectedPlaylist().get('items').on('remove', function (model, collection) {
+                    if (collection.length === 0) {
+                        player.pause();
+                    }
+                });
+            });
+        });
     });
 
     //  http://stackoverflow.com/questions/5235719/how-to-copy-text-to-clipboard-from-a-google-chrome-extension
@@ -33,20 +66,6 @@
         document.execCommand("copy", false, null);
         //  Cleanup
         sendResponse({});
-    });
-
-    chrome.extension.onRequest.addListener(function (request, sender, sendResponse) {
-        switch (request.method) {
-            case 'getPlaylists':
-                sendResponse({ playlists: playlistManager.getStream().get('playlists') });
-                break;
-            case 'addVideoByIdToPlaylist':
-                playlistManager.addVideoByIdToPlaylist(request.id, request.playlistId);
-                break;
-            default:
-                window && console.error("Unhandled request method:", request.method);
-                break;
-        }
     });
     
     chrome.webRequest.onBeforeSendHeaders.addListener(function (info) {

@@ -5,7 +5,6 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState'], function (
     var Stream = Backbone.Model.extend({
         defaults: function () {
             return {
-                activePlaylist: null,
                 id: null,
                 userId: null,
                 title: '',
@@ -15,11 +14,11 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState'], function (
         },
         urlRoot: programState.getBaseUrl() + 'Video/',
         initialize: function () {
+            window && console.log("Stream is initializing");
             var playlists = this.get('playlists');
 
             //  Data was fetched from the server. Need to convert to Backbone.
             if (!(playlists instanceof Backbone.Collection)) {
-                console.log("converting this to the correct", playlists);
                 playlists = new Playlists(playlists);
 
                 this.set('playlists', playlists, {
@@ -31,14 +30,12 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState'], function (
             var self = this;
             playlists.on('change:selected', function (playlist, isSelected) {
                 if (isSelected) {
-                    self.set('activePlaylist', playlist);
-                    
                     //  TODO: Can this be abstracted down to the playlist level?
                     playlist.get('items').on('change:selected', function (item, selected) {
-                        console.log("activePlaylist change selected firing");
+
                         if (selected) {
                             var videoId = item.get('video').get('id');
-                            console.log("loading/cueuing videoId", videoId);
+
                             //  Maintain the playing state by loading if playing. 
                             if (player.isPlaying()) {
                                 player.loadVideoById(videoId);
@@ -48,16 +45,15 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState'], function (
                         }
                     });
 
-                    playlist.get('items').on('remove', function (item) {
+                    playlist.get('items').on('remove', function (item, collection) {
 
-                        if (self.get('activePlaylist').get('items').length == 0) {
+                        if (collection.length == 0) {
                             player.pause();
                         }
                     });
                 } else {
-                    if (self.get('activePlaylist') == playlist) {
+                    if (self.getSelectedPlaylist() === playlist) {
                         playlist.get('items').off('change:selected add remove');
-                        self.set('activePlaylist', null);
                     }
                 }
                 
@@ -71,24 +67,22 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState'], function (
                 if (savedListId === null) {
                     savedListId = this.get('firstListId');
                 }
-
-                console.log("saved list ID:", savedListId);
+                
                 //  Select the most recently selected item during initalization.
                 this.selectPlaylist(savedListId);
             }
 
-            var activePlaylist = this.get('activePlaylist');
-            if (activePlaylist.get('items').length > 0) {
-                console.log("Cueing an item up");
-                var selectedItem = activePlaylist.getSelectedItem();
-                console.log("selected item currently:", selectedItem);
+            var selectedPlaylist = this.getSelectedPlaylist();
+            if (selectedPlaylist.get('items').length > 0) {
+                console.log("setting playlist selectedItem in stream?");
+                var selectedItem = selectedPlaylist.getSelectedItem();
 
                 if (selectedItem == null) {
-                    selectedItem = activePlaylist.get('items').at(0);
-                    activePlaylist.selectItemById(selectedItem.get('id'));
+                    selectedItem = selectedPlaylist.get('items').at(0);
+                    selectedPlaylist.selectItemById(selectedItem.get('id'));
                     window && console.error("Failed to find a selected item in a playlist with items, gracefully recovering.");
                 } else {
-                    console.log("cueing");
+
                     player.cueVideoById(selectedItem.get('video').get('id'));
                 }
             }
@@ -97,50 +91,7 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState'], function (
         addVideoByIdToPlaylist: function (id, playlistId) {
             this.get('playlists').get(playlistId).addVideoByIdToPlaylist(id);
         },
-        
-        skipItem: function(where) {
-            var activePlaylist = this.get('activePlaylist');
 
-            var nextItem;
-
-            if (where == "next") {
-                var isRadioModeEnabled = JSON.parse(localStorage.getItem('isRadioModeEnabled') || false);
-                
-                if (isRadioModeEnabled) {
-                    var relatedVideo = activePlaylist.getRelatedVideo();
-                    nextItem = activePlaylist.addItem(relatedVideo);
-                } else {
-
-                    nextItem = activePlaylist.gotoNextItem();
-                }
-            } else {
-                nextItem = activePlaylist.gotoPreviousItem();
-            }
-
-            activePlaylist.selectItemById(nextItem.get('id'));
-        },
-        
-        //  TODO: move this to playlist instead of stream.
-        removeItem: function (item) {
-            var activePlaylist = this.get('activePlaylist');
-
-            var selectedItem = activePlaylist.getSelectedItem();
-
-            if (selectedItem && selectedItem === item) {
-                var nextItem = activePlaylist.gotoNextItem();
-
-                //  nextItem will equal item sometimes because gotoNextItem loops around to front of list.
-                if (nextItem != null && nextItem !== item) {
-                    activePlaylist.selectItemById(nextItem.get('id'));
-                } else {
-                    //  TODO: decouple player from stream.
-                    player.pause();
-                }
-            }
-
-            activePlaylist.removeItem(item);
-        },
-        
         addPlaylist: function (playlistTitle, optionalPlaylistId, callback) {
             var playlist = new Playlist({
                 title: playlistTitle,
@@ -300,30 +251,26 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState'], function (
         },
         
         selectPlaylist: function(playlistId) {
-            var activePlaylist = this.get('activePlaylist');
+            var selectedPlaylist = this.getSelectedPlaylist();
             
-            if (activePlaylist == null || activePlaylist.get('id') !== playlistId) {
-                //  TODO: Fire event here instead of coupling to player object.
-                player.pause();
+            if (selectedPlaylist == null || selectedPlaylist.get('id') !== playlistId) {
 
                 var playlist = this.get('playlists').get(playlistId);
 
-                if (activePlaylist != null && activePlaylist.get('id') !== playlist.get('id')) {
-                    activePlaylist.set({ selected: false });
+                if (selectedPlaylist != null && selectedPlaylist.get('id') !== playlist.get('id')) {
+                    selectedPlaylist.set({ selected: false });
                 }
 
                 //First time loading up there won't be a playlist selected yet, so just go ahead and set.
                 playlist.set({ selected: true });
                 localStorage.setItem('selectedPlaylistId', playlist.get('id'));
-
-                //  TODO: Need to implement the ability to select without playing.
-                //  If the newly loaded playlist has a video to play cue it to replace the currently loaded video.
-                var firstItem = playlist.get('items').at(0);
-                if (firstItem != null) {
-                    playlist.selectItemById(firstItem.get('id'));
-                    player.cueVideoById(firstItem.get('video').get('id'));
-                }
             }
+        },
+        
+        getSelectedPlaylist: function() {
+            return this.get('playlists').find(function(playlist) {
+                return playlist.get('selected');
+            });
         }
     });
     

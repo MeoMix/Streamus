@@ -15,14 +15,23 @@ define(['user'], function(User) {
                 event();
             }
         },
-        initialize: function() {
+        
+        login: function() {
             var user = new User();
             var self = this;
 
             user.on('loaded', function () {
                 self.set('user', this);
             });
-        }
+        },
+        //initialize: function() {
+        //    var user = new User();
+        //    var self = this;
+
+        //    user.on('loaded', function () {
+        //        self.set('user', this);
+        //    });
+        //}
     });
 
     LoginManager = new loginManagerModel();

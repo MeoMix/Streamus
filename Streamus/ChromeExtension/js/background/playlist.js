@@ -44,6 +44,8 @@ define(['ytHelper',
                 return data;
             },
             initialize: function () {
+                window && console.log("Playlist is initializing");
+
                 var items = this.get('items');
 
                 //  Our playlistItem data was fetched from the server with the playlist. Need to convert the collection to Backbone Model entities.
@@ -57,14 +59,11 @@ define(['ytHelper',
                     });
                 }
 
-                console.log("initializing a playlist");
                 if (items.length > 0) {
-                    console.log("it has items");
                     //  Playlists store selected item client-side because it can change so often.
                     var localStorageKey = this.get('id') + '_selectedItemId';
                     var savedItemId = localStorage.getItem(localStorageKey);
-
-                    console.log("saved item ID:", savedItemId);
+                    console.log("SavedItemID is:", savedItemId);
 
                     //  Select the most recently selected item during initalization.
                     this.selectItemById(savedItemId);
@@ -129,8 +128,6 @@ define(['ytHelper',
 
                 var item = this.getItemById(id);
 
-                console.log("Item got by ID:", item);
-
                 if (item != null && item.get('selected') === false) {
 
                     item.set('selected', true);
@@ -141,6 +138,8 @@ define(['ytHelper',
                     //  Unshift won't have an effect if item exists in history, so remove silently.
                     history.remove(item, { silent: true });
                     history.unshift(item);
+
+                    window && console.log("Changing selectedItem in storage to:", item.get('title'), item.get('id'));
 
                     localStorage.setItem(this.get('id') + '_selectedItemId', id);
                 }
@@ -157,8 +156,6 @@ define(['ytHelper',
 
                 var randomIndex = Math.floor(Math.random() * relatedVideos.length);
                 var randomRelatedVideo = relatedVideos[randomIndex];
-
-                console.log("random related video duration:", randomRelatedVideo.get('duration'));
 
                 return randomRelatedVideo;
             },
@@ -328,9 +325,34 @@ define(['ytHelper',
 
                 return playlistItem;
             },
+
+            //  Skips to the next playlistItem. Will start playing the video if the player was already playing.
+            //  if where == "next" it'll skip to the next item otherwise it will skip to the previous.
+            skipItem: function (where) {
+                var nextItem;
+
+                if (where == "next") {
+                    var isRadioModeEnabled = JSON.parse(localStorage.getItem('isRadioModeEnabled') || false);
+
+                    if (isRadioModeEnabled) {
+                        var relatedVideo = this.getRelatedVideo();
+                        window && console.log("calling addItem with:", relatedVideo);
+                        nextItem = this.addItem(relatedVideo);
+                    } else {
+
+                        nextItem = this.gotoNextItem();
+                    }
+                } else {
+                    nextItem = this.gotoPreviousItem();
+                }
+
+                this.selectItemById(nextItem.get('id'));
+            },
             
-            //  TODO: What happens if I remove the selected item? I won't have anything selected.
-            removeItem: function(item, callback) {
+            //  TODO: This is getting bulky...
+            removeItem: function (item, callback) {
+                var selectedItem = this.getSelectedItem();
+                
                 //  If localStorage is saving the currently selected item as the one being deleted, clean that up so restarting the program doesn't try and 
                 //  select a playlistItem which does not exist.
                 var playlistId = this.get('id');
@@ -355,6 +377,10 @@ define(['ytHelper',
                 //  It is counter-intuitive to the user to click 'Delete' and have lag while the server responds.
                 //  TODO: How do I handle a scenario where the server fails to delete by ID?
                 this.get('items').remove(item);
+                
+                if (selectedItem === item && this.get('items').length > 0) {
+                    this.skipItem('next');
+                }
 
                 item.destroy({
                     success: callback,

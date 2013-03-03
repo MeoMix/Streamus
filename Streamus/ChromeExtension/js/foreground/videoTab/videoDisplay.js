@@ -1,7 +1,7 @@
 ﻿define(['youTubePlayerAPI', 'playlistManager', 'player'], function (youTubePlayerAPI, playlistManager, player) {
     'use strict';
 
-    //var selectedItem = playlistManager.getStream().get('activePlaylist').getSelectedItem();
+    //var selectedItem = playlistManager.getStream().getSelectedPlaylist().getSelectedItem();
     //var videoId = 'undefined';
     
     //if (selectedItem !== null) {

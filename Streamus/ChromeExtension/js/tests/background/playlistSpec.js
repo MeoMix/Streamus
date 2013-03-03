@@ -12,7 +12,7 @@
 
             //  onReady will fire immediately if playlistManager is already ready.
             playlistManager.onReady(function () {
-                playlistManager.addPlaylist('Test Title', null, callback);
+                playlistManager.getStream().addPlaylist('Test Title', null, callback);
             });
         }
 

@@ -15,6 +15,8 @@ define(['playlistManager', 'player', 'helpers'], function (playlistManager, play
 
         //  Don't divide by 0.
         var fill = totalTime !== 0 ? currentTime / totalTime : 0;
+
+        window && console.log("fills is:", fill);
         
         var backgroundImage = '-webkit-gradient(linear,left top, right top, from(#ccc), color-stop(' + fill + ',#ccc), color-stop(' + fill + ',rgba(0,0,0,0)), to(rgba(0,0,0,0)))';
         $(this).css('background-image', backgroundImage);
@@ -51,15 +53,39 @@ define(['playlistManager', 'player', 'helpers'], function (playlistManager, play
     });
 
     var stream = playlistManager.getStream();
+    var selectedPlaylist = stream.getSelectedPlaylist();
 
-    stream.get('activePlaylist').get('items').on('change:selected', function() {
+    selectedPlaylist.get('items').on('change:selected', function () {
         setCurrentTime(0);
         setTotalTime(getCurrentVideoDuration());
     });
+    
+    selectedPlaylist.get('items').on('remove', function (model, collection) {
+        if (collection.length === 0) {
+            setCurrentTime(0);
+            setTotalTime(0);
+        }
+    });
 
-    stream.get('activePlaylist').on('empty:items', function() {
-        setCurrentTime(0);
-        setTotalTime(0);
+    stream.get('playlists').on('change:selected', function (playlist, isSelected) {
+        
+        if (isSelected) {
+            playlist.get('items').on('change:selected', function() {
+                setCurrentTime(0);
+                setTotalTime(getCurrentVideoDuration());
+            });
+            
+            playlist.get('items').on('remove', function (model, collection) {
+                if (collection.length === 0) {
+                    setCurrentTime(0);
+                    setTotalTime(0);
+                }
+            });
+
+        } else {
+            playlist.get('items').off('remove change:selected');
+        }
+
     });
 
     //  If a video is currently playing when the GUI opens then initialize with those values.
@@ -90,7 +116,7 @@ define(['playlistManager', 'player', 'helpers'], function (playlistManager, play
     //  Return 0 or currently selected video's duration.
     function getCurrentVideoDuration() {
         var duration = 0;
-        var selectedItem = playlistManager.getStream().get('activePlaylist').getSelectedItem();
+        var selectedItem = playlistManager.getStream().getSelectedPlaylist().getSelectedItem();
 
         if (selectedItem != null) {
             duration = selectedItem.get('video').get('duration');

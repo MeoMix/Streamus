@@ -10,7 +10,7 @@ define(['contextMenu', 'playlistManager'], function (contextMenu, playlistManage
                 //TODO: I need to gray out the option to delete, but still show it.
                 //Should I gray out when clicking on last playlist or current playlist?
                 if (playlist !== null && !playlist.get('selected')) {
-                    playlistManager.removePlaylistById(playlist.get('id'));
+                    playlistManager.getStream().removePlaylistById(playlist.get('id'));
                 }
             });
         }
