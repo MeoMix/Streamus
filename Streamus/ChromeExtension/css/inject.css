@@ -1,0 +1,21 @@
+#StreamusContextMenu {
+    background: #fff;
+    border-radius: 5px;
+    padding: 5px 0;
+    -webkit-box-shadow: 0 0 5px rgba(0,0,0,.3);
+    z-index: 100;
+}
+#StreamusContextMenu a {
+    display: block;
+    padding: 4px 8px;
+    font: 12px/1 sans-serif;
+    color: #000;
+    text-decoration: none;
+}
+#StreamusContextMenu a:hover {
+    background: #efefef;
+}
+#StreamusContextMenu a:active {
+    background: rgb(36,109,149);
+    color: #fff;
+}
