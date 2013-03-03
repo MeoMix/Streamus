@@ -15,31 +15,31 @@ namespace Streamus.Backend.Domain
         public Guid Id { get; set; }
 
         //  TODO: This seems forced, but I can't get NHibernate to properly figure out the mapping without holding a reference.
-        [DataMember(Name = "collectionId")]
-        public Guid CollectionId
+        [DataMember(Name = "streamId")]
+        public Guid StreamId
         {
             get
             {
-                Guid collectionId = Guid.Empty;
-                if (Collection != null)
+                Guid streamId = Guid.Empty;
+                if (Stream != null)
                 {
-                    collectionId = Collection.Id;
+                    streamId = Stream.Id;
                 }
 
-                return collectionId;
+                return streamId;
             }
             set
             {
-                Collection = new PlaylistCollectionDao().Get(value);
+                Stream = new StreamDao().Get(value);
             }
         }
 
-        public PlaylistCollection Collection { get; set; }
+        public Stream Stream { get; set; }
 
         [DataMember(Name = "title")]
         public string Title { get; set; }
 
-        //  Use collection interfaces so NHibernate can inject with its own collection implementation.
+        //  Use interfaces so NHibernate can inject with its own collection implementation.
         [DataMember(Name = "items")]
         public IList<PlaylistItem> Items { get; set; }
 

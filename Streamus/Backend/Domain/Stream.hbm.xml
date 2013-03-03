@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Streamus" namespace="Streamus.Backend.Domain">
   
-  <class name="PlaylistCollection" table="[PlaylistCollections]" lazy="false" >
+  <class name="Stream" table="[Streams]" lazy="false" >
     <id name="Id" unsaved-value="00000000-0000-0000-0000-000000000000">
       <generator class="guid" />
     </id>
@@ -10,7 +10,7 @@
     <property name="FirstListId" not-null="true" />
 
     <bag name="Playlists" inverse="true" cascade="all-delete-orphan" >
-      <key column="CollectionId" />
+      <key column="StreamId" />
       <one-to-many class="Playlist" />
     </bag>
 

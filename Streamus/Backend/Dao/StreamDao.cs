@@ -7,17 +7,17 @@ using log4net;
 
 namespace Streamus.Backend.Dao
 {
-    public class PlaylistCollectionDao : AbstractNHibernateDao<PlaylistCollection>, IPlaylistCollectionDao
+    public class StreamDao : AbstractNHibernateDao<Stream>, IStreamDao
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public PlaylistCollection Get(Guid id)
+        public Stream Get(Guid id)
         {
-            PlaylistCollection playlistCollection = null;
+            Stream stream = null;
 
             try
             {
-                playlistCollection = (PlaylistCollection) NHibernateSession.Load(typeof (PlaylistCollection), id);
+                stream = (Stream)NHibernateSession.Load(typeof(Stream), id);
             }
             catch (ObjectNotFoundException exception)
             {
@@ -25,7 +25,7 @@ namespace Streamus.Backend.Dao
                 Logger.Error(exception);
             }
 
-            return playlistCollection;
+            return stream;
         }
     }
 }

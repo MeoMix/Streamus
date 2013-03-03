@@ -7,10 +7,10 @@ using System.Runtime.Serialization;
 
 namespace Streamus.Backend.Domain
 {        
-    //  TODO: Currently there is only the ability to have a single PlaylistCollection.
-    //  Should create PlaylistCollection objects as a LinkedList so that adding and removing is possible.
+    //  TODO: Currently there is only the ability to have a single Stream.
+    //  Should create Strean objects as a LinkedList so that adding and removing is possible.
     [DataContract]
-    public class PlaylistCollection
+    public class Stream
     {
         [DataMember(Name = "id")]
         public Guid Id { get; set; }
@@ -27,24 +27,24 @@ namespace Streamus.Backend.Domain
         [DataMember(Name = "title")]
         public string Title { get; set; }
 
-        //  Use collection interfaces so NHibernate can inject with its own collection implementation.
+        //  Use interfaces so NHibernate can inject with its own collection implementation.
         [DataMember(Name = "playlists")]
         public IList<Playlist> Playlists { get; set; }
 
         [DataMember(Name = "firstListId")]
         public Guid FirstListId { get; set; }
 
-        public PlaylistCollection()
+        public Stream()
         {
             Id = Guid.Empty;
             Title = string.Empty;
             Playlists = new List<Playlist>();
 
-            //  A collection should always have at least one Playlist.
+            //  A stream should always have at least one Playlist.
             CreatePlaylist();
         }
 
-        public PlaylistCollection(string title) 
+        public Stream(string title) 
             : this()
         {
             Title = title;
@@ -78,7 +78,7 @@ namespace Streamus.Backend.Domain
                 playlist.NextListId = firstList.Id;
             }
 
-            playlist.Collection = this;
+            playlist.Stream = this;
 
             Playlists.Add(playlist);
             return playlist;
@@ -104,7 +104,7 @@ namespace Streamus.Backend.Domain
 
         public void ValidateAndThrow()
         {
-            var validator = new PlaylistCollectionValidator();
+            var validator = new StreamValidator();
             validator.ValidateAndThrow(this);
         }
 
@@ -129,7 +129,7 @@ namespace Streamus.Backend.Domain
 
         public override bool Equals(object obj)
         {
-            PlaylistCollection other = obj as PlaylistCollection;
+            Stream other = obj as Stream;
             if (other == null)
                 return false;
 

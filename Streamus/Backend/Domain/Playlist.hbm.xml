@@ -16,7 +16,7 @@
       <one-to-many class="PlaylistItem" />
     </bag>
 
-    <many-to-one name="Collection" column="CollectionId" />
+    <many-to-one name="Stream" column="StreamId" />
 
   </class>
   

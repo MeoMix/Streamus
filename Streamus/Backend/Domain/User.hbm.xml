@@ -8,9 +8,9 @@
     
     <property name="Name" />
 
-    <bag name="PlaylistCollections" inverse="true" cascade="all-delete-orphan" >
+    <bag name="Streams" inverse="true" cascade="all-delete-orphan" >
       <key column="UserId" />
-      <one-to-many class="PlaylistCollection" />
+      <one-to-many class="Stream" />
     </bag>
   </class>
   

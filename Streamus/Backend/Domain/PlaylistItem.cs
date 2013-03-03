@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using FluentValidation;
+﻿using FluentValidation;
 using Streamus.Backend.Dao;
 using Streamus.Backend.Domain.Validators;
+using System;
+using System.Runtime.Serialization;
 
 namespace Streamus.Backend.Domain
 {

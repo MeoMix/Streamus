@@ -13,14 +13,14 @@ namespace Streamus.Controllers
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IUserDao UserDao;
-        private readonly IPlaylistCollectionDao PlaylistCollectionDao;
+        private readonly IStreamDao _streamDao;
 
         public UserController()
         {
             try
             {
                 UserDao = new UserDao();
-                PlaylistCollectionDao = new PlaylistCollectionDao();
+                _streamDao = new StreamDao();
             }
             catch (TypeInitializationException exception)
             {
@@ -36,7 +36,7 @@ namespace Streamus.Controllers
         [HttpPost]
         public ActionResult Create()
         {
-            var userManager = new UserManager(UserDao, PlaylistCollectionDao);
+            var userManager = new UserManager(UserDao, _streamDao);
             User user = userManager.CreateUser();
 
             return new JsonDataContractActionResult(user);

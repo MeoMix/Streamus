@@ -15,37 +15,37 @@ namespace Streamus.Backend.Domain
         [DataMember(Name = "name")]
         public string Name { get; set; }
 
-        //  Use collection interfaces so NHibernate can inject with its own collection implementation.
-        [DataMember(Name = "playlistCollections")]
-        public IList<PlaylistCollection> PlaylistCollections { get; set; }
+        //  Use interfaces so NHibernate can inject with its own collection implementation.
+        [DataMember(Name = "streams")]
+        public IList<Stream> Streams { get; set; }
 
         public User()
         {
             Name = string.Empty;
-            PlaylistCollections = new List<PlaylistCollection>();
+            Streams = new List<Stream>();
 
-            //  A user should always have at least one PlaylistCollection.
-            CreatePlaylistCollection();
+            //  A user should always have at least one Stream.
+            CreateStream();
         }
 
-        public PlaylistCollection CreatePlaylistCollection()
+        public Stream CreateStream()
         {
-            string title = string.Format("New Playlist Collection {0:D4}", PlaylistCollections.Count);
-            var playlistCollection = new PlaylistCollection(title);
-            return AddPlaylistCollection(playlistCollection);
+            string title = string.Format("New Stream {0:D4}", Streams.Count);
+            Stream stream = new Stream(title);
+            return AddStream(stream);
         }
 
-        public PlaylistCollection AddPlaylistCollection(PlaylistCollection playlistCollection)
+        public Stream AddStream(Stream stream)
         {
-            playlistCollection.User = this;
-            PlaylistCollections.Add(playlistCollection);
+            stream.User = this;
+            Streams.Add(stream);
 
-            return playlistCollection;
+            return stream;
         }
 
-        public void RemovePlaylistCollection(PlaylistCollection playlistCollection)
+        public void RemoveStream(Stream stream)
         {
-            PlaylistCollections.Remove(playlistCollection);
+            Streams.Remove(stream);
         }
 
         public void ValidateAndThrow()

@@ -13,14 +13,14 @@ namespace Streamus.Backend.Domain.Managers
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private IPlaylistDao PlaylistDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
-        private IPlaylistCollectionDao PlaylistCollectionDao { get; set; }
+        private IStreamDao StreamDao { get; set; }
         private IVideoDao VideoDao { get; set; }
 
-        public PlaylistManager(IPlaylistDao playlistDao, IPlaylistItemDao playlistItemDao, IPlaylistCollectionDao playlistCollectionDao, IVideoDao videoDao)
+        public PlaylistManager(IPlaylistDao playlistDao, IPlaylistItemDao playlistItemDao, IStreamDao streamDao, IVideoDao videoDao)
         {
             PlaylistDao = playlistDao;
             PlaylistItemDao = playlistItemDao;
-            PlaylistCollectionDao = playlistCollectionDao;
+            StreamDao = streamDao;
             VideoDao = videoDao;
         }
 
@@ -32,16 +32,16 @@ namespace Streamus.Backend.Domain.Managers
                 playlist.ValidateAndThrow();
                 PlaylistDao.Save(playlist);
 
-                if (playlist.Collection.Playlists.Count == 0)
+                if (playlist.Stream.Playlists.Count == 0)
                 {
                     playlist.NextListId = playlist.Id;
                     playlist.PreviousListId = playlist.Id;
-                    playlist.Collection.FirstListId = playlist.Id;
+                    playlist.Stream.FirstListId = playlist.Id;
                 }
                 else
                 {
-                    Playlist firstList = playlist.Collection.Playlists.First(list => list.Id == playlist.Collection.FirstListId);
-                    Playlist lastList = playlist.Collection.Playlists.First(list => list.Id == firstList.PreviousListId);
+                    Playlist firstList = playlist.Stream.Playlists.First(list => list.Id == playlist.Stream.FirstListId);
+                    Playlist lastList = playlist.Stream.Playlists.First(list => list.Id == firstList.PreviousListId);
 
                     //  Adjust our linked list and add the item.
                     lastList.NextListId = playlist.Id;
@@ -51,7 +51,7 @@ namespace Streamus.Backend.Domain.Managers
                     playlist.NextListId = firstList.Id;
                 }
 
-                PlaylistCollectionDao.Save(playlist.Collection);
+                StreamDao.Save(playlist.Stream);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
@@ -98,7 +98,7 @@ namespace Streamus.Backend.Domain.Managers
                 NHibernateSessionManager.Instance.BeginTransaction();
 
                 Playlist playlist = PlaylistDao.Get(id);
-                playlist.Collection.RemovePlaylist(playlist);
+                playlist.Stream.RemovePlaylist(playlist);
                 PlaylistDao.Delete(playlist);
 
                 NHibernateSessionManager.Instance.CommitTransaction();

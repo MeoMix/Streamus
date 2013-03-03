@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using log4net;
 using NHibernate;
-using NHibernate.Criterion;
 using Streamus.Backend.Domain;
 using Streamus.Backend.Domain.Interfaces;
-using log4net;
+using System;
+using System.Reflection;
 
 namespace Streamus.Backend.Dao
 {

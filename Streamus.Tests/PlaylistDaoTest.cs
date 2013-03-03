@@ -13,7 +13,7 @@ namespace Streamus.Tests
     {
         private IPlaylistDao PlaylistDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
-        private IPlaylistCollectionDao PlaylistCollectionDao { get; set; }
+        private IStreamDao _streamDao { get; set; }
         private IVideoDao VideoDao { get; set; }
         private User User { get; set; }
         private Video Video { get; set; }
@@ -29,7 +29,7 @@ namespace Streamus.Tests
             {
                 PlaylistDao = new PlaylistDao();
                 PlaylistItemDao = new PlaylistItemDao();
-                PlaylistCollectionDao = new PlaylistCollectionDao();
+                _streamDao = new StreamDao();
                 VideoDao = new VideoDao();
             }
             catch (TypeInitializationException exception)
@@ -37,7 +37,7 @@ namespace Streamus.Tests
                 throw exception.InnerException;
             }
 
-            User = new UserManager(new UserDao(), PlaylistCollectionDao).CreateUser();
+            User = new UserManager(new UserDao(), _streamDao).CreateUser();
 
             Video = new Video("s91jgcmQoB0", "Tristam - Chairs", 219);
             new VideoManager(VideoDao).Save(Video);
@@ -50,14 +50,14 @@ namespace Streamus.Tests
         public void SetupContext()
         {
             //  Create managers here because every client request will require new managers.
-            PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, PlaylistCollectionDao, VideoDao);
+            PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, _streamDao, VideoDao);
         }
 
         [Test]
         public void Updates()
         {
-            var playlistCollection = User.PlaylistCollections.First();
-            var playlist = playlistCollection.CreatePlaylist();
+            var stream = User.Streams.First();
+            var playlist = stream.CreatePlaylist();
 
             PlaylistManager.Save(playlist);
 
@@ -75,8 +75,8 @@ namespace Streamus.Tests
         [Test]
         public void Deletes()
         {
-            var playlistCollection = User.PlaylistCollections.First();
-            var playlist = playlistCollection.CreatePlaylist();
+            var stream = User.Streams.First();
+            var playlist = stream.CreatePlaylist();
 
             PlaylistManager.Save(playlist);
 
@@ -87,7 +87,7 @@ namespace Streamus.Tests
             playlist.AddItem(playlistItem);
             PlaylistManager.UpdatePlaylistItem(playlistItem);
 
-            playlistCollection.RemovePlaylist(playlist);
+            stream.RemovePlaylist(playlist);
             PlaylistManager.DeletePlaylistById(playlist.Id);
 
             NHibernateSessionManager.Instance.Clear();

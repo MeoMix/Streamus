@@ -15,7 +15,7 @@ namespace Streamus.Tests
         private IPlaylistDao PlaylistDao { get; set; }
         private IVideoDao VideoDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
-        private IPlaylistCollectionDao PlaylistCollectionDao { get; set; }
+        private IStreamDao _streamDao { get; set; }
         private User User { get; set; }
         private Playlist Playlist { get; set; }
         private Video Video { get; set; }
@@ -32,7 +32,7 @@ namespace Streamus.Tests
                 UserDao = new UserDao();
                 PlaylistDao = new PlaylistDao();
                 PlaylistItemDao = new PlaylistItemDao();
-                PlaylistCollectionDao = new PlaylistCollectionDao();
+                _streamDao = new StreamDao();
                 VideoDao = new VideoDao();
             }
             catch (TypeInitializationException exception)
@@ -40,7 +40,7 @@ namespace Streamus.Tests
                 throw exception.InnerException;
             }
 
-            User = new UserManager(UserDao, PlaylistCollectionDao).CreateUser();
+            User = new UserManager(UserDao, _streamDao).CreateUser();
             Video = new Video("s91jgcmQoB0", "Tristam - Chairs", 219);
             new VideoManager(VideoDao).Save(Video);
         }
@@ -52,12 +52,12 @@ namespace Streamus.Tests
         public void SetupContext()
         {
             //  Create managers here because every client request will require new managers.
-            PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, PlaylistCollectionDao, VideoDao);
+            PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, _streamDao, VideoDao);
 
-            var playlistCollection = User.PlaylistCollections.First();
+            var stream = User.Streams.First();
 
             //  Make a new Playlist object each time to ensure no side-effects from previous test case.
-            Playlist = playlistCollection.CreatePlaylist();
+            Playlist = stream.CreatePlaylist();
             
             PlaylistManager.Save(Playlist);
         }

@@ -51,7 +51,7 @@ namespace Streamus.Tests
         public void SetupContext()
         {
             //  Create managers here because every client request will require new managers.
-            UserManager = new UserManager(UserDao, new PlaylistCollectionDao());
+            UserManager = new UserManager(UserDao, new StreamDao());
         }
 
         [Test]
@@ -67,7 +67,7 @@ namespace Streamus.Tests
             Assert.AreNotSame(user, userFromDatabase);
 
             Assert.IsNotNull(userFromDatabase);
-            Assert.IsNotEmpty(userFromDatabase.PlaylistCollections);
+            Assert.IsNotEmpty(userFromDatabase.Streams);
         }
     }
 }

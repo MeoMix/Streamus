@@ -13,17 +13,17 @@ namespace Streamus.Backend.Domain.Managers
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private IUserDao UserDao { get; set; }
-        private IPlaylistCollectionDao PlaylistCollectionDao { get; set; }
+        private IStreamDao _streamDao { get; set; }
 
-        public UserManager(IUserDao userDao, IPlaylistCollectionDao playlistCollectionDao)
+        public UserManager(IUserDao userDao, IStreamDao streamDao)
         {
             UserDao = userDao;
-            PlaylistCollectionDao = playlistCollectionDao;
+            _streamDao = streamDao;
         }
 
         /// <summary>
         ///     Creates a new User and saves it to the DB. As a side effect, also creates a new, empty
-        ///     PlaylistCollection (which has a new, empty Playlist) for the created User and saves it to the DB.
+        ///     Stream (which has a new, empty Playlist) for the created User and saves it to the DB.
         /// </summary>
         /// <returns>The created user with a generated GUID</returns>
         public User CreateUser()
@@ -38,12 +38,12 @@ namespace Streamus.Backend.Domain.Managers
                 UserDao.Save(user);
 
                 //  TODO: Can this happen automatically with NHibernate?
-                PlaylistCollection playlistCollection = user.PlaylistCollections[0];
+                Stream stream = user.Streams[0];
 
-                playlistCollection.FirstListId = playlistCollection.Playlists[0].Id;
-                playlistCollection.Playlists[0].NextListId = playlistCollection.Playlists[0].Id;
-                playlistCollection.Playlists[0].PreviousListId = playlistCollection.Playlists[0].Id;
-                PlaylistCollectionDao.Update(playlistCollection);
+                stream.FirstListId = stream.Playlists[0].Id;
+                stream.Playlists[0].NextListId = stream.Playlists[0].Id;
+                stream.Playlists[0].PreviousListId = stream.Playlists[0].Id;
+                _streamDao.Update(stream);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
