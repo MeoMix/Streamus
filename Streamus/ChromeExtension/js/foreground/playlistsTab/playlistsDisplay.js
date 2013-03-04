@@ -18,7 +18,7 @@ define(['playlistsContextMenu', 'ytHelper', 'playlistManager', 'player'], functi
     function reload() {
         playlistList.empty();
 
-        var activeStream = chrome.extension.getBackgroundPage().LoginManager.get('user').get('streams').at(0);
+        var activeStream = chrome.extension.getBackgroundPage().User.get('streams').at(0);
 
         var firstListId = activeStream.get('firstListId');
         var currentList = activeStream.get('playlists').get(firstListId);

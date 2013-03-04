@@ -1,7 +1,7 @@
 ﻿//  Test cases for the background's user model. Hopes to ensure that the user
 //  loads successfully from the server from a client-side id or, alternatively,
 //  that it is created successfully by the server.
-define(['loginManager'], function (loginManager) {
+define(function () {
     'use strict';
     var userIdKey = 'UserId';
     
@@ -26,15 +26,14 @@ define(['loginManager'], function (loginManager) {
         xit('loads', function () {
 
             runs(function() {
-                loginManager.login();
+                user.login();
             });
 
             waitsFor(function() {
-                return loginManager.get('loggedIn') === true;
+                return user.get('loggedIn') === true;
             }, "The user should have loaded.", 5000);
 
             runs(function () {
-                var user = loginManager.get('user');
                 expect(user.isNew()).toBe(false);
             });
         });

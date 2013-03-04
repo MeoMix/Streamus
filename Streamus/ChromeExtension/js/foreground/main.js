@@ -10,12 +10,12 @@ require(['jquery',
     'use strict';
 
     //  TODO: Would like to access through define module, but not sure how..
-    var loginManager = chrome.extension.getBackgroundPage().LoginManager;
+    var user = chrome.extension.getBackgroundPage().User;
     var player = chrome.extension.getBackgroundPage().YouTubePlayer;
         
     //  If the foreground is opened before the background has had a chance to load, wait for the background.
     //  This is easier than having every control on the foreground guard against the background not existing.
-    loginManager.onLoggedIn(loadForeground);
+    user.on('change:loaded', loadForeground);
 
     function loadForeground() {
 

@@ -19,7 +19,6 @@ var require = {
         'playlistItemsHistory': 'js/background/playlistItemsHistory',
         'player': 'js/background/player',
         'playlistManager': 'js/background/playlistManager',
-        'loginManager': 'js/background/loginManager',
         'playlist': 'js/background/playlist',
         'playlists': 'js/background/playlists',
         'stream': 'background/stream',

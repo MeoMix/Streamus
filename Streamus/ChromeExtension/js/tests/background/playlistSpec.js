@@ -1,9 +1,8 @@
 ﻿define(['playlist',
         'playlistManager',
-        'loginManager',
         'videos',
         'ytHelper'],
-    function (Playlist, playlistManager, loginManager, Videos, ytHelper) {
+    function (Playlist, playlistManager, Videos, ytHelper) {
         'use strict';
         var savedPlaylist = null;
         
@@ -66,7 +65,7 @@
                 }, "The Playlist should have saved", 5000);
 
                 runs(function () {
-                    var userId = loginManager.get('user').get('id');
+                    var userId = user.get('id');
 
                     expect(savedPlaylist).not.toEqual(null);
                     expect(savedPlaylist.isNew()).toEqual(false);

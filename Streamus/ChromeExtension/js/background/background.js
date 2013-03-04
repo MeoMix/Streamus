@@ -1,11 +1,11 @@
-﻿define(['player', 'loginManager'], function (player, loginManager) {
+﻿define(['player', 'user'], function (player, user) {
     'use strict';
 
     //  The YouTube Player API must be ready before loading playlistManager because user loads with streams which, when initialized
     //  will try and affect the player.
     player.once('change:ready', function () {
 
-        loginManager.login();
+        user.login();
 
         require(['playlistManager'], function (playlistManager) {
 
@@ -44,7 +44,7 @@
                 }
             });
 
-            loginManager.onLoggedIn(function() {
+            user.on('change:loaded', function() {
                 //  TODO: How do I break this ugly chain?
                 playlistManager.getStream().getSelectedPlaylist().get('items').on('remove', function (model, collection) {
                     if (collection.length === 0) {

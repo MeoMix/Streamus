@@ -7,15 +7,15 @@ define(['playlist',
         'playlists',
         'playlistItem',
         'playlistItems',
-        'loginManager',
+        'user',
         'player'
-    ], function(Playlist, Playlists, PlaylistItem, PlaylistItems, loginManager, player) {
+    ], function(Playlist, Playlists, PlaylistItem, PlaylistItems, user, player) {
         'use strict';
-
-        loginManager.onLoggedIn(function () {
+        
+        user.once('change:loaded', function () {
             //  PlaylistManager will remember the selected playlist via localStorage.
             var savedId = localStorage.getItem('selectedPlaylistId');
-            var stream = loginManager.get('user').get('streams').at(0);
+            var stream = user.get('streams').at(0);
             stream.selectPlaylist(savedId);
         });
         
@@ -27,7 +27,7 @@ define(['playlist',
                 //  The player can be playing in the background and UI changes may try and be posted to the UI, need to prevent.
                 var isRadioModeEnabled = JSON.parse(localStorage.getItem('isRadioModeEnabled')) || false;
 
-                var selectedPlaylist = loginManager.get('user').get('streams').at(0).getSelectedPlaylist();
+                var selectedPlaylist = user.get('streams').at(0).getSelectedPlaylist();
                 var nextItem;
                 if (isRadioModeEnabled) {
                     var nextVideo = selectedPlaylist.getRelatedVideo();
@@ -46,7 +46,7 @@ define(['playlist',
         PlaylistManager = {
             //  TODO: How can I remove this dependency?
             getStream: function () {
-                return loginManager.get('user').get('streams').at(0);
+                return user.get('streams').at(0);
             }
         };
 

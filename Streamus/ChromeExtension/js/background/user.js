@@ -1,22 +1,25 @@
 //  A singleton representing the sole logged on user for the program.
 //  Tries to load itself by ID stored in localStorage and then by chrome.storage.sync.
 //  If still unloaded, tells the server to create a new user and assumes that identiy.
+var User = null;
 define(['streams', 'programState'], function (Streams, programState) {
     'use strict';
     var userIdKey = 'UserId';
 
     //  User data will be loaded either from cache or server.
-    var User = Backbone.Model.extend({
+    var UserModel = Backbone.Model.extend({
         defaults: {
-            id: '49713f20-2ed0-4e01-a06a-caa9a3a02408', //localStorage.getItem(userIdKey),
+            id: '5069ae33-0ab8-440d-97c0-feebf7ac5910', //localStorage.getItem(userIdKey),
             name: '',
+            loaded: false,
             streams: new Streams()
         },
         
         urlRoot: programState.getBaseUrl() + 'User/',
         
         //  TODO: I am doing too much work in this initialize constructor. 
-        initialize: function () {
+        //  TODO: It would be nice to have this be initialize and not custom function having to be called.
+        login: function () {
             window && console.log("user is initializing");
 
             //  If user's ID wasn't found in local storage, check sync because its a pc-shareable location, but doesn't work synchronously.
@@ -37,7 +40,7 @@ define(['streams', 'programState'], function (Streams, programState) {
                             //  Currently only care about userId, name can't be updated.
                             success: function (model) {
                                 //  Announce that user has loaded so managers can use it to fetch data.
-                                self.trigger('loaded');
+                                self.set('loaded', true);
                             },
                             error: function(error) {
                                 window && console.error(error);
@@ -85,7 +88,7 @@ define(['streams', 'programState'], function (Streams, programState) {
                 localStorage.setItem(userIdKey, model.get('id'));
 
                 //  Announce that user has loaded so managers can use it to fetch data.
-                model.trigger('loaded');
+                self.set('loaded', true);
             },
             error: function (error) {
                 window && console.error(error);
@@ -94,8 +97,7 @@ define(['streams', 'programState'], function (Streams, programState) {
     }
 
     //  Only ever instantiate one User.
-    return _.once(function(config) {
-        var user = new User(config);
-        return user;
-    });
+    User = new UserModel();
+    
+    return User;
 });

@@ -13,7 +13,6 @@ var require = {
         'playlist': 'background/playlist',
         'playlists': 'background/playlists',
         'playlistManager': 'background/playlistManager',
-        'loginManager': 'background/loginManager',
         'youTubePlayerAPI': 'youTubePlayerAPI',
         'video': 'background/video',
         'videos': 'background/videos',
