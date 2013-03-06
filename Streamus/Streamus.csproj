@@ -263,6 +263,7 @@
     <None Include="ChromeExtension\js\thirdParty\chrome-api-vsdoc.js" />
     <Content Include="ChromeExtension\js\thirdParty\jasmine-html.js" />
     <Content Include="ChromeExtension\css\jasmine.css" />
+    <Content Include="ChromeExtension\js\thirdParty\jquery.scrollIntoView.js" />
     <Content Include="ChromeExtension\tests.htm" />
     <Content Include="ChromeExtension\js\tests\background\playlistItemSpec.js" />
     <Content Include="ChromeExtension\js\tests\background\playlistSpec.js" />

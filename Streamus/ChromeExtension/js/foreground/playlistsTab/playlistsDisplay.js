@@ -18,7 +18,9 @@ define(['playlistsContextMenu', 'ytHelper', 'playlistManager', 'player'], functi
     function reload() {
         playlistList.empty();
 
-        var activeStream = chrome.extension.getBackgroundPage().User.get('streams').at(0);
+        var user = chrome.extension.getBackgroundPage().User;
+        console.log("user?", user);
+        var activeStream = user.get('streams').at(0);
 
         var firstListId = activeStream.get('firstListId');
         var currentList = activeStream.get('playlists').get(firstListId);
@@ -53,8 +55,8 @@ define(['playlistsContextMenu', 'ytHelper', 'playlistManager', 'player'], functi
         
         //  Removes the old 'current' marking and move it to the newly selected row.
         function selectRow(id) {
-            playlistList.find('li').removeClass('current');
-            $('#' + id).parent().addClass('current');
+            playlistList.find('li').removeClass('highlighted');
+            $('#' + id).parent().addClass('highlighted');
         };
 
         //  Clicking on a playlist will select that playlist.

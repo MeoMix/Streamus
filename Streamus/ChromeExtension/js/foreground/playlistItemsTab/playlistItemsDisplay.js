@@ -21,10 +21,23 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
     });
 
     //  Removes the old 'current' marking and move it to the newly selected row.
-    var selectRow = function (itemId) {
-        playlistItemList.find('li').removeClass('current');
-        playlistItemList.find('li[data-itemid="' + itemId + '"]').addClass('current');
+    function setListItemClass(itemId, itemClass) {
+        playlistItemList.find('li').removeClass(itemClass);
+        playlistItemList.find('li[data-itemid="' + itemId + '"]').addClass(itemClass);
     };
+    
+    function selectItemById(itemId) {
+        var selectedItemId = playlistManager.getStream().getSelectedPlaylist().getSelectedItem().get('id');
+        //  If the item is already selected then it is cued up -- so just play it.
+        if (selectedItemId == itemId) {
+
+            player.play();
+        } else {
+            window && console.log("Playlist manager is about to select item with ID:", itemId);
+            var item = playlistManager.getStream().getSelectedPlaylist().selectItemById(itemId);
+            player.loadVideoById(item.get('video').get('id'));
+        }
+    }
     
     //  TODO: Need to be a lot more fine-grained then just spamming reload. Will come back around to it.
     //  TODO: This will need to be reworked to support >1 streams.
@@ -45,9 +58,32 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
     stream.getSelectedPlaylist().get('items').on('add remove change:selected', reload);
 
     reload();
+    var currentlyHighlightedId = localStorage.getItem('highlightedItemId');
+    
+    function scrollLoadedItemIntoView(loadedItem, useAnimation) {
+
+        //  Since we emptied our list we lost the selection, reselect.
+        if (loadedItem) {
+            var loadedItemId = loadedItem.get('id');
+            var $loadedItem = playlistItemList.find('li[data-itemid="' + loadedItemId + '"]');
+            
+            if ($loadedItem.length > 0) {
+                $loadedItem.scrollIntoView(useAnimation);
+            }
+
+        }
+    }
+
+    scrollLoadedItemIntoView(stream.getSelectedPlaylist().getSelectedItem(), false);
 
     //  Refresh all the videos displayed to ensure they GUI matches background's data.
     function reload() {
+        var currentlyHiglighted = playlistItemList.find('.highlighted');
+
+        if (currentlyHiglighted.length > 0) {
+            currentlyHighlightedId = currentlyHiglighted.data('itemid');
+        }
+
         playlistItemList.empty();
         
         var selectedPlaylist = playlistManager.getStream().getSelectedPlaylist();
@@ -66,6 +102,16 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
                     'data-itemid': item.get('id')
                 }).appendTo(playlistItemList);
 
+                $('<div>', {
+                    height: '68px',
+                    width: '120px',
+                    css: {
+                        'background-image': 'url(http://img.youtube.com/vi/' + item.get('video').get('id') + '/default.jpg)',
+                        'background-position-y': '-11px',
+                        'margin-top': '5px'
+                    }
+                }).appendTo(listItem);
+
                 $('<a/>', {
                     text: item.get('title'),
                     contextmenu: function (e) {
@@ -80,33 +126,45 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
 
             currentItem = selectedPlaylistItems.get(currentItem.get('nextItemId'));
 
-        } while(currentItem.get('id') !== firstItemId)
+        } while (currentItem.get('id') !== firstItemId)
 
-        //  Load and start playing a video if it is clicked.
-        //  TODO: double click
         playlistItemList.children().click(function () {
+            var itemId = $(this).data('itemid');
+            var itemClass = 'highlighted';
+
+            var item = playlistItemList.find('li[data-itemid="' + itemId + '"]');
+            
+            if (item.hasClass(itemClass)) {
+                selectItemById(itemId);
+            } else {
+                setListItemClass(itemId, itemClass);
+                localStorage.setItem('highlightedItemId', itemId);
+            }
+
+            return false;
+        });
+
+        //  Load and start playing a video if it is double click.
+        playlistItemList.children().dblclick(function () {
 
             var itemId = $(this).data('itemid');
-
-            var selectedItemId = playlistManager.getStream().getSelectedPlaylist().getSelectedItem().get('id');
-            //  If the item is already selected then it is cued up -- so just play it.
-            if (selectedItemId == itemId) {
-
-                player.play();
-            } else {
-                window && console.log("Playlist manager is about to select item with ID:", itemId);
-                var item = playlistManager.getStream().getSelectedPlaylist().selectItemById(itemId);
-                player.loadVideoById(item.get('video').get('id'));
-            }
+            selectItemById(itemId);
             
             return false;
         });
 
-        var selectedItem = selectedPlaylist.getSelectedItem();
+        var loadedItem = selectedPlaylist.getSelectedItem();
 
         //  Since we emptied our list we lost the selection, reselect.
-        if (selectedItem) {
-            selectRow(selectedItem.get('id'));
+        if (loadedItem) {
+            scrollLoadedItemIntoView(loadedItem, false);
+
+            var loadedItemId = loadedItem.get('id');
+            setListItemClass(loadedItemId, 'loaded');
+        }
+        
+        if (currentlyHighlightedId) {
+            setListItemClass(currentlyHighlightedId, 'highlighted');
         }
       
     }

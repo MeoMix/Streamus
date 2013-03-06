@@ -68,6 +68,7 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                 data: {
                     v: 2,
                     alt: 'json',
+                    //  TODO: Retrieve restricted youtube data and filter on that.
                     fields: 'entry(title,media:group(yt:videoid,yt:duration))',
                     //  Don't really need that many suggested videos, take 5.
                     'max-results': 5,
@@ -147,6 +148,8 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                     strict: true
                 },
                 success: function (result) {
+
+                    console.log("Result", result);
 
                     if (callback) {
                         callback(result.entry);

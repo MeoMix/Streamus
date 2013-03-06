@@ -36,6 +36,7 @@ var require = {
         'backbone': 'thirdParty/backbone',
         'playlistManager': 'foreground/playlistManager',
         'player': 'foreground/player',
-        'videoDisplay': 'foreground/videoTab/videoDisplay'
+        'videoDisplay': 'foreground/videoTab/videoDisplay',
+        'scrollIntoView': 'thirdParty/jquery.scrollIntoView'
     }
 };

@@ -2,6 +2,7 @@ require(['jquery',
         'jqueryUi',
         'backbone',
         'jqueryMousewheel',
+        'scrollIntoView',
         'playerStates',
         'helpers',
         'underscore',
@@ -15,8 +16,12 @@ require(['jquery',
         
     //  If the foreground is opened before the background has had a chance to load, wait for the background.
     //  This is easier than having every control on the foreground guard against the background not existing.
-    user.on('change:loaded', loadForeground);
-
+    if (user.get('loaded')) {
+        loadForeground();
+    } else {
+        user.once('change:loaded', loadForeground);
+    }
+    
     function loadForeground() {
 
         if (player.get('ready')) {

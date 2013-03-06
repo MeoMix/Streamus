@@ -11,6 +11,7 @@
 
             //  Receive keyboard shortcuts from users.
             chrome.commands.onCommand.addListener(function (command) {
+                console.log("Command received:", command);
                 switch (command) {
                     case 'nextVideo':
                         playlistManager.getStream().getSelectedPlaylist().skipItem("next");
