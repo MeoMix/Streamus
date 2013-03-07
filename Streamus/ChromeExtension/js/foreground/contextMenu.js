@@ -3,8 +3,8 @@ define(function(){
 	'use strict';
 	var selector = $('#ContextMenu');
 
-	//Hide the context menu whenever any click occurs not just when selecting an item.
-	$(document).click(function(){
+	//  Hide the context menu whenever any click occurs not just when selecting an item.
+    $(document).on('click contextmenu', function () {
 		selector.offset({top:0, left:0}).hide();
 	});
 

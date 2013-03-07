@@ -1,10 +1,11 @@
 //  This is the list of playlists on the playlists tab.
-define(['playlistsContextMenu', 'ytHelper', 'playlistManager', 'player'], function (contextMenu, ytHelper, playlistManager, player) {
+define(['playlistsContextMenu', 'ytHelper', 'playlistManager'], function (contextMenu, ytHelper, playlistManager) {
     //  TODO: Make this sortable and should inherit from a common List object. 
     var playlistList = $('#PlaylistList ul');
     //  TODO: Need to be a lot more fine-grained then just spamming reload. Will come back around to it.
     // TODO: This will need to be reworked to support >1 streams.
     var stream = playlistManager.getStream();
+    var user = chrome.extension.getBackgroundPage().User;
 
     stream.get('playlists').on('remove', reload);
     stream.get('playlists').on('add', reload);
@@ -18,7 +19,7 @@ define(['playlistsContextMenu', 'ytHelper', 'playlistManager', 'player'], functi
     function reload() {
         playlistList.empty();
 
-        var user = chrome.extension.getBackgroundPage().User;
+
         console.log("user?", user);
         var activeStream = user.get('streams').at(0);
 

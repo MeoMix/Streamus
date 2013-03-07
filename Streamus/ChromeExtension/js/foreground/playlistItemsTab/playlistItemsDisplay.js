@@ -43,13 +43,16 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
     //  TODO: This will need to be reworked to support >1 streams.
     var stream = playlistManager.getStream();
 
-    stream.get('playlists').on('change:selected', function(playlist, isSelected) {
+    stream.get('playlists').on('change:selected', function (playlist, isSelected) {
+        var playlistItems = playlist.get('items');
         if (isSelected) {
-            playlist.get('items').on('add remove change:selected', reload);
+            playlistItems.on('add remove change:selected', function () {
+                reload(playlistItems);
+            });
 
             reload();
         } else {
-            playlist.get('items').off('add remove change:selected');
+            playlistItems.off('add remove change:selected');
         }
 
     });
@@ -102,13 +105,12 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
                     'data-itemid': item.get('id')
                 }).appendTo(playlistItemList);
 
-                $('<div>', {
-                    height: '68px',
-                    width: '120px',
+                $('<img>', {
+                    width: '50px',
+                    src: 'http://img.youtube.com/vi/' + item.get('video').get('id') + '/default.jpg',
                     css: {
-                        'background-image': 'url(http://img.youtube.com/vi/' + item.get('video').get('id') + '/default.jpg)',
-                        'background-position-y': '-11px',
-                        'margin-top': '5px'
+                        'margin-top': '3px',
+                        'margin-left': '3px'
                     }
                 }).appendTo(listItem);
 

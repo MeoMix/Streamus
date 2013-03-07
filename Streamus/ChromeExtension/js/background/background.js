@@ -1,6 +1,30 @@
 ﻿define(['player', 'user'], function (player, user) {
     'use strict';
 
+    player.on('change:state', function (model, state) {
+        
+        if (state === PlayerStates.PLAYING) {
+
+            var foreground = chrome.extension.getViews({ type: "popup" });
+  
+            if (foreground.length == 0){
+                var notification = window.webkitNotifications.createNotification(
+                  'http://img.youtube.com/vi/' + user.get('streams').at(0).getSelectedPlaylist().getSelectedItem().get('video').get('id') + '/default.jpg',
+                  'Now Playing',
+                  user.get('streams').at(0).getSelectedPlaylist().getSelectedItem().get('title')
+                );
+
+                notification.show();
+
+                setTimeout(function () {
+                    notification.close();
+                }, 5000);
+            }
+        }
+
+        console.log("state:", state);
+    });
+
     //  The YouTube Player API must be ready before loading playlistManager because user loads with streams which, when initialized
     //  will try and affect the player.
     player.once('change:ready', function () {

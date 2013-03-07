@@ -121,7 +121,7 @@ define(['youTubePlayerAPI', 'ytHelper'], function (youTubePlayerAPI, ytHelper) {
             
         play: function () {
             if (!this.isPlaying()) {
-                
+
                 this.set('buffering', true);
                 this.get('youTubePlayer').playVideo();
             }
