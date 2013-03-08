@@ -66,6 +66,7 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                 url: 'https://gdata.youtube.com/feeds/api/videos/' + videoId + '/related',
                 dataType: 'json',
                 data: {
+                    category: 'Music',
                     v: 2,
                     alt: 'json',
                     //  TODO: Retrieve restricted youtube data and filter on that.

@@ -61,7 +61,6 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
     stream.getSelectedPlaylist().get('items').on('add remove change:selected', reload);
 
     reload();
-    var currentlyHighlightedId = localStorage.getItem('highlightedItemId');
     
     function scrollLoadedItemIntoView(loadedItem, useAnimation) {
 
@@ -81,12 +80,6 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
 
     //  Refresh all the videos displayed to ensure they GUI matches background's data.
     function reload() {
-        var currentlyHiglighted = playlistItemList.find('.highlighted');
-
-        if (currentlyHiglighted.length > 0) {
-            currentlyHighlightedId = currentlyHiglighted.data('itemid');
-        }
-
         playlistItemList.empty();
         
         var selectedPlaylist = playlistManager.getStream().getSelectedPlaylist();
@@ -130,27 +123,12 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
 
         } while (currentItem.get('id') !== firstItemId)
 
-        playlistItemList.children().click(function () {
-            var itemId = $(this).data('itemid');
-            var itemClass = 'highlighted';
-
-            var item = playlistItemList.find('li[data-itemid="' + itemId + '"]');
-            
-            if (item.hasClass(itemClass)) {
-                selectItemById(itemId);
-            } else {
-                setListItemClass(itemId, itemClass);
-                localStorage.setItem('highlightedItemId', itemId);
-            }
-
-            return false;
-        });
-
         //  Load and start playing a video if it is double click.
-        playlistItemList.children().dblclick(function () {
+        playlistItemList.children().click(function () {
 
             var itemId = $(this).data('itemid');
             selectItemById(itemId);
+            setListItemClass(loadedItemId, 'loaded');
             
             return false;
         });
@@ -164,10 +142,5 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
             var loadedItemId = loadedItem.get('id');
             setListItemClass(loadedItemId, 'loaded');
         }
-        
-        if (currentlyHighlightedId) {
-            setListItemClass(currentlyHighlightedId, 'highlighted');
-        }
-      
     }
 });

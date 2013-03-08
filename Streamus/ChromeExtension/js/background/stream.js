@@ -255,15 +255,14 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState'], function (
             
             if (selectedPlaylist == null || selectedPlaylist.get('id') !== playlistId) {
 
-                var playlist = this.get('playlists').get(playlistId);
-
-                if (selectedPlaylist != null && selectedPlaylist.get('id') !== playlist.get('id')) {
+                //  Deselect any currently selected playlist.
+                if (selectedPlaylist != null) {
                     selectedPlaylist.set({ selected: false });
                 }
-
-                //First time loading up there won't be a playlist selected yet, so just go ahead and set.
-                playlist.set({ selected: true });
-                localStorage.setItem('selectedPlaylistId', playlist.get('id'));
+                
+                //  Mark the new playlist as selected and save this state to localStorage for future UI openings.
+                this.get('playlists').get(playlistId).set({ selected: true });
+                localStorage.setItem('selectedPlaylistId', playlistId);
             }
         },
         

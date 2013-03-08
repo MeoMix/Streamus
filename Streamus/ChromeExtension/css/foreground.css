@@ -545,12 +545,8 @@
   margin-top: 5px;
 } 
 
-.highlighted a {
+.loaded a {
     font-weight: bold !important;
-}
-
-.loaded a:before {
-  content:'♫ ';
 }
 
 #ContextMenu {

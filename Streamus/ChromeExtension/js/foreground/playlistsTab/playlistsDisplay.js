@@ -19,8 +19,6 @@ define(['playlistsContextMenu', 'ytHelper', 'playlistManager'], function (contex
     function reload() {
         playlistList.empty();
 
-
-        console.log("user?", user);
         var activeStream = user.get('streams').at(0);
 
         var firstListId = activeStream.get('firstListId');
@@ -56,8 +54,8 @@ define(['playlistsContextMenu', 'ytHelper', 'playlistManager'], function (contex
         
         //  Removes the old 'current' marking and move it to the newly selected row.
         function selectRow(id) {
-            playlistList.find('li').removeClass('highlighted');
-            $('#' + id).parent().addClass('highlighted');
+            playlistList.find('li').removeClass('loaded');
+            $('#' + id).parent().addClass('loaded');
         };
 
         //  Clicking on a playlist will select that playlist.
