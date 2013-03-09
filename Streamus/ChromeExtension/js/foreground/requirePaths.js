@@ -34,7 +34,7 @@ var require = {
         'underscore': 'thirdParty/underscore',
         'oauth2': 'thirdParty/oauth2/oauth2',
         'backbone': 'thirdParty/backbone',
-        'playlistManager': 'foreground/playlistManager',
+        'backgroundManager': 'foreground/backgroundManager',
         'player': 'foreground/player',
         'videoDisplay': 'foreground/videoTab/videoDisplay',
         'scrollIntoView': 'thirdParty/jquery.scrollIntoView'

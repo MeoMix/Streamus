@@ -1,7 +1,7 @@
 //  The videos tab header. Users may add videos by clicking on Add Videos.
 //  Clicking Add Videos will allow the user to either search w/ auto-complete suggestions, or to paste youtube URLs into the input.
-define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'playlistManager'],
-    function (ContentHeader, ytHelper, dialogs, helpers, playlistManager) {
+define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
+    function (ContentHeader, ytHelper, dialogs, helpers, backgroundManager) {
     'use strict';
 
     var contentHeader = new ContentHeader('#CurrentPlaylistItemDisplay', 'Add Videos', 'Search for artists or videos');
@@ -29,7 +29,10 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'playlistManager'],
             //  Don't change the text when user clicks their video selection.
             event.preventDefault();
             contentHeader.flashMessage('Thanks!', 2000);
-            playlistManager.getStream().getSelectedPlaylist().addItemByInformation(ui.item.value);
+            backgroundManager.get('activePlaylist').addItemByInformation(ui.item.value);
+            
+
+
         }
     });
 
@@ -68,7 +71,7 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'playlistManager'],
             if (videoInformation == null) {
                 dialogs.showBannedVideoDialog();
             } else {
-                playlistManager.getStream().getSelectedPlaylist().addItemByInformation(videoInformation);
+                backgroundManager.get('activePlaylist').addItemByInformation(videoInformation);
             }
         });
     }

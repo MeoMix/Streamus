@@ -1,17 +1,10 @@
 //  This is the list of playlists on the playlists tab.
-define(['playlistsContextMenu', 'ytHelper', 'playlistManager'], function (contextMenu, ytHelper, playlistManager) {
+define(['playlistsContextMenu', 'ytHelper', 'backgroundManager'], function (contextMenu, ytHelper, backgroundManager) {
     //  TODO: Make this sortable and should inherit from a common List object. 
     var playlistList = $('#PlaylistList ul');
     //  TODO: Need to be a lot more fine-grained then just spamming reload. Will come back around to it.
     // TODO: This will need to be reworked to support >1 streams.
-    var stream = playlistManager.getStream();
-    var user = chrome.extension.getBackgroundPage().User;
-
-    stream.get('playlists').on('remove', reload);
-    stream.get('playlists').on('add', reload);
-    stream.get('playlists').on('change:selected', reload);
-    stream.get('playlists').on('change:title', reload);
-    //TODO: on stream change.
+    backgroundManager.get('activeStream').get('playlists').on('add remove change:selected change:title', reload);
 
     reload();
 
@@ -19,7 +12,7 @@ define(['playlistsContextMenu', 'ytHelper', 'playlistManager'], function (contex
     function reload() {
         playlistList.empty();
 
-        var activeStream = user.get('streams').at(0);
+        var activeStream = backgroundManager.get('activeStream');
 
         var firstListId = activeStream.get('firstListId');
         var currentList = activeStream.get('playlists').get(firstListId);
@@ -51,7 +44,6 @@ define(['playlistsContextMenu', 'ytHelper', 'playlistManager'], function (contex
 
         } while(currentList.get('id') !== firstListId)
 
-        
         //  Removes the old 'current' marking and move it to the newly selected row.
         function selectRow(id) {
             playlistList.find('li').removeClass('loaded');
@@ -63,7 +55,7 @@ define(['playlistsContextMenu', 'ytHelper', 'playlistManager'], function (contex
             var clickedId = $(this).children()[0].id;
             selectRow(clickedId);
             
-            playlistManager.getStream().selectPlaylist(clickedId);
+            backgroundManager.get('activeStream').selectPlaylist(clickedId);
             return false;
         });
     }

@@ -1,5 +1,5 @@
 ﻿//  Represents the videos in a given playlist
-define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (contextMenu, playlistManager, player) {
+define(['playlistItemsContextMenu', 'backgroundManager', 'player'], function (contextMenu, backgroundManager, player) {
     'use strict';
     var playlistItemList = $('#PlaylistItemList ul');
 
@@ -16,7 +16,7 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
             //var movedItemId = ui.item.data('itemid');
             //var newPosition = ui.item.index();
 
-            //playlistManager.getStream().getSelectedPlaylist().moveItem(movedItemId, newPosition);
+            //backgroundManager.get('activePlaylist').moveItem(movedItemId, newPosition);
         }
     });
 
@@ -27,23 +27,23 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
     };
     
     function selectItemById(itemId) {
-        var selectedItemId = playlistManager.getStream().getSelectedPlaylist().getSelectedItem().get('id');
+        var selectedItemId = backgroundManager.get('activePlaylistItem').get('id');
         //  If the item is already selected then it is cued up -- so just play it.
         if (selectedItemId == itemId) {
 
             player.play();
         } else {
             window && console.log("Playlist manager is about to select item with ID:", itemId);
-            var item = playlistManager.getStream().getSelectedPlaylist().selectItemById(itemId);
+            var item = backgroundManager.get('activePlaylist').selectItemById(itemId);
             player.loadVideoById(item.get('video').get('id'));
         }
     }
     
     //  TODO: Need to be a lot more fine-grained then just spamming reload. Will come back around to it.
     //  TODO: This will need to be reworked to support >1 streams.
-    var stream = playlistManager.getStream();
+    var activeStream = backgroundManager.get('activeStream');
 
-    stream.get('playlists').on('change:selected', function (playlist, isSelected) {
+    activeStream.get('playlists').on('change:selected', function (playlist, isSelected) {
         var playlistItems = playlist.get('items');
         if (isSelected) {
             playlistItems.on('add remove change:selected', function () {
@@ -58,9 +58,10 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
     });
     
     //  TODO: Not sure what change on items is doing or why I need it.
-    stream.getSelectedPlaylist().get('items').on('add remove change:selected', reload);
+    backgroundManager.get('activePlaylist').get('items').on('add remove change:selected', reload);
 
     reload();
+    scrollLoadedItemIntoView(backgroundManager.get('activePlaylistItem'), false);
     
     function scrollLoadedItemIntoView(loadedItem, useAnimation) {
 
@@ -76,20 +77,17 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
         }
     }
 
-    scrollLoadedItemIntoView(stream.getSelectedPlaylist().getSelectedItem(), false);
-
     //  Refresh all the videos displayed to ensure they GUI matches background's data.
     function reload() {
         playlistItemList.empty();
-        
-        var selectedPlaylist = playlistManager.getStream().getSelectedPlaylist();
-        var selectedPlaylistItems = selectedPlaylist.get('items');
 
-        if (selectedPlaylistItems.length === 0) return;
+        var activePlaylist = backgroundManager.get('activePlaylist');
+        var activePlaylistItems = backgroundManager.get('activePlaylist').get('items');
 
-        var firstItemId = selectedPlaylist.get('firstItemId');
+        if (activePlaylistItems.length === 0) return;
 
-        var currentItem = selectedPlaylistItems.get(firstItemId);
+        var firstItemId = activePlaylist.get('firstItemId');
+        var currentItem = activePlaylistItems.get(firstItemId);
         
         //  Build up the ul of li's representing each playlistItem.
         do {
@@ -119,7 +117,7 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
                 }).appendTo(listItem);
             })(currentItem);
 
-            currentItem = selectedPlaylistItems.get(currentItem.get('nextItemId'));
+            currentItem = activePlaylistItems.get(currentItem.get('nextItemId'));
 
         } while (currentItem.get('id') !== firstItemId)
 
@@ -128,19 +126,20 @@ define(['playlistItemsContextMenu', 'playlistManager', 'player'], function (cont
 
             var itemId = $(this).data('itemid');
             selectItemById(itemId);
-            setListItemClass(loadedItemId, 'loaded');
+            setListItemClass(itemId, 'loaded');
             
             return false;
         });
-
-        var loadedItem = selectedPlaylist.getSelectedItem();
+        
+        //  TODO: this might not work as hoped because what if activePlaylistItem is in a different playlist?
+        var activeItem = backgroundManager.get('activePlaylistItem');
 
         //  Since we emptied our list we lost the selection, reselect.
-        if (loadedItem) {
-            scrollLoadedItemIntoView(loadedItem, false);
+        if (activeItem) {
+            scrollLoadedItemIntoView(activeItem, false);
 
-            var loadedItemId = loadedItem.get('id');
-            setListItemClass(loadedItemId, 'loaded');
+            var activeItemId = activeItem.get('id');
+            setListItemClass(activeItemId, 'loaded');
         }
     }
 });

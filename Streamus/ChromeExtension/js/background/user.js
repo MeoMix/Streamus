@@ -18,8 +18,7 @@ define(['streams', 'programState'], function (Streams, programState) {
         urlRoot: programState.getBaseUrl() + 'User/',
         
         //  TODO: I am doing too much work in this initialize constructor. 
-        //  TODO: It would be nice to have this be initialize and not custom function having to be called.
-        login: function () {
+        initialize: function () {
             window && console.log("user is initializing");
 
             //  If user's ID wasn't found in local storage, check sync because its a pc-shareable location, but doesn't work synchronously.

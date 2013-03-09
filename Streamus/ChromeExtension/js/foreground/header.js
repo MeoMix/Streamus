@@ -1,5 +1,5 @@
 ﻿//  Displays the currently playing playlistItem's title or a default welcome message.
-define(['playlistManager'], function (playlistManager) {
+define(['backgroundManager'], function (backgroundManager) {
     'use strict';
     var header = $('#Header');
     var headerTitle = $('#HeaderTitle');
@@ -22,26 +22,12 @@ define(['playlistManager'], function (playlistManager) {
         $(this).stop(true).animate({ marginLeft: 0 });
     });
 
-    var stream = playlistManager.getStream();
-
-    stream.getSelectedPlaylist().on('change:title', function (playlist, title) {
+    var activePlaylist= backgroundManager.get('activePlaylist');
+    activePlaylist.on('change:title', function (playlist, title) {
         headerTitle.text(title);
     });
-
-    stream.getSelectedPlaylist().get('items').on('change:selected', function (item, isSelected) {
-        
-        if (isSelected) {
-            setTitle(item);
-        }
-    });
-
-    stream.getSelectedPlaylist().get('items').on('remove', function (model, collection) {
-        if (collection.length === 0) {
-            headerTitle.text(defaultTitle);
-        }
-    });
     
-    stream.getSelectedPlaylist().on('change:selected', function (playlist, isSelected) {
+    activePlaylist.on('change:selected', function (playlist, isSelected) {
 
         if (isSelected) {
             setTitle(playlist.getSelectedItem());
@@ -49,10 +35,22 @@ define(['playlistManager'], function (playlistManager) {
 
     });
 
-    //  Initialize the title because might be re-opening with a playlistItem already loaded.
+    var activePlaylistItems = activePlaylist.get('items');
+    activePlaylistItems.on('change:selected', function (item, isSelected) {
+        
+        if (isSelected) {
+            setTitle(item);
+        }
+    });
 
-    var selectedItem = stream.getSelectedPlaylist().getSelectedItem();
-    setTitle(selectedItem);
+    activePlaylistItems.on('remove', function (model, collection) {
+        if (collection.length === 0) {
+            headerTitle.text(defaultTitle);
+        }
+    });
+
+    //  Initialize the title because might be re-opening with a playlistItem already loaded.
+    setTitle(backgroundManager.get('activePlaylistItem'));
     
     function setTitle(item) {
         var titleText = item == null ? defaultTitle : item.get('title');

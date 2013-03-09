@@ -12,11 +12,18 @@ define(function () {
 
     var LocalStorageManagerModel = Backbone.Model.extend({
         defaults: {
+            
         },
-        initialize: function () {
+        
+        getSelectedStreamId: function () {
+            
+            return localStorage.getItem('activeStreamId');
+
+            var selectedItemId = localStorage.getItem('selectedItemId');
         },
+
         getSelectedItemId: function(){
-            var selectedIof temId = localStorage.getItem('selectedItemId');
+            var selectedItemId = localStorage.getItem('selectedItemId');
             
         }
         

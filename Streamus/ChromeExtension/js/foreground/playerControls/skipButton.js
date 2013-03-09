@@ -1,5 +1,5 @@
 //  When clicked -- skips to the next video. Skips from the end of the list to the front again.
-define(['playlistManager'], function (playlistManager) {
+define(['backgroundManager'], function (backgroundManager) {
     'use strict';
     var skipButton = $('#SkipButton');
 
@@ -7,20 +7,13 @@ define(['playlistManager'], function (playlistManager) {
     skipButton.click(_.debounce(function () {
 
         if (!$(this).hasClass('disabled')) {
-            playlistManager.getStream().getSelectedPlaylist().skipItem('next');
+            backgroundManager.get('activePlaylist').skipItem('next');
         }
 
     }, 100, true));
 
-    var stream = playlistManager.getStream();
-    stream.getSelectedPlaylist().get('items').on('remove', function (model, collection) {
-        if (collection.length === 0) {
-            disableButton();
-        }
-    });
-    stream.getSelectedPlaylist().get('items').on('add', enableButton);
-    
-    stream.get('playlists').on('change:selected', function (playlist, isSelected) {
+    var activeStream = backgroundManager.get('activeStream');
+    activeStream.get('playlists').on('change:selected', function (playlist, isSelected) {
 
         if (isSelected) {
             enableIfItemsInPlaylist(playlist);
@@ -39,7 +32,15 @@ define(['playlistManager'], function (playlistManager) {
 
     });
 
-    enableIfItemsInPlaylist(stream.getSelectedPlaylist());
+    var activePlaylist = backgroundManager.get('activePlaylist');
+    activePlaylist.get('items').on('remove', function (model, collection) {
+        if (collection.length === 0) {
+            disableButton();
+        }
+    });
+    activePlaylist.get('items').on('add', enableButton);
+    
+    enableIfItemsInPlaylist(activePlaylist);
     
     function enableIfItemsInPlaylist(playlist) {
         var itemCount = playlist.get('items').length;

@@ -1,5 +1,5 @@
 //The play/pause icon.
-define(['playlistManager', 'player'], function (playlistManager, player) {
+define(['backgroundManager', 'player'], function (backgroundManager, player) {
 	'use strict';
 	var playPauseButton = $('#PlayPauseButton');
 	var pauseIcon = $('#PauseIcon');
@@ -37,35 +37,36 @@ define(['playlistManager', 'player'], function (playlistManager, player) {
 	player.on('change:state', makeIconReflectPlayerState);
 	makeIconReflectPlayerState();
 
-	var stream = playlistManager.getStream();
-    var selectedPlaylist = stream.getSelectedPlaylist();
+	console.log("Background Manager:", backgroundManager);
+    console.log("The real deal:", chrome.extension.getBackgroundPage().BackgroundManager);
 
-    selectedPlaylist.get('items').on('remove', function (model, collection) {
+	var activeStream = backgroundManager.get('activeStream');
+    console.log("Active stream here:", activeStream);
+	activeStream.get('playlists').on('change:selected', function (playlist, isSelected) {
+	    if (isSelected) {
+	        playlist.get('items').on('remove', function (model, collection) {
+	            if (collection.length === 0) {
+	                disableButton();
+	            }
+	        });
+
+	        playlist.get('items').on('add', enableButton);
+	    } else {
+	        playlist.get('items').off('remove add');
+	    }
+
+	});
+
+	var activePlaylistitems = backgroundManager.get('activePlaylist').get('items');
+	activePlaylistitems.on('remove', function (model, collection) {
 	    if (collection.length === 0) {
 	        disableButton();
 	    }
 	});
 
-    selectedPlaylist.get('items').on('add', enableButton);
+	activePlaylistitems.on('add', enableButton);
 
-    stream.get('playlists').on('change:selected', function (playlist, isSelected) {
-        if (isSelected) {
-            playlist.get('items').on('remove', function(model, collection) {
-                if (collection.length === 0) {
-                    disableButton();
-                }
-            });
-            
-            playlist.get('items').on('add', enableButton);
-        } else {
-            playlist.get('items').off('remove add');
-        }
-
-    });
-
-    var itemCount = selectedPlaylist.get('items').length;
-
-    if (itemCount > 0) {
+    if (activePlaylistitems.length > 0) {
         enableButton();
     }
 

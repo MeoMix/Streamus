@@ -1,4 +1,4 @@
-﻿define(['youTubePlayerAPI', 'playlistManager', 'player'], function (youTubePlayerAPI, playlistManager, player) {
+﻿define(['youTubePlayerAPI', 'backgroundManager', 'player'], function (youTubePlayerAPI, backgroundManager, player) {
     'use strict';
 
     //var selectedItem = playlistManager.getStream().getSelectedPlaylist().getSelectedItem();

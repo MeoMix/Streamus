@@ -1,4 +1,4 @@
-define(['playlistManager'], function(playlistManager){
+define(['backgroundManager'], function (backgroundManager) {
     'use strict';
     return function(selector, addText, addInputPlaceholder){
         var contentHeader = $(selector);
@@ -9,14 +9,14 @@ define(['playlistManager'], function(playlistManager){
 
         function processTitle(playlistTitle){
             if (playlistTitle !== '') {
-                playlistManager.getStream().getSelectedPlaylist().set('title', playlistTitle);
+                backgroundManager.get('activePlaylist').set('title', playlistTitle);
             }
         }
 
         var headerInput = $('<input/>', {
             'class': 'headerInput',
             type: 'text',
-            value: playlistManager.getStream().getSelectedPlaylist().get('title'),
+            value: backgroundManager.get('activePlaylist').get('title'),
             originalValue: '',
             mouseover: function(){
                 this.originalValue = $(this).val();
@@ -42,18 +42,13 @@ define(['playlistManager'], function(playlistManager){
         });
         
         headerInput.appendTo(headerTitle);
-        
-        var stream = playlistManager.getStream();
-        stream.getSelectedPlaylist().on('change:title', function (event, title) {
-            headerInput.val(title);
-        });
-        
-        stream.get('playlists').on('change:selected', function (playlist, isSelected) {
-            
+
+        backgroundManager.get('activeStream').get('playlists').on('change:selected', function (playlist, isSelected) {
+
             if (isSelected) {
                 headerInput.val(playlist.get('title'));
 
-                playlist.on('change:title', function(event, title) {
+                playlist.on('change:title', function (event, title) {
                     headerInput.val(title);
                 });
 
@@ -63,6 +58,10 @@ define(['playlistManager'], function(playlistManager){
 
         });
 
+        backgroundManager.get('activePlaylist').on('change:title', function (event, title) {
+            headerInput.val(title);
+        });
+        
         var addButton = $('<div/>', {
             'class': 'addButton'
         }).appendTo(contentHeader);

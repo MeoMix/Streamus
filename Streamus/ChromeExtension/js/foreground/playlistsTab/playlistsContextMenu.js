@@ -1,5 +1,5 @@
-//Responsible for showing options when interacting with a Playlist in Playlist_List.
-define(['contextMenu', 'playlistManager'], function (contextMenu, playlistManager) {
+//  Responsible for showing options when interacting with a Playlist in Playlist_List.
+define(['contextMenu', 'backgroundManager'], function (contextMenu, backgroundManager) {
     'use strict';
     var playlistContextMenu = {};
 
@@ -7,10 +7,9 @@ define(['contextMenu', 'playlistManager'], function (contextMenu, playlistManage
         initialize: function(playlist) {
             this.empty();
             this.addContextMenuItem('Delete playlist', function() {
-                //TODO: I need to gray out the option to delete, but still show it.
-                //Should I gray out when clicking on last playlist or current playlist?
+
                 if (playlist !== null && !playlist.get('selected')) {
-                    playlistManager.getStream().removePlaylistById(playlist.get('id'));
+                    backgroundManager.get('activeStream').removePlaylistById(playlist.get('id'));
                 }
             });
         }

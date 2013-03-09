@@ -1,4 +1,4 @@
-﻿define(['contentHeader', 'ytHelper', 'playlistManager'], function(ContentHeader, ytHelper, playlistManager) {
+﻿define(['contentHeader', 'ytHelper', 'backgroundManager'], function (ContentHeader, ytHelper, backgroundManager) {
     'use strict';
     
     var contentHeader = new ContentHeader('#PlaylistDisplay', 'Add Playlist', 'Enter a playlist name');
@@ -27,14 +27,14 @@
 
                 ytHelper.getPlaylistTitle(youtubePlaylistId, function (playlistTitle) {
                     if (playlistTitle) {
-                        playlistManager.getStream().addPlaylist(playlistTitle, youtubePlaylistId);
+                        backgroundManager.get('activeStream').addPlaylist(playlistTitle, youtubePlaylistId);
                     }
                 });
             }
             else {
                 //  Only add the playlist if a name was provided.
                 if (userInput.trim() !== '') {
-                    playlistManager.getStream().addPlaylist(userInput);
+                    backgroundManager.get('activeStream').addPlaylist(userInput);
                     contentHeader.flashMessage('Thanks!', 2000);
                 }
             }

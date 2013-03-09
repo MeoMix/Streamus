@@ -1,5 +1,5 @@
 //  When clicked -- skips to the last video. Skips from the begining of the list to the end.
-define(['playlistManager'], function(playlistManager){
+define(['backgroundManager'], function (backgroundManager) {
     'use strict';
     var previousButton = $('#PreviousButton');
     
@@ -7,27 +7,18 @@ define(['playlistManager'], function(playlistManager){
     previousButton.click(_.debounce(function () {
         
         if (!$(this).hasClass('disabled')) {
-            playlistManager.getStream().getSelectedPlaylist().skipItem('previous');
+            backgroundManager.get('activePlaylist').skipItem('previous');
         }
         
     }, 100, true));
-    
-    var stream = playlistManager.getStream();
-    var selectedPlaylist = stream.getSelectedPlaylist();
-    selectedPlaylist.get('items').on('remove', function (model, collection) {
-        if (collection.length === 0) {
-            disableButton();
-        }
-    });
-    
-    selectedPlaylist.get('items').on('add', enableButton);
-    
-    stream.get('playlists').on('change:selected', function (playlist, isSelected) {
+
+    var activeStream = backgroundManager.get('activeStream');
+    activeStream.get('playlists').on('change:selected', function (playlist, isSelected) {
 
         if (isSelected) {
             enableIfItemsInPlaylist(playlist);
 
-            playlist.get('items').on('remove', function(model, collection) {
+            playlist.get('items').on('remove', function (model, collection) {
                 if (collection.length === 0) {
                     disableButton();
                 }
@@ -41,7 +32,16 @@ define(['playlistManager'], function(playlistManager){
 
     });
 
-    enableIfItemsInPlaylist(selectedPlaylist);
+    var activePlaylist = backgroundManager.get('activePlaylist');
+    activePlaylist.get('items').on('remove', function (model, collection) {
+        if (collection.length === 0) {
+            disableButton();
+        }
+    });
+    
+    activePlaylist.get('items').on('add', enableButton);
+
+    enableIfItemsInPlaylist(activePlaylist);
     
     function enableIfItemsInPlaylist(playlist) {
         var itemCount = playlist.get('items').length;

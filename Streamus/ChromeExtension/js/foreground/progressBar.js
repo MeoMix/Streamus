@@ -1,6 +1,6 @@
 ﻿//  A progress bar which shows the elapsed time as compared to the total time of the current video.
 //  Changes colors based on player state -- yellow when paused, green when playing.
-define(['playlistManager', 'player', 'helpers'], function (playlistManager, player, helpers) {
+define(['backgroundManager', 'player', 'helpers'], function (backgroundManager, player, helpers) {
     'use strict';
     
     var progressBar = $('#VideoTimeProgressBar');
@@ -52,29 +52,15 @@ define(['playlistManager', 'player', 'helpers'], function (playlistManager, play
         }
     });
 
-    var stream = playlistManager.getStream();
-    var selectedPlaylist = stream.getSelectedPlaylist();
+    var activeStream = backgroundManager.get('activeStream');
+    activeStream.get('playlists').on('change:selected', function (playlist, isSelected) {
 
-    selectedPlaylist.get('items').on('change:selected', function () {
-        setCurrentTime(0);
-        setTotalTime(getCurrentVideoDuration());
-    });
-    
-    selectedPlaylist.get('items').on('remove', function (model, collection) {
-        if (collection.length === 0) {
-            setCurrentTime(0);
-            setTotalTime(0);
-        }
-    });
-
-    stream.get('playlists').on('change:selected', function (playlist, isSelected) {
-        
         if (isSelected) {
-            playlist.get('items').on('change:selected', function() {
+            playlist.get('items').on('change:selected', function () {
                 setCurrentTime(0);
                 setTotalTime(getCurrentVideoDuration());
             });
-            
+
             playlist.get('items').on('remove', function (model, collection) {
                 if (collection.length === 0) {
                     setCurrentTime(0);
@@ -86,6 +72,20 @@ define(['playlistManager', 'player', 'helpers'], function (playlistManager, play
             playlist.get('items').off('remove change:selected');
         }
 
+    });
+
+    var activePlaylist = backgroundManager.get('activePlaylist');
+
+    activePlaylist.get('items').on('change:selected', function () {
+        setCurrentTime(0);
+        setTotalTime(getCurrentVideoDuration());
+    });
+    
+    activePlaylist.get('items').on('remove', function (model, collection) {
+        if (collection.length === 0) {
+            setCurrentTime(0);
+            setTotalTime(0);
+        }
     });
 
     //  If a video is currently playing when the GUI opens then initialize with those values.
@@ -116,10 +116,10 @@ define(['playlistManager', 'player', 'helpers'], function (playlistManager, play
     //  Return 0 or currently selected video's duration.
     function getCurrentVideoDuration() {
         var duration = 0;
-        var selectedItem = playlistManager.getStream().getSelectedPlaylist().getSelectedItem();
+        var activeItem = backgroundManager.get('activePlaylistItem');
 
-        if (selectedItem != null) {
-            duration = selectedItem.get('video').get('duration');
+        if (activeItem != null) {
+            duration = activeItem.get('video').get('duration');
         }
 
         return duration;

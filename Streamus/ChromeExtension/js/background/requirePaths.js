@@ -12,7 +12,6 @@ var require = {
         'streams': 'background/streams',
         'playlist': 'background/playlist',
         'playlists': 'background/playlists',
-        'playlistManager': 'background/playlistManager',
         'youTubePlayerAPI': 'youTubePlayerAPI',
         'video': 'background/video',
         'videos': 'background/videos',
@@ -25,6 +24,7 @@ var require = {
         'user': 'background/user',
         'oauth2': 'thirdParty/oauth2/oauth2',
         'playlistItemsHistory': 'background/playlistItemsHistory',
-        'backbone': 'thirdParty/backbone'
+        'backbone': 'thirdParty/backbone',
+        'backgroundManager': 'background/backgroundManager'
     }
 };

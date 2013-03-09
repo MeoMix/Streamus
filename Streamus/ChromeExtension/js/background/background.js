@@ -1,5 +1,14 @@
-﻿define(['player', 'user'], function (player, user) {
+﻿define(['player', 'backgroundManager'], function (player, backgroundManager) {
     'use strict';
+    
+    //player.once('change:ready', function () {
+    //    console.log("background Manager:", backgroundManager);
+    //    backgroundManager.get('activePlaylist').get('items').on('remove', function (model, collection) {
+    //        if (collection.length === 0) {
+    //            player.pause();
+    //        }
+    //    });
+    //});
 
     player.on('change:state', function (model, state) {
         
@@ -9,9 +18,9 @@
   
             if (foreground.length == 0){
                 var notification = window.webkitNotifications.createNotification(
-                  'http://img.youtube.com/vi/' + user.get('streams').at(0).getSelectedPlaylist().getSelectedItem().get('video').get('id') + '/default.jpg',
+                  'http://img.youtube.com/vi/' + backgroundManager.get('activePlaylistItem').get('video').get('id') + '/default.jpg',
                   'Now Playing',
-                  user.get('streams').at(0).getSelectedPlaylist().getSelectedItem().get('title')
+                  backgroundManager.get('activePlaylistItem').get('title')
                 );
 
                 notification.show();
@@ -21,63 +30,62 @@
                 }, 5000);
             }
         }
+        //  If the video stopped playing and there's another playlistItem to skip to, do so.
+        else if (state === PlayerStates.ENDED) {
+            //  Don't pass message to UI if it is closed. Handle sock change in the background.
+            //  The player can be playing in the background and UI changes may try and be posted to the UI, need to prevent.
+            var isRadioModeEnabled = JSON.parse(localStorage.getItem('isRadioModeEnabled')) || false;
 
-        console.log("state:", state);
+            var activePlaylist = backgroundManager.get('activePlaylist');
+            var nextItem;
+            if (isRadioModeEnabled) {
+                var nextVideo = activePlaylist.getRelatedVideo();
+                nextItem = activePlaylist.addItem(nextVideo);
+
+            } else {
+                nextItem = activePlaylist.gotoNextItem();
+            }
+
+            var selectedItem = activePlaylist.selectItemById(nextItem.get('id'));
+            player.loadVideoById(selectedItem.get('video').get('id'));
+        }
+
+    });
+    
+    //  Receive keyboard shortcuts from users.
+    chrome.commands.onCommand.addListener(function (command) {
+        console.log("Command received:", command);
+        switch (command) {
+            case 'nextVideo':
+                backgroundManager.get('activePlaylist').skipItem("next");
+                break;
+            case 'previousVideo':
+                backgroundManager.get('activePlaylist').skipItem("previous");
+                break;
+            case 'toggleVideo':
+                if (player.isPlaying()) {
+                    player.pause();
+                } else {
+                    player.play();
+                }
+
+                break;
+
+        }
     });
 
-    //  The YouTube Player API must be ready before loading playlistManager because user loads with streams which, when initialized
-    //  will try and affect the player.
-    player.once('change:ready', function () {
-
-        user.login();
-
-        require(['playlistManager'], function (playlistManager) {
-
-            //  Receive keyboard shortcuts from users.
-            chrome.commands.onCommand.addListener(function (command) {
-                console.log("Command received:", command);
-                switch (command) {
-                    case 'nextVideo':
-                        playlistManager.getStream().getSelectedPlaylist().skipItem("next");
-                        break;
-                    case 'previousVideo':
-                        playlistManager.getStream().getSelectedPlaylist().skipItem("previous");
-                        break;
-                    case 'toggleVideo':
-                        if (player.isPlaying()) {
-                            player.pause();
-                        } else {
-                            player.play();
-                        }
-
-                        break;
-
-                }
-            });
-            
-            chrome.extension.onRequest.addListener(function (request, sender, sendResponse) {
-                switch (request.method) {
-                    case 'getPlaylists':
-                        sendResponse({ playlists: playlistManager.getStream().get('playlists') });
-                        break;
-                    case 'addVideoByIdToPlaylist':
-                        playlistManager.getStream().addVideoByIdToPlaylist(request.id, request.playlistId);
-                        break;
-                    default:
-                        window && console.error("Unhandled request method:", request.method);
-                        break;
-                }
-            });
-
-            user.on('change:loaded', function() {
-                //  TODO: How do I break this ugly chain?
-                playlistManager.getStream().getSelectedPlaylist().get('items').on('remove', function (model, collection) {
-                    if (collection.length === 0) {
-                        player.pause();
-                    }
-                });
-            });
-        });
+    chrome.extension.onRequest.addListener(function (request, sender, sendResponse) {
+        switch (request.method) {
+            case 'getPlaylists':
+                sendResponse({ playlists: backgroundManager.get('activeStream').get('playlists') });
+                break;
+            case 'addVideoByIdToPlaylist':
+                backgroundManager.get('activeStream').addVideoByIdToPlaylist(request.id, request.playlistId);
+                break;
+            default:
+                window && console.error("Unhandled request method:", request.method);
+                break;
+        }
     });
 
     //  http://stackoverflow.com/questions/5235719/how-to-copy-text-to-clipboard-from-a-google-chrome-extension
