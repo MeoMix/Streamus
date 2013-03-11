@@ -12,42 +12,16 @@ define(['backgroundManager'], function (backgroundManager) {
 
     }, 100, true));
 
-    var activeStream = backgroundManager.get('activeStream');
-    activeStream.get('playlists').on('change:selected', function (playlist, isSelected) {
-
-        if (isSelected) {
-            enableIfItemsInPlaylist(playlist);
-
-            playlist.get('items').on('remove', function (model, collection) {
-                if (collection.length === 0) {
-                    disableButton();
-                }
-            });
-
-            playlist.get('items').on('add', enableButton);
-
-        } else {
-            playlist.get('items').off('remove add');
-        }
-
-    });
-
-    var activePlaylist = backgroundManager.get('activePlaylist');
-    activePlaylist.get('items').on('remove', function (model, collection) {
-        if (collection.length === 0) {
+    backgroundManager.on('change:activePlaylistItem', function (activePlaylistItem) {
+        if (activePlaylistItem === null) {
             disableButton();
-        }
-    });
-    activePlaylist.get('items').on('add', enableButton);
-    
-    enableIfItemsInPlaylist(activePlaylist);
-    
-    function enableIfItemsInPlaylist(playlist) {
-        var itemCount = playlist.get('items').length;
-
-        if (itemCount > 0) {
+        } else {
             enableButton();
         }
+    });
+
+    if (backgroundManager.get('activePlaylistItem') !== null) {
+        enableButton();
     }
 
     //  Paint the button's path black and bind its click event.

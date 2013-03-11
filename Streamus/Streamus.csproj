@@ -227,7 +227,6 @@
     <Content Include="ChromeExtension\js\background\streams.js" />
     <Content Include="ChromeExtension\js\background\playlistItem.js" />
     <Content Include="ChromeExtension\js\background\playlistItems.js" />
-    <Content Include="ChromeExtension\js\background\playlistManager.js" />
     <Content Include="ChromeExtension\js\background\playlists.js" />
     <Content Include="ChromeExtension\js\background\requirePaths.js" />
     <Content Include="ChromeExtension\js\background\user.js" />
@@ -244,7 +243,6 @@
     <Content Include="ChromeExtension\js\foreground\playerControls\shuffleButton.js" />
     <Content Include="ChromeExtension\js\foreground\playerControls\skipButton.js" />
     <Content Include="ChromeExtension\js\foreground\playerControls\volumeSlider.js" />
-    <Content Include="ChromeExtension\js\foreground\playlistManager.js" />
     <Content Include="ChromeExtension\js\foreground\playlistsTab\playlistInput.js" />
     <Content Include="ChromeExtension\js\foreground\playlistsTab\playlistsContextMenu.js" />
     <Content Include="ChromeExtension\js\foreground\playlistsTab\playlistsDisplay.js" />

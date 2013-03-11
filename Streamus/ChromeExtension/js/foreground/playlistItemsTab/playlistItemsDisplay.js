@@ -40,26 +40,8 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player'], function (co
     }
     
     //  TODO: Need to be a lot more fine-grained then just spamming reload. Will come back around to it.
-    //  TODO: This will need to be reworked to support >1 streams.
-    var activeStream = backgroundManager.get('activeStream');
-
-    activeStream.get('playlists').on('change:selected', function (playlist, isSelected) {
-        var playlistItems = playlist.get('items');
-        if (isSelected) {
-            playlistItems.on('add remove change:selected', function () {
-                reload(playlistItems);
-            });
-
-            reload();
-        } else {
-            playlistItems.off('add remove change:selected');
-        }
-
-    });
+    backgroundManager.on('change:activePlaylistItem change:activePlaylist change:activeStream', reload);
     
-    //  TODO: Not sure what change on items is doing or why I need it.
-    backgroundManager.get('activePlaylist').get('items').on('add remove change:selected', reload);
-
     reload();
     scrollLoadedItemIntoView(backgroundManager.get('activePlaylistItem'), false);
     

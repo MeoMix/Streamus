@@ -48,44 +48,24 @@ define(['backgroundManager', 'player', 'helpers'], function (backgroundManager, 
             //  Bind to progressBar mouse-up to support dragging as well as clicking.
             //  I don't want to send a message until drag ends, so mouseup works nicely. 
             player.seekTo($(this).val());
-            isSeeking = false;
+
+            setTimeout(function() {
+                isSeeking = false;
+            }, 200);
+            
         }
     });
 
-    var activeStream = backgroundManager.get('activeStream');
-    activeStream.get('playlists').on('change:selected', function (playlist, isSelected) {
+    backgroundManager.on('change:activePlaylistItem', function(activePlaylistItem) {
 
-        if (isSelected) {
-            playlist.get('items').on('change:selected', function () {
-                setCurrentTime(0);
-                setTotalTime(getCurrentVideoDuration());
-            });
-
-            playlist.get('items').on('remove', function (model, collection) {
-                if (collection.length === 0) {
-                    setCurrentTime(0);
-                    setTotalTime(0);
-                }
-            });
-
-        } else {
-            playlist.get('items').off('remove change:selected');
-        }
-
-    });
-
-    var activePlaylist = backgroundManager.get('activePlaylist');
-
-    activePlaylist.get('items').on('change:selected', function () {
-        setCurrentTime(0);
-        setTotalTime(getCurrentVideoDuration());
-    });
-    
-    activePlaylist.get('items').on('remove', function (model, collection) {
-        if (collection.length === 0) {
+        if (activePlaylistItem === null) {
             setCurrentTime(0);
             setTotalTime(0);
+        } else {
+            setCurrentTime(0);
+            setTotalTime(getCurrentVideoDuration());
         }
+        
     });
 
     //  If a video is currently playing when the GUI opens then initialize with those values.
