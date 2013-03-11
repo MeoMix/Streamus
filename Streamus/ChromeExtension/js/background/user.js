@@ -70,13 +70,15 @@ define(['streams', 'programState'], function (Streams, programState) {
         this.fetch({
             success: function (model) {
                 //  Have to manually convert the JSON array into a Backbone.Collection
-                console.log("converting Streams to a backbone.collection");
+                console.log("converting Streams to a backbone.collection", model.get('streams'));
                 var streams = new Streams(model.get('streams'));
 
                 self.set('streams', streams, {
                     //  Silent operation because streams isn't technically changing - just being made correct.
                     silent: true
                 });
+
+                console.log("STRAMS:", streams);
 
                 //  TODO: Error handling for writing to sync too much.
                 //  Write to sync as little as possible because it has restricted read/write limits per hour.

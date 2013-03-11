@@ -28,6 +28,8 @@ define(['youTubePlayerAPI', 'ytHelper'], function (youTubePlayerAPI, ytHelper) {
                     events: {
                         'onReady': function () {
 
+                            console.log("youTubePlayer is ready");
+
                             //  Start monitoring YouTube for current time changes, foreground will pick up on currentTime changes.
                             setInterval(function () {
                                 var currentTime = self.get('youTubePlayer').getCurrentTime();

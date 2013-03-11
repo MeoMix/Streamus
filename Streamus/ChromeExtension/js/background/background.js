@@ -10,6 +10,20 @@
     //    });
     //});
 
+    backgroundManager.on('change:activePlaylistItem', function(model, activePlaylistItem) {
+
+        if (activePlaylistItem != null) {
+            
+            var videoId = activePlaylistItem.get('video').get('id');
+            if (player.isPlaying()) {
+                player.loadVideoById(videoId);
+            } else {
+                player.cueVideoById(videoId);
+            }
+        }
+
+    });
+
     player.on('change:state', function (model, state) {
         
         if (state === PlayerStates.PLAYING) {

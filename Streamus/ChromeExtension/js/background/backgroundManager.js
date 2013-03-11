@@ -2,14 +2,17 @@
 var BackgroundManager = null;
 
 //  Denormalization point for the Background's selected models.
-define(['user'], function (user) {
+define(['user', 'playlistItems', 'playlists', 'streams'], function (user, PlaylistItems, Playlists, Streams) {
     'use strict';
 
     var BackgroundManagerModel = Backbone.Model.extend({
         defaults: {
             activePlaylistItem: null,
             activePlaylist: null,
-            activeStream: null
+            activeStream: null,
+            allPlaylistItems: new PlaylistItems(),
+            allPlaylists: new Playlists(),
+            allStreams: new Streams()
         },
         initialize: function () {
 
@@ -18,16 +21,13 @@ define(['user'], function (user) {
                 if (user.get('streams').length === 0) {
                     throw "User should be initialized and have at least 1 stream before loading backgroundManager.";
                 }
-                
+
                 //  Load the active stream:
                 var activeStreamId = localStorage.getItem('activeStreamId');
 
                 if (activeStreamId === null) {
-                    console.log("Loading default active stream");
                     self.set('activeStream', user.get('streams').at(0));
-                    console.log("Active stream:", self.get('activeStream'));
                 } else {
-                    console.log("Loading activeStream with ID:", activeStreamId);
                     self.set('activeStream', user.get('streams').get(activeStreamId));
                 }
 
@@ -59,17 +59,96 @@ define(['user'], function (user) {
                     }));
 
                 }
+
+                self.get('allPlaylistItems').add(getAllPlaylistItems());
+                self.get('allPlaylists').add(getAllPlaylists());
+                self.get('allStreams').add(user.get('streams'));
+
+                self.get('allPlaylistItems').on('change:active', function (playlistItem, isActive) {
+                    
+                    if (activePlaylistItem === playlistItem && !isActive) {
+                        activePlaylistItem = null;
+                    } else if (isActive) {
+                        activePlaylistItem = playlistItem;
+                    }
+
+                });
+
+                self.get('allPlaylists').on('change:active', function (playlist, isActive) {
+                    
+                    if (activePlaylist === playlist && !isActive) {
+                        activePlaylist = null;
+                    }
+                    else if (isActive) {
+                        activePlaylist = playlist;
+                    }
+                    
+                });
+
+
+                self.get('allPlaylists').each(function (playlist) {
+
+                    playlist.get('items').on('add', function (playlistItem) {
+
+                        self.get('allPlaylistItems').add(playlistItem);
+
+                        if (self.get('activePlaylistItem') == null) {
+                            self.set('activePlaylistItem', playlistItem);
+                            playlist.selectItemById(playlistItem.get('id'));
+                        }
+
+                    });
+
+                    playlist.get('items').on('remove', function (playlistItem) {
+                        if (activePlaylistItem === playlistItem) {
+                            activePlaylistItem = null;
+                        }
+                    });
+                    
+                });
+
+                self.get('allStreams').on('change:active', function (stream, isActive) {
+
+                    if (activeStream === stream && !isActive) {
+                        activeStream = null;
+                    } else if (isActive) {
+                        activeStream = stream;
+                    }
+                    
+                });
+
+                self.get('allStreams').each(function (stream) {
+                    
+                    stream.get('playlists').on('add', function (playlist) {
+                        self.get('allPlaylists').add(playlist);
+                        
+                        playlist.on('add', function (playlistItem) {
+                            self.get('allPlaylistItems').add(playlistItem);
+                        });
+                    });
+                    
+                    stream.get('playlists').on('remove', function (playlist) {
+                        if (activePlaylist === playlist) {
+                            activePlaylist = null;
+                        }
+                    });
+                    
+                });
+                
+                //  TODO: Support adding Stream here.
+                //  TODO: Support removing Stream here.
             });
 
         }
     });
+    
     
     //  Takes all streams, retrieves all playlists from streams and then all items from playlists.
     function getAllPlaylistItems() {
         var allPlaylists = getAllPlaylists();
 
         var allPlaylistItems = _.flatten(_.map(allPlaylists, function (playlist) {
-            return playlist.get('items');
+            return playlist.get('items').models;
         }));
 
         return allPlaylistItems;
@@ -78,7 +157,7 @@ define(['user'], function (user) {
     //  Takes all streams and retrieves all playlists from the streams.
     function getAllPlaylists() {
         var allPlaylists = _.flatten(user.get('streams').map(function (stream) {
-            return stream.get('playlists');
+            return stream.get('playlists').models;
         }));
 
         return allPlaylists;

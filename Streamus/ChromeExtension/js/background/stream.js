@@ -19,12 +19,15 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState'], function (
 
             //  Data was fetched from the server. Need to convert to Backbone.
             if (!(playlists instanceof Backbone.Collection)) {
+                console.log("Playlists BEFORE:", playlists);
                 playlists = new Playlists(playlists);
 
                 this.set('playlists', playlists, {
                     //  Silent operation because it isn't technically changing - just being made correct.
                     silent: true
                 });
+
+                console.log("Playlists AFTER:", playlists, this.get('playlists'));
             }
 
             var self = this;
@@ -60,32 +63,32 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState'], function (
             });
             
             //  If there is a playlistItem to cue might as well have it ready to go.
-            if (playlists.length > 0) {
-                var localStorageKey = this.get('id') + '_selectedListId';
-                var savedListId = localStorage.getItem(localStorageKey);
+            //if (playlists.length > 0) {
+            //    var localStorageKey = this.get('id') + '_selectedListId';
+            //    var savedListId = localStorage.getItem(localStorageKey);
                 
-                if (savedListId === null) {
-                    savedListId = this.get('firstListId');
-                }
+            //    if (savedListId === null) {
+            //        savedListId = this.get('firstListId');
+            //    }
                 
-                //  Select the most recently selected item during initalization.
-                this.selectPlaylist(savedListId);
-            }
+            //    //  Select the most recently selected item during initalization.
+            //    this.selectPlaylist(savedListId);
+            //}
 
-            var selectedPlaylist = this.getSelectedPlaylist();
-            if (selectedPlaylist.get('items').length > 0) {
-                console.log("setting playlist selectedItem in stream?");
-                var selectedItem = selectedPlaylist.getSelectedItem();
+            //var selectedPlaylist = this.getSelectedPlaylist();
+            //if (selectedPlaylist.get('items').length > 0) {
+            //    console.log("setting playlist selectedItem in stream?");
+            //    var selectedItem = selectedPlaylist.getSelectedItem();
 
-                if (selectedItem == null) {
-                    selectedItem = selectedPlaylist.get('items').at(0);
-                    selectedPlaylist.selectItemById(selectedItem.get('id'));
-                    window && console.error("Failed to find a selected item in a playlist with items, gracefully recovering.");
-                } else {
+            //    if (selectedItem == null) {
+            //        selectedItem = selectedPlaylist.get('items').at(0);
+            //        selectedPlaylist.selectItemById(selectedItem.get('id'));
+            //        window && console.error("Failed to find a selected item in a playlist with items, gracefully recovering.");
+            //    } else {
 
-                    player.cueVideoById(selectedItem.get('video').get('id'));
-                }
-            }
+            //        player.cueVideoById(selectedItem.get('video').get('id'));
+            //    }
+            //}
         },
         
         addVideoByIdToPlaylist: function (id, playlistId) {

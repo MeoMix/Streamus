@@ -10,18 +10,16 @@ define(['ytHelper',
         'use strict';
 
         var Playlist = Backbone.Model.extend({
-            defaults: function() {
-                return {
-                    id: null,
-                    streamId: null,
-                    title: 'New Playlist',
-                    selected: false,
-                    firstItemId: null,
-                    nextListId: null,
-                    previousListId: null,
-                    history: new PlaylistItemsHistory(),
-                    items: new PlaylistItems()
-                };
+            defaults: {
+                id: null,
+                streamId: null,
+                title: 'New Playlist',
+                selected: false,
+                firstItemId: null,
+                nextListId: null,
+                previousListId: null,
+                history: new PlaylistItemsHistory(),
+                items: new PlaylistItems()
             },
 
             urlRoot: programState.getBaseUrl() + 'Playlist/',
@@ -43,8 +41,8 @@ define(['ytHelper',
                 
                 return data;
             },
-            initialize: function () {
-                window && console.log("Playlist is initializing");
+            initialize: function (attributes, options) {
+                window && console.log("Playlist is initializing", attributes, options);
 
                 var items = this.get('items');
 
@@ -59,15 +57,15 @@ define(['ytHelper',
                     });
                 }
 
-                if (items.length > 0) {
-                    //  Playlists store selected item client-side because it can change so often.
-                    var localStorageKey = this.get('id') + '_selectedItemId';
-                    var savedItemId = localStorage.getItem(localStorageKey);
-                    console.log("SavedItemID is:", savedItemId);
+                //if (items.length > 0) {
+                //    //  Playlists store selected item client-side because it can change so often.
+                //    var localStorageKey = this.get('id') + '_selectedItemId';
+                //    var savedItemId = localStorage.getItem(localStorageKey);
+                //    console.log("SavedItemID is:", savedItemId);
 
-                    //  Select the most recently selected item during initalization.
-                    this.selectItemById(savedItemId);
-                }
+                //    //  Select the most recently selected item during initalization.
+                //    this.selectItemById(savedItemId);
+                //}
                 
                 this.on('change:title', function (model, title) {
                     $.ajax({
@@ -119,18 +117,18 @@ define(['ytHelper',
             
             //  Deselect the currently selected item, then select the new item by its id
             selectItemById: function (id) {
-                var selectedItem = this.getSelectedItem();
+                //var selectedItem = this.getSelectedItem();
 
                 //  currentlySelected is not defined for a brand new playlist since we have no items yet selected.
-                if (selectedItem != null && selectedItem.get('id') !== id) {
-                    selectedItem.set('selected', false);
-                }
+                //if (selectedItem != null && selectedItem.get('id') !== id) {
+                //    selectedItem.set('selected', false);
+                //}
 
                 var item = this.getItemById(id);
 
-                if (item != null && item.get('selected') === false) {
-
-                    item.set('selected', true);
+                //if (item != null && item.get('selected') === false) {
+                if (item != null) {
+                    //item.set('selected', true);
                     //  TODO: bind this to the change selected to true event of an item.
                     item.set('playedRecently', true);
 
@@ -139,9 +137,9 @@ define(['ytHelper',
                     history.remove(item, { silent: true });
                     history.unshift(item);
 
-                    window && console.log("Changing selectedItem in storage to:", item.get('title'), item.get('id'));
+                    //window && console.log("Changing selectedItem in storage to:", item.get('title'), item.get('id'));
 
-                    localStorage.setItem(this.get('id') + '_selectedItemId', id);
+                    //localStorage.setItem(this.get('id') + '_selectedItemId', id);
                 }
 
                 return item;
@@ -315,14 +313,11 @@ define(['ytHelper',
                     playlistItem.set('relatedVideoInformation', relatedVideoInformation);
                 });
 
+                console.log("Pushing playlist item onto this:", playlistItem, this);
                 this.get('items').push(playlistItem);
 
                 modifiedItems.save();
-                
-                if (this.get('items').length === 1) {
-                    this.selectItemById(this.get('firstItemId'));
-                }
-
+               
                 return playlistItem;
             },
 

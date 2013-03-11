@@ -8,7 +8,6 @@ define(['backgroundManager'], function (backgroundManager) {
     //  Scroll the playlistItem title if its too long to read.
     headerTitle.mouseover(function () {
         var distanceToMove = $(this).width() - header.width();
-
         
         $(this).animate({
             marginLeft: "-" + distanceToMove + "px"
@@ -22,31 +21,8 @@ define(['backgroundManager'], function (backgroundManager) {
         $(this).stop(true).animate({ marginLeft: 0 });
     });
 
-    var activePlaylist= backgroundManager.get('activePlaylist');
-    activePlaylist.on('change:title', function (playlist, title) {
-        headerTitle.text(title);
-    });
-    
-    activePlaylist.on('change:selected', function (playlist, isSelected) {
-
-        if (isSelected) {
-            setTitle(playlist.getSelectedItem());
-        }
-
-    });
-
-    var activePlaylistItems = activePlaylist.get('items');
-    activePlaylistItems.on('change:selected', function (item, isSelected) {
-        
-        if (isSelected) {
-            setTitle(item);
-        }
-    });
-
-    activePlaylistItems.on('remove', function (model, collection) {
-        if (collection.length === 0) {
-            headerTitle.text(defaultTitle);
-        }
+    backgroundManager.on('change:activePlaylistItem', function (model, activePlaylistItem) {
+        setTitle(activePlaylistItem);
     });
 
     //  Initialize the title because might be re-opening with a playlistItem already loaded.

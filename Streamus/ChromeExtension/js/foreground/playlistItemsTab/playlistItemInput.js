@@ -30,9 +30,6 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
             event.preventDefault();
             contentHeader.flashMessage('Thanks!', 2000);
             backgroundManager.get('activePlaylist').addItemByInformation(ui.item.value);
-            
-
-
         }
     });
 
