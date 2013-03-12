@@ -82,12 +82,20 @@ define(['user', 'player', 'playlistItems', 'playlists', 'streams'], function (us
             this.set('activePlaylistItem', _.find(getAllPlaylistItems(), function (playlistItem) {
                 return playlistItem.get('id') == activePlaylistItemId;
             }));
-
         }
+
 
         this.get('allPlaylistItems').add(getAllPlaylistItems());
         this.get('allPlaylists').add(getAllPlaylists());
         this.get('allStreams').add(user.get('streams'));
+        
+
+        var activePlaylistItem = this.get('activePlaylistItem');
+        if (activePlaylistItem != null) {
+            var playlist = this.getPlaylistById(activePlaylistItem.get('playlistId'));
+            console.log("selecting item:");
+            playlist.selectItem(activePlaylistItem);
+        }
 
         var self = this;
         //this.get('allPlaylistItems').on('change:active', function (playlistItem, isActive) {

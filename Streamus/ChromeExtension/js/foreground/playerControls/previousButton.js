@@ -11,7 +11,8 @@ define(['backgroundManager'], function (backgroundManager) {
             var playlistId = activePlaylistItem.get('playlistId');
             var playlist = backgroundManager.getPlaylistById(playlistId);
 
-            playlist.skipItem('previous');
+            var previousItem = playlist.skipItem('previous');
+            backgroundManager.set('activeItem', previousItem);
         }
         
     }, 100, true));

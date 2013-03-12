@@ -116,14 +116,14 @@ define(['ytHelper',
             },
             
             selectItem: function (playlistItem) {
-                
+                console.log("selecting item:", playlistItem);
                 playlistItem.set('playedRecently', true);
                 //  TODO: Should history be in backgroundManager?
                 var history = this.get('history');
                 //  Unshift won't have an effect if item exists in history, so remove silently.
                 history.remove(playlistItem, { silent: true });
                 history.unshift(playlistItem);
-
+                console.log("history:", history, this.get('history'));
             },
             
             //  Deselect the currently selected item, then select the new item by its id
@@ -197,6 +197,7 @@ define(['ytHelper',
                     if (selectedItem) {
                         var nextItemId = selectedItem.get('nextItemId');
                         nextItem = this.get('items').get(nextItemId);
+                        console.log("NEXT ITEM:", nextItem);
                     }
                 }
                 return nextItem;
@@ -336,6 +337,7 @@ define(['ytHelper',
 
             //  Skips to the next playlistItem. Will start playing the video if the player was already playing.
             //  if where == "next" it'll skip to the next item otherwise it will skip to the previous.
+            //  TODO: break apart skipItem into a gotoNextItem and a gotoPreviousItem
             skipItem: function (where) {
                 var nextItem;
 
@@ -355,6 +357,8 @@ define(['ytHelper',
                 }
 
                 this.selectItemById(nextItem.get('id'));
+
+                return nextItem;
             },
             
             //  TODO: This is getting bulky...
