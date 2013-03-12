@@ -43,19 +43,13 @@ define(['backgroundManager'], function (backgroundManager) {
         
         headerInput.appendTo(headerTitle);
 
-        backgroundManager.get('activeStream').get('playlists').on('change:selected', function (playlist, isSelected) {
+        //  TODO: Unbinding events?
+        backgroundManager.on('change:activePlaylist', function (model, activePlaylist) {
 
-            if (isSelected) {
-                headerInput.val(playlist.get('title'));
-
-                playlist.on('change:title', function (event, title) {
-                    headerInput.val(title);
-                });
-
+            if (activePlaylistItem == null) {
             } else {
-                playlist.off('change:title');
+                headerInput.val(activePlaylist.get('title'));
             }
-
         });
 
         backgroundManager.get('activePlaylist').on('change:title', function (event, title) {

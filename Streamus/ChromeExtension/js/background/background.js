@@ -50,18 +50,23 @@
             //  The player can be playing in the background and UI changes may try and be posted to the UI, need to prevent.
             var isRadioModeEnabled = JSON.parse(localStorage.getItem('isRadioModeEnabled')) || false;
 
-            var activePlaylist = backgroundManager.get('activePlaylist');
+            var activePlaylistItem = backgroundManager.get('activePlaylistItem');
+            //  NOTE: No guarantee that the activePlaylistItem's playlistId will be activePlaylist's ID.
+            var playlistId = activePlaylistItem.get('playlistId');
+            var playlist = backgroundManager.getPlaylistById(playlistId);
+
             var nextItem;
             if (isRadioModeEnabled) {
-                var nextVideo = activePlaylist.getRelatedVideo();
-                nextItem = activePlaylist.addItem(nextVideo);
-
+                var nextVideo = playlist.getRelatedVideo();
+                nextItem = playlist.addItem(nextVideo);
             } else {
-                nextItem = activePlaylist.gotoNextItem();
+                nextItem = playlist.gotoNextItem();
             }
 
-            var selectedItem = activePlaylist.selectItemById(nextItem.get('id'));
-            player.loadVideoById(selectedItem.get('video').get('id'));
+            var newActivePlaylistItem = playlist.selectItemById(nextItem.get('id'));
+            backgroundManager.set('activePlaylistItem', newActivePlaylistItem);
+
+            player.loadVideoById(newActivePlaylistItem.get('video').get('id'));
         }
 
     });

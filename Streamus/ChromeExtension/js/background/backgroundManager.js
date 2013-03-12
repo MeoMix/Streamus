@@ -31,6 +31,18 @@ define(['user', 'player', 'playlistItems', 'playlists', 'streams'], function (us
                 }
             });
 
+        },
+        
+        getPlaylistById: function(playlistId) {
+            return this.get('allPlaylists').find(function(playlist) {
+                return playlist.get('id') === playlistId;
+            });
+        },
+        
+        getPlaylistItemById: function(playlistItemId) {
+            return this.get('allPlaylistItems').find(function(playlistItem) {
+                return playlistItem.get('id') === playlistItemId;
+            });
         }
     });
     
@@ -78,15 +90,15 @@ define(['user', 'player', 'playlistItems', 'playlists', 'streams'], function (us
         this.get('allStreams').add(user.get('streams'));
 
         var self = this;
-        this.get('allPlaylistItems').on('change:active', function (playlistItem, isActive) {
+        //this.get('allPlaylistItems').on('change:active', function (playlistItem, isActive) {
 
-            if (self.get('activePlaylistItem') === playlistItem && !isActive) {
-                self.set('activePlaylistItem', null);
-            } else if (isActive) {
-                self.set('activePlaylistItem', playlistItem);
-            }
+        //    if (self.get('activePlaylistItem') === playlistItem && !isActive) {
+        //        self.set('activePlaylistItem', null);
+        //    } else if (isActive) {
+        //        self.set('activePlaylistItem', playlistItem);
+        //    }
 
-        });
+        //});
 
         this.get('allPlaylists').on('change:active', function(playlist, isActive) {
 
@@ -118,10 +130,10 @@ define(['user', 'player', 'playlistItems', 'playlists', 'streams'], function (us
                 }
             });
 
-            playlist.get('items').on('change:selected', function(playlistItem) {
+            //playlist.get('items').on('change:selected', function(playlistItem) {
 
-                self.set('activePlaylistItem', playlistItem);
-            });
+            //    self.set('activePlaylistItem', playlistItem);
+            //});
 
         });
 

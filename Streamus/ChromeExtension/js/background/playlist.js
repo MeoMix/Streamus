@@ -115,6 +115,17 @@ define(['ytHelper',
                 return Backbone.Model.prototype.save.call(this, attributes, options);
             },
             
+            selectItem: function (playlistItem) {
+                
+                playlistItem.set('playedRecently', true);
+                //  TODO: Should history be in backgroundManager?
+                var history = this.get('history');
+                //  Unshift won't have an effect if item exists in history, so remove silently.
+                history.remove(playlistItem, { silent: true });
+                history.unshift(playlistItem);
+
+            },
+            
             //  Deselect the currently selected item, then select the new item by its id
             selectItemById: function (id) {
                 //var selectedItem = this.getSelectedItem();
@@ -180,6 +191,8 @@ define(['ytHelper',
                 } else {
 
                     var selectedItem = this.get('history').at(0);
+
+                    console.log("selectedItem:", selectedItem);
 
                     if (selectedItem) {
                         var nextItemId = selectedItem.get('nextItemId');

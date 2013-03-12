@@ -7,7 +7,12 @@ define(['backgroundManager'], function (backgroundManager) {
     skipButton.click(_.debounce(function () {
 
         if (!$(this).hasClass('disabled')) {
-            backgroundManager.get('activePlaylist').skipItem('next');
+
+            var activePlaylistItem = backgroundManager.get('activePlaylistItem');
+            var playlistId = activePlaylistItem.get('playlistId');
+            var playlist = backgroundManager.getPlaylistById(playlistId);
+
+            playlist.skipItem('next');
         }
 
     }, 100, true));

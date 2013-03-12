@@ -28,19 +28,29 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player'], function (co
     
     function selectItemById(itemId) {
         var selectedItemId = backgroundManager.get('activePlaylistItem').get('id');
+        
         //  If the item is already selected then it is cued up -- so just play it.
         if (selectedItemId == itemId) {
-
             player.play();
         } else {
             window && console.log("Playlist manager is about to select item with ID:", itemId);
-            var item = backgroundManager.get('activePlaylist').selectItemById(itemId);
-            player.loadVideoById(item.get('video').get('id'));
+
+            var playlistItem = backgroundManager.getPlaylistItemById(itemId);
+            var playlistId = playlistItem.get('playlistId');
+            var playlist = backgroundManager.getPlaylistById(playlistId);
+
+            playlist.selectItem(playlistItem);
+            backgroundManager.set('activePlaylistItem', playlistItem);
+
+            var videoId = playlistItem.get('video').get('id');
+            player.loadVideoById(videoId);
         }
     }
     
     //  TODO: Need to be a lot more fine-grained then just spamming reload. Will come back around to it.
+    //  TODO: Do I need to unbind events? :s Probably.. will fire a lot of reloads, will come back to it though.
     backgroundManager.on('change:activePlaylistItem change:activePlaylist change:activeStream', reload);
+    backgroundManager.get('activePlaylist').get('items').on('add remove', reload);
     
     reload();
     scrollLoadedItemIntoView(backgroundManager.get('activePlaylistItem'), false);
