@@ -48,15 +48,34 @@ define(['user', 'player', 'playlistItems', 'playlists', 'streams'], function (us
     
     function initialize() {
         //  Load the active stream:
+        this.on('change:activeStream', function (model, activeStream) {
+            if (activeStream == null) {
+                localStorage.setItem('activeStreamId', null);
+            } else {
+                localStorage.setItem('activeStreamId', activeStream.get('id'));
+            }
+        });
         var activeStreamId = localStorage.getItem('activeStreamId');
 
         if (activeStreamId === null) {
             this.set('activeStream', user.get('streams').at(0));
         } else {
             this.set('activeStream', user.get('streams').get(activeStreamId));
+            
+            if (this.get('activeStream') == null) {
+                this.set('activeStream', user.get('streams').at(0));
+            }
         }
 
         //  Load the active playlist:
+        this.on('change:activePlaylist', function (model, activePlaylist) {
+            if (activePlaylist == null) {
+                localStorage.setItem('activePlaylistId', null);
+            } else {
+                localStorage.setItem('activePlaylistId', activePlaylist.get('id'));
+            }
+
+        });
         var activePlaylistId = localStorage.getItem('activePlaylistId');
 
         if (activePlaylistId === null) {
@@ -68,9 +87,21 @@ define(['user', 'player', 'playlistItems', 'playlists', 'streams'], function (us
             this.set('activePlaylist', _.find(getAllPlaylists(), function (playlist) {
                 return playlist.get('id') == activePlaylistId;
             }));
+            
+            if (this.get('activePlaylist') == null) {
+                this.set('activePlaylist', this.get('activeStream').get('playlists').at(0));
+            }
         }
 
         //  Load the active playlistItem:
+        this.on('change:activePlaylistItem', function (model, activePlaylistItem) {
+            console.log("writing new activePlaylistItem:", activePlaylistItem);
+            if (activePlaylistItem == null) {
+                localStorage.setItem('activePlaylistItemId', null);
+            } else {
+                localStorage.setItem('activePlaylistItemId', activePlaylistItem.get('id'));
+            }
+        });
         var activePlaylistItemId = localStorage.getItem('activePlaylistItemId');
 
         if (activePlaylistItemId === null) {
@@ -82,6 +113,10 @@ define(['user', 'player', 'playlistItems', 'playlists', 'streams'], function (us
             this.set('activePlaylistItem', _.find(getAllPlaylistItems(), function (playlistItem) {
                 return playlistItem.get('id') == activePlaylistItemId;
             }));
+            
+            if (this.get('activePlaylistItem') == null) {
+                this.set('activePlaylistItem', this.get('activePlaylist').get('items').at(0));
+            }
         }
 
 
@@ -127,7 +162,7 @@ define(['user', 'player', 'playlistItems', 'playlists', 'streams'], function (us
 
                 if (self.get('activePlaylistItem') == null) {
                     self.set('activePlaylistItem', playlistItem);
-                    playlist.selectItemById(playlistItem.get('id'));
+                    playlist.selectItem(playlistItem);
                 }
 
             });

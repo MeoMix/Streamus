@@ -58,6 +58,7 @@ define(['youTubePlayerAPI', 'ytHelper'], function (youTubePlayerAPI, ytHelper) {
                             });
                             
                             //  Keep the player out of UNSTARTED state because seekTo will start playing if in UNSTARTED and not PAUSED
+                            console.log("pausing");
                             self.pause();
                             
                             //  Announce that the YouTube Player is ready to go.

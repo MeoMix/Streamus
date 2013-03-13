@@ -63,7 +63,7 @@
                 nextItem = playlist.gotoNextItem();
             }
 
-            var newActivePlaylistItem = playlist.selectItemById(nextItem.get('id'));
+            var newActivePlaylistItem = playlist.selectItem(nextItem);
             backgroundManager.set('activePlaylistItem', newActivePlaylistItem);
 
             player.loadVideoById(newActivePlaylistItem.get('video').get('id'));

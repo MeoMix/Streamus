@@ -60,6 +60,8 @@ define(['player'], function (player) {
 		return muted;
 	})();
 
+    console.log("isMuted:", isMuted);
+
 	//  Initialize player's volume and muted state to last known information or 100 / unmuted.
 	var musicVolume = (function(){
 		var volume = 100;
@@ -71,6 +73,7 @@ define(['player'], function (player) {
 		}
 
 		var volumeForPlayer = isMuted ? 0 : volume;
+	    console.log("volumeForPlayer:", volumeForPlayer);
 		volumeSlider.val(volumeForPlayer);
 		updateSoundIcon(volumeForPlayer);
 
@@ -81,12 +84,14 @@ define(['player'], function (player) {
 		isMuted = volume === 0;
 		
         //  TODO: localStorage is undefined when foreground is destroyed.
-		localStorage && localStorage.setItem(MUTED_KEY, JSON.stringify(isMuted));
+		localStorage.setItem(MUTED_KEY, JSON.stringify(isMuted));
 		if (volume) {
 			//  Remember old music value if muting so that unmute is possible.
 			musicVolume = volume;
-			localStorage && localStorage.setItem(VOLUME_KEY, JSON.stringify(musicVolume));
+			localStorage.setItem(VOLUME_KEY, JSON.stringify(musicVolume));
 		}
+
+	    console.log("setting volume to:", volume);
 
 		updateSoundIcon(volume);
 		player.set('volume', volume);
@@ -97,13 +102,15 @@ define(['player'], function (player) {
 		updateWithVolume(volume);
 	};
     
-	player.get('change:state', setVolumeIfVidCued);
+	player.on('change:state', setVolumeIfVidCued);
 	setVolumeIfVidCued();
     
-	function setVolumeIfVidCued() {
-        if (player.get('state') === PlayerStates.VIDCUED) {
+	function setVolumeIfVidCued(model, playerState) {
+	    console.log("ohi", playerState, PlayerStates.VIDCUED);
+	    if (playerState === PlayerStates.VIDCUED || playerState === PlayerStates.PLAYING) {
+	        console.log("Setting volume to:", player.get('volume'));
             //  Volume only becomes available once a video has become cued or when popup reopens.
-            setVolume(player.get('volume'));
-        }
+	        setVolume(player.get('volume'));
+	    }
     }
 })

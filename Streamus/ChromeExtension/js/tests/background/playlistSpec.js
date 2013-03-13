@@ -215,7 +215,7 @@
                 var selectedItem = savedPlaylist.getSelectedItem();
                 var itemToSelect = savedPlaylist.get('items').at(selectedItem.get('position') + 1);
                 
-                savedPlaylist.selectItemById(itemToSelect);
+                savedPlaylist.selectItem(itemToSelect);
 
                 var newlySelectedItem = savedPlaylist.getSelectedItem();
                 expect(newlySelectedItem.get('selected')).toEqual(true);

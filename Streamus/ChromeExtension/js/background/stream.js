@@ -82,7 +82,7 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState'], function (
 
             //    if (selectedItem == null) {
             //        selectedItem = selectedPlaylist.get('items').at(0);
-            //        selectedPlaylist.selectItemById(selectedItem.get('id'));
+            //        selectedPlaylist.selectItem(selectedItem);
             //        window && console.error("Failed to find a selected item in a playlist with items, gracefully recovering.");
             //    } else {
 

@@ -57,16 +57,6 @@ define(['ytHelper',
                     });
                 }
 
-                //if (items.length > 0) {
-                //    //  Playlists store selected item client-side because it can change so often.
-                //    var localStorageKey = this.get('id') + '_selectedItemId';
-                //    var savedItemId = localStorage.getItem(localStorageKey);
-                //    console.log("SavedItemID is:", savedItemId);
-
-                //    //  Select the most recently selected item during initalization.
-                //    this.selectItemById(savedItemId);
-                //}
-                
                 this.on('change:title', function (model, title) {
                     $.ajax({
                         url: programState.getBaseUrl() + 'Playlist/UpdateTitle',
@@ -118,42 +108,11 @@ define(['ytHelper',
             selectItem: function (playlistItem) {
                 console.log("selecting item:", playlistItem);
                 playlistItem.set('playedRecently', true);
-                //  TODO: Should history be in backgroundManager?
+
                 var history = this.get('history');
                 //  Unshift won't have an effect if item exists in history, so remove silently.
                 history.remove(playlistItem, { silent: true });
                 history.unshift(playlistItem);
-                console.log("history:", history, this.get('history'));
-            },
-            
-            //  Deselect the currently selected item, then select the new item by its id
-            selectItemById: function (id) {
-                //var selectedItem = this.getSelectedItem();
-
-                //  currentlySelected is not defined for a brand new playlist since we have no items yet selected.
-                //if (selectedItem != null && selectedItem.get('id') !== id) {
-                //    selectedItem.set('selected', false);
-                //}
-
-                var item = this.getItemById(id);
-
-                //if (item != null && item.get('selected') === false) {
-                if (item != null) {
-                    //item.set('selected', true);
-                    //  TODO: bind this to the change selected to true event of an item.
-                    item.set('playedRecently', true);
-
-                    var history = this.get('history');
-                    //  Unshift won't have an effect if item exists in history, so remove silently.
-                    history.remove(item, { silent: true });
-                    history.unshift(item);
-
-                    //window && console.log("Changing selectedItem in storage to:", item.get('title'), item.get('id'));
-
-                    //localStorage.setItem(this.get('id') + '_selectedItemId', id);
-                }
-
-                return item;
             },
 
             getItemById: function(id) {
@@ -176,10 +135,8 @@ define(['ytHelper',
 
                 if (isShuffleEnabled === true) {
                     var items = this.get('items');
-                    var itemsNotPlayedRecently = items.where(function (item) {
-                        return !item.playedRecently;
-                    });
-                    
+                    var itemsNotPlayedRecently = items.where({ playedRecently: false });
+
                     if (itemsNotPlayedRecently.length === 0) {
                         items.each(function(item) {
                             item.set('playedRecently', false);
@@ -192,12 +149,9 @@ define(['ytHelper',
 
                     var selectedItem = this.get('history').at(0);
 
-                    console.log("selectedItem:", selectedItem);
-
                     if (selectedItem) {
                         var nextItemId = selectedItem.get('nextItemId');
                         nextItem = this.get('items').get(nextItemId);
-                        console.log("NEXT ITEM:", nextItem);
                     }
                 }
                 return nextItem;
@@ -205,14 +159,16 @@ define(['ytHelper',
             
             gotoPreviousItem: function() {
                 var selectedItem = this.get('history').shift();
+                console.log("SelectedItem:", selectedItem);
                 var previousItem = this.get('history').shift();
+                console.log("previousItem:", previousItem);
                 
                 //  If no previous item was found in the history, then just go back one item
                 if (!previousItem) {
                     var previousItemId = selectedItem.get('previousItemId');
                     previousItem = this.get('items').get(previousItemId);
                 }
-
+                console.log("previousItem222:", previousItem);
                 return previousItem;
             },
 
@@ -257,11 +213,6 @@ define(['ytHelper',
                     });
 
                     self.get('items').push(playlistItem);
-
-                    //  Ensure the first playlistItem is selected if adding a bunch of new ones.
-                    if (self.get('items').length === 1) {
-                        self.selectItemById(self.get('firstItemId'));
-                    }
                 });
                 
                 createdItems.save({}, {
@@ -356,8 +307,9 @@ define(['ytHelper',
                     nextItem = this.gotoPreviousItem();
                 }
 
-                this.selectItemById(nextItem.get('id'));
-
+                console.log("nextItem is:", nextItem);
+                this.selectItem(nextItem);
+                console.log("returning");
                 return nextItem;
             },
             

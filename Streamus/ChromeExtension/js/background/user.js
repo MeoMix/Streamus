@@ -9,7 +9,7 @@ define(['streams', 'programState'], function (Streams, programState) {
     //  User data will be loaded either from cache or server.
     var UserModel = Backbone.Model.extend({
         defaults: {
-            id: '49713f20-2ed0-4e01-a06a-caa9a3a02408', //localStorage.getItem(userIdKey),
+            id: '5069ae33-0ab8-440d-97c0-feebf7ac5910', //localStorage.getItem(userIdKey),
             name: '',
             loaded: false,
             streams: new Streams()
