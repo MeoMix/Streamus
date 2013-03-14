@@ -33,8 +33,6 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player'], function (co
         if (selectedItemId == itemId) {
             player.play();
         } else {
-            window && console.log("Playlist manager is about to select item with ID:", itemId);
-
             var playlistItem = backgroundManager.getPlaylistItemById(itemId);
             var playlistId = playlistItem.get('playlistId');
             var playlist = backgroundManager.getPlaylistById(playlistId);

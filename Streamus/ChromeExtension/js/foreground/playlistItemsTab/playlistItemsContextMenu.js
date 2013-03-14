@@ -1,5 +1,5 @@
 //  Responsible for showing options when interacting with a Video in PlaylistItemList.
-define(['contextMenu', 'backgroundManager'], function (contextMenu, backgroundManager) {
+define(['contextMenu', 'player', 'backgroundManager'], function (contextMenu, player, backgroundManager) {
     'use strict';
     var playlistItemsContextMenu = { };
 
@@ -13,9 +13,22 @@ define(['contextMenu', 'backgroundManager'], function (contextMenu, backgroundMa
                 }
             });
 
-            this.addContextMenuItem('Delete', function() {
+            this.addContextMenuItem('Delete', function () {
+
                 if (item != null) {
-                    backgroundManager.get('activePlaylist').removeItem(item);
+                    var playlistId = item.get('playlistId');
+                    var playlist = backgroundManager.getPlaylistById(playlistId);
+                    playlist.removeItem(item);
+
+                    if (backgroundManager.get('activePlaylistItem') == null) {
+
+                        if (playlist.get('items').length > 0) {
+                            var newlyActiveItem = playlist.skipItem('next');
+                            backgroundManager.set('activePlaylistItem', newlyActiveItem);
+                        } else {
+                            player.pause();
+                        }
+                    }
                 }
             });
         }

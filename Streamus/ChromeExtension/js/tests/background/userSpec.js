@@ -1,16 +1,15 @@
 ﻿//  Test cases for the background's user model. Hopes to ensure that the user
 //  loads successfully from the server from a client-side id or, alternatively,
 //  that it is created successfully by the server.
-define(function () {
+define(['localStorageManager'], function (localStorageManager) {
     'use strict';
-    var userIdKey = 'UserId';
-    
+
     describe('The User', function () {
         //  TODO: The way user is currently written isn't very testable.
         //  I would like to be able to test more specific actions such as the tests left blank here.
 
         xit('creates when no id found in storage locations', function () {
-            localStorage.setItem(userIdKey, null);
+            localStorageManager.setUserId(null);
         });
 
         xit('loads from chrome.sync if no id found in localStorage', function () {

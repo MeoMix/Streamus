@@ -5,8 +5,9 @@ define(['ytHelper',
         'playlistItemsHistory',
         'playlistItem',
         'programState',
+        'localStorageManager',
         'video'
-    ], function(ytHelper, PlaylistItems, PlaylistItemsHistory, PlaylistItem, programState, Video) {
+    ], function(ytHelper, PlaylistItems, PlaylistItemsHistory, PlaylistItem, programState, localStorageManager, Video) {
         'use strict';
 
         var Playlist = Backbone.Model.extend({
@@ -41,9 +42,7 @@ define(['ytHelper',
                 
                 return data;
             },
-            initialize: function (attributes, options) {
-                window && console.log("Playlist is initializing", attributes, options);
-
+            initialize: function () {
                 var items = this.get('items');
 
                 //  Our playlistItem data was fetched from the server with the playlist. Need to convert the collection to Backbone Model entities.
@@ -91,22 +90,8 @@ define(['ytHelper',
                 });
 
             },
-
-            //  http://danielarandaochoa.com/backboneexamples/blog/2012/08/27/extending-backbone-js-classes/
-            save: function(attributes, options) {
-                //  Keep track of the selected item in localStorage.
-                var selectedItem = this.getSelectedItem();
-
-                var selectedItemId = selectedItem ? selectedItem.get('id') : null;
-
-                var selectedItemStorageKey = this.get('id') + '_selectedItemId';
-                localStorage.setItem(selectedItemStorageKey, selectedItemId);
-
-                return Backbone.Model.prototype.save.call(this, attributes, options);
-            },
             
             selectItem: function (playlistItem) {
-                console.log("selecting item:", playlistItem);
                 playlistItem.set('playedRecently', true);
 
                 var history = this.get('history');
@@ -131,7 +116,7 @@ define(['ytHelper',
             //  TODO: This method name sucks and the method itself is doing too much. Refactor!
             gotoNextItem: function() {
                 var nextItem = null;
-                var isShuffleEnabled = JSON.parse(localStorage.getItem('isShuffleEnabled') || false);
+                var isShuffleEnabled = localStorageManager.getIsShuffleEnabled();
 
                 if (isShuffleEnabled === true) {
                     var items = this.get('items');
@@ -159,16 +144,14 @@ define(['ytHelper',
             
             gotoPreviousItem: function() {
                 var selectedItem = this.get('history').shift();
-                console.log("SelectedItem:", selectedItem);
                 var previousItem = this.get('history').shift();
-                console.log("previousItem:", previousItem);
                 
                 //  If no previous item was found in the history, then just go back one item
                 if (!previousItem) {
                     var previousItemId = selectedItem.get('previousItemId');
                     previousItem = this.get('items').get(previousItemId);
                 }
-                console.log("previousItem222:", previousItem);
+
                 return previousItem;
             },
 
@@ -278,7 +261,6 @@ define(['ytHelper',
                     playlistItem.set('relatedVideoInformation', relatedVideoInformation);
                 });
 
-                console.log("Pushing playlist item onto this:", playlistItem, this);
                 this.get('items').push(playlistItem);
 
                 modifiedItems.save();
@@ -293,11 +275,10 @@ define(['ytHelper',
                 var nextItem;
 
                 if (where == "next") {
-                    var isRadioModeEnabled = JSON.parse(localStorage.getItem('isRadioModeEnabled') || false);
+                    var isRadioModeEnabled = localStorageManager.getIsRadioModeEnabled();
 
                     if (isRadioModeEnabled) {
                         var relatedVideo = this.getRelatedVideo();
-                        window && console.log("calling addItem with:", relatedVideo);
                         nextItem = this.addItem(relatedVideo);
                     } else {
 
@@ -307,25 +288,15 @@ define(['ytHelper',
                     nextItem = this.gotoPreviousItem();
                 }
 
-                console.log("nextItem is:", nextItem);
                 this.selectItem(nextItem);
-                console.log("returning");
                 return nextItem;
             },
             
             //  TODO: This is getting bulky...
             removeItem: function (item, callback) {
-                var selectedItem = this.getSelectedItem();
-                
-                //  If localStorage is saving the currently selected item as the one being deleted, clean that up so restarting the program doesn't try and 
-                //  select a playlistItem which does not exist.
-                var playlistId = this.get('id');
-                var itemId = item.get('id');
-                if (localStorage.getItem(playlistId + '_selectedItemId') === itemId) {
-                    localStorage.setItem(playlistId + '_selectedItemId', null);
-                }
-                
-                if (this.get('firstItemId') === itemId) {
+
+                if (this.get('firstItemId') === item.get('id')) {
+                    //  length of 1 here because we're about to remove an item.
                     var newFirstItemId = this.get('items').length === 1 ? '00000000-0000-0000-0000-000000000000' : item.get('nextItemId');
                     this.set('firstItemId', newFirstItemId);
                 }
@@ -342,10 +313,6 @@ define(['ytHelper',
                 //  TODO: How do I handle a scenario where the server fails to delete by ID?
                 this.get('items').remove(item);
                 
-                if (selectedItem === item && this.get('items').length > 0) {
-                    this.skipItem('next');
-                }
-
                 item.destroy({
                     success: callback,
                     error: function (error) {

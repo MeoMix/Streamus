@@ -5,31 +5,99 @@ var LocalStorageManager = null;
 define(function () {
     'use strict';
 
-    //  Playlists store selected item client-side because it can change so often.
-    var localStorageKey = this.get('id') + '_selectedItemId';
-    var savedItemId = localStorage.getItem(localStorageKey);
-
-
     var LocalStorageManagerModel = Backbone.Model.extend({
-        defaults: {
-            
+        getActiveStreamId: function() {
+            var activeStreamId = getItem('activeStreamId');
+            return activeStreamId;
         },
         
-        getSelectedStreamId: function () {
-            
-            return localStorage.getItem('activeStreamId');
-
-            var selectedItemId = localStorage.getItem('selectedItemId');
+        setActiveStreamId: function (activeStreamId) {
+            localStorage.setItem('activeStreamId', JSON.stringify(activeStreamId));
         },
-
-        getSelectedItemId: function(){
-            var selectedItemId = localStorage.getItem('selectedItemId');
-            
+        
+        getActivePlaylistId: function() {
+            var activePlaylistId = getItem('activePlaylistId');
+            return activePlaylistId;
+        },
+        
+        setActivePlaylistId: function(activePlaylistId) {
+            localStorage.setItem('activePlaylistId', JSON.stringify(activePlaylistId));
+        },
+        
+        getActivePlaylistItemId: function() {
+            var activePlaylistItemId = getItem('activePlaylistItemId');
+            return activePlaylistItemId;
+        },
+        
+        setActivePlaylistItemId: function(activePlaylistItemId) {
+            localStorage.setItem('activePlaylistItemId', JSON.stringify(activePlaylistItemId));
+        },
+        
+        getIsMuted: function () {
+            var isMuted = getItem('isMuted');
+            return isMuted;
+        },
+        
+        setIsMuted: function (isMuted) {
+            localStorage.setItem('isMuted', JSON.stringify(isMuted));
+        },
+        
+        getVolume: function () {
+            //  Default to 50 because having the music on and audible, but not blasting, seems like the best default if we fail for some reason. 
+            var volume = getItem('volume') || 50;
+            return volume;
+        },
+        
+        setVolume: function(volume) {
+            localStorage.setItem('volume', JSON.stringify(volume));
+        },
+        
+        getIsRadioModeEnabled: function () {
+            var isRadioModeEnabled = getItem('isRadioModeEnabled') || false;
+            return isRadioModeEnabled;
+        },
+        
+        setIsRadioModeEnabled: function(isRadioModeEnabled) {
+            localStorage.setItem('isRadioModeEnabled', JSON.stringify(isRadioModeEnabled));
+        },
+        
+        getIsShuffleEnabled: function() {
+            var isShuffleEnabled = getItem('isShuffleEnabled') || false;
+            return isShuffleEnabled;
+        },
+        
+        setIsShuffleEnabled: function (isShuffleEnabled) {
+            localStorage.setItem('isShuffleEnabled', JSON.stringify(isShuffleEnabled));
+        },
+        
+        getUserId: function () {
+            var userId = getItem('userId');
+            return userId;
+        },
+        
+        setUserId: function(userId) {
+            localStorage.setItem('userId', JSON.stringify(userId));
         }
-        
     });
+    
+    //  Fetch an item from localStorage, try and turn it from a string to an object literal if possible.
+    //  If not, just allow the string type because its assumed to be correct.
+    function getItem(key) {
+        var item = localStorage.getItem(key);
+        
+        if (item !== null) {
+            
+            try {
+                //  Make sure I don't send back 'null' or 'undefined' as string types.
+                item = JSON.parse(item);
+            } catch(exception) {
+                //  Consume any exceptions because might try and parse a GUID which isn't valid JSON.
+            }
+        }
 
+        return item;
+    }
+    
     LocalStorageManager = new LocalStorageManagerModel();
-
     return LocalStorageManager;
 });

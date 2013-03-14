@@ -1,19 +1,17 @@
 //  Responsible for controlling the volume indicator of the UI.
-define(['player'], function (player) {
+define(['player', 'localStorageManager'], function (player, localStorageManager) {
     'use strict';
     
-	var muteButton = $('#MuteButton');
-	var MUTED_KEY = 'musicMuted';
-    var VOLUME_KEY = 'musicVolume';
+    var muteButton = $('#MuteButton');
+    var isMuted = localStorageManager.getIsMuted();
+    //TODO: Difficult to properly represent state when not already known -- can't get info from YouTube API until a video is playing.
+    var volume = localStorageManager.getVolume();
 
 	//  Whenever the mute button is clicked toggle the muted state.
-	muteButton.click(function(){
-		if(isMuted){
-			setVolume(musicVolume);
-		}
-		else{
-			setVolume(0);
-		}
+    muteButton.click(function () {
+        var playerVolume = isMuted ? 0 : volume;
+
+        volumeSlider.val(playerVolume).trigger('change');
 	});
 
 	//  Whenever the volume slider is interacted with by the user, change the volume to reflect.
@@ -33,84 +31,51 @@ define(['player'], function (player) {
 		volumeSlider.parent().css("top","-35px");
 	});
 
-	var updateSoundIcon = function(volume){
+	var updateSoundIcon = function(newVolume){
 		//  Repaint the amount of white filled in the bar showing the distance the grabber has been dragged.
-		var backgroundImage = '-webkit-gradient(linear,left top, right top, from(#ccc), color-stop('+ volume/100 +',#ccc), color-stop('+ volume/100+',rgba(0,0,0,0)), to(rgba(0,0,0,0)))';
+	    var backgroundImage = '-webkit-gradient(linear,left top, right top, from(#ccc), color-stop(' + newVolume / 100 + ',#ccc), color-stop(' + newVolume / 100 + ',rgba(0,0,0,0)), to(rgba(0,0,0,0)))';
 		volumeSlider.css('background-image', backgroundImage);
 
-		var activeBars = parseInt(volume/25);					 
+		var activeBars = parseInt(newVolume / 25);
 		muteButton.find('.MuteButtonBar:lt(' + activeBars +')').css('fill', '#fff');
 		muteButton.find('.MuteButtonBar:gt(' + activeBars+')').css('fill', '#555');
 
 		if(activeBars === 0){
 			muteButton.find('.MuteButtonBar').css('fill', '#555');
 		}
-
 	};
 
-	//  Initialize the muted state;
-	var isMuted = (function(){
-		var muted = false;
-
-		var storedIsMuted = localStorage.getItem(MUTED_KEY);
-		if(storedIsMuted){
-			muted = JSON.parse(storedIsMuted);
-		}
-
-		return muted;
-	})();
-
-    console.log("isMuted:", isMuted);
-
 	//  Initialize player's volume and muted state to last known information or 100 / unmuted.
-	var musicVolume = (function(){
-		var volume = 100;
 
-		//TODO: Difficult to properly represent state when not already known -- can't get info from YouTube API until a video is playing.
-		var storedMusicVolume = localStorage.getItem(VOLUME_KEY);
-		if(storedMusicVolume){
-			volume = JSON.parse(storedMusicVolume);
-		}
+	var volumeForPlayer = isMuted ? 0 : volume;
+	volumeSlider.val(volumeForPlayer);
+	updateSoundIcon(volumeForPlayer);
 
-		var volumeForPlayer = isMuted ? 0 : volume;
-	    console.log("volumeForPlayer:", volumeForPlayer);
-		volumeSlider.val(volumeForPlayer);
-		updateSoundIcon(volumeForPlayer);
+	var updateWithVolume = function(newVolume){
+	    isMuted = volume === 0;
 
-		return volume;
-	})();
-
-	var updateWithVolume = function(volume){
-		isMuted = volume === 0;
+	    localStorageManager.setIsMuted(isMuted);
 		
-        //  TODO: localStorage is undefined when foreground is destroyed.
-		localStorage.setItem(MUTED_KEY, JSON.stringify(isMuted));
 		if (volume) {
 			//  Remember old music value if muting so that unmute is possible.
-			musicVolume = volume;
-			localStorage.setItem(VOLUME_KEY, JSON.stringify(musicVolume));
+		    volume = newVolume;
+		    localStorageManager.setVolume(volume);
 		}
-
-	    console.log("setting volume to:", volume);
 
 		updateSoundIcon(volume);
 		player.set('volume', volume);
 	};
-	
-	var setVolume = function(volume){
-		volumeSlider.val(volume);
-		updateWithVolume(volume);
-	};
     
-	player.on('change:state', setVolumeIfVidCued);
-	setVolumeIfVidCued();
+	player.on('change:state', setVolumeIfPlayerReady);
+	setVolumeIfPlayerReady();
     
-	function setVolumeIfVidCued(model, playerState) {
-	    console.log("ohi", playerState, PlayerStates.VIDCUED);
+	function setVolumeIfPlayerReady(model, playerState) {
+
 	    if (playerState === PlayerStates.VIDCUED || playerState === PlayerStates.PLAYING) {
-	        console.log("Setting volume to:", player.get('volume'));
-            //  Volume only becomes available once a video has become cued or when popup reopens.
-	        setVolume(player.get('volume'));
+	        //  Volume only becomes available once a video has become cued or when popup reopens.
+	        var playerVolume = player.get('volume');
+
+	        volumeSlider.val(playerVolume).trigger('change');
 	    }
     }
 })

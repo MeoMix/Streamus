@@ -22,7 +22,6 @@ define(['backgroundManager'], function (backgroundManager) {
     });
 
     backgroundManager.on('change:activePlaylistItem', function (model, activePlaylistItem) {
-        console.log("activePlaylistItem has changed RAAAWR");
         setTitle(activePlaylistItem);
     });
 

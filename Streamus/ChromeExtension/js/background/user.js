@@ -2,14 +2,14 @@
 //  Tries to load itself by ID stored in localStorage and then by chrome.storage.sync.
 //  If still unloaded, tells the server to create a new user and assumes that identiy.
 var User = null;
-define(['streams', 'programState'], function (Streams, programState) {
+define(['streams', 'programState', 'localStorageManager'], function (Streams, programState, localStorageManager) {
     'use strict';
     var userIdKey = 'UserId';
 
     //  User data will be loaded either from cache or server.
     var UserModel = Backbone.Model.extend({
         defaults: {
-            id: '5069ae33-0ab8-440d-97c0-feebf7ac5910', //localStorage.getItem(userIdKey),
+            id: '5069ae33-0ab8-440d-97c0-feebf7ac5910', //localStorageManager.getUserId(),
             name: '',
             loaded: false,
             streams: new Streams()
@@ -19,8 +19,6 @@ define(['streams', 'programState'], function (Streams, programState) {
         
         //  TODO: I am doing too much work in this initialize constructor. 
         initialize: function () {
-            window && console.log("user is initializing");
-
             //  If user's ID wasn't found in local storage, check sync because its a pc-shareable location, but doesn't work synchronously.
             if (this.isNew()) {
                 var self = this;
@@ -70,7 +68,6 @@ define(['streams', 'programState'], function (Streams, programState) {
         this.fetch({
             success: function (model) {
                 //  Have to manually convert the JSON array into a Backbone.Collection
-                console.log("converting Streams to a backbone.collection", model.get('streams'));
                 var streams = new Streams(model.get('streams'));
 
                 self.set('streams', streams, {
@@ -78,15 +75,13 @@ define(['streams', 'programState'], function (Streams, programState) {
                     silent: true
                 });
 
-                console.log("STRAMS:", streams);
-
                 //  TODO: Error handling for writing to sync too much.
                 //  Write to sync as little as possible because it has restricted read/write limits per hour.
                 if (shouldSetSyncStorage) {
                     chrome.storage.sync.set({ userIdKey: model.get('id') });
                 }
 
-                localStorage.setItem(userIdKey, model.get('id'));
+                localStorageManager.setUserId(model.get('id'));
 
                 //  Announce that user has loaded so managers can use it to fetch data.
                 self.set('loaded', true);

@@ -35,6 +35,7 @@ var require = {
         'oauth2': 'thirdParty/oauth2/oauth2',
         'backbone': 'thirdParty/backbone',
         'backgroundManager': 'foreground/backgroundManager',
+        'localStorageManager': 'foreground/localStorageManager',
         'player': 'foreground/player',
         'videoDisplay': 'foreground/videoTab/videoDisplay',
         'scrollIntoView': 'thirdParty/jquery.scrollIntoView'

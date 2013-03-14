@@ -1,5 +1,5 @@
 ﻿//  Holds all the relevant data for a video.
-define(['playlists', 'playlist', 'videos', 'player', 'programState'], function (Playlists, Playlist, Videos, player, programState) {
+define(['playlists', 'playlist', 'videos', 'player', 'programState', 'localStorageManager'], function (Playlists, Playlist, Videos, player, programState, localStorageManager) {
     'use strict';
     
     var Stream = Backbone.Model.extend({
@@ -14,20 +14,16 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState'], function (
         },
         urlRoot: programState.getBaseUrl() + 'Video/',
         initialize: function () {
-            window && console.log("Stream is initializing");
             var playlists = this.get('playlists');
 
             //  Data was fetched from the server. Need to convert to Backbone.
             if (!(playlists instanceof Backbone.Collection)) {
-                console.log("Playlists BEFORE:", playlists);
                 playlists = new Playlists(playlists);
 
                 this.set('playlists', playlists, {
                     //  Silent operation because it isn't technically changing - just being made correct.
                     silent: true
                 });
-
-                console.log("Playlists AFTER:", playlists, this.get('playlists'));
             }
 
             var self = this;
@@ -77,7 +73,6 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState'], function (
 
             //var selectedPlaylist = this.getSelectedPlaylist();
             //if (selectedPlaylist.get('items').length > 0) {
-            //    console.log("setting playlist selectedItem in stream?");
             //    var selectedItem = selectedPlaylist.getSelectedItem();
 
             //    if (selectedItem == null) {
@@ -265,7 +260,7 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState'], function (
                 
                 //  Mark the new playlist as selected and save this state to localStorage for future UI openings.
                 this.get('playlists').get(playlistId).set({ selected: true });
-                localStorage.setItem('selectedPlaylistId', playlistId);
+                localStorageManager.setActivePlaylistId(playlistId);
             }
         },
         

@@ -230,12 +230,14 @@
     <Content Include="ChromeExtension\js\background\playlists.js" />
     <Content Include="ChromeExtension\js\background\requirePaths.js" />
     <Content Include="ChromeExtension\js\background\user.js" />
+    <Content Include="ChromeExtension\js\foreground\backgroundManager.js" />
     <Content Include="ChromeExtension\js\foreground\contentButtons.js" />
     <Content Include="ChromeExtension\js\foreground\contentHeader.js" />
     <Content Include="ChromeExtension\js\foreground\contextMenu.js" />
     <Content Include="ChromeExtension\js\foreground\dialogs.js" />
     <Content Include="ChromeExtension\js\foreground\foreground.js" />
     <Content Include="ChromeExtension\js\foreground\header.js" />
+    <Content Include="ChromeExtension\js\foreground\localStorageManager.js" />
     <Content Include="ChromeExtension\js\foreground\main.js" />
     <Content Include="ChromeExtension\js\foreground\player.js" />
     <Content Include="ChromeExtension\js\foreground\playerControls\playPauseButton.js" />

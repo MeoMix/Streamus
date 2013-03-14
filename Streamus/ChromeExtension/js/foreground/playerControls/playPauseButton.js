@@ -38,7 +38,6 @@ define(['backgroundManager', 'player'], function (backgroundManager, player) {
 	makeIconReflectPlayerState();
 
     backgroundManager.on('change:activePlaylistItem', function(model, activePlaylistItem) {
-        console.log("activePlaylistItem:", activePlaylistItem);
         if (activePlaylistItem === null) {
             disableButton();
         } else {
@@ -47,7 +46,8 @@ define(['backgroundManager', 'player'], function (backgroundManager, player) {
 
     });
 
-    if (backgroundManager.get('activePlaylistItem') !== null) {
+    console.log("activePlaylistItem:", backgroundManager.get('activePlaylistItem'));
+    if (backgroundManager.get('activePlaylistItem') != null) {
         enableButton();
     }
 

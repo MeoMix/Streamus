@@ -1,12 +1,12 @@
-define(function(){
+define(['localStorageManager'], function(localStorageManager){
     'use strict';
     var enableRadioModeCheckBox = $('#EnableRadioModeCheckBox');
 
-    var isRadioModeEnabled = JSON.parse(localStorage.getItem('isRadioModeEnabled')) || false;
+    var isRadioModeEnabled = localStorageManager.getIsRadioModeEnabled();
     enableRadioModeCheckBox.prop('checked', isRadioModeEnabled);
 
     enableRadioModeCheckBox.change(function () {
-        localStorage.setItem('isRadioModeEnabled', this.checked);
+        localStorageManager.setIsRadioModeEnabled(this.checked);
     }).trigger('change');
 
     var ohi = chrome.extension.getBackgroundPage().$('#MusicHolder');

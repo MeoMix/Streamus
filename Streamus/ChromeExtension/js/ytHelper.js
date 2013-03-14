@@ -149,9 +149,6 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                     strict: true
                 },
                 success: function (result) {
-
-                    console.log("Result", result);
-
                     if (callback) {
                         callback(result.entry);
                     }

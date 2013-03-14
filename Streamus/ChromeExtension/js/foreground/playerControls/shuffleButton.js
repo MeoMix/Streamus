@@ -1,11 +1,10 @@
-//When clicked -- shuffles the playlist. Doesn't affect curently playing video at all.
-//Can't be clicked with 2 or fewer videos.
-define(function(){
+//  Enables the 'shuffling' state of
+define(['localStorageManager'], function(localStorageManager){
 	'use strict';
 	var shuffleButton = $('#ShuffleButton').click(shuffleVideo);
 
-	//  localStorage serializes bools to strings.
-	if(JSON.parse(localStorage.getItem('isShuffleEnabled') || false)){
+    var isShuffleEnabled = localStorageManager.getIsShuffleEnabled();
+    if (isShuffleEnabled) {
 		shuffleButton.addClass('pressed');
 	}
 
@@ -17,6 +16,6 @@ define(function(){
 			shuffleButton.addClass('pressed');
 		}
 
-		localStorage.setItem('isShuffleEnabled', shuffleButton.hasClass('pressed'));
+	    localStorageManager.setIsShuffleEnabled(shuffleButton.hasClass('pressed'));
 	}
 });

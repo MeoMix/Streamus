@@ -1,15 +1,6 @@
-﻿define(['player', 'backgroundManager'], function (player, backgroundManager) {
+﻿define(['player', 'backgroundManager', 'localStorageManager'], function (player, backgroundManager, localStorageManager) {
     'use strict';
     
-    //player.once('change:ready', function () {
-    //    console.log("background Manager:", backgroundManager);
-    //    backgroundManager.get('activePlaylist').get('items').on('remove', function (model, collection) {
-    //        if (collection.length === 0) {
-    //            player.pause();
-    //        }
-    //    });
-    //});
-
     backgroundManager.on('change:activePlaylistItem', function(model, activePlaylistItem) {
 
         if (activePlaylistItem != null) {
@@ -48,7 +39,7 @@
         else if (state === PlayerStates.ENDED) {
             //  Don't pass message to UI if it is closed. Handle sock change in the background.
             //  The player can be playing in the background and UI changes may try and be posted to the UI, need to prevent.
-            var isRadioModeEnabled = JSON.parse(localStorage.getItem('isRadioModeEnabled')) || false;
+            var isRadioModeEnabled = localStorageManager.getIsRadioModeEnabled();
 
             var activePlaylistItem = backgroundManager.get('activePlaylistItem');
             //  NOTE: No guarantee that the activePlaylistItem's playlistId will be activePlaylist's ID.
@@ -73,7 +64,6 @@
     
     //  Receive keyboard shortcuts from users.
     chrome.commands.onCommand.addListener(function (command) {
-        console.log("Command received:", command);
         switch (command) {
             case 'nextVideo':
                 backgroundManager.get('activePlaylist').skipItem("next");

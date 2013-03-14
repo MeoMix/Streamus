@@ -26,7 +26,7 @@ define(['backgroundManager'], function (backgroundManager) {
         }
     });
 
-    if (backgroundManager.get('activePlaylistItem') !== null) {
+    if (backgroundManager.get('activePlaylistItem') != null) {
         enableButton();
     }
 

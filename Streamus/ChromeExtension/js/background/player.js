@@ -28,8 +28,6 @@ define(['youTubePlayerAPI', 'ytHelper'], function (youTubePlayerAPI, ytHelper) {
                     events: {
                         'onReady': function () {
 
-                            console.log("youTubePlayer is ready");
-
                             //  Start monitoring YouTube for current time changes, foreground will pick up on currentTime changes.
                             setInterval(function () {
                                 var currentTime = self.get('youTubePlayer').getCurrentTime();
@@ -58,7 +56,6 @@ define(['youTubePlayerAPI', 'ytHelper'], function (youTubePlayerAPI, ytHelper) {
                             });
                             
                             //  Keep the player out of UNSTARTED state because seekTo will start playing if in UNSTARTED and not PAUSED
-                            console.log("pausing");
                             self.pause();
                             
                             //  Announce that the YouTube Player is ready to go.

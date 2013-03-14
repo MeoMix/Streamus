@@ -25,6 +25,7 @@ var require = {
         'oauth2': 'thirdParty/oauth2/oauth2',
         'playlistItemsHistory': 'background/playlistItemsHistory',
         'backbone': 'thirdParty/backbone',
-        'backgroundManager': 'background/backgroundManager'
+        'backgroundManager': 'background/backgroundManager',
+        'localStorageManager': 'background/localStorageManager'
     }
 };

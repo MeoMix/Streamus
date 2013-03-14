@@ -40,8 +40,8 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
         var code = e.which;
         clearTimeout(typingTimeout);
         var usersText = $(this).val();
-
         typingTimeout = setTimeout(function () {
+ 
             userIsTyping = false;
             //  User can navigate suggestions with up/down. 
             if (code !== $.ui.keyCode.UP && code !== $.ui.keyCode.DOWN) {
