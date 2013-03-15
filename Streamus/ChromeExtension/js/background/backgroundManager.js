@@ -43,6 +43,12 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
             return this.get('allPlaylistItems').find(function(playlistItem) {
                 return playlistItem.get('id') === playlistItemId;
             });
+        },
+        
+        getStreamById: function(streamId) {
+            return user.get('streams').find(function(stream) {
+                return stream.get('id') === streamId;
+            });
         }
     });
     

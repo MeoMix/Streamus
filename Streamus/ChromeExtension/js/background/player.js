@@ -1,6 +1,6 @@
 //  TODO: Exposed globally so that Chrome Extension's foreground can access through chrome.extension.getBackgroundPage()
 var YouTubePlayer = null;
-define(['youTubePlayerAPI', 'ytHelper'], function (youTubePlayerAPI, ytHelper) {
+define(['youTubePlayerAPI', 'ytHelper', 'localStorageManager'], function (youTubePlayerAPI, ytHelper, localStorageManager) {
     'use strict';
 
     var YouTubePlayerModel = Backbone.Model.extend({
@@ -10,8 +10,9 @@ define(['youTubePlayerAPI', 'ytHelper'], function (youTubePlayerAPI, ytHelper) {
             currentTime: 0,
             ready: false,
             state: PlayerStates.UNSTARTED,
-            //  Starts at 0, but is set when a video is set to VIDCUED.
-            volume: 0,
+            volume: localStorageManager.getVolume(),
+            //  This will be set after the player is ready and can communicate its true value.
+            muted: false,
             //  The actual YouTube player API object.
             youTubePlayer: null
         },
@@ -37,15 +38,27 @@ define(['youTubePlayerAPI', 'ytHelper'], function (youTubePlayerAPI, ytHelper) {
                                 }
                             }, 500);
 
+                            var isMuted = self.get('youTubePlayer').isMuted();
+                            self.set('muted', isMuted);
+
                             //  Update the volume whenever the UI modifies the volume property.
                             self.on('change:volume', function (model, volume) {
+                                localStorageManager.setVolume(volume);
+                                self.set('muted', false);
+
                                 var youTubePlayer = self.get('youTubePlayer');
-                                
-                                if (volume) {
-                                    youTubePlayer.setVolume(volume);
+                                youTubePlayer.setVolume(volume);
+                            });
+
+                            self.on('change:muted', function (model, isMuted) {
+                                var youTubePlayer = self.get('youTubePlayer');
+
+                                if (isMuted) {
+                                    youTubePlayer.mute();
                                 } else {
-                                    youTubePlayer.muted();
+                                    youTubePlayer.unMute();
                                 }
+
                             });
 
                             self.on('change:state', function (model, state) {

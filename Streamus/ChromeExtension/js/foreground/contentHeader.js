@@ -46,7 +46,7 @@ define(['backgroundManager'], function (backgroundManager) {
         //  TODO: Unbinding events?
         backgroundManager.on('change:activePlaylist', function (model, activePlaylist) {
 
-            if (activePlaylistItem == null) {
+            if (activePlaylist == null) {
             } else {
                 headerInput.val(activePlaylist.get('title'));
             }

@@ -5,6 +5,7 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager'], function (cont
     //  TODO: Need to be a lot more fine-grained then just spamming reload. Will come back around to it.
     // TODO: This will need to be reworked to support >1 streams.
     backgroundManager.get('activeStream').get('playlists').on('add remove change:selected change:title', reload);
+    backgroundManager.on('change:activeStream', reload);
 
     reload();
 
@@ -34,15 +35,17 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager'], function (cont
                     }
                 }).appendTo(listItem);
                 
-                if (list.get('selected')) {
-                    selectRow(list.get('id'));
-                }
+                //if (list.get('selected')) {
+                //    selectRow(list.get('id'));
+                //}
 
             })(currentList);
             
             currentList = activeStream.get('playlists').get(currentList.get('nextListId'));
 
-        } while(currentList.get('id') !== firstListId)
+        } while (currentList.get('id') !== firstListId)
+
+        selectRow(backgroundManager.get('activePlaylist').get('id'));
 
         //  Removes the old 'current' marking and move it to the newly selected row.
         function selectRow(id) {
@@ -52,10 +55,12 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager'], function (cont
 
         //  Clicking on a playlist will select that playlist.
         playlistList.children().click(function () {
-            var clickedId = $(this).children()[0].id;
-            selectRow(clickedId);
-            
-            backgroundManager.get('activeStream').selectPlaylist(clickedId);
+            var playlistId = $(this).children()[0].id;
+            selectRow(playlistId);
+
+            var playlist = backgroundManager.getPlaylistById(playlistId);
+            backgroundManager.set('activePlaylist', playlist);
+
             return false;
         });
     }

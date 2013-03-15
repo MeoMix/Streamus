@@ -54,10 +54,10 @@
                 nextItem = playlist.gotoNextItem();
             }
 
-            var newActivePlaylistItem = playlist.selectItem(nextItem);
-            backgroundManager.set('activePlaylistItem', newActivePlaylistItem);
+            playlist.selectItem(nextItem);
+            backgroundManager.set('activePlaylistItem', nextItem);
 
-            player.loadVideoById(newActivePlaylistItem.get('video').get('id'));
+            player.loadVideoById(nextItem.get('video').get('id'));
         }
 
     });

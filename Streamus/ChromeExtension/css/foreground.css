@@ -549,6 +549,14 @@
     font-weight: bold !important;
 }
 
+.muted > svg > path {
+    fill: Red !important;
+}
+
+.muted > svg > rect {
+    fill: Black !important;
+}
+
 #ContextMenu {
     display: none;        
     position: absolute;
