@@ -15,7 +15,6 @@ define(['ytHelper',
                 id: null,
                 streamId: null,
                 title: 'New Playlist',
-                selected: false,
                 firstItemId: null,
                 nextListId: null,
                 previousListId: null,
@@ -166,8 +165,7 @@ define(['ytHelper',
                         video: video,
                         //  PlaylistItem title is mutable, video title is immutable.
                         title: video.get('title'),
-                        relatedVideoInformation: [],
-                        selected: false
+                        relatedVideoInformation: []
                     });
 
                     var playlistItems = self.get('items');
@@ -353,15 +351,8 @@ define(['ytHelper',
             //            window && console.error(error);
             //        }                    
             //    });
-            //},
-            
-            //  Returns the currently selected playlistItem or null if no item was found.
-            getSelectedItem: function() {
-                var items = this.get('items');
-                var selectedItem = items.getSelectedItem();
-                return selectedItem;
-            }
-            
+            //}
+           
         });
 
         return function (config) {

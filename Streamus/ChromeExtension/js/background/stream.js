@@ -118,7 +118,7 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState', 'localStora
                         firstList.set('previousListId', playlistId);
                         playlist.set('nextListId', firstList.get('id'));
                     }
-                        
+
                     currentPlaylists.push(playlist);
 
                     if (callback) {

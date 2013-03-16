@@ -4,8 +4,20 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager'], function (cont
     var playlistList = $('#PlaylistList ul');
     //  TODO: Need to be a lot more fine-grained then just spamming reload. Will come back around to it.
     // TODO: This will need to be reworked to support >1 streams.
-    backgroundManager.get('activeStream').get('playlists').on('add remove change:selected change:title', reload);
-    backgroundManager.on('change:activeStream', reload);
+
+    backgroundManager.on('change:activePlaylist', reload);
+
+    var activePlaylists = backgroundManager.get('activeStream').get('playlists');
+    activePlaylists.on('add remove change:title', reload);
+
+    backgroundManager.on('change:activeStream', function(model, activeStream) {
+
+        activePlaylists.off('add remove change:title');
+        activePlaylists = activeStream.get('playlists');
+        activePlaylists.on('add remove change:title', reload);
+
+        reload();
+    });
 
     reload();
 
@@ -57,6 +69,8 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager'], function (cont
         playlistList.children().click(function () {
             var playlistId = $(this).children()[0].id;
             selectRow(playlistId);
+
+            console.log("playlistID:", playlistId, typeof(playlistId));
 
             var playlist = backgroundManager.getPlaylistById(playlistId);
             backgroundManager.set('activePlaylist', playlist);

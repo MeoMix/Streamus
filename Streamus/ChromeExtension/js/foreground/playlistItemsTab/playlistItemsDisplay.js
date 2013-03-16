@@ -46,10 +46,20 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player'], function (co
     }
     
     //  TODO: Need to be a lot more fine-grained then just spamming reload. Will come back around to it.
-    //  TODO: Do I need to unbind events? :s Probably.. will fire a lot of reloads, will come back to it though.
-    backgroundManager.on('change:activePlaylistItem change:activePlaylist change:activeStream', reload);
-    backgroundManager.get('activePlaylist').get('items').on('add remove', reload);
-    
+    backgroundManager.on('change:activePlaylistItem', reload);
+
+    var activePlaylistItems = backgroundManager.get('activePlaylist').get('items');
+    activePlaylistItems.on('add remove', reload);
+
+    backgroundManager.on('change:activePlaylist', function (model, activePlaylist) {
+
+        activePlaylistItems.off('add remove');
+        activePlaylistItems = activePlaylist.get('items');
+        activePlaylistItems.on('add remove', reload);
+
+        reload();
+    });
+
     reload();
     scrollLoadedItemIntoView(backgroundManager.get('activePlaylistItem'), false);
     

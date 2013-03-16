@@ -20,14 +20,6 @@
             });
         },
 
-        getSelectedItem: function() {
-            var selectedItem = this.find(function(item) {
-                return item.get('selected');
-            }) || null;
-
-            return selectedItem;
-        },
-
         getRelatedVideos: function() {
             //  Take each playlist item's array of related videos, pluck them all out into a collection of arrays
             //  then flatten the arrays into a collection of videos.

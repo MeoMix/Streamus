@@ -12,7 +12,6 @@ define(['helpers', 'programState', 'video'], function(helpers, programState, Vid
                 previousItemId: null,
                 video: null,
                 title: '',
-                selected: false,
                 //  Used to weight randomness in shuffle. Resets to false when all in collection are set to true.
                 playedRecently: false,
                 relatedVideoInformation: [] 
