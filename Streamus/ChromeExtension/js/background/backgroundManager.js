@@ -74,26 +74,7 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
         });
 
         this.get('allPlaylists').each(function(playlist) {
-
-            playlist.get('items').on('add', function(playlistItem) {
-
-                self.get('allPlaylistItems').add(playlistItem);
-
-                if (self.get('activePlaylistItem') === null) {
-                    self.set('activePlaylistItem', playlistItem);
-                    playlist.selectItem(playlistItem);
-                }
-
-            });
-
-            playlist.get('items').on('remove', function (playlistItem) {
-
-                self.get('allPlaylistItems').remove(playlistItem);
-
-                if (self.get('activePlaylistItem') === playlistItem) {
-                    self.set('activePlaylistItem', null);
-                }
-            });
+            bindEventsToPlaylist.call(self, playlist);
         });
 
         this.get('allStreams').on('change:active', function(stream, isActive) {
@@ -111,9 +92,7 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
             stream.get('playlists').on('add', function (playlist) {
                 self.get('allPlaylists').add(playlist);
 
-                playlist.on('add', function(playlistItem) {
-                    self.get('allPlaylistItems').add(playlistItem);
-                });
+                bindEventsToPlaylist.call(self, playlist);
             });
 
             stream.get('playlists').on('remove', function (playlist) {
@@ -129,6 +108,32 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
 
         //  TODO: Support adding Stream here.
         //  TODO: Support removing Stream here.
+    }
+    
+    function bindEventsToPlaylist(playlist) {
+        console.log("Playlist:", playlist);
+        var self = this;
+        playlist.get('items').on('add', function (playlistItem) {
+
+            console.log("Detected item add. Adding", playlistItem);
+
+            self.get('allPlaylistItems').add(playlistItem);
+
+            if (self.get('activePlaylistItem') === null) {
+                self.set('activePlaylistItem', playlistItem);
+                playlist.selectItem(playlistItem);
+            }
+
+        });
+
+        playlist.get('items').on('remove', function (playlistItem) {
+
+            self.get('allPlaylistItems').remove(playlistItem);
+
+            if (self.get('activePlaylistItem') === playlistItem) {
+                self.set('activePlaylistItem', null);
+            }
+        });
     }
     
     function loadActiveStream() {
