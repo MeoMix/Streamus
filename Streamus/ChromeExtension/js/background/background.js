@@ -66,10 +66,27 @@
     chrome.commands.onCommand.addListener(function (command) {
         switch (command) {
             case 'nextVideo':
-                backgroundManager.get('activePlaylist').skipItem("next");
+                var activePlaylistItem = backgroundManager.get('activePlaylistItem');
+                
+                if (activePlaylistItem !== null) {
+                    var playlistId = activePlaylistItem.get('playlistId');
+                    var playlist = backgroundManager.getPlaylistById(playlistId);
+
+                    var nextItem = playlist.skipItem('next');
+                    backgroundManager.set('activePlaylistItem', nextItem);
+                }
+
                 break;
             case 'previousVideo':
-                backgroundManager.get('activePlaylist').skipItem("previous");
+                var activePlaylistItem = backgroundManager.get('activePlaylistItem');
+
+                if (activePlaylistItem !== null) {
+                    var playlistId = activePlaylistItem.get('playlistId');
+                    var playlist = backgroundManager.getPlaylistById(playlistId);
+
+                    var previousItem = playlist.skipItem('previous');
+                    backgroundManager.set('activePlaylistItem', previousItem);
+                }
                 break;
             case 'toggleVideo':
                 if (player.isPlaying()) {

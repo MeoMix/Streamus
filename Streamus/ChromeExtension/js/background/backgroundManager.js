@@ -92,6 +92,8 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
             stream.get('playlists').on('add', function (playlist) {
                 self.get('allPlaylists').add(playlist);
 
+                console.log("Binding to playlist:", playlist);
+
                 bindEventsToPlaylist.call(self, playlist);
             });
 

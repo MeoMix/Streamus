@@ -16,7 +16,7 @@ define(['backgroundManager', 'player', 'helpers'], function (backgroundManager, 
         //  Don't divide by 0.
         var fill = totalTime !== 0 ? currentTime / totalTime : 0;
 
-        chrome.extension.getBackgroundPage().console.log("Fill: ", fill, currentTime, totalTime);
+        window && console.log("Fill: ", fill, currentTime, totalTime);
 
         var backgroundImage = '-webkit-gradient(linear,left top, right top, from(#ccc), color-stop(' + fill + ',#ccc), color-stop(' + fill + ',rgba(0,0,0,0)), to(rgba(0,0,0,0)))';
         $(this).css('background-image', backgroundImage);

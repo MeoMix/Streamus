@@ -2,23 +2,9 @@
 define(['playlistsContextMenu', 'ytHelper', 'backgroundManager'], function (contextMenu, ytHelper, backgroundManager) {
     //  TODO: Make this sortable and should inherit from a common List object. 
     var playlistList = $('#PlaylistList ul');
-    //  TODO: Need to be a lot more fine-grained then just spamming reload. Will come back around to it.
-    // TODO: This will need to be reworked to support >1 streams.
 
-    backgroundManager.on('change:activePlaylist', reload);
-
-    var activePlaylists = backgroundManager.get('activeStream').get('playlists');
-    activePlaylists.on('add remove change:title', reload);
-
-    backgroundManager.on('change:activeStream', function(model, activeStream) {
-
-        activePlaylists.off('add remove change:title');
-        activePlaylists = activeStream.get('playlists');
-        activePlaylists.on('add remove change:title', reload);
-
-        reload();
-    });
-
+    backgroundManager.on('change:activeStream change:activePlaylist', reload);
+    backgroundManager.get('allPlaylists').on('add remove', reload);
     reload();
 
     //  Refreshes the playlist display with the current playlist information.
@@ -46,10 +32,6 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager'], function (cont
                         return false;
                     }
                 }).appendTo(listItem);
-                
-                //if (list.get('selected')) {
-                //    selectRow(list.get('id'));
-                //}
 
             })(currentList);
             
