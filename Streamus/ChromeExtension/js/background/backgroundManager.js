@@ -142,12 +142,14 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                 localStorageManager.setActiveStreamId(activeStream.get('id'));
             }
         });
+        
         var activeStreamId = localStorageManager.getActiveStreamId();
+        var activeStream = this.get('allStreams').get(activeStreamId);
 
-        if (activeStreamId === null) {
+        if (typeof (activeStream) === 'undefined') {
             this.set('activeStream', this.get('allStreams').at(0));
         } else {
-            this.set('activeStream', this.get('allStreams').get(activeStreamId));
+            this.set('activeStream', activeStream);
         }
     }
 
@@ -162,18 +164,18 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
             }
 
         });
+        
         var activePlaylistId = localStorageManager.getActivePlaylistId();
 
-        if (activePlaylistId === null) {
+        //  There is no guarantee that the active playlist will be in the active stream because a user could be looking through
+        //  different streams without selecting a new playlist.
+        var activePlaylist = _.find(getAllPlaylists(), function (playlist) {
+            return playlist.get('id') === activePlaylistId;
+        });
+        
+        if (typeof(activePlaylist) === 'undefined') {
             this.set('activePlaylist', this.get('activeStream').get('playlists').at(0));
         } else {
-
-            //  There is no guarantee that the active playlist will be in the active stream because a user could be looking through
-            //  different streams without selecting a new playlist.
-            var activePlaylist = _.find(getAllPlaylists(), function (playlist) {
-                return playlist.get('id') === activePlaylistId;
-            });
-
             this.set('activePlaylist', activePlaylist);
         }
     }
@@ -190,8 +192,14 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
         });
 
         var activePlaylistItemId = localStorageManager.getActivePlaylistItemId();
+        
+        //  There is no guarantee that the active playlistItem will be in the active playlist because a user could be looking through
+        //  different playlists without selecting a new item.
+        var activePlaylistItem = _.find(getAllPlaylistItems(), function (playlistItem) {
+            return playlistItem.get('id') === activePlaylistItemId;
+        });
 
-        if (activePlaylistItemId === null) {
+        if (typeof (activePlaylistItem) === 'undefined') {
             var activePlaylistItems = this.get('activePlaylist').get('items');
 
             if (activePlaylistItems.length > 0) {
@@ -199,19 +207,10 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
             }
 
         } else {
-
-            //  There is no guarantee that the active playlistItem will be in the active playlist because a user could be looking through
-            //  different playlists without selecting a new item.
-
-            var activePlaylistItem = _.find(getAllPlaylistItems(), function (playlistItem) {
-                return playlistItem.get('id') === activePlaylistItemId;
-            });
-
             this.set('activePlaylistItem', activePlaylistItem);
         }
 
-        var activePlaylistItem = this.get('activePlaylistItem');
-        if (activePlaylistItem != null) {
+        if (this.get('activePlaylistItem') !== null) {
             var playlist = this.getPlaylistById(activePlaylistItem.get('playlistId'));
             playlist.selectItem(activePlaylistItem);
         }
