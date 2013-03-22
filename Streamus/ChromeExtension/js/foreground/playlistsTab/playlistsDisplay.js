@@ -52,8 +52,6 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager'], function (cont
             var playlistId = $(this).children()[0].id;
             selectRow(playlistId);
 
-            console.log("playlistID:", playlistId, typeof(playlistId));
-
             var playlist = backgroundManager.getPlaylistById(playlistId);
             backgroundManager.set('activePlaylist', playlist);
 

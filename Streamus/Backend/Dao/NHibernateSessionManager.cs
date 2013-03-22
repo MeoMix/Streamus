@@ -140,7 +140,7 @@ namespace Streamus.Backend.Dao
             }
         }
 
-        private bool HasOpenTransaction()
+        public bool HasOpenTransaction()
         {
             ITransaction transaction = ContextTransaction;
 

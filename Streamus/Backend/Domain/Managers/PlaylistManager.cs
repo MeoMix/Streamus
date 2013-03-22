@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using Streamus.Backend.Dao;
 using Streamus.Backend.Domain.Interfaces;
 using log4net;
@@ -95,6 +96,20 @@ namespace Streamus.Backend.Domain.Managers
         {
             try
             {
+                //  TODO: Fuuuuck. How can I fix this?
+                int sleepCount = 0;
+                while (NHibernateSessionManager.Instance.HasOpenTransaction() && sleepCount < 10)
+                {
+                    Logger.DebugFormat("Sleep Count {0}", sleepCount);
+                    Thread.Sleep(1000);
+                    sleepCount++;
+                }
+
+                if (NHibernateSessionManager.Instance.HasOpenTransaction())
+                {
+                    Logger.Error("Exceeded max block time for sleeping.");
+                }
+
                 NHibernateSessionManager.Instance.BeginTransaction();
 
                 Playlist playlist = PlaylistDao.Get(id);
@@ -151,6 +166,20 @@ namespace Streamus.Backend.Domain.Managers
         {
             try
             {
+                //  TODO: Terrible.
+                int sleepCount = 0;
+                while (NHibernateSessionManager.Instance.HasOpenTransaction() && sleepCount < 10)
+                {
+                    Logger.DebugFormat("Sleep Count {0}", sleepCount);
+                    Thread.Sleep(1000);
+                    sleepCount++;
+                }
+
+                if (NHibernateSessionManager.Instance.HasOpenTransaction())
+                {
+                    Logger.Error("Exceeded max block time for sleeping.");
+                }
+
                 NHibernateSessionManager.Instance.BeginTransaction();
                 Playlist playlist = PlaylistDao.Get(playlistId);
 

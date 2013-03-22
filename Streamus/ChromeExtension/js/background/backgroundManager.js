@@ -91,9 +91,6 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
 
             stream.get('playlists').on('add', function (playlist) {
                 self.get('allPlaylists').add(playlist);
-
-                console.log("Binding to playlist:", playlist);
-
                 bindEventsToPlaylist.call(self, playlist);
             });
 
@@ -113,12 +110,9 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
     }
     
     function bindEventsToPlaylist(playlist) {
-        console.log("Playlist:", playlist);
         var self = this;
         playlist.get('items').on('add', function (playlistItem) {
-
-            console.log("Detected item add. Adding", playlistItem);
-
+            
             self.get('allPlaylistItems').add(playlistItem);
 
             if (self.get('activePlaylistItem') === null) {

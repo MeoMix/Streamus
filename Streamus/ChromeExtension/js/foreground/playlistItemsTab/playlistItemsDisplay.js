@@ -36,11 +36,6 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player'], function (co
         } else {
             var playlistItem = backgroundManager.getPlaylistItemById(itemId);
             
-            if (playlistItem === null) {
-                console.log("ALL PLAYLISTS", backgroundManager.get('allPlaylists'));
-                console.log("ALL PLAYLISTITEMS:", backgroundManager.get('allPlaylistItems'));
-            }
-
             var playlistId = playlistItem.get('playlistId');
             var playlist = backgroundManager.getPlaylistById(playlistId);
 
@@ -64,7 +59,6 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player'], function (co
             var loadedItemId = activeItem.get('id');
             var $activeItem = playlistItemList.find('li[data-itemid="' + loadedItemId + '"]');
 
-            window && console.log("$Active item:", $activeItem);
             if ($activeItem.length > 0) {
                 $activeItem.scrollIntoView(useAnimation);
             }
@@ -130,8 +124,6 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player'], function (co
 
         //  Since we emptied our list we lost the selection, reselect.
         if (activeItem) {
-            console.log("Scrolling into view.");
-
             scrollActiveItemIntoView(activeItem, false);
 
             var activeItemId = activeItem.get('id');
