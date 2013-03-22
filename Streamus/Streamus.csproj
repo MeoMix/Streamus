@@ -185,9 +185,7 @@
     <Content Include="bin\Antlr3.Runtime.dll" />
     <Content Include="bin\EntityFramework.dll" />
     <Content Include="bin\FluentValidation.dll" />
-    <Content Include="bin\hibernate.cfg.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="bin\hibernate.cfg.xml" />
     <Content Include="bin\Iesi.Collections.dll" />
     <Content Include="bin\log4net.dll" />
     <Content Include="bin\Microsoft.Web.Infrastructure.dll" />
