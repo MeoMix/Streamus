@@ -182,12 +182,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Backend\Domain\Playlist.hbm.xml" />
     <EmbeddedResource Include="Backend\Domain\Stream.hbm.xml" />
-    <Content Include="bin\NHibernate.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="bin\NHibernate.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="bin\NHibernate.dll" />
+    <Content Include="bin\NHibernate.xml" />
     <Content Include="ChromeExtension\background.htm" />
     <Content Include="ChromeExtension\css\aristo\aristo.css" />
     <Content Include="ChromeExtension\css\aristo\images\bg_fallback.png" />
