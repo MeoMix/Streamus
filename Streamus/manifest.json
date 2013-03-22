@@ -24,7 +24,7 @@
     "https://www.youtube.com/",
     "https://graph.facebook.com/",
 	"http://localhost:61975/Streamus/",
-	"http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/",
+	"http://streamus.apphb.com/",
     "tabs"
 	],
   "content_scripts": [

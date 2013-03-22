@@ -1,4 +1,3 @@
 *.min.js
 obj/
-bin/
 sftp-config.json

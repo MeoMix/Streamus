@@ -9,7 +9,7 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
     //  User data will be loaded either from cache or server.
     var UserModel = Backbone.Model.extend({
         defaults: {
-            id: '5069ae33-0ab8-440d-97c0-feebf7ac5910', //localStorageManager.getUserId(),
+            id: null, //'D0505AF9-2527-40B1-A777-854C973D7DF0', //localStorageManager.getUserId(),
             name: '',
             loaded: false,
             streams: new Streams()
@@ -28,7 +28,8 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
                     //  Look for a user id in sync, it might be undefined though.
                     var foundUserId = data[userIdKey];
 
-                    if (typeof foundUserId === 'undefined') {
+                    if(true){
+                    //if (typeof foundUserId === 'undefined') {
                         
                         //  No stored ID found at any client storage spot. Create a new user and use the returned user object.
                         self.save({}, {

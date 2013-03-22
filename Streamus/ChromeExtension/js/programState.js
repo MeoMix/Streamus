@@ -3,7 +3,7 @@ define(function () {
     'use strict';
     var ProgramState = Backbone.Model.extend({
         defaults: {
-            isLocal: true
+            isLocal: false
         },
         //  Make sure to update the URL in manifest.json, too.
         getBaseUrl: function() {
@@ -11,7 +11,7 @@ define(function () {
             if (this.get('isLocal')) {
                 baseUrl = 'http://localhost:61975/';
             } else {
-                baseUrl = 'http://ec2-54-234-89-248.compute-1.amazonaws.com/Streamus/';
+                baseUrl = 'http://streamus.apphb.com/';
             }
 
             return baseUrl;
