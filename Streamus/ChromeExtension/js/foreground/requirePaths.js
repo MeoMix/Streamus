@@ -38,6 +38,7 @@ var require = {
         'localStorageManager': 'foreground/localStorageManager',
         'player': 'foreground/player',
         'videoDisplay': 'foreground/videoTab/videoDisplay',
-        'scrollIntoView': 'thirdParty/jquery.scrollIntoView'
+        'scrollIntoView': 'thirdParty/jquery.scrollIntoView',
+        'intro': 'thirdParty/intro'
     }
 };

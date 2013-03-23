@@ -191,6 +191,7 @@
     <Content Include="ChromeExtension\css\aristo\images\ui-icons_454545_256x240.png" />
     <Content Include="ChromeExtension\css\foreground.css" />
     <Content Include="ChromeExtension\css\inject.css" />
+    <Content Include="ChromeExtension\css\introjs.css" />
     <Content Include="ChromeExtension\foreground.htm" />
     <Content Include="ChromeExtension\icon.png" />
     <Content Include="ChromeExtension\images\spinner.svg" />
@@ -240,6 +241,7 @@
     <Content Include="ChromeExtension\js\tests\background\userSpec.js" />
     <Content Include="ChromeExtension\js\tests\main.js" />
     <None Include="ChromeExtension\js\thirdParty\chrome-api-vsdoc.js" />
+    <Content Include="ChromeExtension\js\thirdParty\intro.js" />
     <Content Include="ChromeExtension\js\thirdParty\jasmine-html.js" />
     <Content Include="ChromeExtension\css\jasmine.css" />
     <Content Include="ChromeExtension\js\thirdParty\jquery.scrollIntoView.js" />
