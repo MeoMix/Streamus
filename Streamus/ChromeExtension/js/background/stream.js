@@ -248,10 +248,10 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState', 'localStora
             });
         },
         
-        getSelectedPlaylist: function() {
-            return this.get('playlists').find(function(playlist) {
-                return playlist.get('selected');
-            });
+        getPlaylistById: function(playlistId) {
+            var playlist = this.get('playlists').get(playlistId) || null;
+           
+            return playlist;
         }
     });
     

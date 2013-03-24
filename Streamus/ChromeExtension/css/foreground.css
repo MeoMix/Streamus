@@ -1,4 +1,9 @@
-﻿body {
+﻿.introjs-helperNumberLayer {
+    left: 5px !important;
+    top: 5px !important;
+}
+
+body {
   min-width: 513px;
   min-height:340px;
   background:#fff;
@@ -388,7 +393,7 @@
   border-right:1px solid #666;
 }
 
-#ShuffleButton, #MuteButton {
+#SettingsButton, #MuteButton {
   -webkit-box-shadow:inset 0 3px 5px #000;
   right:40px;
   top:0;
@@ -400,14 +405,14 @@
   background: rgba(0,0,0,.5)
 }
 
-#ShuffleButton svg, #MuteButton svg {
+#SettingsButton svg, #MuteButton svg {
   position:absolute;
   top:50%;
   left:50%;
   margin: -8px 0 0 -8px;
 }
 
-#ShuffleButton:active, 
+#SettingsButton:active, 
 #MuteButton:active {
   background-image: -webkit-gradient(linear,left top, left bottom,color-stop(0.5,rgba(255,255,255,0)), to(rgba(255,255,255,0.25)));
 }
@@ -417,6 +422,16 @@
   border-right:none;
 }
 
+#SettingsButtonSvgWrapper {
+    width: 80%;
+    margin-left: 9%;
+}
+
+#SettingsSliderWrapper {
+    right: 40px !important;
+}
+
+#SettingsSliderWrapper,
 #VolumeSliderWrapper {
   -webkit-transition: top 0.5s;
   width:40px; 
@@ -430,21 +445,34 @@
   -webkit-box-shadow: 0 3px 5px rgba(0,0,0,0.3)
 }
 
+#ShuffleButton {
+    position:absolute;
+    right: 12px;
+    top: 33px;
+}
+
+#RadioModeButton {
+    position: absolute;
+    right: 13px;
+    top: 6px;
+}
+
 #VolumeSlider {
-  -webkit-appearance:none !important; 
-  position:absolute;
-  top:45px;
-  right:-20px; 
-  width:80px; 
-  height:6px; 
-  margin:0;
-  padding:0;
-  -webkit-box-sizing:border-box; 
-  -webkit-transform: rotate(270deg);
+    right: -20px;
+    width:80px; 
+    height:6px; 
+    -webkit-appearance:none !important; 
+   -webkit-box-sizing:border-box; 
+   -webkit-transform: rotate(270deg);
+   
   background-color:#222; 
   border-bottom:1px solid #000; 
-  border-top: 1px solid #555; 
-  border-radius:3px
+  border-top: 1px solid #555;
+  border-radius: 3px;
+  position:absolute;
+  top:45px;
+  margin:0;
+  padding:0;
 }
 
 #VolumeSlider::-webkit-slider-thumb {
@@ -538,12 +566,17 @@
   position:absolute; 
   top:0;
   left:60px;
-  right:0px; 
+  right:0; 
   overflow: hidden; 
   font: 12px/18px sans-serif;
   height: 38px;
   margin-top: 5px;
-} 
+}
+
+#PlaylistsContent .list a {
+    left: 10px !important;
+    top: 7px !important;
+}
 
 .loaded a {
     font-weight: bold !important;

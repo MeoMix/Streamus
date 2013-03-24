@@ -10,6 +10,7 @@ var require = {
         'skipButton': 'foreground/playerControls/skipButton',
         'previousButton': 'foreground/playerControls/previousButton',
         'shuffleButton': 'foreground/playerControls/shuffleButton',
+        'radioModeButton': 'foreground/playerControls/radioModeButton',
         'header': 'foreground/header',
         'settings': 'foreground/settingsTab/settings',
         'playlistItemsContextMenu': 'foreground/playlistItemsTab/playlistItemsContextMenu',

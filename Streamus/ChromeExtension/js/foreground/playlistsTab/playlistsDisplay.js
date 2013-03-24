@@ -13,34 +13,40 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager'], function (cont
 
         var activeStream = backgroundManager.get('activeStream');
 
+        if (activeStream.get('playlists').length === 0) return;
+
         var firstListId = activeStream.get('firstListId');
-        var currentList = activeStream.get('playlists').get(firstListId);
+        var currentPlaylist = activeStream.get('playlists').get(firstListId);
         
         //  Build up each row.
         do {
             (function (list) {
-                var listItem = $('<li/>').appendTo(playlistList);
-
-                $('<a/>', {
-                    id: list.get('id'),
-                    href: '#' + list.get('id'),
-                    text: list.get('title'),
+                var listItem = $('<li/>', {
                     contextmenu: function (e) {
                         contextMenu.initialize(list);
                         contextMenu.show(e.pageY, e.pageX);
                         //  Prevent default context menu display.
                         return false;
                     }
+                }).appendTo(playlistList);
+
+                $('<a/>', {
+                    id: list.get('id'),
+                    href: '#' + list.get('id'),
+                    text: list.get('title')
                 }).appendTo(listItem);
 
-            })(currentList);
+            })(currentPlaylist);
             
-            currentList = activeStream.get('playlists').get(currentList.get('nextListId'));
+            currentPlaylist = activeStream.get('playlists').get(currentPlaylist.get('nextListId'));
 
-        } while (currentList.get('id') !== firstListId)
+        } while (currentPlaylist.get('id') !== firstListId)
 
-        selectRow(backgroundManager.get('activePlaylist').get('id'));
-
+        var activePlaylist = backgroundManager.get('activePlaylist');
+        if (activePlaylist !== null) {
+            selectRow(activePlaylist.get('id'));
+        }
+        
         //  Removes the old 'current' marking and move it to the newly selected row.
         function selectRow(id) {
             playlistList.find('li').removeClass('loaded');
@@ -54,8 +60,6 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager'], function (cont
 
             var playlist = backgroundManager.getPlaylistById(playlistId);
             backgroundManager.set('activePlaylist', playlist);
-
-            return false;
         });
     }
 });

@@ -29,10 +29,14 @@ define(['backgroundManager'], function (backgroundManager) {
     enableIfItemsInPlaylist(backgroundManager.get('activePlaylist'));
     
     function enableIfItemsInPlaylist(playlist) {
-        var itemCount = playlist.get('items').length;
+        if (playlist !== null) {
 
-        if (itemCount > 0) {
-            enableButton();
+            var itemCount = playlist.get('items').length;
+
+            if (itemCount > 0) {
+                enableButton();
+            }
+            
         }
     }
 

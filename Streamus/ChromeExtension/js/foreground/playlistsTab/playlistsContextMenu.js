@@ -6,10 +6,12 @@ define(['contextMenu', 'backgroundManager'], function (contextMenu, backgroundMa
     $.extend(playlistContextMenu, contextMenu, {
         initialize: function(playlist) {
             this.empty();
-            this.addContextMenuItem('Delete playlist', function() {
+            this.addContextMenuItem('Delete playlist', function () {
 
-                if (playlist !== null && !playlist.get('selected')) {
-                    backgroundManager.get('activeStream').removePlaylistById(playlist.get('id'));
+                //  TODO: When would this be null? :s
+                if (playlist !== null) {
+                    var playlistId = playlist.get('id');
+                    backgroundManager.get('activeStream').removePlaylistById(playlistId);
                 }
             });
         }

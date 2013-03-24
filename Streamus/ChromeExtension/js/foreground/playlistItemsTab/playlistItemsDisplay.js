@@ -72,8 +72,8 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player'], function (co
 
         var activePlaylist = backgroundManager.get('activePlaylist');
 
-        if (activePlaylist.get('items').length === 0) return;
-
+        if (activePlaylist == null || activePlaylist.get('items').length === 0) return;
+        
         var firstItemId = activePlaylist.get('firstItemId');
         var currentItem = activePlaylist.get('items').get(firstItemId);
         
@@ -81,7 +81,14 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player'], function (co
         do {
             (function (item) {
                 var listItem = $('<li/>', {
-                    'data-itemid': item.get('id')
+                    'data-itemid': item.get('id'),
+                    contextmenu: function (e) {
+                        contextMenu.initialize(item);
+                        contextMenu.show(e.pageY, e.pageX);
+
+                        //  Prevent default context menu display.
+                        return false;
+                    }
                 }).appendTo(playlistItemList);
 
                 $('<img>', {
@@ -94,14 +101,7 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player'], function (co
                 }).appendTo(listItem);
 
                 $('<a/>', {
-                    text: item.get('title'),
-                    contextmenu: function (e) {
-                        contextMenu.initialize(item);
-                        contextMenu.show(e.pageY, e.pageX);
-
-                        //  Prevent default context menu display.
-                        return false;
-                    }
+                    text: item.get('title')
                 }).appendTo(listItem);
             })(currentItem);
 
@@ -109,14 +109,13 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player'], function (co
 
         } while (currentItem.get('id') !== firstItemId)
 
+        //  TODO: Can I just early-bind this and not have to reapply every time?
         //  Load and start playing a video if it is double click.
         playlistItemList.children().click(function () {
 
             var itemId = $(this).data('itemid');
             selectItemById(itemId);
             setListItemClass(itemId, 'loaded');
-            
-            return false;
         });
         
         //  TODO: Does not work when activePlaylist is not visible.

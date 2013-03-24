@@ -7,6 +7,7 @@ define(['backgroundManager',
         'skipButton',
         'previousButton',
         'shuffleButton',
+        'radioModeButton',
         'contentButtons',
         'progressBar',
         'settings',
@@ -19,7 +20,7 @@ define(['backgroundManager',
 ], function (backgroundManager) {
     'use strict';
     
-    introJs().start();
+    //introJs().start();
     
     //  If the user has browser around to a different stream or playlist (but didn't make a playlistItem selection)
     //  it is unintuitive to stay on that stream/playlist upon re-opening the UI. As such, set the state back to the 

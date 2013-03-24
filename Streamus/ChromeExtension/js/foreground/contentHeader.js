@@ -13,10 +13,17 @@ define(['backgroundManager'], function (backgroundManager) {
             }
         }
 
+        var activePlaylist = backgroundManager.get('activePlaylist');
+        var activePlaylistTitle = '';
+        
+        if (activePlaylist !== null) {
+            activePlaylistTitle = activePlaylist.get('title');
+        }
+
         var headerInput = $('<input/>', {
             'class': 'headerInput',
             type: 'text',
-            value: backgroundManager.get('activePlaylist').get('title'),
+            value: activePlaylistTitle,
             originalValue: '',
             mouseover: function(){
                 this.originalValue = $(this).val();

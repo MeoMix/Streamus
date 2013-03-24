@@ -4,7 +4,7 @@ define(function(){
 	var selector = $('#ContextMenu');
 
 	//  Hide the context menu whenever any click occurs not just when selecting an item.
-    $(document).on('click contextmenu', function () {
+	$(document).on('mousedown contextmenu', function () {
 		selector.offset({top:0, left:0}).hide();
 	});
 
@@ -16,11 +16,11 @@ define(function(){
 			$('<a/>', {
 				href: '#',
 				text: text,
-				click: onClick
+				mousedown: onClick
 			}).appendTo(selector);
 		},
 		show: function(top, left){
-			//Don't allow the context menu to display off the document viewport.
+			//  Don't allow the context menu to display off the document viewport.
 			var needsVerticalFlip = top + selector.height() > $(document).height();
 			if(needsVerticalFlip){
 				top = top - selector.height();

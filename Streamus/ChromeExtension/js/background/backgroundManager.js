@@ -100,6 +100,22 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
 
                 if (self.get('activePlaylist') === playlist) {
                     self.set('activePlaylist', null);
+
+                    var streamId = playlist.get('streamId');
+                    var stream = self.getStreamById(streamId);
+                    
+                    if (stream.get('playlists').length > 0) {
+
+                        var newlyActivePlaylist = stream.getPlaylistById(playlist.get('nextListId'));
+                        self.set('activePlaylist', newlyActivePlaylist);
+                    }
+                }
+
+                //  If the currently playing item was in the playlist that has been removed - stop the music / refresh the UI.
+                var activePlaylistItem = self.get('activePlaylistItem');
+                if (activePlaylistItem !== null && activePlaylistItem.get('playlistId') === playlist.id) {
+                    player.pause();
+                    self.set('activePlaylistItem', null);
                 }
             });
 
@@ -128,6 +144,16 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
 
             if (self.get('activePlaylistItem') === playlistItem) {
                 self.set('activePlaylistItem', null);
+                
+                var playlistId = playlistItem.get('playlistId');
+                var playlist = self.getPlaylistById(playlistId);
+                
+                if (playlist.get('items').length > 0) {
+                    var newlyActiveItem = playlist.skipItem('next');
+                    self.set('activePlaylistItem', newlyActiveItem);
+                } else {
+                    player.pause();
+                }
             }
         });
     }
@@ -171,9 +197,9 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
         //  different streams without selecting a new playlist.
         var activePlaylist = _.find(getAllPlaylists(), function (playlist) {
             return playlist.get('id') === activePlaylistId;
-        });
+        }) || null;
         
-        if (typeof(activePlaylist) === 'undefined') {
+        if (activePlaylist === null) {
             this.set('activePlaylist', this.get('activeStream').get('playlists').at(0));
         } else {
             this.set('activePlaylist', activePlaylist);
@@ -197,9 +223,9 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
         //  different playlists without selecting a new item.
         var activePlaylistItem = _.find(getAllPlaylistItems(), function (playlistItem) {
             return playlistItem.get('id') === activePlaylistItemId;
-        });
+        }) || null;
 
-        if (typeof (activePlaylistItem) === 'undefined') {
+        if (activePlaylistItem === null) {
             var activePlaylistItems = this.get('activePlaylist').get('items');
 
             if (activePlaylistItems.length > 0) {

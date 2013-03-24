@@ -1,14 +1,23 @@
-//  Enables the 'shuffling' state of
 define(['localStorageManager'], function(localStorageManager){
-	'use strict';
-	var shuffleButton = $('#ShuffleButton').click(shuffleVideo);
+    'use strict';
+
+    var settingsSliderWrapper = $('#SettingsSliderWrapper');
+    var settingsControl = $('.settingsControl');
+    
+    settingsControl.mouseover(function () {
+        settingsSliderWrapper.css("top", "70px");
+    }).mouseout(function () {
+        settingsSliderWrapper.css("top", "-35px");
+    });
+
+	var shuffleButton = $('#ShuffleButton').click(toggleShuffleVideo);
 
     var isShuffleEnabled = localStorageManager.getIsShuffleEnabled();
     if (isShuffleEnabled) {
 		shuffleButton.addClass('pressed');
 	}
 
-	function shuffleVideo() {
+    function toggleShuffleVideo() {
 		if(shuffleButton.hasClass('pressed')){
 			shuffleButton.removeClass('pressed');
 		}
