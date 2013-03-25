@@ -53,14 +53,22 @@
 
                     return sameVideoId || similiarVideoName;
                 });
-                
-                //  Don't include 'playlist' songs -- assuming things >8m are playlists.
-                var isJustOneSong = relatedVideo.get('duration') < 480;
 
-                var isNotLive = relatedVideo.get('title').toLowerCase().indexOf('live') === -1;
-
-                return alreadyExistingItem == null && isJustOneSong && isNotLive;
+                return alreadyExistingItem == null;
             });
+            
+            // Try to filter out 'playlist' songs, but if they all get filtered out then back out of this assumption.
+            var tempFilteredRelatedVideos = _.filter(relatedVideos, function(relatedVideo) {
+                //  assuming things >8m are playlists.
+                var isJustOneSong = relatedVideo.get('duration') < 480;
+                var isNotLive = relatedVideo.get('title').toLowerCase().indexOf('live') === -1;
+                
+                return isJustOneSong && isNotLive;
+            });
+            
+            if (tempFilteredRelatedVideos.length !== 0) {
+                relatedVideos = tempFilteredRelatedVideos;
+            }
 
             return relatedVideos;
         }
