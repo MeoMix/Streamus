@@ -11,12 +11,23 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player'], function (co
         //  Whenever a video row is moved inform the Player of the new video list order
         update: function (event, ui) {
 
-            throw "Not implemented.";
+            console.log("event and ui:", event, ui);
 
-            //var movedItemId = ui.item.data('itemid');
-            //var newPosition = ui.item.index();
+            var movedItemId = ui.item.data('itemid');
+            var newIndex = ui.item.index();
+            var nextIndex = newIndex + 1;
 
-            //backgroundManager.get('activePlaylist').moveItem(movedItemId, newPosition);
+            var nextListItem = playlistItemList.children('ul li:eq(' + nextIndex + ')');
+
+            console.log("nextListeItem:", nextListItem);
+
+            if (nextListItem == null) {
+                nextListItem = playlistItemList.children('ul li:eq(0)'); 
+            }
+
+            var nextItemId = nextListItem.data('itemid');
+
+            backgroundManager.get('activePlaylist').moveItem(movedItemId, nextItemId);
         }
     });
 

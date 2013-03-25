@@ -319,40 +319,36 @@ define(['ytHelper',
                 });
             },
             
-            //TODO: Reimplement moveItem without using position.
-            //moveItem: function (itemId, newPosition, callback) {
-            //    var movedItem = this.get('items').get(itemId);
+            moveItem: function (movedItemId, nextItemId) {
+                var movedItem = this.get('items').get(movedItemId);
                 
-            //    var oldPosition = movedItem.get('position');
-            //    var movementDirection = oldPosition > newPosition ? 1 : -1;
+                //  The previous and next items of the movedItem's original position. Need to update these pointers.
+                var movedPreviousItem = this.get('items').get(movedItem.get('previousItemId'));
+                var movedNextItem = this.get('items').get(movedItem.get('nextItemId'));
                 
-            //    var distance = Math.abs(oldPosition - newPosition);
+                movedPreviousItem.set('nextItemId', movedNextItem.get('id'));
+                movedNextItem.set('previousItemId', movedPreviousItem.get('id'));
+                
+                //  The item right in front of movedItem which got 'bumped forward 1' after the move.
+                var nextItem = this.get('items').get(nextItemId);
 
-            //    for (; distance > 0; distance--) {
-            //        //  Get a new index based on moving forward or backward.
-            //        var itemIndex = oldPosition > newPosition ? distance - 1 : newPosition - (distance - 1);
+                var previousItemId = nextItem.get('previousItemId');
+                //  The item right behind movedItem which stayed in the same position.
+                var previousItem = this.get('items').get(nextItem.get('previousItemId'));
 
-            //        var item = this.get('items').at(itemIndex);
+                //  Fix the movedItem's pointers.
+                nextItem.set('previousItemId', movedItemId);
+                movedItem.set('nextItemId', nextItemId);
+                movedItem.set('previousItemId', previousItemId);
+                previousItem.set('nextItemId', movedItemId);
 
-            //        var movedItemPosition = item.get('position') + movementDirection;
+                //  If bumped forward the firstItem, update to new firstItemId.
+                if (nextItemId == this.get('firstItemId')) {
+                    this.set('firstItemId', movedItemId);
+                }
 
-            //        item.set('position', movedItemPosition);
-            //    }
-
-            //    movedItem.set('position', newPosition);
-
-            //    this.save({}, {
-            //        success: function () {
-            //            if (callback) {
-            //                callback();
-            //            }
-            //        },
-            //        error: function(error) {
-            //            window && console.error(error);
-            //        }                    
-            //    });
-            //}
-           
+                this.save();
+            }
         });
 
         return function (config) {

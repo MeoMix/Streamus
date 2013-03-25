@@ -445,6 +445,11 @@ body {
   -webkit-box-shadow: 0 3px 5px rgba(0,0,0,0.3)
 }
 
+#ShuffleButton:hover,
+#RadioModeButton:hover {
+    cursor: pointer;
+}
+
 #ShuffleButton {
     position:absolute;
     right: 12px;

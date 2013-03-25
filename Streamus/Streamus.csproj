@@ -194,6 +194,7 @@
     <Content Include="ChromeExtension\css\introjs.css" />
     <Content Include="ChromeExtension\foreground.htm" />
     <Content Include="ChromeExtension\icon.png" />
+    <Content Include="ChromeExtension\images\settingsButton.svg" />
     <Content Include="ChromeExtension\images\spinner.svg" />
     <Content Include="ChromeExtension\js\background\background.js" />
     <Content Include="ChromeExtension\js\background\backgroundManager.js" />
@@ -220,6 +221,7 @@
     <Content Include="ChromeExtension\js\foreground\player.js" />
     <Content Include="ChromeExtension\js\foreground\playerControls\playPauseButton.js" />
     <Content Include="ChromeExtension\js\foreground\playerControls\previousButton.js" />
+    <Content Include="ChromeExtension\js\foreground\playerControls\radioModeButton.js" />
     <Content Include="ChromeExtension\js\foreground\playerControls\shuffleButton.js" />
     <Content Include="ChromeExtension\js\foreground\playerControls\skipButton.js" />
     <Content Include="ChromeExtension\js\foreground\playerControls\volumeSlider.js" />
