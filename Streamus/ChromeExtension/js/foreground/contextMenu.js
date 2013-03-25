@@ -12,11 +12,11 @@ define(function(){
 		empty: function(){
 			selector.empty();
 		},
-		addContextMenuItem: function(text, onClick){
+		addContextMenuItem: function(text, onMouseDown){
 			$('<a/>', {
 				href: '#',
 				text: text,
-				mousedown: onClick
+				mousedown: onMouseDown
 			}).appendTo(selector);
 		},
 		show: function(top, left){

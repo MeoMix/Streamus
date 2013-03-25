@@ -11,15 +11,11 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player'], function (co
         //  Whenever a video row is moved inform the Player of the new video list order
         update: function (event, ui) {
 
-            console.log("event and ui:", event, ui);
-
             var movedItemId = ui.item.data('itemid');
             var newIndex = ui.item.index();
             var nextIndex = newIndex + 1;
 
             var nextListItem = playlistItemList.children('ul li:eq(' + nextIndex + ')');
-
-            console.log("nextListeItem:", nextListItem);
 
             if (nextListItem == null) {
                 nextListItem = playlistItemList.children('ul li:eq(0)'); 
@@ -96,7 +92,8 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player'], function (co
                     contextmenu: function (e) {
                         contextMenu.initialize(item);
                         contextMenu.show(e.pageY, e.pageX);
-
+                        //  +1 offset because if contextmenu appears directly under mouse, hover css will be removed from element.
+                        contextMenu.show(e.pageY, e.pageX + 1);
                         //  Prevent default context menu display.
                         return false;
                     }

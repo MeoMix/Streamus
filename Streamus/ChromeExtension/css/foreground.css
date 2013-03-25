@@ -1,9 +1,4 @@
-﻿.introjs-helperNumberLayer {
-    left: 5px !important;
-    top: 5px !important;
-}
-
-body {
+﻿body {
   min-width: 513px;
   min-height:340px;
   background:#fff;
@@ -556,7 +551,7 @@ body {
   background-color: #eaeaea
 }
 
-.list li:active {
+/*.list li:active {
   background-color: #09f;
   color:#fff;
   text-shadow: 0 1px #06d;
@@ -565,7 +560,7 @@ body {
 
 .list li:active svg *{
   fill:#fff
-}
+}*/
 
 .list a {
   position:absolute; 

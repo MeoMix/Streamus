@@ -24,7 +24,8 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager'], function (cont
                 var listItem = $('<li/>', {
                     contextmenu: function (e) {
                         contextMenu.initialize(list);
-                        contextMenu.show(e.pageY, e.pageX);
+                        //  +1 offset because if contextmenu appears directly under mouse, hover css will be removed from element.
+                        contextMenu.show(e.pageY, e.pageX + 1);
                         //  Prevent default context menu display.
                         return false;
                     }

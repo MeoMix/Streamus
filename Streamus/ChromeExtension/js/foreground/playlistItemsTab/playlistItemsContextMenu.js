@@ -20,6 +20,7 @@ define(['contextMenu', 'backgroundManager'], function (contextMenu, backgroundMa
                     var playlist = backgroundManager.getPlaylistById(playlistId);
                     playlist.removeItem(item);
                 }
+                
             });
         }
     });
