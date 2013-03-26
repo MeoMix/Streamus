@@ -13,12 +13,12 @@ namespace Streamus.Backend.Domain.Managers
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private IUserDao UserDao { get; set; }
-        private IStreamDao _streamDao { get; set; }
+        private IStreamDao StreamDao { get; set; }
 
         public UserManager(IUserDao userDao, IStreamDao streamDao)
         {
             UserDao = userDao;
-            _streamDao = streamDao;
+            StreamDao = streamDao;
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Streamus.Backend.Domain.Managers
                 stream.FirstListId = stream.Playlists[0].Id;
                 stream.Playlists[0].NextListId = stream.Playlists[0].Id;
                 stream.Playlists[0].PreviousListId = stream.Playlists[0].Id;
-                _streamDao.Update(stream);
+                StreamDao.Update(stream);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }

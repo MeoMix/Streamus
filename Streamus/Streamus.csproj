@@ -67,6 +67,9 @@
     <Reference Include="NHibernate">
       <HintPath>..\packages\NHibernate.3.3.3.4000\lib\Net35\NHibernate.dll</HintPath>
     </Reference>
+    <Reference Include="nunit.framework, Version=2.6.2.12296, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -133,10 +136,14 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Backend\Dao\ErrorDao.cs" />
     <Compile Include="Backend\Dao\StreamDao.cs" />
     <Compile Include="Backend\Dao\PlaylistItemDao.cs" />
+    <Compile Include="Backend\Domain\Error.cs" />
+    <Compile Include="Backend\Domain\Interfaces\IErrorDao.cs" />
     <Compile Include="Backend\Domain\Interfaces\IStreamDao.cs" />
     <Compile Include="Backend\Domain\Interfaces\IPlaylistItemDao.cs" />
+    <Compile Include="Backend\Domain\Managers\ErrorManager.cs" />
     <Compile Include="Backend\Domain\Stream.cs" />
     <Compile Include="Backend\Domain\PlaylistItem.cs" />
     <Compile Include="Backend\Domain\Interfaces\IUserDao.cs" />
@@ -147,6 +154,7 @@
     <Compile Include="Backend\Domain\Managers\PlaylistManager.cs" />
     <Compile Include="Backend\Domain\Managers\UserManager.cs" />
     <Compile Include="Backend\Domain\Playlist.cs" />
+    <Compile Include="Backend\Domain\Validators\ErrorValidator.cs" />
     <Compile Include="Backend\Domain\Validators\StreamValidator.cs" />
     <Compile Include="Backend\Domain\Validators\PlaylistItemValidator.cs" />
     <Compile Include="Backend\Domain\Validators\PlaylistValidator.cs" />
@@ -159,10 +167,12 @@
     <Compile Include="Backend\Dao\PlaylistDao.cs" />
     <Compile Include="Backend\Dao\VideoDao.cs" />
     <Compile Include="Backend\Dao\UserDao.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\PlaylistController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JsonDataContractActionResult.cs" />
     <Compile Include="Controllers\PlaylistItemController.cs" />
+    <Compile Include="Controllers\ThrottleAttribute.cs" />
     <Compile Include="Controllers\VideoController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
@@ -181,6 +191,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Backend\Domain\Playlist.hbm.xml" />
     <EmbeddedResource Include="Backend\Domain\Stream.hbm.xml" />
+    <EmbeddedResource Include="Backend\Domain\Error.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <Content Include="ChromeExtension\background.htm" />
     <Content Include="ChromeExtension\css\aristo\aristo.css" />
     <Content Include="ChromeExtension\css\aristo\images\bg_fallback.png" />
@@ -198,6 +211,7 @@
     <Content Include="ChromeExtension\images\spinner.svg" />
     <Content Include="ChromeExtension\js\background\background.js" />
     <Content Include="ChromeExtension\js\background\backgroundManager.js" />
+    <Content Include="ChromeExtension\js\background\error.js" />
     <Content Include="ChromeExtension\js\background\localStorageManager.js" />
     <Content Include="ChromeExtension\js\background\main.js" />
     <Content Include="ChromeExtension\js\background\player.js" />

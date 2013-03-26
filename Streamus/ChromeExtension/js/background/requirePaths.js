@@ -2,6 +2,7 @@ var require = {
     baseUrl: '../ChromeExtension/js/',
     paths: {
         'main': 'background/main',
+        'error': 'background/error',
         'programState': 'programState',
         'background': 'background/background',
         'playerStates': 'playerStates',

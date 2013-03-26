@@ -14,7 +14,7 @@ namespace Streamus.Controllers
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IPlaylistDao PlaylistDao;
         private readonly IPlaylistItemDao PlaylistItemDao;
-        private readonly IStreamDao _streamDao;
+        private readonly IStreamDao StreamDao;
         private readonly IVideoDao VideoDao;
 
         public PlaylistController()
@@ -23,7 +23,7 @@ namespace Streamus.Controllers
             {
                 PlaylistDao = new PlaylistDao();
                 PlaylistItemDao = new PlaylistItemDao();
-                _streamDao = new StreamDao();
+                StreamDao = new StreamDao();
                 VideoDao = new VideoDao();
             }
             catch (TypeInitializationException exception)
@@ -36,7 +36,7 @@ namespace Streamus.Controllers
         [HttpPost]
         public ActionResult Create(Playlist playlist)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, _streamDao, VideoDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, StreamDao, VideoDao);
             playlistManager.Save(playlist);
 
             return new JsonDataContractActionResult(playlist);
@@ -45,7 +45,7 @@ namespace Streamus.Controllers
         [HttpPut]
         public ActionResult Update(Playlist playlist)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, _streamDao, VideoDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, StreamDao, VideoDao);
             playlistManager.Update(playlist);
 
             return new JsonDataContractActionResult(playlist);
@@ -62,7 +62,7 @@ namespace Streamus.Controllers
         [HttpDelete]
         public EmptyResult Delete(Guid id)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, _streamDao, VideoDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, StreamDao, VideoDao);
             playlistManager.DeletePlaylistById(id);
 
             return new EmptyResult();
@@ -71,7 +71,7 @@ namespace Streamus.Controllers
         [HttpPost]
         public EmptyResult UpdateTitle(Guid playlistId, string title)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, _streamDao, VideoDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, StreamDao, VideoDao);
             playlistManager.UpdateTitle(playlistId, title);
 
             return new EmptyResult();
@@ -80,7 +80,7 @@ namespace Streamus.Controllers
         [HttpPost]
         public EmptyResult UpdateFirstItemId(Guid playlistId, Guid firstItemId)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, _streamDao, VideoDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, StreamDao, VideoDao);
             playlistManager.UpdateFirstItemId(playlistId, firstItemId);
 
             return new EmptyResult();

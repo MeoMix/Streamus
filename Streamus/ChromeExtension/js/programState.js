@@ -3,7 +3,7 @@ define(function () {
     'use strict';
     var ProgramState = Backbone.Model.extend({
         defaults: {
-            isLocal: false
+            isLocal: true
         },
         //  Make sure to update the URL in manifest.json, too.
         getBaseUrl: function() {

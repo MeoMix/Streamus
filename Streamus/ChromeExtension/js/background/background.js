@@ -1,5 +1,16 @@
-﻿define(['player', 'backgroundManager', 'localStorageManager'], function (player, backgroundManager, localStorageManager) {
+﻿define(['player', 'backgroundManager', 'localStorageManager', 'error'], function (player, backgroundManager, localStorageManager, Error) {
     'use strict';
+
+    //  TODO: Throttle errors client-side as well as server-side.
+    window.onError = function (message, url, lineNumber) {
+        var error = new Error({
+            message: message,
+            url: url,
+            lineNumber: lineNumber
+        });
+
+        error.save();
+    };
     
     backgroundManager.on('change:activePlaylistItem', function(model, activePlaylistItem) {
 
