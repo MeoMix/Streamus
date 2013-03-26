@@ -6,7 +6,7 @@
       <generator class="guid" />
     </id>
     
-    <property name="Name" />
+    <property name="Name" not-null="true" />
 
     <bag name="Streams" inverse="true" cascade="all-delete-orphan" >
       <key column="UserId" />

@@ -2,7 +2,7 @@
     'use strict';
 
     //  TODO: Throttle errors client-side as well as server-side.
-    window.onError = function (message, url, lineNumber) {
+    window.onerror = function (message, url, lineNumber) {
         var error = new Error({
             message: message,
             url: url,

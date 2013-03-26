@@ -15,7 +15,7 @@ namespace Streamus.Backend.Domain
         public string Message { get; set; }
 
         [DataMember(Name = "lineNumber")]
-        public string LineNumber { get; set; }
+        public int LineNumber { get; set; }
 
         [DataMember(Name = "url")]
         public string Url { get; set; }
@@ -24,15 +24,15 @@ namespace Streamus.Backend.Domain
         public string ClientVersion { get; set; }
 
         [DataMember(Name = "timeOccurred")]
-        public string TimeOccurred { get; set; }
+        public DateTime TimeOccurred { get; set; }
 
         public Error()
         {
             Message = string.Empty;
-            LineNumber = string.Empty;
+            LineNumber = -1;
             Url = string.Empty;
             ClientVersion = string.Empty;
-            TimeOccurred = string.Empty;
+            TimeOccurred = DateTime.Now;
         }
 
         public void ValidateAndThrow()

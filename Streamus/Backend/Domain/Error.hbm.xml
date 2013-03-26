@@ -6,11 +6,11 @@
       <generator class="guid" />
     </id>
     
-    <property name="Message" />
-    <property name="LineNumber" />
-    <property name="Url" />
-    <property name="ClientVersion" />
-    <property name="TimeOccurred" />
+    <property name="Message" not-null="true"/>
+    <property name="LineNumber" not-null="true"/>
+    <property name="Url" not-null="true" />
+    <property name="ClientVersion" not-null="true" />
+    <property name="TimeOccurred" not-null="true" />
 
   </class>
   
