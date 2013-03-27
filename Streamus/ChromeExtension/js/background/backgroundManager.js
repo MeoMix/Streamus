@@ -53,7 +53,8 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
     });
     
     function initialize() {
-        this.set('allStreams', user.get('streams'));
+        console.log("setting allStreams to:", user.get('streams'));
+        this.get('allStreams').add(user.get('streams').models);
         this.get('allPlaylists').add(getAllPlaylists());
         this.get('allPlaylistItems').add(getAllPlaylistItems());
 
@@ -183,7 +184,13 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
         //  Load the active playlist:
         this.on('change:activePlaylist', function (model, activePlaylist) {
 
-            if (activePlaylist === null) {
+            if (activePlaylist == null) {
+                
+                if (activePlaylist !== null) {
+                    window && console.error("This really should've been null and not undefined.");
+                    window && console.trace();
+                }
+
                 localStorageManager.setActivePlaylistId(null);
             } else {
                 localStorageManager.setActivePlaylistId(activePlaylist.get('id'));
@@ -200,10 +207,10 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
         }) || null;
         
         if (activePlaylist === null) {
-            this.set('activePlaylist', this.get('activeStream').get('playlists').at(0));
-        } else {
-            this.set('activePlaylist', activePlaylist);
+            activePlaylist = this.get('activeStream').get('playlists').at(0) || null;
         }
+
+        this.set('activePlaylist', activePlaylist);
     }
     
     function loadActivePlaylistItem() {
@@ -226,10 +233,14 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
         }) || null;
 
         if (activePlaylistItem === null) {
-            var activePlaylistItems = this.get('activePlaylist').get('items');
+            var activePlaylist = this.get('activePlaylist');
+            
+            if (activePlaylist !== null) {
+                var activePlaylistItems = activePlaylist.get('items');
 
-            if (activePlaylistItems.length > 0) {
-                this.set('activePlaylistItem', activePlaylistItems.at(0));
+                if (activePlaylistItems.length > 0) {
+                    this.set('activePlaylistItem', activePlaylistItems.at(0));
+                }
             }
 
         } else {

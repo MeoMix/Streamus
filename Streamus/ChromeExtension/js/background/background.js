@@ -111,8 +111,15 @@
         }
     });
 
-    chrome.extension.onRequest.addListener(function (request, sender, sendResponse) {
+    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+        console.log("request:", request);
         switch (request.method) {
+
+            case 'getStreams':
+                var allStreams = backgroundManager.get('allStreams');
+                console.log("Streams:", allStreams);
+                sendResponse({ streams: backgroundManager.get('allStreams') });
+                break;
             case 'getPlaylists':
                 sendResponse({ playlists: backgroundManager.get('activeStream').get('playlists') });
                 break;

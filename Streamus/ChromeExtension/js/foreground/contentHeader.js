@@ -18,6 +18,10 @@ define(['backgroundManager'], function (backgroundManager) {
         
         if (activePlaylist !== null) {
             activePlaylistTitle = activePlaylist.get('title');
+            
+            activePlaylist.on('change:title', function (event, title) {
+                headerInput.val(title);
+            });
         }
 
         var headerInput = $('<input/>', {
@@ -53,16 +57,12 @@ define(['backgroundManager'], function (backgroundManager) {
         //  TODO: Unbinding events?
         backgroundManager.on('change:activePlaylist', function (model, activePlaylist) {
 
-            if (activePlaylist == null) {
+            if (activePlaylist === null) {
             } else {
                 headerInput.val(activePlaylist.get('title'));
             }
         });
 
-        backgroundManager.get('activePlaylist').on('change:title', function (event, title) {
-            headerInput.val(title);
-        });
-        
         var addButton = $('<div/>', {
             'class': 'addButton'
         }).appendTo(contentHeader);

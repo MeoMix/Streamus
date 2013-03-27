@@ -1,6 +1,6 @@
 {
   "name": "Streamus",
-  "version": "0.44",
+  "version": "0.45",
   "manifest_version": 2,
   "description": "A music player for Google Chrome. Converts YouTube into an iPod with pandora-like searching. Plays in the background!",
   "background":{
@@ -34,8 +34,9 @@
 	  "all_frames": true
 	},
     {
-      "matches": ["http://www.youtube.com/watch?v*"],
+      "matches": ["*://www.youtube.com/watch?v*"],
       "css": ["ChromeExtension/css/inject.css"],
+	  "all_frames": true,
       "js": ["ChromeExtension/js/thirdParty/underscore.js", "ChromeExtension/js/thirdParty/jquery.js", "ChromeExtension/js/inject.js"]
     },
     {

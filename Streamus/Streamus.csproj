@@ -257,6 +257,7 @@
     <Content Include="ChromeExtension\js\tests\background\userSpec.js" />
     <Content Include="ChromeExtension\js\tests\main.js" />
     <None Include="ChromeExtension\js\thirdParty\chrome-api-vsdoc.js" />
+    <Content Include="ChromeExtension\js\thirdParty\alertify.js" />
     <Content Include="ChromeExtension\js\thirdParty\intro.js" />
     <Content Include="ChromeExtension\js\thirdParty\jasmine-html.js" />
     <Content Include="ChromeExtension\css\jasmine.css" />
@@ -266,6 +267,7 @@
     <Content Include="ChromeExtension\js\tests\background\playlistSpec.js" />
     <Content Include="hibernate.cfg.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="ChromeExtension\js\thirdParty\backbone.js" />
     <Content Include="favicon.ico" />

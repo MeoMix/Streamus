@@ -1,21 +1,36 @@
-#StreamusContextMenu {
-    background: #fff;
-    border-radius: 5px;
-    padding: 5px 0;
-    -webkit-box-shadow: 0 0 5px rgba(0,0,0,.3);
-    z-index: 100;
+#streamus-panel-buttons .yt-uix-button:hover {
+    border-bottom-color: #000;
+    opacity: 1;
+    filter: none;
 }
-#StreamusContextMenu a {
-    display: block;
-    padding: 4px 8px;
-    font: 12px/1 sans-serif;
-    color: #000;
-    text-decoration: none;
+
+#streamus-panel-buttons .yt-uix-button {
+    height: 24px;
+    margin-right: 30px;
+    margin-bottom: 10px;
+    padding: 0 4px;
+    color: #333;
+    border: 2px solid transparent;
+    border-width: 2px 0;
+    background: none;
+    font-size: 13px;
+    -moz-box-shadow: none;
+    -ms-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border-bottom-color: #000;
+    opacity: 0.5;
+    filter: alpha(opacity=50);
 }
-#StreamusContextMenu a:hover {
-    background: #efefef;
+
+#streamus-panel-buttons .yt-uix-button-toggled {
+    border-bottom-color: #000;
+    opacity: 1;
+    filter: none;
 }
-#StreamusContextMenu a:active {
-    background: rgb(36,109,149);
-    color: #fff;
+
+.action-panel-streamus {
+    display: none;
+    padding: 18px 20px;
+    width: 600px;
 }
