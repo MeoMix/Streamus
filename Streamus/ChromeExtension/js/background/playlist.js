@@ -259,6 +259,7 @@ define(['ytHelper',
                     playlistItem.set('relatedVideoInformation', relatedVideoInformation);
                 });
 
+                console.log("Pushing playlistItem");
                 this.get('items').push(playlistItem);
 
                 modifiedItems.save();

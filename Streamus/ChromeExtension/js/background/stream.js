@@ -1,5 +1,5 @@
 ﻿//  Holds all the relevant data for a video.
-define(['playlists', 'playlist', 'videos', 'player', 'programState', 'localStorageManager'], function (Playlists, Playlist, Videos, player, programState, localStorageManager) {
+define(['playlists', 'playlist', 'videos', 'player', 'programState', 'ytHelper', 'localStorageManager'], function (Playlists, Playlist, Videos, player, programState, ytHelper, localStorageManager) {
     'use strict';
     
     var Stream = Backbone.Model.extend({

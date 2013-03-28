@@ -34,3 +34,18 @@
     padding: 18px 20px;
     width: 600px;
 }
+
+#streamSelect,
+#playlistSelect {
+    font-size: 1.4em !important;
+}
+
+#streamusVideoAddButton {
+    height: 24px;
+    border: 1px solid #ccc;
+    font-size: 11px;
+    background-image: linear-gradient(to bottom,#fff 0,#e0e0e0 100%);
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    margin-top: 2px !important;
+}

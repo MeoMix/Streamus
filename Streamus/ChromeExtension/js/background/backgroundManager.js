@@ -74,6 +74,14 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
 
         });
 
+        this.get('allPlaylists').on('add', function(playlist) {
+            chrome.runtime.sendMessage({ method: "playlistAdded", playlist: playlist });
+        });
+
+        this.get('allPlaylists').on('remove', function(playlist) {
+            chrome.runtime.sendMessage({ method: "playlistRemoved", playlist: playlist });
+        });
+
         this.get('allPlaylists').each(function(playlist) {
             bindEventsToPlaylist.call(self, playlist);
         });
@@ -86,6 +94,14 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                 self.set('activeStream', stream);
             }
 
+        });
+
+        this.get('allStreams').on('add', function (stream) {
+            chrome.runtime.sendMessage({ method: "streamAdded", stream: stream });
+        });
+
+        this.get('allStreams').on('remove', function (stream) {
+            chrome.runtime.sendMessage({ method: "streamRemoved", stream: stream });
         });
 
         this.get('allStreams').each(function(stream) {

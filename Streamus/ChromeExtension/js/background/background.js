@@ -1,4 +1,4 @@
-﻿define(['player', 'backgroundManager', 'localStorageManager', 'error'], function (player, backgroundManager, localStorageManager, Error) {
+﻿define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error'], function (player, backgroundManager, localStorageManager, ytHelper, Error) {
     'use strict';
 
     //  TODO: Throttle errors client-side as well as server-side.
@@ -118,13 +118,23 @@
             case 'getStreams':
                 var allStreams = backgroundManager.get('allStreams');
                 console.log("Streams:", allStreams);
-                sendResponse({ streams: backgroundManager.get('allStreams') });
+                sendResponse({ streams: allStreams });
                 break;
-            case 'getPlaylists':
-                sendResponse({ playlists: backgroundManager.get('activeStream').get('playlists') });
+            case 'getPlaylists':                
+                var stream = backgroundManager.getStreamById(request.streamId);
+                var playlists = stream.get('playlists');
+
+                sendResponse({ playlists: playlists });
                 break;
             case 'addVideoByIdToPlaylist':
-                backgroundManager.get('activeStream').addVideoByIdToPlaylist(request.id, request.playlistId);
+                var playlist = backgroundManager.getPlaylistById(request.playlistId);
+                
+                ytHelper.getVideoInformationFromId(request.videoId, function (videoInformation) {
+                    console.log("Adding video information:", videoInformation);
+                    var addedItem = playlist.addItemByInformation(videoInformation);
+                    console.log("added item:", addedItem);
+                });
+                
                 break;
             default:
                 window && console.error("Unhandled request method:", request.method);

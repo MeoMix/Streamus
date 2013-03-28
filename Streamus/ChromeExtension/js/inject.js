@@ -88,7 +88,8 @@ $(function () {
     sharePanelStreamSelect.appendTo(sharePanel);
 
     var streamSelect = $('<select>', {
-        id: 'streamSelect'
+        id: 'streamSelect',
+        'class': 'yt-uix-form-input-text share-panel-url'
     });
     streamSelect.appendTo(sharePanelStreamSelect);
     
@@ -116,7 +117,8 @@ $(function () {
     selectPlaylistContent.appendTo(selectPlaylistButton);
     
     var playlistSelect = $('<select>', {
-        id: 'playlistSelect'
+        id: 'playlistSelect',
+        'class': 'yt-uix-form-input-text share-panel-url'
     });
     playlistSelect.appendTo(sharePanelPlaylistSelect);
 
@@ -124,23 +126,21 @@ $(function () {
         type: 'button',
         value: 'Add Video',
         title: 'Add Video',
-        onclick: function () {
-            //  TODO: use helpers
+        id: 'streamusVideoAddButton',
+        'class': 'yt-uix-button',
+        click: function () {
+            console.log("clicked.. sending message");
+
             var match = document.URL.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/);
             var videoId = (match && match[2].length === 11) ? match[2] : null;
 
             var playlistId = playlistSelect.val();
-            var selectedPlaylist = _.find(playlists, function(playlist) {
-                return playlist.id === playlistId;
-            });
 
-            //ytHelper.getVideoInformationFromId(videoId, function (videoInformation) {
-            //    if (videoInformation == null) {
-            //        dialogs.showBannedVideoDialog();
-            //    } else {
-            //        backgroundManager.get('activePlaylist').addItemByInformation(videoInformation);
-            //    }
-            //});
+            chrome.runtime.sendMessage({
+                method: "addVideoByIdToPlaylist",
+                playlistId: playlistId,
+                videoId: videoId
+            });
         }
     });
     videoAddButton.appendTo(sharePanelPlaylistSelect);
@@ -172,7 +172,7 @@ $(function () {
             selectPlaylistButton.addClass('yt-uix-button-toggled');
             sharePanelPlaylistSelect.removeClass('hid');
 
-            chrome.runtime.sendMessage({ method: "getPlaylists" }, function(getPlaylistsResponse) {
+            chrome.runtime.sendMessage({ method: "getPlaylists", streamId: getStreamsResponse.streams[0].id }, function(getPlaylistsResponse) {
 
                 playlists = getPlaylistsResponse.playlists;
 
@@ -205,9 +205,50 @@ $(function () {
             streamOption.appendTo(streamSelect);
         });
     });
-    
 
-    
+    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+        console.log("MESSAGE RECEIVED:", request);
+        switch (request.method) {
+
+            case 'streamAdded':
+                
+                //  TODO: Sort alphabetically
+                var streamOption = $('<option>', {
+                    value: request.stream.id,
+                    text: request.stream.title
+                });
+
+                streamOption.appendTo(streamSelect);
+                
+                break;
+            case 'streamRemoved':
+                
+                streamSelect.find('option[value="' + request.stream.id + '"]');
+                
+                break;
+            case 'playlistAdded':
+
+                //  TODO: Sort alphabetically
+                var playlistOption = $('<option>', {
+                    value: request.playlist.id,
+                    text: request.playlist.title
+                });
+
+                playlistOption.appendTo(playlistSelect);
+                
+                break;
+            case 'playlistRemoved':
+                
+                playlistSelect.find('option[value="' + request.playlist.id + '"]');
+                
+                break;
+            default:
+                break;
+
+        }
+
+    });
+
 });
 
 
