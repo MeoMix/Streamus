@@ -74,14 +74,6 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
 
         });
 
-        this.get('allPlaylists').on('add', function(playlist) {
-            chrome.runtime.sendMessage({ method: "playlistAdded", playlist: playlist });
-        });
-
-        this.get('allPlaylists').on('remove', function(playlist) {
-            chrome.runtime.sendMessage({ method: "playlistRemoved", playlist: playlist });
-        });
-
         this.get('allPlaylists').each(function(playlist) {
             bindEventsToPlaylist.call(self, playlist);
         });

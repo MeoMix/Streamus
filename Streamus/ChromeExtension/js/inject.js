@@ -118,8 +118,16 @@ $(function () {
     
     var playlistSelect = $('<select>', {
         id: 'playlistSelect',
-        'class': 'yt-uix-form-input-text share-panel-url'
+        'class': 'yt-uix-form-input-text share-panel-url',
+        change: function() {
+            console.log("onChange");
+            var match = document.URL.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/);
+            var videoId = (match && match[2].length === 11) ? match[2] : null;
+            
+
+        }
     });
+
     playlistSelect.appendTo(sharePanelPlaylistSelect);
 
     var videoAddButton = $('<input>', {
@@ -130,7 +138,6 @@ $(function () {
         'class': 'yt-uix-button',
         click: function () {
             console.log("clicked.. sending message");
-
             var match = document.URL.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/);
             var videoId = (match && match[2].length === 11) ? match[2] : null;
 
@@ -161,10 +168,11 @@ $(function () {
         sharePanelStreamSelect.addClass('hid');
     });
 
-    var playlists = [];
     chrome.runtime.sendMessage({ method: "getStreams" }, function (getStreamsResponse) {
 
-        if (getStreamsResponse.streams.length === 1) {
+        var streams = getStreamsResponse.streams;
+
+        if (streams.length === 1) {
    
             selectStreamButton.removeClass('yt-uix-button-toggled');
             sharePanelStreamSelect.addClass('hid');
@@ -172,30 +180,41 @@ $(function () {
             selectPlaylistButton.addClass('yt-uix-button-toggled');
             sharePanelPlaylistSelect.removeClass('hid');
 
-            chrome.runtime.sendMessage({ method: "getPlaylists", streamId: getStreamsResponse.streams[0].id }, function(getPlaylistsResponse) {
+            if (streams[0].playlists.length === 0) {
 
-                playlists = getPlaylistsResponse.playlists;
+                //  TODO: Render input element and create playlist.
 
-                if (playlists.length === 0) {
+            } else {
+                var firstPlaylist = _.find(streams[0].playlists, function (playlist) {
+                    return playlist.id == stream.firstListId;
+                });
+                
+                $('<option>', {
+                    value: firstPlaylist.id,
+                    text: firstPlaylist.title
+                }).appendTo(playlistSelect);
 
-                    //  TODO: Render input element and create playlist.
+                var nextPlaylist = _.find(streams[0].playlists, function (playlist) {
+                    return playlist.id == firstPlaylist.nextListId;
+                });
+                
+                while (nextPlaylist.id != firstPlaylist.id) {
+                    
+                    $('<option>', {
+                        value: nextPlaylist.id,
+                        text: nextPlaylist.title
+                    }).appendTo(playlistSelect);
 
-                } else {
-                    _.each(playlists, function (playlist) {
-
-                        var playlistOption = $('<option>', {
-                            value: playlist.id,
-                            text: playlist.title
-                        });
-
-                        playlistOption.appendTo(playlistSelect);
+                    nextPlaylist = _.find(streams[0].playlists, function (playlist) {
+                        return playlist.id == nextPlaylist.nextListId;
                     });
                 }
+            }
+            
 
-            });
         }
 
-        _.each(getStreamsResponse.streams, function (stream) {
+        _.each(streams, function (stream) {
 
             var streamOption = $('<option>', {
                 value: stream.id,
@@ -206,48 +225,49 @@ $(function () {
         });
     });
 
-    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-        console.log("MESSAGE RECEIVED:", request);
-        switch (request.method) {
+    //  TODO: Connect to YouTube pages and live-update the injected selects instead of the user needing to refresh the page.
+    //chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    //    console.log("MESSAGE RECEIVED:", request);
+    //    switch (request.method) {
 
-            case 'streamAdded':
+    //        case 'streamAdded':
                 
-                //  TODO: Sort alphabetically
-                var streamOption = $('<option>', {
-                    value: request.stream.id,
-                    text: request.stream.title
-                });
+    //            //  TODO: Sort alphabetically
+    //            var streamOption = $('<option>', {
+    //                value: request.stream.id,
+    //                text: request.stream.title
+    //            });
 
-                streamOption.appendTo(streamSelect);
+    //            streamOption.appendTo(streamSelect);
                 
-                break;
-            case 'streamRemoved':
+    //            break;
+    //        case 'streamRemoved':
                 
-                streamSelect.find('option[value="' + request.stream.id + '"]');
+    //            streamSelect.find('option[value="' + request.stream.id + '"]');
                 
-                break;
-            case 'playlistAdded':
+    //            break;
+    //        case 'playlistAdded':
 
-                //  TODO: Sort alphabetically
-                var playlistOption = $('<option>', {
-                    value: request.playlist.id,
-                    text: request.playlist.title
-                });
+    //            //  TODO: Sort alphabetically
+    //            var playlistOption = $('<option>', {
+    //                value: request.playlist.id,
+    //                text: request.playlist.title
+    //            });
 
-                playlistOption.appendTo(playlistSelect);
+    //            playlistOption.appendTo(playlistSelect);
                 
-                break;
-            case 'playlistRemoved':
+    //            break;
+    //        case 'playlistRemoved':
                 
-                playlistSelect.find('option[value="' + request.playlist.id + '"]');
+    //            playlistSelect.find('option[value="' + request.playlist.id + '"]');
                 
-                break;
-            default:
-                break;
+    //            break;
+    //        default:
+    //            break;
 
-        }
+    //    }
 
-    });
+    //});
 
 });
 

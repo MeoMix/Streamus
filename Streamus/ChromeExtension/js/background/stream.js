@@ -57,33 +57,6 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState', 'ytHelper',
                 }
                 
             });
-            
-            //  If there is a playlistItem to cue might as well have it ready to go.
-            //if (playlists.length > 0) {
-            //    var localStorageKey = this.get('id') + '_selectedListId';
-            //    var savedListId = localStorage.getItem(localStorageKey);
-                
-            //    if (savedListId === null) {
-            //        savedListId = this.get('firstListId');
-            //    }
-                
-            //    //  Select the most recently selected item during initalization.
-            //    this.selectPlaylist(savedListId);
-            //}
-
-            //var selectedPlaylist = this.getSelectedPlaylist();
-            //if (selectedPlaylist.get('items').length > 0) {
-            //    var selectedItem = selectedPlaylist.getSelectedItem();
-
-            //    if (selectedItem == null) {
-            //        selectedItem = selectedPlaylist.get('items').at(0);
-            //        selectedPlaylist.selectItem(selectedItem);
-            //        window && console.error("Failed to find a selected item in a playlist with items, gracefully recovering.");
-            //    } else {
-
-            //        player.cueVideoById(selectedItem.get('video').get('id'));
-            //    }
-            //}
         },
         
         addVideoByIdToPlaylist: function (id, playlistId) {

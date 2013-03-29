@@ -114,8 +114,7 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player'], function (co
             })(currentItem);
 
             currentItem = activePlaylist.get('items').get(currentItem.get('nextItemId'));
-
-        } while (currentItem.get('id') !== firstItemId)
+        } while (currentItem && currentItem.get('id') !== firstItemId)
 
         //  TODO: Can I just early-bind this and not have to reapply every time?
         //  Load and start playing a video if it is double click.
