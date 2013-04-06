@@ -79,9 +79,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Folder Include="Properties\" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="background.htm" />
     <Content Include="css\aristo\aristo.css" />
