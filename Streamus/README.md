@@ -19,7 +19,7 @@ Installation
 
 Overview
 ========
-
+ 
 Streamus was created with the intention of making the process of playing music much simpler. Previously, I had found that the most convenient way to play music was through YouTube. This lent itself to keeping a list of bookmarks of pleasant videos. I noticed, though, that my bookmarking solution did not scale well with large collections of videos. Streamus was designed with the intention of being just as simple, quick and easy as using YouTube itself, but with all of the functionality of a desktop MP3 player.
 
 An initial load of Streamus will present the user with a playlist containing a handful of videos. While not fully realized yet, the intention is to be able to pre-populate Streamus with hundreds of videos spanning all common genres of music. Users will have the ability to create their own playlists, stream from pre-existing, dynamic playlists, or enable Pandora-esque video finding.
