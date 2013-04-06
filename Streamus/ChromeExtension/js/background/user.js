@@ -18,6 +18,8 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
         urlRoot: programState.getBaseUrl() + 'User/',
 
         initialize: function () {
+            console.log("isNew:", this.isNew());
+
             //  If user's ID wasn't found in local storage, check sync because its a pc-shareable location, but doesn't work synchronously.
             if (this.isNew()) {
                 var self = this;
@@ -44,6 +46,8 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
     });
     
     function createNewUser() {
+        this.set('id', null);
+
         var self = this;
         //  No stored ID found at any client storage spot. Create a new user and use the returned user object.
         this.save({}, {
@@ -74,6 +78,7 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
             chrome.storage.sync.set({ userIdKey: model.get('id') });
         }
 
+        console.log("writing to local storage id:", model.get('id'));
         localStorageManager.setUserId(model.get('id'));
 
         //  Announce that user has loaded so managers can use it to fetch data.
@@ -91,6 +96,8 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
                 onUserLoaded.call(self, model, shouldSetSyncStorage);
             },
             error: function (error) {
+                console.log("error failed to find user");
+
                 //  Failed to fetch the user... recover by creating a new user for now. Should probably do some sort of notify.
                 createNewUser.call(self);
                 window && console.error(error);
