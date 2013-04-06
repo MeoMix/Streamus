@@ -150,11 +150,9 @@
     <Content Include="js\tests\background\userSpec.js" />
     <Content Include="js\tests\main.js" />
     <Content Include="js\tests\requirePaths.js" />
-    <Content Include="js\thirdParty\alertify.js" />
     <Content Include="js\thirdParty\backbone.js" />
     <Content Include="js\thirdParty\geoplugin.js" />
     <Content Include="js\thirdParty\googleAnalytics.js" />
-    <Content Include="js\thirdParty\intro.js" />
     <Content Include="js\thirdParty\jasmine-html.js" />
     <Content Include="js\thirdParty\jasmine.js" />
     <Content Include="js\thirdParty\jquery.js" />
