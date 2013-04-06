@@ -10,7 +10,8 @@
     <property name="NextItemId" not-null="true" />
     <property name="PreviousItemId" not-null="true" />
     <property name="Title" not-null="true" />
-    <property name="VideoId" not-null="true"/>
+    
+    <many-to-one name="Video" column="VideoId" not-null="true" />
   </class>
   
 </hibernate-mapping>

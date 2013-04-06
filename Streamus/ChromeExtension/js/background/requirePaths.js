@@ -24,7 +24,6 @@ var require = {
         'underscore': 'thirdParty/underscore',
         'user': 'background/user',
         'oauth2': 'thirdParty/oauth2/oauth2',
-        'playlistItemsHistory': 'background/playlistItemsHistory',
         'backbone': 'thirdParty/backbone',
         'backgroundManager': 'background/backgroundManager',
         'localStorageManager': 'background/localStorageManager'

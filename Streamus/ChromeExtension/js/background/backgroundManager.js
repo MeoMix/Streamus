@@ -1,11 +1,15 @@
 ﻿//  TODO: Exposed globally for the foreground. Is there a better way?
 var BackgroundManager = null;
 
-//  Denormalization point for the Background's selected models.
-define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', 'streams'], function (user, player, localStorageManager, PlaylistItems, Playlists, Streams) {
+//  BackgroundManager is a denormalization point for the Background's selected models.
+//  NOTE: It is important to understand that the activePlaylistItem is NOT guaranteed to be in the activePlaylist.
+//  The same applies for activePlaylist being under the activeStream. The user can click around, but this shouldn't affect state
+//  until they make a decision.
+define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', 'streams'],
+    function (user, player, localStorageManager, PlaylistItems, Playlists, Streams) {
     'use strict';
 
-    var BackgroundManagerModel = Backbone.Model.extend({
+    var backgroundManagerModel = Backbone.Model.extend({
         defaults: {
             activePlaylistItem: null,
             activePlaylist: null,
@@ -17,15 +21,18 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
         initialize: function () {
 
             var self = this;
+            //  TODO:  What if user's loaded state gets set before backgroundManager initializes? Not really possible unless instant response, but still.
             user.once('change:loaded', function() {
                 if (user.get('streams').length === 0) {
                     throw "User should be initialized and have at least 1 stream before loading backgroundManager.";
                 }
 
+                //  TODO: I hate this whole concept of having to check if its ready else wait for it to be ready.
+                //  Do not initialize the backgroundManager until player is ready to go.
                 if (player.get('ready')) {
                     initialize.call(self);
                 } else {
-                    player.on('change:ready', function() {
+                    player.once('change:ready', function() {
                         initialize.call(self);
                     });
                 }
@@ -53,7 +60,6 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
     });
     
     function initialize() {
-        console.log("setting allStreams to:", user.get('streams'));
         this.get('allStreams').add(user.get('streams').models);
         this.get('allPlaylists').add(getAllPlaylists());
         this.get('allPlaylistItems').add(getAllPlaylistItems());
@@ -88,6 +94,8 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
 
         });
 
+        //  TODO: This isn't fully implemented yet. My intention is to send a message to any
+        //  listening YouTube pages to ensure that Streamus data loaded on the YouTube page stays up to date.
         this.get('allStreams').on('add', function (stream) {
             chrome.runtime.sendMessage({ method: "streamAdded", stream: stream });
         });
@@ -113,6 +121,7 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                     var streamId = playlist.get('streamId');
                     var stream = self.getStreamById(streamId);
                     
+                    //  Update activePlaylist to the next playlist if there is another.
                     if (stream.get('playlists').length > 0) {
 
                         var newlyActivePlaylist = stream.getPlaylistById(playlist.get('nextListId'));
@@ -168,7 +177,7 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
     }
     
     function loadActiveStream() {
-        //  Load the active stream:
+ 
         this.on('change:activeStream', function (model, activeStream) {
 
             if (activeStream === null) {
@@ -189,11 +198,12 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
     }
 
     function loadActivePlaylist() {
-        //  Load the active playlist:
+ 
         this.on('change:activePlaylist', function (model, activePlaylist) {
 
             if (activePlaylist == null) {
                 
+                //  TODO: I was experiencing some client side errors where this was undefined, trying to track down.
                 if (activePlaylist !== null) {
                     window && console.error("This really should've been null and not undefined.");
                     window && console.trace();
@@ -208,8 +218,8 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
         
         var activePlaylistId = localStorageManager.getActivePlaylistId();
 
-        //  There is no guarantee that the active playlist will be in the active stream because a user could be looking through
-        //  different streams without selecting a new playlist.
+        //  There is no guarantee that activePlaylist is in activeStream because a user could be looking
+        //  at another stream without having selected a playlist in that stream.
         var activePlaylist = _.find(getAllPlaylists(), function (playlist) {
             return playlist.get('id') === activePlaylistId;
         }) || null;
@@ -222,20 +232,28 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
     }
     
     function loadActivePlaylistItem() {
-        //  Load the active playlistItem:
+
         this.on('change:activePlaylistItem', function (model, activePlaylistItem) {
 
             if (activePlaylistItem == null) {
                 localStorageManager.setActivePlaylistItemId(null);
             } else {
                 localStorageManager.setActivePlaylistItemId(activePlaylistItem.get('id'));
+                
+                //  Make sure that the player keeps its video in sync with the activePlaylistItem's video.
+                var videoId = activePlaylistItem.get('video').get('id');
+                if (player.isPlaying()) {
+                    player.loadVideoById(videoId);
+                } else {
+                    player.cueVideoById(videoId);
+                }
             }
         });
 
         var activePlaylistItemId = localStorageManager.getActivePlaylistItemId();
         
-        //  There is no guarantee that the active playlistItem will be in the active playlist because a user could be looking through
-        //  different playlists without selecting a new item.
+        //  There is no guarantee that activePlaylistItem is in activePlaylist because a user could be looking
+        //  at another playlist without having selected an item in that playlist.
         var activePlaylistItem = _.find(getAllPlaylistItems(), function (playlistItem) {
             return playlistItem.get('id') === activePlaylistItemId;
         }) || null;
@@ -255,6 +273,7 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
             this.set('activePlaylistItem', activePlaylistItem);
         }
 
+        //  Need to inform the playlist to select the item so playlist history can update.
         if (this.get('activePlaylistItem') !== null) {
             var playlist = this.getPlaylistById(activePlaylistItem.get('playlistId'));
             playlist.selectItem(activePlaylistItem);
@@ -281,7 +300,7 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
         return allPlaylists;
     }
 
-    BackgroundManager = new BackgroundManagerModel();
+    BackgroundManager = new backgroundManagerModel();
 
     return BackgroundManager;
 });

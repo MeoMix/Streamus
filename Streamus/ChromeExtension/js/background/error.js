@@ -2,7 +2,7 @@
 define(['programState'], function (programState) {
     'use strict';
 
-    var Error = Backbone.Model.extend({
+    var ErrorModel = Backbone.Model.extend({
         defaults: {
             message: '',
             lineNumber: -1,
@@ -14,7 +14,7 @@ define(['programState'], function (programState) {
     });
 
     return function (config) {
-        var video = new Error(config);
-        return video;
+        var error = new ErrorModel(config);
+        return error;
     };
 });

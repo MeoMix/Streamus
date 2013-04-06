@@ -1,7 +1,8 @@
 ﻿define(['video', 'programState'], function (Video, programState) {
 
-    var Videos = Backbone.Collection.extend({
+    var videoCollection = Backbone.Collection.extend({
         model: Video,
+        //  Provide the ability for a VideoCollection to save.
         save: function (callback) {
             var self = this;
             $.ajax({
@@ -19,7 +20,7 @@
     });
 
     return function(config) {
-        var videos = new Videos(config);
+        var videos = new videoCollection(config);
         return videos;
     };
 });

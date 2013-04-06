@@ -2,7 +2,7 @@
     function (PlaylistItem, ytHelper, Video, levDistance, programState) {
         'use strict';
 
-    var PlaylistItems = Backbone.Collection.extend({
+    var playlistItemsCollection = Backbone.Collection.extend({
         model: PlaylistItem,
         
         //  I've given this Collection its own Save implementation because when I add/delete from a Playlist
@@ -76,7 +76,7 @@
 
     //  Public exposure of a constructor for building new PlaylistItem objects.
     return function(config) {
-        var playlistItems = new PlaylistItems(config);
+        var playlistItems = new playlistItemsCollection(config);
 
         //  TODO: Can I move this to an initialize?
         playlistItems.each(function(item) {

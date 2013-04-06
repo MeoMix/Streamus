@@ -2,7 +2,7 @@
 define(['programState'], function(programState){
     'use strict';
 
-    var Video = Backbone.Model.extend({
+    var videoModel = Backbone.Model.extend({
         defaults: {
             //  Provided by YouTube's API.
             id: '',
@@ -13,7 +13,7 @@ define(['programState'], function(programState){
     });
 
     return function (config) {
-        var video = new Video(config);
+        var video = new videoModel(config);
         return video;
     };
 });

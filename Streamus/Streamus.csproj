@@ -251,7 +251,6 @@
     <Content Include="ChromeExtension\js\foreground\videoTab\videoDisplay.js" />
     <Content Include="ChromeExtension\js\inject.js" />
     <Content Include="ChromeExtension\js\playerStates.js" />
-    <Content Include="ChromeExtension\js\background\playlistItemsHistory.js" />
     <Content Include="ChromeExtension\js\programState.js" />
     <Content Include="ChromeExtension\js\tests\background\playerSpec.js" />
     <Content Include="ChromeExtension\js\tests\background\userSpec.js" />

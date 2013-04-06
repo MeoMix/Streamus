@@ -2,7 +2,7 @@
 define(['helpers', 'programState', 'video'], function(helpers, programState, Video) {
     'use strict';
     
-    var PlaylistItem = Backbone.Model.extend({
+    var playlistItemModel = Backbone.Model.extend({
         defaults: function() {
             return {
                 //  Backend saves as composite key with playlistId, so its OK to generate id client-side.
@@ -53,7 +53,7 @@ define(['helpers', 'programState', 'video'], function(helpers, programState, Vid
 
     //  Public exposure of a constructor for building new PlaylistItem objects.
     return function (config) {
-        var playlistItem = new PlaylistItem(config);
+        var playlistItem = new playlistItemModel(config);
 
         return playlistItem;
     };

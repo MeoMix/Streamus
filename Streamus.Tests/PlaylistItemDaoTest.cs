@@ -15,7 +15,7 @@ namespace Streamus.Tests
         private IPlaylistDao PlaylistDao { get; set; }
         private IVideoDao VideoDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
-        private IStreamDao _streamDao { get; set; }
+        private IStreamDao StreamDao { get; set; }
         private User User { get; set; }
         private Playlist Playlist { get; set; }
         private Video Video { get; set; }
@@ -32,7 +32,7 @@ namespace Streamus.Tests
                 UserDao = new UserDao();
                 PlaylistDao = new PlaylistDao();
                 PlaylistItemDao = new PlaylistItemDao();
-                _streamDao = new StreamDao();
+                StreamDao = new StreamDao();
                 VideoDao = new VideoDao();
             }
             catch (TypeInitializationException exception)
@@ -40,7 +40,7 @@ namespace Streamus.Tests
                 throw exception.InnerException;
             }
 
-            User = new UserManager(UserDao, _streamDao).CreateUser();
+            User = new UserManager(UserDao, StreamDao).CreateUser();
             Video = new Video("s91jgcmQoB0", "Tristam - Chairs", 219);
             new VideoManager(VideoDao).Save(Video);
         }
@@ -52,7 +52,7 @@ namespace Streamus.Tests
         public void SetupContext()
         {
             //  Create managers here because every client request will require new managers.
-            PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, _streamDao, VideoDao);
+            PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, StreamDao, VideoDao);
 
             var stream = User.Streams.First();
 
@@ -67,7 +67,7 @@ namespace Streamus.Tests
         {
             //  Usually created client-side, but for testing it is OK to create server-side.
             Guid playlistItemId = Guid.NewGuid();
-            var playlistItem = new PlaylistItem(Playlist.Id, playlistItemId, Video.Title, Video.Id);
+            var playlistItem = new PlaylistItem(Playlist.Id, playlistItemId, Video.Title, Video);
 
             Playlist.AddItem(playlistItem);
             PlaylistManager.UpdatePlaylistItem(playlistItem);
@@ -90,14 +90,14 @@ namespace Streamus.Tests
         {
             //  Usually created client-side, but for testing it is OK to create server-side.
             Guid firstItemId = Guid.NewGuid();
-            var firstItem = new PlaylistItem(Playlist.Id, firstItemId, Video.Title, Video.Id);
+            var firstItem = new PlaylistItem(Playlist.Id, firstItemId, Video.Title, Video);
 
             Playlist.AddItem(firstItem);
             PlaylistManager.UpdatePlaylistItem(firstItem);
 
             //  Usually created client-side, but for testing it is OK to create server-side.
             Guid secondItemId = Guid.NewGuid();
-            var secondItem = new PlaylistItem(Playlist.Id, secondItemId, Video.Title, Video.Id);
+            var secondItem = new PlaylistItem(Playlist.Id, secondItemId, Video.Title, Video);
 
             Playlist.AddItem(secondItem);
             PlaylistManager.UpdatePlaylistItem(secondItem);

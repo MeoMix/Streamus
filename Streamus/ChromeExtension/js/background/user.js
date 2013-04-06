@@ -7,7 +7,7 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
     var userIdKey = 'UserId';
 
     //  User data will be loaded either from cache or server.
-    var UserModel = Backbone.Model.extend({
+    var userModel = Backbone.Model.extend({
         defaults: {
             id: localStorageManager.getUserId(),
             name: '',
@@ -16,8 +16,7 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
         },
         
         urlRoot: programState.getBaseUrl() + 'User/',
-        
-        //  TODO: I am doing too much work in this initialize constructor. 
+
         initialize: function () {
             //  If user's ID wasn't found in local storage, check sync because its a pc-shareable location, but doesn't work synchronously.
             if (this.isNew()) {
@@ -100,7 +99,7 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
     }
 
     //  Only ever instantiate one User.
-    User = new UserModel();
+    User = new userModel();
     
     return User;
 });

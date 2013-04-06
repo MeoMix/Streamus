@@ -16,7 +16,6 @@ var require = {
 
         'playlistItem': 'js/background/playlistItem',
         'playlistItems': 'js/background/playlistItems',
-        'playlistItemsHistory': 'js/background/playlistItemsHistory',
         'player': 'js/background/player',
         'playlistManager': 'js/background/playlistManager',
         'playlist': 'js/background/playlist',

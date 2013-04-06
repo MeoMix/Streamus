@@ -3,7 +3,7 @@ var YouTubePlayer = null;
 define(['youTubePlayerAPI', 'ytHelper', 'localStorageManager'], function (youTubePlayerAPI, ytHelper, localStorageManager) {
     'use strict';
 
-    var YouTubePlayerModel = Backbone.Model.extend({
+    var youTubePlayerModel = Backbone.Model.extend({
         defaults: {
             buffering: false,
             //  Returns the elapsed time of the currently loaded video. Returns 0 if no video is playing
@@ -163,7 +163,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'localStorageManager'], function (youTub
         }
     });
 
-    YouTubePlayer = new YouTubePlayerModel();
+    YouTubePlayer = new youTubePlayerModel();
 
     return YouTubePlayer;
 });

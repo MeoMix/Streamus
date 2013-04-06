@@ -1,8 +1,8 @@
-﻿//  Holds all the relevant data for a video.
+﻿//  A stream is a collection of playlists
 define(['playlists', 'playlist', 'videos', 'player', 'programState', 'ytHelper', 'localStorageManager'], function (Playlists, Playlist, Videos, player, programState, ytHelper, localStorageManager) {
     'use strict';
     
-    var Stream = Backbone.Model.extend({
+    var streamModel = Backbone.Model.extend({
         defaults: function () {
             return {
                 id: null,
@@ -229,7 +229,7 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState', 'ytHelper',
     });
     
     return function (config) {
-        var stream = new Stream(config);
+        var stream = new streamModel(config);
 
         return stream;
     };

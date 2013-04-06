@@ -2,15 +2,14 @@
 //  history of videos played. Provides methods to work with PlaylistItems such as getting, removing, updating, etc..
 define(['ytHelper',
         'playlistItems',
-        'playlistItemsHistory',
         'playlistItem',
         'programState',
         'localStorageManager',
         'video'
-    ], function(ytHelper, PlaylistItems, PlaylistItemsHistory, PlaylistItem, programState, localStorageManager, Video) {
+    ], function(ytHelper, PlaylistItems, PlaylistItem, programState, localStorageManager, Video) {
         'use strict';
 
-        var Playlist = Backbone.Model.extend({
+        var playlistModel = Backbone.Model.extend({
             defaults: {
                 id: null,
                 streamId: null,
@@ -18,7 +17,7 @@ define(['ytHelper',
                 firstItemId: null,
                 nextListId: null,
                 previousListId: null,
-                history: new PlaylistItemsHistory(),
+                history: new PlaylistItems(),
                 items: new PlaylistItems()
             },
 
@@ -353,7 +352,7 @@ define(['ytHelper',
         });
 
         return function (config) {
-            var playlist = new Playlist(config);
+            var playlist = new playlistModel(config);
             
             return playlist;
         };

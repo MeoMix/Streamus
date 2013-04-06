@@ -1,4 +1,4 @@
-//The play/pause icon.
+//  The play/pause icon.
 define(['backgroundManager', 'player'], function (backgroundManager, player) {
 	'use strict';
 	var playPauseButton = $('#PlayPauseButton');

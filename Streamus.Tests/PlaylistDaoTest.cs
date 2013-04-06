@@ -13,7 +13,7 @@ namespace Streamus.Tests
     {
         private IPlaylistDao PlaylistDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
-        private IStreamDao _streamDao { get; set; }
+        private IStreamDao StreamDao { get; set; }
         private IVideoDao VideoDao { get; set; }
         private User User { get; set; }
         private Video Video { get; set; }
@@ -29,7 +29,7 @@ namespace Streamus.Tests
             {
                 PlaylistDao = new PlaylistDao();
                 PlaylistItemDao = new PlaylistItemDao();
-                _streamDao = new StreamDao();
+                StreamDao = new StreamDao();
                 VideoDao = new VideoDao();
             }
             catch (TypeInitializationException exception)
@@ -37,7 +37,7 @@ namespace Streamus.Tests
                 throw exception.InnerException;
             }
 
-            User = new UserManager(new UserDao(), _streamDao).CreateUser();
+            User = new UserManager(new UserDao(), StreamDao).CreateUser();
 
             Video = new Video("s91jgcmQoB0", "Tristam - Chairs", 219);
             new VideoManager(VideoDao).Save(Video);
@@ -50,7 +50,7 @@ namespace Streamus.Tests
         public void SetupContext()
         {
             //  Create managers here because every client request will require new managers.
-            PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, _streamDao, VideoDao);
+            PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, StreamDao, VideoDao);
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace Streamus.Tests
 
             //  Usually created client-side, but for testing it is OK to create server-side.
             Guid firstItemId = Guid.NewGuid();
-            var playlistItem = new PlaylistItem(playlist.Id, firstItemId, Video.Title, Video.Id);
+            var playlistItem = new PlaylistItem(playlist.Id, firstItemId, Video.Title, Video);
 
             playlist.AddItem(playlistItem);
             PlaylistManager.UpdatePlaylistItem(playlistItem);

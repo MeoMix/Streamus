@@ -5,7 +5,7 @@ var LocalStorageManager = null;
 define(function () {
     'use strict';
 
-    var LocalStorageManagerModel = Backbone.Model.extend({
+    var localStorageManagerModel = Backbone.Model.extend({
         getActiveStreamId: function() {
             var activeStreamId = getItem('activeStreamId');
             return activeStreamId;
@@ -98,6 +98,6 @@ define(function () {
         return item;
     }
     
-    LocalStorageManager = new LocalStorageManagerModel();
+    LocalStorageManager = new localStorageManagerModel();
     return LocalStorageManager;
 });

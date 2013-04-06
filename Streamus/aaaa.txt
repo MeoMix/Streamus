@@ -1,0 +1,1 @@
+Open an issue for having shuffle + radio mode enabled -- should shuffle back into items in the playlist periodicially.

@@ -1,12 +1,12 @@
 ﻿define(['playlistItems', 'playlist'], function (PlaylistItems, Playlist) {
     'use strict';
 
-    var Playlists = Backbone.Collection.extend({
+    var playlistCollection = Backbone.Collection.extend({
         model: Playlist
     });
 
     return function (config) {
-        var playlists = new Playlists(config);
+        var playlists = new playlistCollection(config);
 
         return playlists;
     };

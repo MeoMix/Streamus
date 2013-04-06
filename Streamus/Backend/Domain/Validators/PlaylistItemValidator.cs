@@ -15,7 +15,7 @@ namespace Streamus.Backend.Domain.Validators
             RuleFor(playlistItem => playlistItem.Id).NotEqual(Guid.Empty);
             RuleFor(playlistItem => playlistItem.PlaylistId).NotEqual(Guid.Empty);
             RuleFor(playlistItem => playlistItem.PlaylistId).Must(playlistId => PlaylistDao.Get(playlistId) != null);
-            RuleFor(playlistItem => playlistItem.VideoId).NotEqual(string.Empty);
+            RuleFor(playlistItem => playlistItem.Video).NotNull();
             RuleFor(playlistItem => playlistItem.NextItemId).NotEqual(Guid.Empty);
             RuleFor(playlistItem => playlistItem.PreviousItemId).NotEqual(Guid.Empty);
         }
