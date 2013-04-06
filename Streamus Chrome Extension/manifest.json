@@ -1,0 +1,73 @@
+{
+  "name": "Streamus",
+  "version": "0.48",
+  "manifest_version": 2,
+  "description": "A music player for Google Chrome. Converts YouTube into an iPod with pandora-like searching. Plays in the background!",
+  "background":{
+    "page": "background.htm"
+  },
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_title": "Streamus: Drop the 'ic' from streamed music.",
+    "default_popup": "foreground.htm"
+  },
+  "permissions": [
+    "contextMenus",
+    "clipboardWrite",
+	"notifications",
+    "storage",
+    "webRequest",
+    "webRequestBlocking",
+    "http://www.geoplugin.net/",
+    "http://www.beatport.com/top-100",
+    "http://www.youtube.com/",
+    "https://www.youtube.com/",
+    "https://graph.facebook.com/",
+	"http://localhost:61975/Streamus/",
+	"http://streamus.apphb.com/",
+    "tabs"
+	],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["js/thirdParty/jquery.js"],
+	  "all_frames": true
+	},
+    {
+      "matches": ["*://www.youtube.com/watch?v*"],
+      "css": ["css/inject.css"],
+	  "all_frames": true,
+      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/inject.js"]
+    },
+    {
+      "matches": ["http://www.facebook.com/robots.txt*"],
+      "js": ["js/thirdParty/oauth2/oauth2_inject.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "commands": {
+    "nextVideo": {
+      "suggested_key": { "default": "Alt+P" },
+      "description": "Tells the player to play next video."
+    },
+    "previousVideo": {
+      "suggested_key": { "default": "Alt+E" },
+      "description": "Tells the player to play previous video."
+    },
+    "toggleVideo": {
+      "suggested_key": { "default": "Ctrl+P" },
+      "description": "Tells the player to toggle the video state."
+    },
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+B"
+      }
+    }
+  },
+  "web_accessible_resources": [
+    "css/inject.css",
+    "icon.png"
+  ],
+  "content_security_policy": 
+    "script-src 'self' 'unsafe-eval' https://graph.facebook.com https://www.youtube.com https://ssl.google-analytics.com https://gdata.youtube.com https://suggestqueries.google.com https://www.youtube.com https://s.ytimg.com; object-src 'self'"
+}
