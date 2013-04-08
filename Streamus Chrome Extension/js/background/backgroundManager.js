@@ -265,7 +265,8 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                 var activePlaylistItems = activePlaylist.get('items');
 
                 if (activePlaylistItems.length > 0) {
-                    this.set('activePlaylistItem', activePlaylistItems.at(0));
+                    activePlaylistItem = activePlaylistItems.at(0);
+                    this.set('activePlaylistItem', activePlaylistItem);
                 }
             }
 
@@ -274,7 +275,8 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
         }
 
         //  Need to inform the playlist to select the item so playlist history can update.
-        if (this.get('activePlaylistItem') !== null) {
+        if (activePlaylistItem !== null) {
+          
             var playlist = this.getPlaylistById(activePlaylistItem.get('playlistId'));
             playlist.selectItem(activePlaylistItem);
         }

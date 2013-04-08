@@ -20,24 +20,28 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager'], function (cont
         
         //  Build up each row.
         do {
-            (function (list) {
-                var listItem = $('<li/>', {
-                    contextmenu: function (e) {
-                        contextMenu.initialize(list);
-                        //  +1 offset because if contextmenu appears directly under mouse, hover css will be removed from element.
-                        contextMenu.show(e.pageY, e.pageX + 1);
-                        //  Prevent default context menu display.
-                        return false;
-                    }
-                }).appendTo(playlistList);
 
-                $('<a/>', {
-                    id: list.get('id'),
-                    href: '#' + list.get('id'),
-                    text: list.get('title')
-                }).appendTo(listItem);
+            if(currentPlaylist == null) break;
 
-            })(currentPlaylist);
+            var listItem = $('<li/>', {
+                'data-playlistid': currentPlaylist.get('id'),
+                contextmenu: function (e) {
+                        
+                    var clickedPlaylistId = $(this).data('playlistid');
+                    var clickedPlaylist = activeStream.get('playlists').get(clickedPlaylistId);
+                    contextMenu.initialize(clickedPlaylist);
+                    //  +1 offset because if contextmenu appears directly under mouse, hover css will be removed from element.
+                    contextMenu.show(e.pageY, e.pageX + 1);
+                    //  Prevent default context menu display.
+                    return false;
+                }
+            }).appendTo(playlistList);
+
+            $('<a/>', {
+                id: currentPlaylist.get('id'),
+                href: '#' + currentPlaylist.get('id'),
+                text: currentPlaylist.get('title')
+            }).appendTo(listItem);
             
             currentPlaylist = activeStream.get('playlists').get(currentPlaylist.get('nextListId'));
 

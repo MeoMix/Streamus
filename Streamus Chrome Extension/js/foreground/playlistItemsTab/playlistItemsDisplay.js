@@ -85,33 +85,35 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player'], function (co
         var currentItem = activePlaylist.get('items').get(firstItemId);
         
         //  Build up the ul of li's representing each playlistItem.
+        
         do {
-            (function (item) {
-                var listItem = $('<li/>', {
-                    'data-itemid': item.get('id'),
-                    contextmenu: function (e) {
-                        contextMenu.initialize(item);
-                        contextMenu.show(e.pageY, e.pageX);
-                        //  +1 offset because if contextmenu appears directly under mouse, hover css will be removed from element.
-                        contextMenu.show(e.pageY, e.pageX + 1);
-                        //  Prevent default context menu display.
-                        return false;
-                    }
-                }).appendTo(playlistItemList);
+            
+            if(currentItem == null) break;
 
-                $('<img>', {
-                    width: '50px',
-                    src: 'http://img.youtube.com/vi/' + item.get('video').get('id') + '/default.jpg',
-                    css: {
-                        'margin-top': '3px',
-                        'margin-left': '3px'
-                    }
-                }).appendTo(listItem);
+            var listItem = $('<li/>', {
+                'data-itemid': currentItem.get('id'),
+                contextmenu: function (e) {
 
-                $('<a/>', {
-                    text: item.get('title')
-                }).appendTo(listItem);
-            })(currentItem);
+                    var clickedItemId = $(this).data('itemid');
+                    var clickedItem = activePlaylist.get('items').get(clickedItemId);
+
+                    contextMenu.initialize(clickedItem);
+
+                    //  +1 offset because if contextmenu appears directly under mouse, hover css will be removed from element.
+                    contextMenu.show(e.pageY, e.pageX + 1);
+                    //  Prevent default context menu display.
+                    return false;
+                }
+            }).appendTo(playlistItemList);
+
+            $('<img>', {
+                'class': 'playlistItemVideoImage',
+                src: 'http://img.youtube.com/vi/' + currentItem.get('video').get('id') + '/default.jpg',
+            }).appendTo(listItem);
+
+            $('<a/>', {
+                text: currentItem.get('title')
+            }).appendTo(listItem);
 
             currentItem = activePlaylist.get('items').get(currentItem.get('nextItemId'));
         } while (currentItem && currentItem.get('id') !== firstItemId)

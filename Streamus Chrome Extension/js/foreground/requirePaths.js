@@ -11,6 +11,7 @@ var require = {
         'previousButton': 'foreground/playerControls/previousButton',
         'shuffleButton': 'foreground/playerControls/shuffleButton',
         'radioModeButton': 'foreground/playerControls/radioModeButton',
+        'repeatButton': 'foreground/playerControls/repeatButton',
         'header': 'foreground/header',
         'settings': 'foreground/settingsTab/settings',
         'playlistItemsContextMenu': 'foreground/playlistItemsTab/playlistItemsContextMenu',
