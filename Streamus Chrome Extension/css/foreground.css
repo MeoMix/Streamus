@@ -432,7 +432,8 @@
 }
 
 #ShuffleButton:hover,
-#RadioModeButton:hover {
+#RadioModeButton:hover,
+#RepeatButton:hover {
     cursor: pointer;
 }
 
@@ -446,6 +447,16 @@
     position: absolute;
     right: 13px;
     top: 6px;
+}
+
+#RepeatButton {
+    position: absolute;
+    right: 14px;
+    top: 58px;
+}
+
+#RepeatPlaylistSvgWrapper {
+    display: none;
 }
 
 #VolumeSlider {
@@ -637,6 +648,13 @@
     opacity: .7;
     -webkit-animation:rotate 1.5s infinite steps(12);
     display: none;
+}
+
+
+.playlistItemVideoImage {
+    margin-top: 3px;
+    margin-left: 3px;
+    width: 50px;
 }
 
 @-webkit-keyframes "rotate" {

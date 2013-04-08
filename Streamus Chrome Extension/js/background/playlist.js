@@ -87,6 +87,31 @@ define(['ytHelper',
                     });
                 });
 
+                var self = this;
+                this.get('items').on('remove', function (removedItem) {
+                    var playlistItems = self.get('items');
+                        
+                    if (playlistItems.length > 0) {
+                        
+                        //  Update firstItem if it was removed
+                        if (self.get('firstItemId') === removedItem.get('id')) {
+                            self.set('firstItemId', removedItem.get('nextItemId'));
+                        }
+                        
+                        //  Update linked list pointers
+                        var previousItem = playlistItems.get(removedItem.get('previousItemId'));
+                        var nextItem = playlistItems.get(removedItem.get('nextItemId'));
+
+                        //  Remove the item from linked list.
+                        previousItem.set('nextItemId', nextItem.get('id'));
+                        nextItem.set('previousItemId', previousItem.get('id'));
+
+                    } else {
+                        self.set('firstItemId', '00000000-0000-0000-0000-000000000000');
+                    }
+
+                });
+
             },
             
             selectItem: function (playlistItem) {
@@ -241,7 +266,12 @@ define(['ytHelper',
                     playlistItem.set('previousItemId', playlistItemId);
                 } else {
                     var firstItem = playlistItems.get(this.get('firstItemId'));
+
+                    console.log("First item:", firstItem);
+
                     var lastItem = playlistItems.get(firstItem.get('previousItemId'));
+
+                    console.log("lastItem is:", lastItem);
 
                     lastItem.set('nextItemId', playlistItemId);
                     playlistItem.set('previousItemId', lastItem.get('id'));
@@ -287,35 +317,6 @@ define(['ytHelper',
 
                 this.selectItem(nextItem);
                 return nextItem;
-            },
-            
-            //  TODO: This is getting bulky...
-            removeItem: function (item, callback) {
-
-                if (this.get('firstItemId') === item.get('id')) {
-                    //  length of 1 here because we're about to remove an item.
-                    var newFirstItemId = this.get('items').length === 1 ? '00000000-0000-0000-0000-000000000000' : item.get('nextItemId');
-                    this.set('firstItemId', newFirstItemId);
-                }
-
-                var previousItem = this.get('items').get(item.get('previousItemId'));
-                var nextItem = this.get('items').get(item.get('nextItemId'));
-                
-                //  Remove the item from our linked list.
-                previousItem.set('nextItemId', nextItem.get('id'));
-                nextItem.set('previousItemId', previousItem.get('id'));
-
-                //  I'm removing the item client-side before issuing a command to the server for usability sake.
-                //  It is counter-intuitive to the user to click 'Delete' and have lag while the server responds.
-                //  TODO: How do I handle a scenario where the server fails to delete by ID?
-                this.get('items').remove(item);
-                
-                item.destroy({
-                    success: callback,
-                    error: function (error) {
-                        window && console.error(error);
-                    }
-                });
             },
             
             moveItem: function (movedItemId, nextItemId) {

@@ -127,6 +127,7 @@
     <Content Include="js\foreground\playerControls\playPauseButton.js" />
     <Content Include="js\foreground\playerControls\previousButton.js" />
     <Content Include="js\foreground\playerControls\radioModeButton.js" />
+    <Content Include="js\foreground\playerControls\repeatButton.js" />
     <Content Include="js\foreground\playerControls\shuffleButton.js" />
     <Content Include="js\foreground\playerControls\skipButton.js" />
     <Content Include="js\foreground\playerControls\volumeSlider.js" />

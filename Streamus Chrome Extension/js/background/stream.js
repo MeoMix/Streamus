@@ -57,6 +57,31 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState', 'ytHelper',
                 }
                 
             });
+
+            this.get('playlists').on('remove', function (removedPlaylist) {
+                
+                var playlists = self.get('playlists');
+
+                if (playlists.length > 0) {
+
+                    //  Update firstList if it was removed
+                    if (self.get('firstListId') === removedPlaylist.get('id')) {
+                        self.set('firstListId', removedPlaylist.get('nextListId'));
+                    }
+
+                    //  Update linked list pointers
+                    var previousList = playlists.get(removedPlaylist.get('previousListId'));
+                    var nextList = playlists.get(removedPlaylist.get('nextListId'));
+
+                    //  Remove the playlist from linked list.
+                    previousList.set('nextListId', nextList.get('id'));
+                    nextList.set('previousListId', previousList.get('id'));
+
+                } else {
+                    self.set('firstListId', '00000000-0000-0000-0000-000000000000');
+                }
+
+            });
         },
         
         addVideoByIdToPlaylist: function (id, playlistId) {
