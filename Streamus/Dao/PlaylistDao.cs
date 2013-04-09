@@ -1,11 +1,11 @@
 ﻿using log4net;
 using NHibernate;
-using Streamus.Backend.Domain;
-using Streamus.Backend.Domain.Interfaces;
+using Streamus.Domain;
+using Streamus.Domain.Interfaces;
 using System;
 using System.Reflection;
 
-namespace Streamus.Backend.Dao
+namespace Streamus.Dao
 {
     public class PlaylistDao : AbstractNHibernateDao<Playlist>, IPlaylistDao
     {

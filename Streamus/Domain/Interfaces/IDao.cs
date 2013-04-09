@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Streamus.Backend.Domain.Interfaces
+namespace Streamus.Domain.Interfaces
 {
     public interface IDao<T>
     {

@@ -1,8 +1,8 @@
 ﻿using log4net;
-using Streamus.Backend.Dao;
-using Streamus.Backend.Domain;
-using Streamus.Backend.Domain.Interfaces;
-using Streamus.Backend.Domain.Managers;
+using Streamus.Dao;
+using Streamus.Domain;
+using Streamus.Domain.Interfaces;
+using Streamus.Domain.Managers;
 using System;
 using System.Reflection;
 using System.Web.Mvc;

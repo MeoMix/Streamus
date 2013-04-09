@@ -1,10 +1,10 @@
-﻿using System;
-using NHibernate;
+﻿using NHibernate;
 using NHibernate.Criterion;
-using Streamus.Backend.Domain;
-using Streamus.Backend.Domain.Interfaces;
+using Streamus.Domain;
+using Streamus.Domain.Interfaces;
+using System;
 
-namespace Streamus.Backend.Dao
+namespace Streamus.Dao
 {
     public class PlaylistItemDao : AbstractNHibernateDao<PlaylistItem>, IPlaylistItemDao
     {

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using Streamus.Backend.Dao;
-using Streamus.Backend.Domain.Interfaces;
+using Streamus.Dao;
+using Streamus.Domain.Interfaces;
 using log4net;
 
-namespace Streamus.Backend.Domain.Managers
+namespace Streamus.Domain.Managers
 {
     public class PlaylistManager
     {

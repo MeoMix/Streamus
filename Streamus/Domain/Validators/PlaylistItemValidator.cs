@@ -1,9 +1,9 @@
 ﻿using System;
 using FluentValidation;
-using Streamus.Backend.Dao;
-using Streamus.Backend.Domain.Interfaces;
+using Streamus.Dao;
+using Streamus.Domain.Interfaces;
 
-namespace Streamus.Backend.Domain.Validators
+namespace Streamus.Domain.Validators
 {
     public class PlaylistItemValidator : AbstractValidator<PlaylistItem>
     {

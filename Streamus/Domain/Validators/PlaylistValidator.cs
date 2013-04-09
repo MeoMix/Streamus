@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentValidation;
 
-namespace Streamus.Backend.Domain.Validators
+namespace Streamus.Domain.Validators
 {
     public class PlaylistValidator : AbstractValidator<Playlist>
     {

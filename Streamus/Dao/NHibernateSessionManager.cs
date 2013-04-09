@@ -1,13 +1,12 @@
-﻿using System;
+﻿using log4net;
+using NHibernate;
+using NHibernate.Cfg;
+using System;
 using System.Reflection;
 using System.Runtime.Remoting.Messaging;
 using System.Web;
-using NHibernate;
-using NHibernate.Cache;
-using NHibernate.Cfg;
-using log4net;
 
-namespace Streamus.Backend.Dao
+namespace Streamus.Dao
 {
     /// <summary>
     ///     Handles creation and management of sessions and transactions.  It is a singleton because

@@ -1,12 +1,12 @@
-﻿using System.Reflection;
+﻿using log4net;
 using NHibernate;
 using NHibernate.Criterion;
-using Streamus.Backend.Domain;
+using Streamus.Domain;
+using Streamus.Domain.Interfaces;
 using System.Collections.Generic;
-using Streamus.Backend.Domain.Interfaces;
-using log4net;
+using System.Reflection;
 
-namespace Streamus.Backend.Dao
+namespace Streamus.Dao
 {
     public class VideoDao : AbstractNHibernateDao<Video>, IVideoDao
     {

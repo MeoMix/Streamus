@@ -1,10 +1,10 @@
-﻿using System;
+﻿using FluentValidation;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using FluentValidation;
-using Streamus.Backend.Domain.Validators;
+using Streamus.Domain.Validators;
 
-namespace Streamus.Backend.Domain
+namespace Streamus.Domain
 {
     [DataContract]
     public class User

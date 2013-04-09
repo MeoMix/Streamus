@@ -1,11 +1,11 @@
-﻿using System;
-using System.Reflection;
+﻿using log4net;
 using NHibernate;
-using Streamus.Backend.Domain;
-using Streamus.Backend.Domain.Interfaces;
-using log4net;
+using Streamus.Domain;
+using Streamus.Domain.Interfaces;
+using System;
+using System.Reflection;
 
-namespace Streamus.Backend.Dao
+namespace Streamus.Dao
 {
     public class UserDao : AbstractNHibernateDao<User>, IUserDao
     {

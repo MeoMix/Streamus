@@ -1,11 +1,7 @@
-﻿using System;
-using System.Reflection;
-using NHibernate;
-using Streamus.Backend.Domain;
-using Streamus.Backend.Domain.Interfaces;
-using log4net;
+﻿using Streamus.Domain;
+using Streamus.Domain.Interfaces;
 
-namespace Streamus.Backend.Dao
+namespace Streamus.Dao
 {
     public class ErrorDao : AbstractNHibernateDao<Error>, IErrorDao
     {

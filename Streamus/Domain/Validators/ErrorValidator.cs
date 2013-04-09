@@ -1,7 +1,6 @@
-﻿using System;
-using FluentValidation;
+﻿using FluentValidation;
 
-namespace Streamus.Backend.Domain.Validators
+namespace Streamus.Domain.Validators
 {
     public class ErrorValidator : AbstractValidator<Error>
     {
