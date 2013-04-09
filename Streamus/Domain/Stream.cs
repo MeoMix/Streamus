@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
-using Streamus.Backend.Domain.Validators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Streamus.Domain.Validators;
 
-namespace Streamus.Backend.Domain
+namespace Streamus.Domain
 {        
     //  TODO: Currently there is only the ability to have a single Stream.
     //  Should create Strean objects as a LinkedList so that adding and removing is possible.

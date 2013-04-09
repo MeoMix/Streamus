@@ -1,9 +1,9 @@
-﻿using System;
-using FluentValidation;
-using Streamus.Backend.Domain.Validators;
+﻿using FluentValidation;
+using System;
 using System.Runtime.Serialization;
+using Streamus.Domain.Validators;
 
-namespace Streamus.Backend.Domain
+namespace Streamus.Domain
 {
     [DataContract]
     public class Error

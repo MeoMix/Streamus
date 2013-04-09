@@ -1,9 +1,9 @@
-﻿using System;
+﻿using NHibernate;
+using Streamus.Domain.Interfaces;
+using System;
 using System.Collections.Generic;
-using NHibernate;
-using Streamus.Backend.Domain.Interfaces;
 
-namespace Streamus.Backend.Dao
+namespace Streamus.Dao
 {
     public class AbstractNHibernateDao<T> : MarshalByRefObject, IDao<T> where T : class
     {

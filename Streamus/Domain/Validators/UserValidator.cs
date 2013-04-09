@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Streamus.Backend.Domain.Validators
+namespace Streamus.Domain.Validators
 {
     public class UserValidator : AbstractValidator<User>
     {

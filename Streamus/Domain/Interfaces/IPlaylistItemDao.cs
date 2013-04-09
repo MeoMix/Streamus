@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Streamus.Backend.Domain.Interfaces
+namespace Streamus.Domain.Interfaces
 {
     public interface IPlaylistItemDao : IDao<PlaylistItem>
     {
