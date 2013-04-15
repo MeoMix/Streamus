@@ -31,7 +31,7 @@ namespace Streamus.Controllers
                 PlaylistItemDao = new PlaylistItemDao();
                 VideoDao = new VideoDao();
 
-                PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, StreamDao, VideoDao);
+                PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
             }
             catch (TypeInitializationException exception)
             {
@@ -49,8 +49,6 @@ namespace Streamus.Controllers
         {
             var userManager = new UserManager(UserDao, StreamDao);
             User user = userManager.CreateUser();
-
-            
 
             return new JsonDataContractActionResult(user);
         }

@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using Streamus.Backend.Dao;
-using Streamus.Backend.Domain;
-using Streamus.Backend.Domain.Interfaces;
-using Streamus.Backend.Domain.Managers;
+using Streamus.Dao;
+using Streamus.Domain;
+using Streamus.Domain.Interfaces;
+using Streamus.Domain.Managers;
 using System;
 
 namespace Streamus.Tests
@@ -52,7 +52,7 @@ namespace Streamus.Tests
         public void SetupContext()
         {
             //  Create managers here because every client request will require new managers.
-            PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, StreamDao, VideoDao);
+            PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
 
             var stream = User.Streams.First();
 

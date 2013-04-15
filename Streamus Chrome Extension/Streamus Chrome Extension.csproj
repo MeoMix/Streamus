@@ -95,7 +95,6 @@
     <Content Include="css\introjs.css" />
     <Content Include="css\jasmine.css" />
     <Content Include="foreground.htm" />
-    <Content Include="icon.png" />
     <Content Include="images\settingsButton.svg" />
     <Content Include="images\spinner.svg" />
     <Content Include="js\background\background.js" />
@@ -174,6 +173,7 @@
     <Content Include="js\thirdParty\underscore.js" />
     <Content Include="js\youTubePlayerAPI.js" />
     <Content Include="js\ytHelper.js" />
+    <Content Include="streamus_icon.png" />
     <Content Include="tests.htm" />
     <None Include="js\thirdParty\chrome-api-vsdoc.js" />
     <Content Include="js\thirdParty\MIT.LICENSE" />

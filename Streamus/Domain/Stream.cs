@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Web.Script.Serialization;
+using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,13 @@ namespace Streamus.Domain
         public IList<Playlist> Playlists { get; set; }
 
         [DataMember(Name = "firstListId")]
-        public Guid FirstListId { get; set; }
+        public Guid FirstListId
+        {
+            get { return FirstPlaylist.Id; }
+            set { FirstPlaylist.Id = value; }
+        }
+
+        public Playlist FirstPlaylist { get; set; }
 
         public Stream()
         {
@@ -61,21 +68,22 @@ namespace Streamus.Domain
         {
             if (Playlists.Count == 0)
             {
-                playlist.NextListId = playlist.Id;
-                playlist.PreviousListId = playlist.Id;
-                FirstListId = playlist.Id;
+                FirstPlaylist = playlist;
+                playlist.NextPlaylist = playlist;
+                playlist.PreviousPlaylist = playlist;
             }
             else
             {
-                Playlist firstList = Playlists.First(list => list.Id == FirstListId);
+                //Playlist firstList = Playlists.First(list => list.Id == FirstListId);
+                Playlist firstList = FirstPlaylist;
                 Playlist lastList = Playlists.First(list => list.Id == firstList.PreviousListId);
 
                 //  Adjust our linked list and add the item.
-                lastList.NextListId = playlist.Id;
-                playlist.PreviousListId = lastList.Id;
+                lastList.NextPlaylist = playlist;
+                playlist.PreviousPlaylist = lastList;
 
-                firstList.PreviousListId = playlist.Id;
-                playlist.NextListId = firstList.Id;
+                firstList.PreviousPlaylist = playlist;
+                playlist.NextPlaylist = firstList;
             }
 
             playlist.Stream = this;
@@ -86,18 +94,18 @@ namespace Streamus.Domain
 
         public void RemovePlaylist(Playlist playlist)
         {
-            if (FirstListId == playlist.Id)
+            if (FirstPlaylist == playlist)
             {
                 //  Move the firstListId to the next playlist
-                FirstListId = playlist.NextListId;
+                FirstPlaylist = playlist.NextPlaylist;
             }
 
-            Playlist previousList = Playlists.First(list => list.Id == playlist.PreviousListId);
-            Playlist nextList = Playlists.First(list => list.Id == playlist.NextListId);
+            Playlist previousList = playlist.PreviousPlaylist;
+            Playlist nextList = playlist.NextPlaylist;
 
             //  Remove the list from our linked list.
-            previousList.NextListId = nextList.Id;
-            nextList.PreviousListId = previousList.Id;
+            previousList.NextPlaylist = nextList;
+            nextList.PreviousPlaylist = previousList;
 
             Playlists.Remove(playlist);
         }

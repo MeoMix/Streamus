@@ -67,30 +67,6 @@ namespace Streamus.Domain.Managers
             }
         }
 
-        //  Videos won't be deleted very often. No one user is able to do it -- so doesn't take a userId. Needs to be an admin.
-        public void Delete(string id)
-        {
-            try
-            {
-                NHibernateSessionManager.Instance.BeginTransaction();
-
-                Video video = VideoDao.Get(id);
-
-                if (video != null)
-                {
-                    VideoDao.Delete(video);
-                }
-
-                NHibernateSessionManager.Instance.CommitTransaction();
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
-                throw;
-            }
-        }
-
         public Video Get(string id)
         {
             try

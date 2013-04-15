@@ -47,17 +47,45 @@ namespace Streamus.Domain
         public Guid FirstItemId { get; set; }
 
         [DataMember(Name = "nextListId")]
-        public Guid NextListId { get; set; }
+        public Guid NextListId
+        {
+            get
+            {
+                Guid nextListId = Guid.Empty;
+                if (NextPlaylist != null)
+                {
+                    nextListId = NextPlaylist.Id;
+                }
+
+                return nextListId;
+            }
+            set { NextPlaylist.Id = value; }
+        }
+
+        public Playlist NextPlaylist { get; set; }
 
         [DataMember(Name = "previousListId")]
-        public Guid PreviousListId { get; set; }
+        public Guid PreviousListId
+        {
+            get
+            {
+                Guid previousListId = Guid.Empty;
+                if (PreviousPlaylist != null)
+                {
+                    previousListId = PreviousPlaylist.Id;
+                }
+
+                return previousListId;
+            }
+            set { PreviousPlaylist.Id = value; }
+        }
+
+        public Playlist PreviousPlaylist { get; set; }
 
         public Playlist()
         {
             Id = Guid.Empty;
             FirstItemId = Guid.Empty;
-            NextListId = Guid.Empty;
-            PreviousListId = Guid.Empty;
             Title = string.Empty;
             Items = new List<PlaylistItem>();
         }

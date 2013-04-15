@@ -36,7 +36,15 @@ namespace Streamus.Controllers
         [HttpPost]
         public ActionResult Create(Playlist playlist)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, StreamDao, VideoDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
+
+            playlist.Stream.AddPlaylist(playlist);
+
+            playlist.ValidateAndThrow();
+            PlaylistDao.Save(playlist);
+
+            StreamDao.Save(playlist.Stream);
+
             playlistManager.Save(playlist);
 
             return new JsonDataContractActionResult(playlist);
@@ -45,7 +53,7 @@ namespace Streamus.Controllers
         [HttpPut]
         public ActionResult Update(Playlist playlist)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, StreamDao, VideoDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
             playlistManager.Update(playlist);
 
             return new JsonDataContractActionResult(playlist);
@@ -62,7 +70,7 @@ namespace Streamus.Controllers
         [HttpDelete]
         public EmptyResult Delete(Guid id)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, StreamDao, VideoDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
             playlistManager.DeletePlaylistById(id);
 
             return new EmptyResult();
@@ -71,7 +79,7 @@ namespace Streamus.Controllers
         [HttpPost]
         public EmptyResult UpdateTitle(Guid playlistId, string title)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, StreamDao, VideoDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
             playlistManager.UpdateTitle(playlistId, title);
 
             return new EmptyResult();
@@ -80,7 +88,7 @@ namespace Streamus.Controllers
         [HttpPost]
         public EmptyResult UpdateFirstItemId(Guid playlistId, Guid firstItemId)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, StreamDao, VideoDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
             playlistManager.UpdateFirstItemId(playlistId, firstItemId);
 
             return new EmptyResult();

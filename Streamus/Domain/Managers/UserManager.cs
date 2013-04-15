@@ -38,12 +38,12 @@ namespace Streamus.Domain.Managers
                 UserDao.Save(user);
 
                 //  TODO: Can this happen automatically with NHibernate?
-                Stream stream = user.Streams[0];
+                //Stream stream = user.Streams[0];
 
-                stream.FirstListId = stream.Playlists[0].Id;
-                stream.Playlists[0].NextListId = stream.Playlists[0].Id;
-                stream.Playlists[0].PreviousListId = stream.Playlists[0].Id;
-                StreamDao.Update(stream);
+                //stream.Playlists[0].NextListId = stream.Playlists[0].Id;
+
+                //stream.Playlists[0].PreviousListId = stream.Playlists[0].Id;
+                //StreamDao.Update(stream);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Streamus.Backend.Dao;
-using Streamus.Backend.Domain;
-using Streamus.Backend.Domain.Interfaces;
-using Streamus.Backend.Domain.Managers;
+using Streamus.Dao;
+using Streamus.Domain;
+using Streamus.Domain.Interfaces;
+using Streamus.Domain.Managers;
 
 namespace Streamus.Tests
 {
@@ -56,17 +56,6 @@ namespace Streamus.Tests
             //  Test that the video was successfully inserted
             Assert.IsNotNull(videoFromDatabase);
             Assert.AreEqual(video.Title, videoFromDatabase.Title);
-        }
-
-        [Test]
-        public void Deletes()
-        {
-            const string videoId = "s91jgcmQoB0";
-            VideoManager.Delete(videoId);
-
-            Video videoFromDatabase = VideoDao.Get(videoId);
-            //  Test that the video was successfully deleted
-            Assert.IsNull(videoFromDatabase);
         }
 
         /// <summary>

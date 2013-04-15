@@ -82,8 +82,11 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="InMemoryDatabaseTest.cs" />
+    <Compile Include="PlaylistDaoTest.cs" />
+    <Compile Include="PlaylistItemDaoTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserDaoTest.cs" />
+    <Compile Include="VideoDaoTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Streamus\Streamus Server.csproj">
