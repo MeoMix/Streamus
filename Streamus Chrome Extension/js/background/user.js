@@ -91,6 +91,7 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
         var self = this;
         this.fetch({
             success: function (model) {
+                console.log("user fetch success:", model);
                 onUserLoaded.call(self, model, shouldSetSyncStorage);
             },
             error: function (error) {

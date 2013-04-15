@@ -2,10 +2,10 @@
 using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
 using NUnit.Framework;
-using Streamus.Backend.Dao;
-using Streamus.Backend.Domain;
-using Streamus.Backend.Domain.Interfaces;
-using Streamus.Backend.Domain.Managers;
+using Streamus.Dao;
+using Streamus.Domain;
+using Streamus.Domain.Interfaces;
+using Streamus.Domain.Managers;
 
 namespace Streamus.Tests
 {
@@ -33,7 +33,7 @@ namespace Streamus.Tests
 
             //  Run this bit of code to have the UserDaoTest create the StreamusTest tables.
             //  Disable this again immediately after. It'll mess up tests and makes everything run slower.
-            const bool needSetupDatabase = true;
+            const bool needSetupDatabase = false;
 
             if (needSetupDatabase)
             {

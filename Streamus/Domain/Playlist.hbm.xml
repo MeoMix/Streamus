@@ -7,8 +7,8 @@
     </id>
     
     <property name="Title" not-null="true" />
-    <property name="NextListId" not-null="true" />
-    <property name="PreviousListId" not-null="true" />
+    <!--<property name="NextListId" not-null="true" />
+    <property name="PreviousListId" not-null="true" />-->
     <property name="FirstItemId" not-null="true" />
 
     <bag name="Items" inverse="true" cascade="all-delete-orphan" >
@@ -17,6 +17,8 @@
     </bag>
 
     <many-to-one name="Stream" column="StreamId" />
+    <many-to-one name="NextPlaylist" column="NextListId" />
+    <many-to-one name="PreviousPlaylist" column="PreviousListId" />
 
   </class>
   

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using Streamus.Dao;
 using Streamus.Domain.Interfaces;
 using log4net;
@@ -14,14 +13,12 @@ namespace Streamus.Domain.Managers
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private IPlaylistDao PlaylistDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
-        private IStreamDao StreamDao { get; set; }
         private IVideoDao VideoDao { get; set; }
 
-        public PlaylistManager(IPlaylistDao playlistDao, IPlaylistItemDao playlistItemDao, IStreamDao streamDao, IVideoDao videoDao)
+        public PlaylistManager(IPlaylistDao playlistDao, IPlaylistItemDao playlistItemDao, IVideoDao videoDao)
         {
             PlaylistDao = playlistDao;
             PlaylistItemDao = playlistItemDao;
-            StreamDao = streamDao;
             VideoDao = videoDao;
         }
 
@@ -30,29 +27,9 @@ namespace Streamus.Domain.Managers
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
+                
                 playlist.ValidateAndThrow();
                 PlaylistDao.Save(playlist);
-
-                if (playlist.Stream.Playlists.Count == 0)
-                {
-                    playlist.NextListId = playlist.Id;
-                    playlist.PreviousListId = playlist.Id;
-                    playlist.Stream.FirstListId = playlist.Id;
-                }
-                else
-                {
-                    Playlist firstList = playlist.Stream.Playlists.First(list => list.Id == playlist.Stream.FirstListId);
-                    Playlist lastList = playlist.Stream.Playlists.First(list => list.Id == firstList.PreviousListId);
-
-                    //  Adjust our linked list and add the item.
-                    lastList.NextListId = playlist.Id;
-                    playlist.PreviousListId = lastList.Id;
-
-                    firstList.PreviousListId = playlist.Id;
-                    playlist.NextListId = firstList.Id;
-                }
-
-                StreamDao.Save(playlist.Stream);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
@@ -96,20 +73,6 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                //  TODO: Fuuuuck. How can I fix this?
-                int sleepCount = 0;
-                while (NHibernateSessionManager.Instance.HasOpenTransaction() && sleepCount < 10)
-                {
-                    Logger.DebugFormat("Sleep Count {0}", sleepCount);
-                    Thread.Sleep(1000);
-                    sleepCount++;
-                }
-
-                if (NHibernateSessionManager.Instance.HasOpenTransaction())
-                {
-                    Logger.Error("Exceeded max block time for sleeping.");
-                }
-
                 NHibernateSessionManager.Instance.BeginTransaction();
 
                 Playlist playlist = PlaylistDao.Get(id);
@@ -166,20 +129,6 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                //  TODO: Terrible.
-                int sleepCount = 0;
-                while (NHibernateSessionManager.Instance.HasOpenTransaction() && sleepCount < 10)
-                {
-                    Logger.DebugFormat("Sleep Count {0}", sleepCount);
-                    Thread.Sleep(1000);
-                    sleepCount++;
-                }
-
-                if (NHibernateSessionManager.Instance.HasOpenTransaction())
-                {
-                    Logger.Error("Exceeded max block time for sleeping.");
-                }
-
                 NHibernateSessionManager.Instance.BeginTransaction();
                 Playlist playlist = PlaylistDao.Get(playlistId);
 
@@ -224,7 +173,7 @@ namespace Streamus.Domain.Managers
                     if (knownPlaylistItem == null)
                     {
                         playlistItem.Video.ValidateAndThrow();
-                        //  TODO: Is this hitting the database? Surely it's not.
+
                         Video videoInSession = VideoDao.Get(playlistItem.Video.Id);
 
                         if (videoInSession == null)
@@ -236,8 +185,6 @@ namespace Streamus.Domain.Managers
                     }
                     else
                     {
-                        //  TODO: I don't think I should need both of these, double check at some point.
-                        //PlaylistItemDao.Update(playlistItem);
                         PlaylistItemDao.Merge(playlistItem);
                     }
                 }
