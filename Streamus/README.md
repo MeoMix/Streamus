@@ -36,7 +36,7 @@ Supported Functionality
 * Delete videos from playlist
 * Create multiple playlists each storing their own set of videos
 * Rename playlists 
-
+ 
 Screenshots & Usage Demo
 ========
 
