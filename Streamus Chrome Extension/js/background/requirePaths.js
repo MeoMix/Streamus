@@ -26,6 +26,7 @@ var require = {
         'oauth2': 'thirdParty/oauth2/oauth2',
         'backbone': 'thirdParty/backbone',
         'backgroundManager': 'background/backgroundManager',
-        'localStorageManager': 'background/localStorageManager'
+        'localStorageManager': 'background/localStorageManager',
+        'iconManager': 'background/iconManager'
     }
 };

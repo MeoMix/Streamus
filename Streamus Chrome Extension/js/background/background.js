@@ -23,6 +23,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
     player.on('change:state', function (model, state) {
         
         if (state === PlayerStates.PLAYING) {
+            player.set('buffering', false);
 
             //  Check if the foreground UI is open.
             var foreground = chrome.extension.getViews({ type: "popup" });

@@ -104,6 +104,7 @@
     <Content Include="js\background\background.js" />
     <Content Include="js\background\backgroundManager.js" />
     <Content Include="js\background\error.js" />
+    <Content Include="js\background\iconManager.js" />
     <Content Include="js\background\localStorageManager.js" />
     <Content Include="js\background\main.js" />
     <Content Include="js\background\player.js" />

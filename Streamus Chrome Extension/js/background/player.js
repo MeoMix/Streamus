@@ -1,6 +1,6 @@
 //  TODO: Exposed globally so that Chrome Extension's foreground can access through chrome.extension.getBackgroundPage()
 var YouTubePlayer = null;
-define(['youTubePlayerAPI', 'ytHelper', 'localStorageManager'], function (youTubePlayerAPI, ytHelper, localStorageManager) {
+define(['youTubePlayerAPI', 'ytHelper', 'localStorageManager', 'iconManager'], function (youTubePlayerAPI, ytHelper, localStorageManager, iconManager) {
     'use strict';
 
     var youTubePlayerModel = Backbone.Model.extend({
@@ -61,11 +61,18 @@ define(['youTubePlayerAPI', 'ytHelper', 'localStorageManager'], function (youTub
 
                             });
 
-                            self.on('change:state', function (model, state) {
-
-                                if (state === PlayerStates.PLAYING) {
-                                    self.set('buffering', false);
+                            self.on('change:volume', function (model, volume) {
+                                
+                                if (volume === 100) {
+                                    chrome.browserAction.setIcon({
+                                        path: "../../images/streamus_icon128.png"
+                                    });
+                                } else {
+                                    chrome.browserAction.setIcon({
+                                        path: "../../images/streamus_icon19.png"
+                                    });
                                 }
+
                             });
                             
                             //  Keep the player out of UNSTARTED state because seekTo will start playing if in UNSTARTED and not PAUSED
