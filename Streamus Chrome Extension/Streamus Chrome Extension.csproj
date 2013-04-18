@@ -97,6 +97,10 @@
     <Content Include="foreground.htm" />
     <Content Include="images\settingsButton.svg" />
     <Content Include="images\spinner.svg" />
+    <Content Include="images\streamus_icon128.png" />
+    <Content Include="images\streamus_icon19.png" />
+    <Content Include="images\streamus_icon38.png" />
+    <Content Include="images\streamus_icon48.png" />
     <Content Include="js\background\background.js" />
     <Content Include="js\background\backgroundManager.js" />
     <Content Include="js\background\error.js" />
@@ -173,7 +177,6 @@
     <Content Include="js\thirdParty\underscore.js" />
     <Content Include="js\youTubePlayerAPI.js" />
     <Content Include="js\ytHelper.js" />
-    <Content Include="streamus_icon.png" />
     <Content Include="tests.htm" />
     <None Include="js\thirdParty\chrome-api-vsdoc.js" />
     <Content Include="js\thirdParty\MIT.LICENSE" />
