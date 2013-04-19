@@ -59,24 +59,21 @@ define(['youTubePlayerAPI', 'ytHelper', 'localStorageManager', 'iconManager'], f
                                     youTubePlayer.unMute();
                                 }
 
+                                iconManager.setIcon(this.get('state'), isMuted, this.get('volume'));
+                            });
+
+                            self.on('change:state', function(model, state) {
+                                iconManager.setIcon(state, this.get('muted'), this.get('volume'));
                             });
 
                             self.on('change:volume', function (model, volume) {
-                                
-                                if (volume === 100) {
-                                    chrome.browserAction.setIcon({
-                                        path: "../../images/streamus_icon128.png"
-                                    });
-                                } else {
-                                    chrome.browserAction.setIcon({
-                                        path: "../../images/streamus_icon19.png"
-                                    });
-                                }
-
+                                iconManager.setIcon(this.get('state'), this.get('muted'), volume);
                             });
                             
                             //  Keep the player out of UNSTARTED state because seekTo will start playing if in UNSTARTED and not PAUSED
                             self.pause();
+
+                            iconManager.setIcon(self.get('state'), self.get('muted'), self.get('volume'));
                             
                             //  Announce that the YouTube Player is ready to go.
                             self.set('ready', true);

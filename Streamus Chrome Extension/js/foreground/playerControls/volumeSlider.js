@@ -53,7 +53,7 @@ define(['player'], function (player) {
         var backgroundImage = '-webkit-gradient(linear,left top, right top, from(#ccc), color-stop(' + newVolume / 100 + ',#ccc), color-stop(' + newVolume / 100 + ',rgba(0,0,0,0)), to(rgba(0,0,0,0)))';
         volumeSlider.css('background-image', backgroundImage);
 
-        var activeBars = parseInt(newVolume / 25);
+        var activeBars = Math.ceil((newVolume / 25));
         muteButton.find('.MuteButtonBar:lt(' + activeBars + ')').css('fill', '#fff');
         muteButton.find('.MuteButtonBar:gt(' + activeBars + ')').css('fill', '#555');
 

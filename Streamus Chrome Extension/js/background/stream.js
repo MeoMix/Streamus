@@ -1,5 +1,5 @@
 ﻿//  A stream is a collection of playlists
-define(['playlists', 'playlist', 'videos', 'player', 'programState', 'ytHelper', 'localStorageManager'], function (Playlists, Playlist, Videos, player, programState, ytHelper, localStorageManager) {
+define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'ytHelper', 'localStorageManager'], function (Playlists, Playlist, Videos, Video, player, programState, ytHelper, localStorageManager) {
     'use strict';
     
     var streamModel = Backbone.Model.extend({
@@ -150,6 +150,18 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState', 'ytHelper',
                             'start-index': startIndex,
                         },
                         success: function (result) {
+                            
+                            //  TODO: Rewrite the Video constructor such that it can create a Video object from videoInformation
+                            function getVideoFromInformation(videoInformation) {
+                                var id = videoInformation.media$group.yt$videoid.$t;
+                                var durationInSeconds = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
+
+                                return new Video({
+                                    id: id,
+                                    title: videoInformation.title.$t,
+                                    duration: durationInSeconds
+                                });
+                            }
 
                             _.each(result.feed.entry, function (entry) {
                                 //  If the title is blank the video has been deleted from the playlist, no data to fetch.
@@ -162,15 +174,8 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState', 'ytHelper',
                                         if (videoInformation === null) {
 
                                             ytHelper.findPlayableByTitle(entry.title.$t, function (playableVideoInformation) {
-                                                var id = playableVideoInformation.media$group.yt$videoid.$t;
-                                                var durationInSeconds = parseInt(playableVideoInformation.media$group.yt$duration.seconds, 10);
-
-                                                videos.push({
-                                                    id: id,
-                                                    playlistId: playlistId,
-                                                    title: playableVideoInformation.title.$t,
-                                                    duration: durationInSeconds
-                                                });
+                                                var playableVideo = getVideoFromInformation(playableVideoInformation);
+                                                videos.push(playableVideo);
                                                     
                                                 totalVideosProcessed++;
 
@@ -181,7 +186,9 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState', 'ytHelper',
 
                                         } else {
 
-                                            videos.add(video);
+                                            var video = getVideoFromInformation(videoInformation);
+                                            videos.push(video);
+
                                             totalVideosProcessed++;
 
                                             if (totalVideosProcessed == result.feed.entry.length) {

@@ -3,12 +3,24 @@ define(function () {
     'use strict';
 
     var iconManagerModel = Backbone.Model.extend({
-        setIconBasedOnVolume: function(volume){
-            switch(volume) {
-            
+        setIcon: function (playerState, isMuted, volume) {
+            var iconColor;
 
+            if (isMuted) {
+                iconColor = 'Red';
+            }
+            else if (playerState === PlayerStates.PLAYING) {
+                iconColor = 'Green';
+            } else {
+                iconColor = 'Yellow';
+            }
 
-            }    
+            var barCount = Math.ceil((volume / 25));
+
+            chrome.browserAction.setIcon({
+                path: '../../images/' + iconColor + ' ' + barCount + '.png'
+            });
+
         }
     });
 

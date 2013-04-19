@@ -207,7 +207,7 @@ define(['ytHelper',
                         playlistItem.set('previousItemId', lastItem.get('id'));
 
                         firstItem.set('previousItemId', playlistItemId);
-                        playlistItemId.set('nextItemId', firstItem.get('id'));
+                        playlistItem.set('nextItemId', firstItem.get('id'));
 
                     }
 

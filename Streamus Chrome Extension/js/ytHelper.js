@@ -153,8 +153,9 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                         callback(result.entry);
                     }
                 },
-                error: function (error) {
-                    window && console.error(error);
+                //  This error is silently consumed and handled -- it is an OK scenario if we don't get a video... sometimes
+                //  they are banned on copyright grounds. No need to log this error.
+                error: function () {
                     callback(null);
                 }
             });
