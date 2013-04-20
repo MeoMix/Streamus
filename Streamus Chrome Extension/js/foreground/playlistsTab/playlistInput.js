@@ -1,19 +1,22 @@
 ﻿define(['contentHeader', 'ytHelper', 'backgroundManager'], function (ContentHeader, ytHelper, backgroundManager) {
     'use strict';
     
-    var contentHeader = new ContentHeader('#PlaylistDisplay', 'Add Playlist', 'Enter a playlist name');
-    contentHeader.contract();
+    var contentHeader = new ContentHeader({
+        selector: '#PlaylistDisplay',
+        addText: 'Add Playlist',
+        addInputPlaceholder: 'Enter a new playlist name or YouTube playlist URL',
+        expanded: false
+    });
 
-    var addInput = $('#PlaylistDisplay .addInput').attr('placeholder', 'Enter a playlist name or YouTube playlist URL');
+    var addInput = $(contentHeader.addInputElement);
 
-    //Whenever the user submits a name for a new playlist create a new playlist with that name.
-    addInput.keyup(function (e) {
-        var code = e.which;
-        //ENTER: 13
-        if (code === 13) {
+    //  Whenever the user submits a name for a new playlist create a new playlist with that name.
+    addInput.on('input', function (event) {
+
+        if (event.which === $.ui.keyCode.ENTER) {
             processInput();
         }
-    }).bind('paste drop', function () {
+    }).on('paste drop', function () {
         processInput();
     });
 

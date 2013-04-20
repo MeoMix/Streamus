@@ -130,6 +130,8 @@
   padding-right: 3px;
   outline: none;
   -webkit-transition: border-color .2s;
+  background-color: white;
+  color: rgb(0, 0, 0);
 }
 
 .addButton {
@@ -138,7 +140,7 @@
   bottom:6px; 
   padding: 0 20px 0 40px; 
   width: 120px; 
-  cursor: pointer; 
+  cursor: auto; 
   -webkit-transition: all 0.5s; 
   border: 1px solid #ccc; 
   border-radius:5px; 
@@ -159,6 +161,7 @@
   left: 40px; 
   font: bold 12px/27px sans-serif;
   color: #555;
+  cursor: pointer;
 }
 
 .addButton input {
@@ -204,9 +207,16 @@
 }
 
 .ui-autocomplete {
-  max-height: 260px;
-  max-width: 433px;
+  max-height: 346px;
+  max-width: 523px;
+  width: 523px !important;
   overflow-y: auto;
+  left: 0 !important;
+  top: 110px !important;
+}
+
+.ui-autocomplete li:nth-child(even) {
+  background-color: #eaeaea
 }
 
 .content {
@@ -552,17 +562,6 @@
 .list li:nth-child(even) {
   background-color: #eaeaea
 }
-
-/*.list li:active {
-  background-color: #09f;
-  color:#fff;
-  text-shadow: 0 1px #06d;
-  background-image:-webkit-gradient(linear,left top, left bottom, from(rgba(255,255,255,.1)), to(rgba(0,0,0,.1)));
-}
-
-.list li:active svg *{
-  fill:#fff
-}*/
 
 .list a {
   position:absolute; 

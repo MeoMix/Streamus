@@ -4,12 +4,14 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
     function (ContentHeader, ytHelper, dialogs, helpers, backgroundManager) {
     'use strict';
 
-    var contentHeader = new ContentHeader('#CurrentPlaylistItemDisplay', 'Add Videos', 'Search for artists or videos');
-    contentHeader.expand();
+    var contentHeader = new ContentHeader({
+        selector: '#CurrentPlaylistItemDisplay',
+        addText: 'Add Videos',
+        addInputPlaceholder: 'Search or Enter YouTube video URL',
+        expanded: true
+    });
 
-    var addInput = $('#CurrentPlaylistItemDisplay .addInput').attr('placeholder', 'Search or Enter YouTube URL');
-    var userIsTyping = false;
-    var typingTimeout = null;
+    var addInput = $(contentHeader.addInputElement);
         
     //  Provides the drop-down suggestions and video suggestions.
     addInput.autocomplete({
@@ -20,7 +22,7 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
             at: "left bottom"
         },
         //  minLength: 0 allows empty search triggers for updating source display.
-        minLength: 0, 
+        minLength: 0,
         focus: function () {
             //  Don't change the input as the user changes selections.
             return false;
@@ -35,29 +37,15 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
 
     //  Validate URL input on enter key.
     //  Otherwise show suggestions. Use keyup event because input's val is updated at that point.
-    addInput.keyup(function (e) {
-        userIsTyping = true;
-        var code = e.which;
-        clearTimeout(typingTimeout);
-        var usersText = $(this).val();
-        typingTimeout = setTimeout(function () {
- 
-            userIsTyping = false;
-            //  User can navigate suggestions with up/down. 
-            if (code !== $.ui.keyCode.UP && code !== $.ui.keyCode.DOWN) {
-                if (usersText === '') {
-                    addInput.autocomplete("option", "source", []);
-                }
-                else {
-                    showVideoSuggestions(usersText);
-                }
-            }
-        }, 200);
 
-    }).keydown(function () {
-        userIsTyping = true;
-        clearTimeout(typingTimeout);
-    }).bind('paste drop', function () {
+    addInput.on('input', function (event) {
+
+        //  User can navigate suggestions with up/down, don't re-run search when they use corresponding keys
+        if (event.which !== $.ui.keyCode.UP && event.which !== $.ui.keyCode.DOWN) {
+            showVideoSuggestions(addInput.val());
+        }
+
+    }).on('paste drop', function () {
         parseUrlInput();
     });
         
@@ -87,27 +75,41 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
     };
         
     //  Searches youtube for video results based on the given text.
-    function showVideoSuggestions(text) {
-        ytHelper.search(text, function (videoInformationList) {
+    function showVideoSuggestions(searchText) {
+        var trimmedSearchText = $.trim(searchText);
 
-            if (!userIsTyping) {
-                var videoDisplayObjects = _.map(videoInformationList, function (videoInformation) {
+        //  Clear results if there is no text.
+        if (trimmedSearchText === '') {
+            addInput.autocomplete({ source: [] });
+        } else {
+            ytHelper.search(trimmedSearchText, function (videoInformationList) {
 
-                    //  I wanted the label to be duration | title to help delinate between typing suggestions and actual videos.
-                    var videoDuration = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
-                    var videoTitle = videoInformation.title.$t;
-                    var label = helpers.prettyPrintTime(videoDuration) + " | " + videoTitle;
+                //  Do not display results if searchText was modified while searching.
+                if (trimmedSearchText === $.trim(addInput.val())) {
+                    
+                    var videoSourceList = _.map(videoInformationList, function(videoInformation) {
 
-                    return {
-                        label: label,
-                        value: videoInformation
-                    };
-                });
+                        //  I wanted the label to be duration | title to help delinate between typing suggestions and actual videos.
+                        var videoDuration = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
+                        var videoTitle = videoInformation.title.$t;
+                        var label = helpers.prettyPrintTime(videoDuration) + " | " + videoTitle;
 
-                //  Show videos found instead of suggestions.
-                addInput.autocomplete("option", "source", videoDisplayObjects);
-                addInput.autocomplete("search", '');
-            }
-        });
+                        return {
+                            label: label,
+                            value: videoInformation
+                        };
+                    });
+
+                    //  Show videos found instead of suggestions.
+                    addInput.autocomplete({
+                        source: videoSourceList
+                    });
+
+                    addInput.autocomplete('search', '');
+
+                }
+            });
+        }
+
     };
 });

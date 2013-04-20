@@ -4,8 +4,8 @@ define(['backgroundManager', 'player'], function (backgroundManager, player) {
 	var playPauseButton = $('#PlayPauseButton');
 	var pauseIcon = $('#PauseIcon');
 	var playIcon = $('#PlayIcon');
-    var loadingSpinner = $('#LoadingSpinner');
-
+	var loadingSpinner = $('#LoadingSpinner');
+    
     //  Only allow changing once every 100ms to preent spamming.
 	playPauseButton.click(_.debounce(function () {
 	    

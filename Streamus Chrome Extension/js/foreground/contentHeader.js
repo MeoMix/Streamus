@@ -1,7 +1,8 @@
 define(['backgroundManager'], function (backgroundManager) {
     'use strict';
-    return function(selector, addText, addInputPlaceholder){
-        var contentHeader = $(selector);
+    return function (config) {
+        
+        var contentHeader = $(config.selector);
 
         var headerTitle = $('<span/>', {
             'class': 'headerTitle'
@@ -72,13 +73,13 @@ define(['backgroundManager'], function (backgroundManager) {
 
         $('<span/>', {
             'class': 'addText',
-            text: addText
+            text: config.addText
         }).appendTo(addButton);
 
         var addInput = $('<input/>', {
             'class': 'addInput',
             type: 'text',
-            placeholder: addInputPlaceholder
+            placeholder: config.addInputPlaceholder
         }).appendTo(addButton);
 
         var addCancelIcon = $('<div/>', {
@@ -92,21 +93,35 @@ define(['backgroundManager'], function (backgroundManager) {
             addCancelIcon.css('right', '0px').one('click', contract);
             addButton.width('443');
             addInput.css('opacity', 1).css('cursor', "auto").focus();
+            addButton.find('span').hide();
+            headerInput.attr('disabled', 'disabled');
         }
         
         function contract() {
+            addButton.find('span').show();
+            headerInput.removeAttr('disabled');
+            
             addButton.width('120px').one('click', expand);
 
             addCancelIcon.css('right', '-30px');
             addInput.css('opacity', 0).css('cursor', "pointer").val('').blur();
 
+            
+
             //  Prevent click event from bubbling up so button does not expand on click.
             return false;
+        }
+        
+        if (config.expanded) {
+            expand();
+        } else {
+            contract();
         }
 
         return {
             expand: expand,
             contract: contract,
+            addInputElement: addInput,
             
             //  Display a message for X milliseconds inside of the input. 
             flashMessage: function (message, durationInMilliseconds) {

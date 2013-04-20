@@ -16,6 +16,8 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
         var searchInterval = setInterval(function () {
             elapsedTime += timeInterval;
 
+            console.log("Elapsed time:", elapsedTime);
+
             if (elapsedTime < timeToSpendSearching) {
                 //  Be sure to filter out videos and suggestions which are restricted by the users geographic location.
                 $.ajax({
@@ -50,6 +52,8 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
             }
             else {
                 clearInterval(searchInterval);
+
+                console.log("Done. Search time and result count:", elapsedTime, videoInformationList.length);
 
                 callback(videoInformationList);
             }
