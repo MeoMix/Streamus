@@ -186,7 +186,7 @@ $(function () {
 
             } else {
                 var firstPlaylist = _.find(streams[0].playlists, function (playlist) {
-                    return playlist.id == stream.firstListId;
+                    return playlist.id == streams[0].firstListId;
                 });
                 
                 $('<option>', {

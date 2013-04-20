@@ -61,17 +61,4 @@ define(['player'], function (player) {
             muteButton.find('.MuteButtonBar').css('fill', '#555');
         }
     }
-
-	//player.on('change:state', setVolumeIfPlayerReady);
-	//setVolumeIfPlayerReady();
-    
-	//function setVolumeIfPlayerReady(model, playerState) {
-
-	//    if (playerState === PlayerStates.VIDCUED || playerState === PlayerStates.PLAYING) {
-	//        //  Volume only becomes available once a video has become cued or when popup reopens.
-	//        var playerVolume = player.get('volume');
-
-	//        volumeSlider.val(playerVolume).trigger('change');
-	//    }
-    //}
 })

@@ -160,23 +160,23 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
     //  means we can bypass a lot of the embed restrictions.
     chrome.webRequest.onBeforeSendHeaders.addListener(function (info) {
         
-        var cookieRequestHeader = _.find(info.requestHeaders, function(requestHeader) {
-            return requestHeader.name === 'Cookie';
-        });
+        //var cookieRequestHeader = _.find(info.requestHeaders, function(requestHeader) {
+        //    return requestHeader.name === 'Cookie';
+        //});
         
-        if (cookieRequestHeader) {
+        //if (cookieRequestHeader) {
 
-            var flashCookieValue = 'f3=40000';
-            var html5CookieValue = 'f2=40000000';
+        //    var flashCookieValue = 'f3=40000';
+        //    var html5CookieValue = 'f2=40000000';
             
-            //  Swap out the flash cookie variable with the HTML5 counterpart.
-            if (cookieRequestHeader.value.indexOf(flashCookieValue) !== -1) {
-                cookieRequestHeader.value = cookieRequestHeader.value.replace(flashCookieValue, html5CookieValue);
-            } else {
-                cookieRequestHeader.value += '&' + html5CookieValue;
-			}
+        //    //  Swap out the flash cookie variable with the HTML5 counterpart.
+        //    if (cookieRequestHeader.value.indexOf(flashCookieValue) !== -1) {
+        //        cookieRequestHeader.value = cookieRequestHeader.value.replace(flashCookieValue, html5CookieValue);
+        //    } else {
+        //        cookieRequestHeader.value += '&' + html5CookieValue;
+		//	}
 
-        }
+        //}
 
         //  Bypass YouTube's embedded player content restrictions by looking like YouTube
         //  Any referer will do, maybe change to Streamus.com in the future? Or maybe leave as YouTube

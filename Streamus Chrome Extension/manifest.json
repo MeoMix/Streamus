@@ -1,6 +1,6 @@
 ﻿{
   "name": "Streamus™",
-  "version": "0.54",
+  "version": "0.55",
   "manifest_version": 2,
   "description": "A YouTube music player built into your browser. Stream videos and songs; share playlists with friends!",
   "background":{
