@@ -2,6 +2,9 @@
 define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
     'use strict';
 
+    var videoInformationFields = 'author,title,media:group(yt:videoid,yt:duration)';
+    var videosInformationFields = 'entry(' + videoInformationFields + ')';
+
     //  Performs a search of YouTube with the provided text and returns a list of playable videos (<= max-results)
     function search(text, callback) {
 
@@ -34,7 +37,7 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                         alt: 'json',
                         //restriction: geoplugin.countryCode,
                         q: text,
-                        fields: 'entry(title,media:group(yt:videoid,yt:duration))',
+                        fields: videosInformationFields,
                         strict: true
                     },
                     success: function(result) {
@@ -74,7 +77,7 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                     v: 2,
                     alt: 'json',
                     //  TODO: Retrieve restricted youtube data and filter on that.
-                    fields: 'entry(title,media:group(yt:videoid,yt:duration))',
+                    fields: videosInformationFields,
                     //  Don't really need that many suggested videos, take 5.
                     'max-results': 5,
                     strict: true
@@ -149,10 +152,12 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                 data: {
                     v: 2,
                     alt: 'json',
-                    fields: 'title,media:group(yt:videoid,yt:duration)',
+                    fields: 'author,title,media:group(yt:videoid,yt:duration)',
                     strict: true
                 },
                 success: function (result) {
+                    console.log('Result:', result);
+
                     if (callback) {
                         callback(result.entry);
                     }

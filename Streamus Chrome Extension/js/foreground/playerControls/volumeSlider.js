@@ -55,10 +55,10 @@ define(['player'], function (player) {
 
         var activeBars = Math.ceil((newVolume / 25));
         muteButton.find('.MuteButtonBar:lt(' + activeBars + ')').css('fill', '#fff');
-        muteButton.find('.MuteButtonBar:gt(' + activeBars + ')').css('fill', '#555');
+        muteButton.find('.MuteButtonBar:gt(' + activeBars + ')').css('fill', '#666');
 
         if (activeBars === 0) {
-            muteButton.find('.MuteButtonBar').css('fill', '#555');
+            muteButton.find('.MuteButtonBar').css('fill', '#666');
         }
     }
 })

@@ -160,7 +160,7 @@
   top:0; 
   left: 40px; 
   font: bold 12px/27px sans-serif;
-  color: #555;
+  color: #666;
   cursor: pointer;
 }
 
@@ -375,7 +375,7 @@
   height:30px; 
   border-left: 1px solid #000; 
   border-top:1px solid #000; 
-  background-color: #555;
+  background-color: #666;
   background-image: -webkit-gradient(linear,left top, left bottom, from(rgba(0,0,0,.5)), to(rgba(0,0,0,0)));
 }
 
@@ -408,19 +408,14 @@
   margin: -8px 0 0 -8px;
 }
 
-#SettingsButton:active, 
-#MuteButton:active {
-  background-image: -webkit-gradient(linear,left top, left bottom,color-stop(0.5,rgba(255,255,255,0)), to(rgba(255,255,255,0.25)));
-}
-
 #MuteButton {
   right:0;
   border-right:none;
 }
 
 #SettingsButtonSvgWrapper {
-    width: 80%;
-    margin-left: 9%;
+    width: 73%;
+    margin-left: 17%;
 }
 
 #SettingsSliderWrapper {
@@ -479,7 +474,7 @@
    
   background-color:#222; 
   border-bottom:1px solid #000; 
-  border-top: 1px solid #555;
+  border-top: 1px solid #666;
   border-radius: 3px;
   position:absolute;
   top:45px;
@@ -565,18 +560,25 @@
 
 .list a {
   position:absolute; 
-  top:0;
   left:60px;
   right:0; 
   overflow: hidden; 
-  font: 12px/18px sans-serif;
   height: 38px;
   margin-top: 5px;
 }
 
+.list a:nth-of-type(1) {
+  font: 12px/18px sans-serif;
+  top:0;
+}
+
+.list a:nth-of-type(2) {
+  top: 20px;
+  color: #666;
+}
+
 #PlaylistsContent .list a {
     left: 10px !important;
-    top: 7px !important;
 }
 
 .loaded a {
@@ -616,7 +618,7 @@
 }
 
 .pressed svg *{
-  fill:#060 !important;
+  fill: #fff !important;
 }
 
 .sidebar-button {
@@ -638,17 +640,15 @@
 }
 
 #LoadingSpinner {
-    background-image: url(../images/spinner.svg);
     width: 48px;
     height: 48px;
-    background-size: contain;
-    margin-top: 11px;
-    margin-left: 11px;
-    opacity: .7;
-    -webkit-animation:rotate 1.5s infinite steps(12);
-    display: none;
+    margin-top: 9px;
+    margin-left: 10px;
 }
 
+#LoadingSpinner * {
+    overflow: visible !important;
+}
 
 .playlistItemVideoImage {
     margin-top: 3px;

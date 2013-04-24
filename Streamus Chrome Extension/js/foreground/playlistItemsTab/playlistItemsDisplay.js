@@ -1,5 +1,5 @@
 ﻿//  Represents the videos in a given playlist
-define(['playlistItemsContextMenu', 'backgroundManager', 'player'], function (contextMenu, backgroundManager, player) {
+define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], function (contextMenu, backgroundManager, player, helpers) {
     'use strict';
     var playlistItemList = $('#PlaylistItemList ul');
 
@@ -106,13 +106,22 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player'], function (co
                 }
             }).appendTo(playlistItemList);
 
+            var currentVideo = currentItem.get('video');
+
             $('<img>', {
                 'class': 'playlistItemVideoImage',
-                src: 'http://img.youtube.com/vi/' + currentItem.get('video').get('id') + '/default.jpg',
+                src: 'http://img.youtube.com/vi/' + currentVideo.get('id') + '/default.jpg',
             }).appendTo(listItem);
 
             $('<a/>', {
                 text: currentItem.get('title')
+            }).appendTo(listItem);
+
+            console.log("currentItem", currentItem);
+            
+
+            $('<a/>', {
+                text: helpers.prettyPrintTime(currentVideo.get('duration')) + ' by ' + currentVideo.get('author')
             }).appendTo(listItem);
 
             currentItem = activePlaylist.get('items').get(currentItem.get('nextItemId'));

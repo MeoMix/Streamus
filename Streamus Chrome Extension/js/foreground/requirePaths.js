@@ -41,6 +41,7 @@ var require = {
         'player': 'foreground/player',
         'videoDisplay': 'foreground/videoTab/videoDisplay',
         'scrollIntoView': 'thirdParty/jquery.scrollIntoView',
-        'intro': 'thirdParty/intro'
+        'intro': 'thirdParty/intro',
+        'spin': 'thirdParty/jquery.spin'
     }
 };

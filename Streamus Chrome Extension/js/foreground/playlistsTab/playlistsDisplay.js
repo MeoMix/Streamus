@@ -1,5 +1,5 @@
 //  This is the list of playlists on the playlists tab.
-define(['playlistsContextMenu', 'ytHelper', 'backgroundManager'], function (contextMenu, ytHelper, backgroundManager) {
+define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers'], function (contextMenu, ytHelper, backgroundManager, helpers) {
     //  TODO: Make this sortable and should inherit from a common List object. 
     var playlistList = $('#PlaylistList ul');
 
@@ -41,6 +41,23 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager'], function (cont
                 id: currentPlaylist.get('id'),
                 href: '#' + currentPlaylist.get('id'),
                 text: currentPlaylist.get('title')
+            }).appendTo(listItem);
+
+            var currentItems = currentPlaylist.get('items');
+            var currentVideos = currentItems.map(function(currentItem) {
+                return currentItem.get('video');
+            });
+
+            var currentVideosDurations = currentVideos.map(function (currentVideo) {
+                return currentVideo.get('duration');
+            });
+
+            var sumVideosDurations = _.reduce(currentVideosDurations, function (memo, duration) {
+                 return memo + duration;
+            }, 0);
+            
+            $('<a/>', {
+                text: 'Videos: ' + currentVideos.length + ' | Duration: ' + helpers.prettyPrintTime(sumVideosDurations)
             }).appendTo(listItem);
             
             currentPlaylist = activeStream.get('playlists').get(currentPlaylist.get('nextListId'));

@@ -155,11 +155,13 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'y
                             function getVideoFromInformation(videoInformation) {
                                 var id = videoInformation.media$group.yt$videoid.$t;
                                 var durationInSeconds = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
+                                var author = videoInformation.author[0].name.$t
 
                                 return new Video({
                                     id: id,
                                     title: videoInformation.title.$t,
-                                    duration: durationInSeconds
+                                    duration: durationInSeconds,
+                                    author: author
                                 });
                             }
 

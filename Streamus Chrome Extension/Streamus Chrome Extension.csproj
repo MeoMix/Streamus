@@ -190,6 +190,7 @@
     <Content Include="js\thirdParty\oauth2\oauth2_finish.js" />
     <Content Include="js\thirdParty\oauth2\oauth2_inject.js" />
     <Content Include="js\thirdParty\require.js" />
+    <Content Include="js\thirdParty\jquery.spin.js" />
     <Content Include="js\thirdParty\underscore.js" />
     <Content Include="js\youTubePlayerAPI.js" />
     <Content Include="js\ytHelper.js" />

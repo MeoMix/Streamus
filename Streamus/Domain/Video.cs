@@ -17,17 +17,22 @@ namespace Streamus.Domain
         [DataMember(Name = "duration")]
         public int Duration { get; set; }
 
+        [DataMember(Name = "author")]
+        public string Author { get; set; }
+
         public Video()
         {
             Id = string.Empty;
             Title = string.Empty;
+            Author = string.Empty;
         }
 
-        public Video(string id, string title, int duration)
+        public Video(string id, string title, int duration, string author)
         {
             Id = id;
             Title = title;
             Duration = duration;
+            Author = author;
         }
 
         public void ValidateAndThrow()

@@ -7,6 +7,7 @@ define(['programState'], function(programState){
             //  Provided by YouTube's API.
             id: '',
             title: '',
+            author: '',
             duration: -1
         },
         urlRoot: programState.getBaseUrl() + 'Video/'

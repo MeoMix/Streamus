@@ -1,5 +1,5 @@
 ﻿{
-  "name": "Streamus™",
+  "name": "Streamus™ (Beta!)",
   "version": "0.55",
   "manifest_version": 2,
   "description": "A YouTube music player built into your browser. Stream videos and songs; share playlists with friends!",
@@ -10,7 +10,7 @@
     "default_icon": {
        "19": "images/Yellow 4.png"
     },
-    "default_title": "Streamus: Drop the 'ic' from streamed music.",
+    "default_title": "Streamus™ (Beta!)",
     "default_popup": "foreground.htm"
   },
   "permissions": [

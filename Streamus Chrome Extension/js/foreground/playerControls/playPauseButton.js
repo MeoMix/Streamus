@@ -1,11 +1,27 @@
 //  The play/pause icon.
-define(['backgroundManager', 'player'], function (backgroundManager, player) {
+define(['backgroundManager', 'player', 'spin'], function (backgroundManager, player, Spin) {
 	'use strict';
 	var playPauseButton = $('#PlayPauseButton');
 	var pauseIcon = $('#PauseIcon');
 	var playIcon = $('#PlayIcon');
-	var loadingSpinner = $('#LoadingSpinner');
-    
+
+	var spinner = new Spin({
+	    lines: 13, // The number of lines to draw
+	    length: 6, // The length of each line
+	    width: 2, // The line thickness
+	    radius: 10, // The radius of the inner circle
+	    corners: 1, // Corner roundness (0..1)
+	    rotate: 0, // The rotation offset
+	    direction: 1, // 1: clockwise, -1: counterclockwise
+	    color: '#000', // #rgb or #rrggbb
+	    speed: 2, // Rounds per second
+	    trail: 25, // Afterglow percentage
+	    shadow: true, // Whether to render a shadow
+	    hwaccel: true, // Whether to use hardware acceleration
+	    className: 'spinner', // The CSS class to assign to the spinner
+	    zIndex: 2e9 // The z-index (defaults to 2000000000)
+	});
+
     //  Only allow changing once every 100ms to preent spamming.
 	playPauseButton.click(_.debounce(function () {
 	    
@@ -28,9 +44,9 @@ define(['backgroundManager', 'player'], function (backgroundManager, player) {
 	    if (isBuffering) {
 	        playIcon.hide();
 	        pauseIcon.hide();
-	        loadingSpinner.show();
+	        spinner.spin($('#LoadingSpinner')[0]);
 	    } else {
-	        loadingSpinner.hide();
+	        spinner.stop();
 	    }
     });
    

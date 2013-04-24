@@ -234,11 +234,14 @@ define(['ytHelper',
                 //  Strip out the id. An example of $t's contents: tag:youtube.com,2008:video:UwHQp8WWMlg
                 var id = videoInformation.media$group.yt$videoid.$t;
                 var durationInSeconds = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
+                var author = videoInformation.author[0].name.$t;
 
                 var video = new Video({
+                    type: 'youTubeApi',
                     id: id,
                     title: videoInformation.title.$t,
-                    duration: durationInSeconds
+                    duration: durationInSeconds,
+                    author: author
                 });
                 
                 return this.addItem(video);

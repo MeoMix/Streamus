@@ -39,7 +39,7 @@ namespace Streamus.Tests
 
             User = new UserManager(new UserDao(), StreamDao).CreateUser();
 
-            Video = new Video("s91jgcmQoB0", "Tristam - Chairs", 219);
+            Video = new Video("s91jgcmQoB0", "Tristam - Chairs", 219, "MeoMix");
             new VideoManager(VideoDao).Save(Video);
         }
 
