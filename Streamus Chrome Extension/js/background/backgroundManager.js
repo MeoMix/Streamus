@@ -147,7 +147,9 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
         var self = this;
         playlist.get('items').on('add', function (playlistItem) {
             
-            self.get('allPlaylistItems').add(playlistItem);
+            self.get('allPlaylistItems').add(playlistItem, {
+                merge: true
+            });
 
             if (self.get('activePlaylistItem') === null) {
                 self.set('activePlaylistItem', playlistItem);

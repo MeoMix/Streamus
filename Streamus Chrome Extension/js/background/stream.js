@@ -9,7 +9,8 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'y
                 userId: null,
                 title: '',
                 playlists: new Playlists(),
-                firstListId: null
+                firstListId: null,
+                youTubePlaylistId: null
             };
         },
         urlRoot: programState.getBaseUrl() + 'Video/',
@@ -87,11 +88,18 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'y
         addVideoByIdToPlaylist: function (id, playlistId) {
             this.get('playlists').get(playlistId).addVideoByIdToPlaylist(id);
         },
+        
+        addChannel: function (playlistTitle, youTubeUser, callback) {
+            
 
-        addPlaylist: function (playlistTitle, optionalPlaylistId, callback) {
+
+        },
+
+        addPlaylist: function (playlistTitle, youTubePlaylistId, callback) {
             var playlist = new Playlist({
                 title: playlistTitle,
-                streamId: this.get('id')
+                streamId: this.get('id'),
+                youTubePlaylistId: youTubePlaylistId
             });
 
             var currentPlaylists = this.get('playlists');
@@ -129,19 +137,16 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'y
             });
                 
             //  TODO: Refactor/simplify. This loads a bulk collection of videos for a YouTube playlist.
-            if (optionalPlaylistId) {
+            if (youTubePlaylistId) {
                     
                 var startIndex = 1;
                 var maxResultsPerSearch = 50;
-                var totalVideosProcessed = 0;
-
-                var videos = new Videos();
 
                 var getVideosInterval = setInterval(function () {
                     $.ajax({
 
                         type: 'GET',
-                        url: 'https://gdata.youtube.com/feeds/api/playlists/' + optionalPlaylistId,
+                        url: 'https://gdata.youtube.com/feeds/api/playlists/' + youTubePlaylistId,
                         dataType: 'json',
                         data: {
                             v: 2,
@@ -166,53 +171,36 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'y
                             }
 
                             _.each(result.feed.entry, function (entry) {
+                                
                                 //  If the title is blank the video has been deleted from the playlist, no data to fetch.
                                 if (entry.title.$t !== "") {
+                                    
                                     var videoId = entry.media$group.yt$videoid.$t;
-
                                     ytHelper.getVideoInformationFromId(videoId, function (videoInformation) {
+                                        
                                         //  videoInformation will be null if it has been banned on copyright grounds
-
                                         if (videoInformation === null) {
 
                                             ytHelper.findPlayableByTitle(entry.title.$t, function (playableVideoInformation) {
                                                 var playableVideo = getVideoFromInformation(playableVideoInformation);
-                                                videos.push(playableVideo);
-                                                    
-                                                totalVideosProcessed++;
-
-                                                if (totalVideosProcessed == result.feed.entry.length) {
-                                                    playlist.addItems(videos);
-                                                }
+                                                playlist.addItem(playableVideo);
                                             });
 
                                         } else {
-
                                             var video = getVideoFromInformation(videoInformation);
-                                            videos.push(video);
-
-                                            totalVideosProcessed++;
-
-                                            if (totalVideosProcessed == result.feed.entry.length) {
-                                                playlist.addItems(videos);
-                                            }
+                                            playlist.addItem(video);
                                         }
 
                                     });
                                 } else {
-
-                                    totalVideosProcessed++;
-
-                                    if (totalVideosProcessed == result.feed.entry.length) {
-                                        playlist.addItems(videos);
-                                    }
+                                    playlist.addItem(video);
                                 }
                             });
 
-                            //If X videos are received and X+C videos were requested, stop because no more videos in playlist.
-                            //TODO: Maybe I just always want to return.
+                            //  If X videos are received and X+C videos were requested, stop because no more videos in playlist.
                             if (result.feed.entry.length < maxResultsPerSearch) {
                                 clearInterval(getVideosInterval);
+                                playlist.trigger('loaded');
                             }
 
                             startIndex += maxResultsPerSearch;

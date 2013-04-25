@@ -23,23 +23,34 @@
     function processInput() {
         setTimeout(function () {
             var userInput = addInput.val();
-            var youtubePlaylistId = ytHelper.parseUrlForPlaylistId(userInput);
+            
+            //  Only add the playlist if something was provided.
+            if (userInput.trim() !== '') {
+               
+                var youTubePlaylistId = ytHelper.parseUrlForPlaylistId(userInput);
 
-            if (youtubePlaylistId !== null) {
-                contentHeader.flashMessage('Thanks!', 2000);
+                if (youTubePlaylistId !== null) {
+                    contentHeader.flashMessage('Thanks!', 2000);
 
-                ytHelper.getPlaylistTitle(youtubePlaylistId, function (playlistTitle) {
-                    if (playlistTitle) {
-                        backgroundManager.get('activeStream').addPlaylist(playlistTitle, youtubePlaylistId);
+                    ytHelper.getPlaylistTitle(youTubePlaylistId, function (playlistTitle) {
+                        if (playlistTitle) {
+                            backgroundManager.get('activeStream').addPlaylist(playlistTitle, youTubePlaylistId);
+                        }
+                    });
+                }
+                else {
+
+                    var youTubeUser = ytHelper.parseUrlForYouTubeUser(userInput);
+                    
+                    if (youTubeUser !== null) {
+                        contentHeader.flashMessage('Thanks!', 2000);
+                        backgroundManager.get('activeStream').addChannel(youTubeUser + '\'s Channel', youTubeUser);
                     }
-                });
-            }
-            else {
-                //  Only add the playlist if a name was provided.
-                if (userInput.trim() !== '') {
+
                     backgroundManager.get('activeStream').addPlaylist(userInput);
                     contentHeader.flashMessage('Thanks!', 2000);
                 }
+                
             }
         });
     };

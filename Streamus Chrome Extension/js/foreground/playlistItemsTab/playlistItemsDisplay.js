@@ -55,7 +55,10 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
     }
     
     backgroundManager.on('change:activePlaylistItem change:activePlaylist', reload);
+
     backgroundManager.get('allPlaylistItems').on('add remove', reload);
+
+
     reload();
     scrollActiveItemIntoView(backgroundManager.get('activePlaylistItem'), false);
     
@@ -116,9 +119,6 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
             $('<a/>', {
                 text: currentItem.get('title')
             }).appendTo(listItem);
-
-            console.log("currentItem", currentItem);
-            
 
             $('<a/>', {
                 text: helpers.prettyPrintTime(currentVideo.get('duration')) + ' by ' + currentVideo.get('author')

@@ -20,12 +20,6 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
         }
     };
         
-    var notification = window.webkitNotifications.createHTMLNotification(
-        '../../desktopNotification.htm'
-    );
-    notification.show();
-
-
     player.on('change:state', function (model, state) {
         
         if (state === PlayerStates.PLAYING) {
@@ -39,6 +33,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
                 //  If the foreground UI is not open, show a notification to indicate active video.
                 var activeVideoId = backgroundManager.get('activePlaylistItem').get('video').get('id');
 
+                //  TODO: Create HTML notification in the future... doesn't have all the support we need currently.
                 var notification = window.webkitNotifications.createNotification(
                   'http://img.youtube.com/vi/' + activeVideoId + '/default.jpg',
                   'Now Playing',

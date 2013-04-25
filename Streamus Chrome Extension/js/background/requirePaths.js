@@ -27,6 +27,7 @@ var require = {
         'backbone': 'thirdParty/backbone',
         'backgroundManager': 'background/backgroundManager',
         'localStorageManager': 'background/localStorageManager',
-        'iconManager': 'background/iconManager'
+        'iconManager': 'background/iconManager',
+        'spin': 'thirdParty/jquery.spin'
     }
 };

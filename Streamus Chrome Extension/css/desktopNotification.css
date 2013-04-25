@@ -21,8 +21,37 @@ body {
   border-bottom-right-radius: 10px;*/
 }
 
+#bottom > * {
+    display: inline-block;
+}
+
 #logo {
     margin-top: 10px;
     margin-left: 10px;
     margin-bottom: 5px;
+}
+
+#PreviousButton {
+    background-color: black;
+    margin-left: 50px;
+}
+
+#PlayPauseButton {
+    background-color: green;   
+}
+
+#NextButton {
+    background-color: blue;
+}
+
+#MuteButton {
+    background-color: red;
+    margin-left: 20px;
+}
+
+.notificationButton {
+    width: 30px;
+    height: 30px;
+    margin-left: 5px;
+    margin-right: 5px;
 }

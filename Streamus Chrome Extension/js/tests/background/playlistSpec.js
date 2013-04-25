@@ -140,42 +140,6 @@
                     return savedPlaylist.get('items').length === initialItemCount + 2;
                 }, "The Playlist should've added 2 items", 10000);
             });
-            
-            // A more common scenario is the user wanting to add a Playlist or some other sort of collection of music.
-            // In this scenario, we would send one AJAX request, but the payload would have multiple videos inside of it.
-            it("adds 2 items as a collection", function () {
-                var initialItemCount = savedPlaylist.get('items').length;
-                var videos = new Videos();
-
-                runs(function () {
-                    ytHelper.getVideoFromId('s91jgcmQoB0', function (video) {
-                        videos.push(video);
-                    });
-
-                    ytHelper.getVideoFromId('n_3mUnxCusM', function (video) {
-                        videos.push(video);
-                    });
-                });
-
-                waitsFor(function () {
-                    return videos.length === 2;
-                });
-
-                var successfullyAddedItems = false;
-                runs(function () {
-                    savedPlaylist.addItems(videos, function () {
-                        successfullyAddedItems = true;
-                    });
-                });
-
-                waitsFor(function () {
-                    return successfullyAddedItems;
-                }, "The Playlist should've added 2 items", 10000);
-
-                runs(function() {
-                    expect(savedPlaylist.get('items').length).toEqual(initialItemCount + 2);
-                });
-            });
 
             //  Renaming sends a PATCH to the server.
             it("renames itself", function () {

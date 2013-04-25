@@ -178,56 +178,6 @@ define(['ytHelper',
                 return previousItem;
             },
 
-            addItems: function(videos, callback) {
-                var createdItems = new PlaylistItems();
-                var self = this;
-
-                videos.each(function (video) {
-
-                    var playlistItem = new PlaylistItem({
-                        playlistId: self.get('id'),
-                        video: video,
-                        //  PlaylistItem title is mutable, video title is immutable.
-                        title: video.get('title'),
-                        relatedVideoInformation: []
-                    });
-
-                    var playlistItems = self.get('items');
-                    var playlistItemId = playlistItem.get('id');
-                    if (playlistItems.length === 0) {
-                        
-                        self.set('firstItemId', playlistItemId);
-                        playlistItem.set('nextItemId', playlistItemId);
-                        playlistItem.set('previousItemId', playlistItemId);
-                    } else {
-                        var firstItem = playlistItems.get(self.get('firstItemId'));
-                        var lastItem = playlistItems.get(firstItem.get('previousItemId'));
-
-                        lastItem.set('nextItemId', playlistItemId);
-                        playlistItem.set('previousItemId', lastItem.get('id'));
-
-                        firstItem.set('previousItemId', playlistItemId);
-                        playlistItem.set('nextItemId', firstItem.get('id'));
-
-                    }
-
-                    createdItems.push(playlistItem);
-
-                    ytHelper.getRelatedVideoInformation(video.get('id'), function (relatedVideoInformation) {
-                        playlistItem.set('relatedVideoInformation', relatedVideoInformation);
-                    });
-
-                    self.get('items').push(playlistItem);
-                });
-                
-                createdItems.save({}, {
-                    success: callback,
-                    error: function(error) {
-                        window && console.error(error);
-                    }
-                });
-            },
-
             //  This is generally called from the foreground to not couple the Video object with the foreground.
             addItemByInformation: function (videoInformation) {
 

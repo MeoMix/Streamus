@@ -4,6 +4,33 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
 
     var videoInformationFields = 'author,title,media:group(yt:videoid,yt:duration)';
     var videosInformationFields = 'entry(' + videoInformationFields + ')';
+    
+    //function getChannelInformation() {
+    //    var user = 'majesticcasual';
+
+    //    $.ajax({
+    //        type: 'GET',
+    //        url: 'http://gdata.youtube.com/feeds/api/users/' + user + '/uploads',
+    //        dataType: 'json',
+    //        data: {
+    //            alt: 'json',
+    //            strict: true
+    //        },
+    //        success: function (result) {
+    //            console.log("RESULT:", result);
+
+    //            //if (callback) {
+    //            //    callback(result.feed.entry);
+    //            //}
+    //        },
+    //        error: function (error) {
+    //            window && console.error(error);
+    //        }
+    //    });
+    //}
+
+    //getChannelInformation();
+    
 
     //  Performs a search of YouTube with the provided text and returns a list of playable videos (<= max-results)
     function search(text, callback) {
@@ -92,6 +119,7 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                 }
             });
         },
+
         search: search,
         //  Takes a URL and returns parsed URL information such as schema and video id if found inside of the URL.
         parseVideoIdFromUrl: function (url) {
@@ -118,6 +146,23 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
             }
 
             return videoId;
+        },
+        
+        parseUrlForYouTubeUser: function (url) {
+            var urlTokens = url.split('/user/');
+            var youTubeUser = null;
+            
+            if (urlTokens.length > 1) {
+                youTubeUser = url.split('/user/')[1];
+                
+                var ampersandPosition = videoId.indexOf('&');
+                if (ampersandPosition !== -1) {
+                    youTubeUser = youTubeUser.substring(0, ampersandPosition);
+                }
+
+            }
+
+            return youTubeUser;
         },
         
         getPlaylistTitle: function (playlistId, callback) {
