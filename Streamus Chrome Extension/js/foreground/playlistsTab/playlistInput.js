@@ -26,11 +26,11 @@
             
             //  Only add the playlist if something was provided.
             if (userInput.trim() !== '') {
-               
+                contentHeader.flashMessage('Thanks!', 2000);
+
                 var youTubePlaylistId = ytHelper.parseUrlForPlaylistId(userInput);
 
                 if (youTubePlaylistId !== null) {
-                    contentHeader.flashMessage('Thanks!', 2000);
 
                     ytHelper.getPlaylistTitle(youTubePlaylistId, function (playlistTitle) {
                         if (playlistTitle) {
@@ -43,12 +43,11 @@
                     var youTubeUser = ytHelper.parseUrlForYouTubeUser(userInput);
                     
                     if (youTubeUser !== null) {
-                        contentHeader.flashMessage('Thanks!', 2000);
-                        backgroundManager.get('activeStream').addChannel(youTubeUser + '\'s Channel', youTubeUser);
+                        backgroundManager.get('activeStream').addChannel(youTubeUser + '\'s Feed', youTubeUser);
+                    } else {
+                        backgroundManager.get('activeStream').addPlaylist(userInput);
                     }
 
-                    backgroundManager.get('activeStream').addPlaylist(userInput);
-                    contentHeader.flashMessage('Thanks!', 2000);
                 }
                 
             }
