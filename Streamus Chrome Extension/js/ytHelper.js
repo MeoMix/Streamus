@@ -166,7 +166,10 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
         },
         
         //  Returns NULL if the request throws a 403 error if videoId has been banned on copyright grounds.
-        getVideoInformationFromId: function (videoId, callback) {
+        getVideoInformation: function (videoId, videoTitle, callback) {
+
+            var self = this;
+
             $.ajax({
                 type: 'GET',
                 url: 'https://gdata.youtube.com/feeds/api/videos/' + videoId,
@@ -179,15 +182,102 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                     strict: true
                 },
                 success: function (result) {
-                    console.log('Result:', result);
 
-                    if (callback) {
-                        callback(result.entry);
+                    //  result will be null if it has been banned on copyright grounds
+                    if (result == null) {
+                        window && console.log("video banned on copyright grounds, finding alternative.");
+
+                        self.findPlayableByTitle(videoTitle, function(playableVideoInformation) {
+
+                            if (callback) {
+                                callback(playableVideoInformation);
+                            }
+
+                        });
+                    } else {
+
+                        if (callback) {
+                            callback(result.entry);
+                        }
+
                     }
+
                 },
                 //  This error is silently consumed and handled -- it is an OK scenario if we don't get a video... sometimes
                 //  they are banned on copyright grounds. No need to log this error.
                 error: function () {
+                    callback(null);
+                }
+            });
+        },
+        
+        getFeedResults: function (youTubeUser, getVideosCallCount, callback) {
+
+            var maxResultsPerSearch = 50;
+            var startIndex = 1 + (maxResultsPerSearch * getVideosCallCount);
+
+            $.ajax({
+                type: 'GET',
+                url: 'https://gdata.youtube.com/feeds/api/users/' + youTubeUser + '/uploads',
+                dataType: 'json',
+                data: {
+                    v: 2,
+                    alt: 'json',
+                    key: 'AI39si7voIBGFYe-bcndXXe8kex6-N_OSzM5iMuWCdPCSnZxLB_qIEnQ-HMijHrwN1Y9sFINBi_frhjzVVrYunHH8l77wfbLCA',
+                    'max-results': maxResultsPerSearch,
+                    'start-index': startIndex,
+                },
+                success: function (result) {
+                    
+                    var feedResults = result.feed.entry;
+
+                    //  If the title is blank the video has been deleted from the playlist, no data to fetch.
+                    var validfeedResults = _.filter(feedResults, function (feedResult) {
+                        return $.trim(feedResult.title.$t) !== '';
+                    });
+
+                    if (callback) {
+                        callback(validfeedResults);
+                    }
+                },
+                error: function(error) {
+                    window && console.error(error);
+                    callback(null);
+                }
+            });
+        },
+        
+        getPlaylistResults: function (youTubePlaylistId, getVideosCallCount, callback) {
+            
+            var maxResultsPerSearch = 50;
+            var startIndex = 1 + (maxResultsPerSearch * getVideosCallCount);
+
+            $.ajax({
+                type: 'GET',
+                url: 'https://gdata.youtube.com/feeds/api/playlists/' + youTubePlaylistId,
+                dataType: 'json',
+                data: {
+                    v: 2,
+                    alt: 'json',
+                    key: 'AI39si7voIBGFYe-bcndXXe8kex6-N_OSzM5iMuWCdPCSnZxLB_qIEnQ-HMijHrwN1Y9sFINBi_frhjzVVrYunHH8l77wfbLCA',
+                    'max-results': maxResultsPerSearch,
+                    'start-index': startIndex,
+                },
+                success: function (result) {
+
+                    var playlistResults = result.feed.entry;
+                    
+                    //  If the title is blank the video has been deleted from the playlist, no data to fetch.
+                    var validPlaylistResults = _.filter(playlistResults, function(playlistResult) {
+                        return $.trim(playlistResult.title.$t) !== '';
+                    });
+
+                    if (callback) {
+                        callback(validPlaylistResults);
+                    }
+                },
+                error: function (error) {
+                    window && console.error(error);
                     callback(null);
                 }
             });

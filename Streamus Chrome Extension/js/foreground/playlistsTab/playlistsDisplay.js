@@ -14,7 +14,7 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
         color: '#000', // #rgb or #rrggbb
         speed: 2, // Rounds per second
         trail: 25, // Afterglow percentage
-        shadow: true, // Whether to render a shadow
+        shadow: false, // Whether to render a shadow
         hwaccel: true, // Whether to use hardware acceleration
         className: 'spinner', // The CSS class to assign to the spinner
         zIndex: 2e9, // The z-index (defaults to 2000000000),
@@ -50,11 +50,11 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
     backgroundManager.get('allPlaylists').on('add', function (playlist) {
         reload();
 
-        if (playlist.get('youTubePlaylistId') !== null) {
+        if (playlist.has('dataSource')) {
             var playlistLink = $('#' + playlist.get('id'));
             spinner.spin(playlistLink[0]);
 
-            playlist.once('loaded', function() {
+            playlist.once('change:dataSourceLoaded', function () {
                 spinner.stop();
             });
         }

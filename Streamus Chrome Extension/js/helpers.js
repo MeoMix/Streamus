@@ -18,6 +18,7 @@ define(function () {
 
             return guid;
         },
+       
 
         //  Takes a time in seconds and converts it to a displayable format of H:mm:ss or mm:ss.
         prettyPrintTime: function(timeInSeconds) {
@@ -25,25 +26,24 @@ define(function () {
                 timeInSeconds = 0;
             }
 
-            var date = new Date(timeInSeconds * 1000);
+            var hours = Math.floor(timeInSeconds / 3600);
+            var remainingSeconds = timeInSeconds % 3600;
 
-            //  Need to remove 16 hours from hours to represent properly.
-            var hours = date.getHours() - 16;
-            var minutes = date.getMinutes();
-            var seconds = date.getSeconds();
+            var minutes = Math.floor(remainingSeconds / 60);
+            remainingSeconds = remainingSeconds % 60;
 
             //  These lines ensure two-digits
             if (minutes < 10) {
                 minutes = "0" + minutes;
             }
 
-            if (seconds < 10) {
-                seconds = "0" + seconds;
+            if (remainingSeconds < 10) {
+                remainingSeconds = "0" + remainingSeconds;
             }
 
-            var timeString = minutes + ':' + seconds;
+            var timeString = minutes + ':' + remainingSeconds;
 
-            if (timeInSeconds >= 3600) {
+            if (hours > 0) {
                 timeString = hours + ':' + timeString;
             }
 

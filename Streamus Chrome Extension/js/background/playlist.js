@@ -5,8 +5,9 @@ define(['ytHelper',
         'playlistItem',
         'programState',
         'localStorageManager',
-        'video'
-    ], function(ytHelper, PlaylistItems, PlaylistItem, programState, localStorageManager, Video) {
+        'video',
+        'videos'
+    ], function(ytHelper, PlaylistItems, PlaylistItem, programState, localStorageManager, Video, Videos) {
         'use strict';
 
         var playlistModel = Backbone.Model.extend({
@@ -18,7 +19,9 @@ define(['ytHelper',
                 nextListId: null,
                 previousListId: null,
                 history: new PlaylistItems(),
-                items: new PlaylistItems()
+                items: new PlaylistItems(),
+                dataSource: null,
+                dataSourceLoaded: false
             },
 
             urlRoot: programState.getBaseUrl() + 'Playlist/',
@@ -111,6 +114,91 @@ define(['ytHelper',
                     }
 
                 });
+                
+                //  Load videos from datasource if provided.
+                var dataSource = this.get('dataSource');
+
+                if (dataSource != null) {
+                    var ytHelperDataFunction = null;
+
+                    switch (dataSource.type) {
+                        case 'youTubePlaylist':
+                            ytHelperDataFunction = ytHelper.getPlaylistResults;
+                            break;
+                        case 'youTubeChannel':
+                            ytHelperDataFunction = ytHelper.getFeedResults;
+                            break;
+                        default:
+                            window && console.error("Unhandled dataSource type:", dataSource.type);
+                    }
+                    
+                    if (ytHelperDataFunction != null) {
+
+                        var getVideosCallCount = 0;
+                        var unsavedVideoCount = 0;
+                        var videos = new Videos();
+
+                        var getVideosInterval = setInterval(function () {
+
+                            ytHelperDataFunction(dataSource.id, getVideosCallCount, function (results) {
+
+                                //  Results will be null if an error occurs while fetching data.
+                                if (results == null || results.length === 0) {
+                                    clearInterval(getVideosInterval);
+
+                                    console.log("setting dataSourceLoaded to true", self);
+                                    self.set('dataSourceLoaded', true);
+
+                                } else {
+
+                                    _.each(results, function (entry, index) {
+                                        var videoId = entry.media$group.yt$videoid.$t;
+                                        addVideoByIdAtIndex(videoId, entry.title.$t, index, results.length);
+                                    });
+
+                                    getVideosCallCount++;
+                                }
+
+                            });
+
+                            function addVideoByIdAtIndex(videoId, videoTitle, index, resultCount) {
+                                ytHelper.getVideoInformation(videoId, videoTitle, function (videoInformation) {
+
+                                    var video = getVideoFromInformation(videoInformation);
+                                    //  Insert at index to preserve order of videos retrieved from YouTube API
+                                    videos.models[index] = video;
+
+                                    unsavedVideoCount++;
+
+                                    //  Periodicially send bursts of packets (up to 50 videos in length) to the server and trigger visual update.
+                                    if (unsavedVideoCount == resultCount) {
+
+                                        self.addItems(videos);
+                                        videos.reset();
+                                        unsavedVideoCount = 0;
+                                    }
+
+                                });
+                            }
+
+                            //  TODO: Rewrite the Video constructor such that it can create a Video object from videoInformation
+                            function getVideoFromInformation(videoInformation) {
+                                var id = videoInformation.media$group.yt$videoid.$t;
+                                var durationInSeconds = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
+                                var author = videoInformation.author[0].name.$t;
+
+                                return new Video({
+                                    id: id,
+                                    title: videoInformation.title.$t,
+                                    duration: durationInSeconds,
+                                    author: author
+                                });
+                            }
+
+
+                        }, 3000);
+                    }
+                }
 
             },
             

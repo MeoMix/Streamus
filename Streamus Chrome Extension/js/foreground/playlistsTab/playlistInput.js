@@ -11,7 +11,7 @@
     var addInput = $(contentHeader.addInputElement);
 
     //  Whenever the user submits a name for a new playlist create a new playlist with that name.
-    addInput.on('input', function (event) {
+    addInput.keydown(function (event) {
 
         if (event.which === $.ui.keyCode.ENTER) {
             processInput();
@@ -29,12 +29,17 @@
                 contentHeader.flashMessage('Thanks!', 2000);
 
                 var youTubePlaylistId = ytHelper.parseUrlForPlaylistId(userInput);
+                var dataSource = null;
 
                 if (youTubePlaylistId !== null) {
 
-                    ytHelper.getPlaylistTitle(youTubePlaylistId, function (playlistTitle) {
-                        if (playlistTitle) {
-                            backgroundManager.get('activeStream').addPlaylist(playlistTitle, youTubePlaylistId);
+                    ytHelper.getPlaylistTitle(youTubePlaylistId, function (youTubePlaylistTitle) {
+                        if (youTubePlaylistTitle) {
+                            dataSource = {
+                                type: 'youTubePlaylist',
+                                id: youTubePlaylistId
+                            };
+                            backgroundManager.get('activeStream').addPlaylistByDataSource(youTubePlaylistTitle, dataSource);
                         }
                     });
                 }
@@ -43,9 +48,17 @@
                     var youTubeUser = ytHelper.parseUrlForYouTubeUser(userInput);
                     
                     if (youTubeUser !== null) {
-                        backgroundManager.get('activeStream').addChannel(youTubeUser + '\'s Feed', youTubeUser);
+
+                        var playlistTitle = youTubeUser + '\'s Feed';
+                        dataSource = {
+                            type: 'youTubeChannel',
+                            id: youTubeUser
+                        };
+
+                        backgroundManager.get('activeStream').addPlaylistByDataSource(playlistTitle, dataSource);
                     } else {
-                        backgroundManager.get('activeStream').addPlaylist(userInput);
+                        console.log("adding playlist by title:", userInput);
+                        backgroundManager.get('activeStream').addPlaylistByDataSource(userInput, dataSource);
                     }
 
                 }

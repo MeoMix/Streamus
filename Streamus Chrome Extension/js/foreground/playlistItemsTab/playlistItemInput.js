@@ -38,7 +38,7 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
     //  Validate URL input on enter key.
     //  Otherwise show suggestions. Use keyup event because input's val is updated at that point.
 
-    addInput.on('input', function (event) {
+    addInput.keydown(function (event) {
 
         //  User can navigate suggestions with up/down, don't re-run search when they use corresponding keys
         if (event.which !== $.ui.keyCode.UP && event.which !== $.ui.keyCode.DOWN) {
