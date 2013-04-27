@@ -108,7 +108,47 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
 
             return videoId;
         },
+        
+        parseUrlForDataSource: function (url) {
 
+            var dataSource = {
+                type: '',
+                id: ''
+            };
+            
+            //  Try for PlaylistId:
+            var urlTokens = url.split('list=PL');
+
+            if (urlTokens.length > 1) {
+                var videoId = url.split('list=PL')[1];
+                var ampersandPosition = videoId.indexOf('&');
+                if (ampersandPosition !== -1) {
+                    dataSource.id = videoId.substring(0, ampersandPosition);
+                    dataSource.type = 'youTubePlaylist';
+                }
+            }
+            
+            //  Try feed from a user URL
+            urlTokens = url.split('/user/');
+
+            if (urlTokens.length > 1) {
+                var youTubeUser = url.split('/user/')[1];
+
+                var ampersandPosition = youTubeUser.indexOf('&');
+                if (ampersandPosition !== -1) {
+                    dataSource.id = youTubeUser.substring(0, ampersandPosition);
+                    dataSource.type = 'youTubePlaylist';
+                }
+
+            }
+            
+            //  TODO: Try feed URL
+
+
+
+        },
+
+        //  TODO: Change to parseUrlForDataSource
         parseUrlForPlaylistId: function (url) {
             var urlTokens = url.split('list=PL');
             var videoId = null;

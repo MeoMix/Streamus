@@ -28,6 +28,8 @@
             if (userInput.trim() !== '') {
                 contentHeader.flashMessage('Thanks!', 2000);
 
+                //var dataSource = ytHelper.parseUrlForDataSource(userInput);
+
                 var youTubePlaylistId = ytHelper.parseUrlForPlaylistId(userInput);
                 var dataSource = null;
 
