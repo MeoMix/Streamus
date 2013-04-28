@@ -28,39 +28,26 @@
             if (userInput.trim() !== '') {
                 contentHeader.flashMessage('Thanks!', 2000);
 
-                //var dataSource = ytHelper.parseUrlForDataSource(userInput);
+                var dataSource = ytHelper.parseUrlForDataSource(userInput);
+                var activeStream = backgroundManager.get('activeStream');
 
-                var youTubePlaylistId = ytHelper.parseUrlForPlaylistId(userInput);
-                var dataSource = null;
-
-                if (youTubePlaylistId !== null) {
-
-                    ytHelper.getPlaylistTitle(youTubePlaylistId, function (youTubePlaylistTitle) {
-                        if (youTubePlaylistTitle) {
-                            dataSource = {
-                                type: 'youTubePlaylist',
-                                id: youTubePlaylistId
-                            };
-                            backgroundManager.get('activeStream').addPlaylistByDataSource(youTubePlaylistTitle, dataSource);
-                        }
-                    });
-                }
-                else {
-
-                    var youTubeUser = ytHelper.parseUrlForYouTubeUser(userInput);
-                    
-                    if (youTubeUser !== null) {
-
-                        var playlistTitle = youTubeUser + '\'s Feed';
-                        dataSource = {
-                            type: 'youTubeChannel',
-                            id: youTubeUser
-                        };
-
-                        backgroundManager.get('activeStream').addPlaylistByDataSource(playlistTitle, dataSource);
-                    } else {
-                        console.log("adding playlist by title:", userInput);
-                        backgroundManager.get('activeStream').addPlaylistByDataSource(userInput, dataSource);
+                //  If unable to parse userInput then create playlist with userInput as title and no data.
+                if (dataSource == null) {
+                    activeStream.addPlaylistByDataSource(userInput);
+                } else {
+                   
+                    switch(dataSource.type) {
+                        case DataSources.YOUTUBE_PLAYLIST:
+                            ytHelper.getPlaylistTitle(dataSource.id, function (youTubePlaylistTitle) {
+                                activeStream.addPlaylistByDataSource(youTubePlaylistTitle, dataSource);
+                            });
+                            break;
+                        case DataSources.YOUTUBE_CHANNEL:
+                            var playlistTitle = dataSource.id + '\'s Feed';
+                            activeStream.addPlaylistByDataSource(playlistTitle, dataSource);
+                            break;
+                        default:
+                            console && console.error("Unhandled dataSource type:", dataSource.type);
                     }
 
                 }

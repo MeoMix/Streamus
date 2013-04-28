@@ -20,8 +20,6 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
         var searchInterval = setInterval(function () {
             elapsedTime += timeInterval;
 
-            console.log("Elapsed time:", elapsedTime);
-
             if (elapsedTime < timeToSpendSearching) {
                 //  Be sure to filter out videos and suggestions which are restricted by the users geographic location.
                 $.ajax({
@@ -57,13 +55,27 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
             }
             else {
                 clearInterval(searchInterval);
-
-                console.log("Done. Search time and result count:", elapsedTime, videoInformationList.length);
-
                 callback(videoInformationList);
             }
         }, timeInterval);
     };
+    
+    function tryGetIdFromUrl(url, identifier) {
+        var urlTokens = url.split(identifier);
+
+        var dataSourceId = '';
+
+        if (urlTokens.length > 1) {
+            dataSourceId = url.split(identifier)[1];
+            
+            var ampersandPosition = dataSourceId.indexOf('&');
+            if (ampersandPosition !== -1) {
+                dataSourceId = dataSourceId.substring(0, ampersandPosition);
+            }
+        }
+
+        return dataSourceId;
+    }
     
     return {
         //  When a video comes from the server it won't have its related videos, so need to fetch and populate.
@@ -111,74 +123,31 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
         
         parseUrlForDataSource: function (url) {
 
-            var dataSource = {
-                type: '',
-                id: ''
-            };
+            var dataSource = null;
             
             //  Try for PlaylistId:
-            var urlTokens = url.split('list=PL');
-
-            if (urlTokens.length > 1) {
-                var videoId = url.split('list=PL')[1];
-                var ampersandPosition = videoId.indexOf('&');
-                if (ampersandPosition !== -1) {
-                    dataSource.id = videoId.substring(0, ampersandPosition);
-                    dataSource.type = 'youTubePlaylist';
-                }
-            }
+            var dataSourceId = tryGetIdFromUrl(url, 'list=PL');
             
-            //  Try feed from a user URL
-            urlTokens = url.split('/user/');
-
-            if (urlTokens.length > 1) {
-                var youTubeUser = url.split('/user/')[1];
-
-                var ampersandPosition = youTubeUser.indexOf('&');
-                if (ampersandPosition !== -1) {
-                    dataSource.id = youTubeUser.substring(0, ampersandPosition);
-                    dataSource.type = 'youTubePlaylist';
-                }
-
-            }
-            
-            //  TODO: Try feed URL
-
-
-
-        },
-
-        //  TODO: Change to parseUrlForDataSource
-        parseUrlForPlaylistId: function (url) {
-            var urlTokens = url.split('list=PL');
-            var videoId = null;
-
-            if (urlTokens.length > 1) {
-                videoId = url.split('list=PL')[1];
-                var ampersandPosition = videoId.indexOf('&');
-                if (ampersandPosition !== -1) {
-                    videoId = videoId.substring(0, ampersandPosition);
-                }
-            }
-
-            return videoId;
-        },
-        
-        parseUrlForYouTubeUser: function (url) {
-            var urlTokens = url.split('/user/');
-            var youTubeUser = null;
-            
-            if (urlTokens.length > 1) {
-                youTubeUser = url.split('/user/')[1];
+            if (dataSourceId !== '') {
+                dataSource = {
+                    id: dataSourceId,
+                    type: DataSources.YOUTUBE_PLAYLIST
+                };
+            } else {
                 
-                var ampersandPosition = youTubeUser.indexOf('&');
-                if (ampersandPosition !== -1) {
-                    youTubeUser = youTubeUser.substring(0, ampersandPosition);
+                //  Try feed from a user URL
+                dataSourceId = tryGetIdFromUrl(url, '/user/');
+                
+                if (dataSourceId !== '') {
+                    dataSource = {
+                        id: dataSourceId,
+                        type: DataSources.YOUTUBE_CHANNEL
+                    };
                 }
 
             }
 
-            return youTubeUser;
+            return dataSource;
         },
         
         getPlaylistTitle: function (playlistId, callback) {
@@ -206,7 +175,7 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
         },
         
         //  Returns NULL if the request throws a 403 error if videoId has been banned on copyright grounds.
-        getVideoInformation: function (videoId, videoTitle, callback) {
+        getVideoInformation: function (videoId, optionalVideoTitle, callback) {
 
             var self = this;
 
@@ -225,15 +194,19 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
 
                     //  result will be null if it has been banned on copyright grounds
                     if (result == null) {
-                        window && console.log("video banned on copyright grounds, finding alternative.");
+                        window && console.error("video banned on copyright grounds, finding alternative.");
+                        
+                        if (optionalVideoTitle && $.trim(optionalVideoTitle) != '') {
 
-                        self.findPlayableByTitle(videoTitle, function(playableVideoInformation) {
+                            self.findPlayableByTitle(optionalVideoTitle, function (playableVideoInformation) {
 
-                            if (callback) {
-                                callback(playableVideoInformation);
-                            }
+                                if (callback) {
+                                    callback(playableVideoInformation);
+                                }
 
-                        });
+                            });
+                        }
+
                     } else {
 
                         if (callback) {
@@ -246,7 +219,9 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                 //  This error is silently consumed and handled -- it is an OK scenario if we don't get a video... sometimes
                 //  they are banned on copyright grounds. No need to log this error.
                 error: function () {
-                    callback(null);
+                    if (callback) {
+                        callback(null);
+                    }
                 }
             });
         },
@@ -282,7 +257,10 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                 },
                 error: function(error) {
                     window && console.error(error);
-                    callback(null);
+                    
+                    if (callback) {
+                        callback(null);
+                    }
                 }
             });
         },
@@ -318,7 +296,10 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                 },
                 error: function (error) {
                     window && console.error(error);
-                    callback(null);
+                    
+                    if (callback) {
+                        callback(null);
+                    }
                 }
             });
         },

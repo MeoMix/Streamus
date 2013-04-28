@@ -136,6 +136,7 @@
     <Content Include="js\background\user.js" />
     <Content Include="js\background\video.js" />
     <Content Include="js\background\videos.js" />
+    <Content Include="js\dataSources.js" />
     <Content Include="js\foreground\backgroundManager.js" />
     <Content Include="js\foreground\contentButtons.js" />
     <Content Include="js\foreground\contentHeader.js" />

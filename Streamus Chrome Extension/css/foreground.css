@@ -560,30 +560,26 @@
   background-color: #eaeaea
 }
 
-.list a {
-  position:absolute; 
-  left:60px;
-  right:0; 
+.list span {
   overflow: hidden; 
-  height: 38px;
+  height: 19px;
   margin-top: 5px;
+  left: 0;
 }
 
-.list a:nth-of-type(1) {
+.list span:nth-of-type(1) {
   font: 12px/18px sans-serif;
-  top:0;
+  top: 5px;
+  z-index: 5;
 }
 
-.list a:nth-of-type(2) {
+.list span:nth-of-type(2) {
   top: 20px;
   color: #666;
+  position: absolute;
 }
 
-#PlaylistsContent .list a {
-    left: 10px !important;
-}
-
-.loaded a {
+.loaded span {
     font-weight: bold !important;
 }
 
@@ -653,10 +649,29 @@
     overflow: visible !important;
 }
 
+.textWrapper {
+    height: 44px;
+    width: 384px;
+    left: 60px;
+    right: 0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding-top: 5px;
+}
+
+#PlaylistsContent .textWrapper {
+    left: 10px;
+    width: 434px;
+}
+
 .playlistItemVideoImage {
     margin-top: 3px;
     margin-left: 3px;
     width: 50px;
+    height: 38px;
+    background-size: 100% auto;
+    z-index: 10;
 }
 
 @-webkit-keyframes "rotate" {

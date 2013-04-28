@@ -4,6 +4,7 @@ var require = {
         'main': 'foreground/main',
         'playerStates': 'playerStates',
         'programState': 'programState',
+        'dataSources': 'dataSources',
         'foreground': 'foreground/foreground',
         'volumeSlider': 'foreground/playerControls/volumeSlider',
         'playPauseButton': 'foreground/playerControls/playPauseButton',

@@ -16,7 +16,7 @@ define(['backgroundManager', 'player', 'spin'], function (backgroundManager, pla
 	    color: '#000', // #rgb or #rrggbb
 	    speed: 2, // Rounds per second
 	    trail: 25, // Afterglow percentage
-	    shadow: true, // Whether to render a shadow
+	    shadow: false, // Whether to render a shadow
 	    hwaccel: true, // Whether to use hardware acceleration
 	    className: 'spinner', // The CSS class to assign to the spinner
 	    zIndex: 2e9 // The z-index (defaults to 2000000000)

@@ -8,11 +8,13 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
 
     //  User data will be loaded either from cache or server.
     var userModel = Backbone.Model.extend({
-        defaults: {
-            id: localStorageManager.getUserId(),
-            name: '',
-            loaded: false,
-            streams: new Streams()
+        defaults: function() {
+            return {
+                id: localStorageManager.getUserId(),
+                name: '',
+                loaded: false,
+                streams: new Streams()
+            };
         },
         
         urlRoot: programState.getBaseUrl() + 'User/',
@@ -91,12 +93,11 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
         var self = this;
         this.fetch({
             success: function (model) {
-                console.log("user fetch success:", model);
                 onUserLoaded.call(self, model, shouldSetSyncStorage);
             },
             error: function (error) {
 
-                //  Failed to fetch the user... recover by creating a new user for now. Should probably do some sort of notify.
+                //  Failed to fetch the user. Recover by creating a new user for now. Should probably do some sort of notify.
                 createNewUser.call(self);
                 window && console.error(error);
             }

@@ -33,7 +33,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
                 //  If the foreground UI is not open, show a notification to indicate active video.
                 var activeVideoId = backgroundManager.get('activePlaylistItem').get('video').get('id');
 
-                //  TODO: Create HTML notification in the future... doesn't have all the support we need currently.
+                //  TODO: Create HTML notification in the future. Doesn't have all the support we need currently.
                 var notification = window.webkitNotifications.createNotification(
                   'http://img.youtube.com/vi/' + activeVideoId + '/default.jpg',
                   'Now Playing',
@@ -123,7 +123,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
             //  http://stackoverflow.com/questions/5235719/how-to-copy-text-to-clipboard-from-a-google-chrome-extension
             //  Copies text to the clipboard. Has to happen on background page due to elevated privs.
             case 'copy':
-                console.log("copying");
+
                 var hiddenClipboard = document.getElementById("HiddenClipboard");
                 hiddenClipboard.value = request.text;
                 //  Copy text from hidden field to clipboard.
@@ -147,7 +147,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
             case 'addVideoByIdToPlaylist':
                 var playlist = backgroundManager.getPlaylistById(request.playlistId);
                 
-                ytHelper.getVideoInformationFromId(request.videoId, function (videoInformation) {
+                ytHelper.getVideoInformationFromId(request.videoId, '', function (videoInformation) {
                     var addedItem = playlist.addItemByInformation(videoInformation);
                     //  TODO: Send response and update YouTube visually to indicate that item has been successfully added
                 });

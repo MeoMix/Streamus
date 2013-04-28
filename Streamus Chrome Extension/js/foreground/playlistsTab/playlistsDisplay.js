@@ -18,15 +18,29 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
         hwaccel: true, // Whether to use hardware acceleration
         className: 'spinner', // The CSS class to assign to the spinner
         zIndex: 2e9, // The z-index (defaults to 2000000000),
-        top: 0
+        top: 5
     });
 
-    backgroundManager.on('change:activeStream change:activePlaylist', reload);
-    backgroundManager.get('allPlaylists').on('remove', reload);
+    backgroundManager.on('change:activeStream', reload);
+    backgroundManager.get('allPlaylists').on('remove change:title', reload);
+
+    backgroundManager.on('change:activePlaylist', function (collection, playlist) {
+        
+        if (playlist !== null) {
+            selectRow(playlist.get('id'));
+        } else {
+            playlistList.find('li').removeClass('loaded');
+        }
+
+    });
     
     backgroundManager.get('allPlaylistItems').on('add remove', function (playlistItem) {
+        throttledUpdatePlaylistDescription(playlistItem);
+    });
+
+    var throttledUpdatePlaylistDescription = _.throttle(function(playlistItem) {
         var playlistId = playlistItem.get('playlistId');
-        var playlistLink = $('#' + playlistId);
+        var playlistLink = playlistList.find('li[data-playlistid="' + playlistId + '"]');
 
         var playlist = backgroundManager.getPlaylistById(playlistId);
 
@@ -43,15 +57,15 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
             return memo + duration;
         }, 0);
 
-        var playlistLinkDescription = 'Videos: ' + currentVideos.length + ' | Duration: ' + helpers.prettyPrintTime(sumVideosDurations);
-        playlistLink.next('.playlistLinkDescription').text(playlistLinkDescription);
-    });
+        var playlistLinkDescription = 'Videos: ' + currentVideos.length + ', Duration: ' + helpers.prettyPrintTime(sumVideosDurations);
+        playlistLink.find('.playlistLinkDescription').text(playlistLinkDescription);
+    }, 100);
     
     backgroundManager.get('allPlaylists').on('add', function (playlist) {
         reload();
 
         if (playlist.has('dataSource')) {
-            var playlistLink = $('#' + playlist.get('id'));
+            var playlistLink = playlistList.find('li[data-playlistid="' + playlist.get('id') + '"]');
             spinner.spin(playlistLink[0]);
 
             playlist.once('change:dataSourceLoaded', function () {
@@ -59,6 +73,12 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
             });
         }
     });
+    
+    //  Removes the old 'current' marking and move it to the newly selected row.
+    function selectRow(id) {
+        playlistList.find('li').removeClass('loaded');
+        playlistList.find('li[data-playlistid="' + id + '"]').addClass('loaded');
+    };
     
     reload();
 
@@ -91,12 +111,15 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
                     return false;
                 }
             }).appendTo(playlistList);
-
-            $('<a/>', {
-                id: currentPlaylist.get('id'),
-                href: '#' + currentPlaylist.get('id'),
-                text: currentPlaylist.get('title')
+            
+            var textWrapper = $('<div>', {
+                'class': 'textWrapper'
             }).appendTo(listItem);
+
+            var currentPlaylistTitle = $('<span/>', {
+                text: currentPlaylist.get('title')
+            });
+            currentPlaylistTitle.appendTo(textWrapper);
 
             var currentItems = currentPlaylist.get('items');
             var currentVideos = currentItems.map(function(currentItem) {
@@ -111,10 +134,12 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
                  return memo + duration;
             }, 0);
             
-            $('<a/>', {
+            $('<span/>', {
                 'class': 'playlistLinkDescription',
-                text: 'Videos: ' + currentVideos.length + ' | Duration: ' + helpers.prettyPrintTime(sumVideosDurations)
-            }).appendTo(listItem);
+                text: 'Videos: ' + currentVideos.length + ', Duration: ' + helpers.prettyPrintTime(sumVideosDurations)
+            }).appendTo(textWrapper);
+            
+            helpers.scrollElementInsideParent(currentPlaylistTitle, textWrapper);
             
             currentPlaylist = activeStream.get('playlists').get(currentPlaylist.get('nextListId'));
 
@@ -124,16 +149,11 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
         if (activePlaylist !== null) {
             selectRow(activePlaylist.get('id'));
         }
-        
-        //  Removes the old 'current' marking and move it to the newly selected row.
-        function selectRow(id) {
-            playlistList.find('li').removeClass('loaded');
-            $('#' + id).parent().addClass('loaded');
-        };
 
         //  Clicking on a playlist will select that playlist.
         playlistList.children().click(function () {
-            var playlistId = $(this).children()[0].id;
+
+            var playlistId = $(this).data('playlistid');
             selectRow(playlistId);
 
             var playlist = backgroundManager.getPlaylistById(playlistId);

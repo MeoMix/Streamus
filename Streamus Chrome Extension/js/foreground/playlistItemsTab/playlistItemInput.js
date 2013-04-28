@@ -35,16 +35,8 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
         }
     });
 
-    //  Validate URL input on enter key.
-    //  Otherwise show suggestions. Use keyup event because input's val is updated at that point.
-
-    addInput.keydown(function (event) {
-
-        //  User can navigate suggestions with up/down, don't re-run search when they use corresponding keys
-        if (event.which !== $.ui.keyCode.UP && event.which !== $.ui.keyCode.DOWN) {
-            showVideoSuggestions(addInput.val());
-        }
-
+    addInput.on('input', function () {
+        showVideoSuggestions(addInput.val());
     }).on('paste drop', function () {
         parseUrlInput();
     });
@@ -52,7 +44,7 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
     function handleValidInput(videoId) {
         contentHeader.flashMessage('Thanks!', 2000);
 
-        ytHelper.getVideoInformationFromId(videoId, function (videoInformation) {
+        ytHelper.getVideoInformation(videoId, '', function (videoInformation) {
             if (videoInformation == null) {
                 dialogs.showBannedVideoDialog();
             } else {

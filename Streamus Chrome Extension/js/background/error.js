@@ -2,7 +2,7 @@
 define(['programState'], function (programState) {
     'use strict';
 
-    var ErrorModel = Backbone.Model.extend({
+    var errorModel = Backbone.Model.extend({
         defaults: {
             message: '',
             lineNumber: -1,
@@ -14,7 +14,7 @@ define(['programState'], function (programState) {
     });
 
     return function (config) {
-        var error = new ErrorModel(config);
+        var error = new errorModel(config);
         return error;
     };
 });

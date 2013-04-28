@@ -6,22 +6,25 @@ define(['ytHelper',
         'programState',
         'localStorageManager',
         'video',
-        'videos'
-    ], function(ytHelper, PlaylistItems, PlaylistItem, programState, localStorageManager, Video, Videos) {
+        'videos',
+        'helpers'
+    ], function(ytHelper, PlaylistItems, PlaylistItem, programState, localStorageManager, Video, Videos, helpers) {
         'use strict';
 
         var playlistModel = Backbone.Model.extend({
-            defaults: {
-                id: null,
-                streamId: null,
-                title: 'New Playlist',
-                firstItemId: null,
-                nextListId: null,
-                previousListId: null,
-                history: new PlaylistItems(),
-                items: new PlaylistItems(),
-                dataSource: null,
-                dataSourceLoaded: false
+            defaults: function() {
+                return {
+                    id: null,
+                    streamId: null,
+                    title: 'New Playlist',
+                    firstItemId: null,
+                    nextListId: null,
+                    previousListId: null,
+                    history: new PlaylistItems(),
+                    items: new PlaylistItems(),
+                    dataSource: null,
+                    dataSourceLoaded: false
+                };
             },
 
             urlRoot: programState.getBaseUrl() + 'Playlist/',
@@ -122,10 +125,10 @@ define(['ytHelper',
                     var ytHelperDataFunction = null;
 
                     switch (dataSource.type) {
-                        case 'youTubePlaylist':
+                        case DataSources.YOUTUBE_PLAYLIST:
                             ytHelperDataFunction = ytHelper.getPlaylistResults;
                             break;
-                        case 'youTubeChannel':
+                        case DataSources.YOUTUBE_CHANNEL:
                             ytHelperDataFunction = ytHelper.getFeedResults;
                             break;
                         default:
@@ -136,7 +139,7 @@ define(['ytHelper',
 
                         var getVideosCallCount = 0;
                         var unsavedVideoCount = 0;
-                        var videos = new Videos();
+                        var orderedVideosArray = [];
 
                         var getVideosInterval = setInterval(function () {
 
@@ -145,10 +148,7 @@ define(['ytHelper',
                                 //  Results will be null if an error occurs while fetching data.
                                 if (results == null || results.length === 0) {
                                     clearInterval(getVideosInterval);
-
-                                    console.log("setting dataSourceLoaded to true", self);
                                     self.set('dataSourceLoaded', true);
-
                                 } else {
 
                                     _.each(results, function (entry, index) {
@@ -164,17 +164,24 @@ define(['ytHelper',
                             function addVideoByIdAtIndex(videoId, videoTitle, index, resultCount) {
                                 ytHelper.getVideoInformation(videoId, videoTitle, function (videoInformation) {
 
-                                    var video = getVideoFromInformation(videoInformation);
-                                    //  Insert at index to preserve order of videos retrieved from YouTube API
-                                    videos.models[index] = video;
+                                    if (videoInformation != null) {
+                                        var video = getVideoFromInformation(videoInformation);
+                                        //  Insert at index to preserve order of videos retrieved from YouTube API
+                                        orderedVideosArray[index] = video;
+                                    }
 
                                     unsavedVideoCount++;
 
                                     //  Periodicially send bursts of packets (up to 50 videos in length) to the server and trigger visual update.
                                     if (unsavedVideoCount == resultCount) {
 
-                                        self.addItems(videos);
-                                        videos.reset();
+                                        var videos = new Videos(orderedVideosArray);
+                                        
+                                        //  orderedVideosArray may have some empty slots which get converted to empty Video objects; drop 'em.
+                                        var videosWithIds = videos.withIds();
+                                        
+                                        self.addItems(videosWithIds);
+                                        orderedVideosArray = [];
                                         unsavedVideoCount = 0;
                                     }
 
@@ -196,7 +203,7 @@ define(['ytHelper',
                             }
 
 
-                        }, 3000);
+                        }, 4000);
                     }
                 }
 
@@ -204,6 +211,8 @@ define(['ytHelper',
             
             selectItem: function (playlistItem) {
                 playlistItem.set('playedRecently', true);
+
+                console.log("Selecting item and adding it to history:", this.get('title'), playlistItem);
 
                 var history = this.get('history');
                 //  Unshift won't have an effect if item exists in history, so remove silently.
@@ -253,7 +262,9 @@ define(['ytHelper',
                 return nextItem;
             },
             
-            gotoPreviousItem: function() {
+            gotoPreviousItem: function () {
+                console.log("History for playlist:", this.get('title'), this.get('history'));
+
                 var selectedItem = this.get('history').shift();
                 var previousItem = this.get('history').shift();
                 
@@ -307,12 +318,7 @@ define(['ytHelper',
                     playlistItem.set('previousItemId', playlistItemId);
                 } else {
                     var firstItem = playlistItems.get(this.get('firstItemId'));
-
-                    console.log("First item:", firstItem);
-
                     var lastItem = playlistItems.get(firstItem.get('previousItemId'));
-
-                    console.log("lastItem is:", lastItem);
 
                     lastItem.set('nextItemId', playlistItemId);
                     playlistItem.set('previousItemId', lastItem.get('id'));
@@ -337,10 +343,11 @@ define(['ytHelper',
             },
             
             addItems: function (videos, callback) {
-                var createdItems = new PlaylistItems();
+                var itemsToSave = new PlaylistItems();
                 var self = this;
 
-                console.log("adding items:", videos);
+                console.log("Calling addItems with ", videos.length);
+                console.log("Last video:", videos.at(videos.length - 1));
 
                 videos.each(function (video) {
 
@@ -354,6 +361,9 @@ define(['ytHelper',
 
                     var playlistItems = self.get('items');
                     var playlistItemId = playlistItem.get('id');
+
+                    console.log("playlistItemId:", playlistItemId);
+
                     if (playlistItems.length === 0) {
 
                         self.set('firstItemId', playlistItemId);
@@ -363,24 +373,41 @@ define(['ytHelper',
                         var firstItem = playlistItems.get(self.get('firstItemId'));
                         var lastItem = playlistItems.get(firstItem.get('previousItemId'));
 
+                        console.log("setting lastItem's nextItem", lastItem.get('title'), playlistItem.get('title'));
+
                         lastItem.set('nextItemId', playlistItemId);
                         playlistItem.set('previousItemId', lastItem.get('id'));
 
                         firstItem.set('previousItemId', playlistItemId);
                         playlistItem.set('nextItemId', firstItem.get('id'));
 
+                        itemsToSave.add(firstItem, { merge: true });
+                        itemsToSave.add(lastItem, { merge: true });
                     }
 
-                    createdItems.push(playlistItem);
-
-                    ytHelper.getRelatedVideoInformation(video.get('id'), function (relatedVideoInformation) {
-                        playlistItem.set('relatedVideoInformation', relatedVideoInformation);
-                    });
-
+                    itemsToSave.push(playlistItem);
                     self.get('items').push(playlistItem);
                 });
 
-                createdItems.save({}, {
+                //  TODO: Could probably be improved for very large playlists being added.
+                //  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
+                var sampleSize = videos.length > 30 ? 30 : videos.length;
+                var randomSampleIndices = helpers.getRandomNonOverlappingNumbers(sampleSize, videos.length);
+
+                _.each(randomSampleIndices, function (randomIndex) {
+                    var randomVideo = videos.at(randomIndex);
+                    
+                    ytHelper.getRelatedVideoInformation(randomVideo.get('id'), function (relatedVideoInformation) {
+
+                        var playlistItem = self.get('items').find(function (item) {
+                            return item.get('video').get('id') == randomVideo.get('id');
+                        });
+
+                        playlistItem.set('relatedVideoInformation', relatedVideoInformation);
+                    });
+                });
+
+                itemsToSave.save({}, {
                     success: callback,
                     error: function (error) {
                         window && console.error(error);
