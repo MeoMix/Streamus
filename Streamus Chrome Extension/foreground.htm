@@ -51,9 +51,6 @@
                         / 
                         <label class="TimeDisplay" id="TotalTimeLabel" title="Video Duration">00:00</label>
                     </div>
-                    <div id="SettingsButton" class="settingsControl" title="Settings">
-                       <img id="SettingsButtonSvgWrapper" src="images/settingsButton.svg"/>
-                    </div>
                     <div id="MuteButton" class="volumeControl" title="Toggle Volume">
                         <svg width="16" height="16">
                             <path d="M0,6 L3,6 L7,2 L7,14 L3,10 L0,10Z" fill="#fff" />
@@ -65,8 +62,43 @@
                     </div>
                 </div>
             </div>
-            
-            <div id="SettingsSliderWrapper" class="settingsControl" >
+
+            <div id="VolumeSliderWrapper" class="volumeControl">
+                <input type="range" id="VolumeSlider" class="volumeControl" title="Current Volume" min="0" max="100" step="1" value="0" />
+            </div>
+
+            <div id="menu">
+<!--                <a id="VideoMenuButton" class="menubutton" data-content="VideoContent" href="#">
+                    <svg width="30" height="30" style="margin-left: -12px">
+                        <g transform="translate(-6.000000, -5.000000) scale(0.9, 0.9)">
+                            <path style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); stroke-linejoin: round; opacity: 0;" fill="none" stroke="#ffffff" d="M27.188,4.875V5.969H22.688V4.875H8.062V5.969H3.5619999999999994V4.875H2.5619999999999994V26.125H3.5619999999999994V25.031H8.062V26.125H22.686999999999998V25.031H27.186999999999998V26.125H28.436999999999998V4.875H27.188ZM8.062,23.719H3.5619999999999994V20.594H8.062V23.719ZM8.062,19.281H3.5619999999999994V16.156H8.062V19.281ZM8.062,14.844H3.5619999999999994V11.719H8.062V14.844ZM8.062,10.406H3.5619999999999994V7.281H8.062V10.406ZM11.247,20.59V9.754L20.628999999999998,15.172L11.247,20.59ZM27.188,23.719H22.688V20.594H27.188V23.719ZM27.188,19.281H22.688V16.156H27.188V19.281ZM27.188,14.844H22.688V11.719H27.188V14.844ZM27.188,10.406H22.688V7.281H27.188V10.406Z" stroke-width="3" stroke-linejoin="round" opacity="0" transform="matrix(1,0,0,1,4,4)"></path>
+                            <path style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); opacity: 1; fill-opacity: 1;" fill="url(#66790-_0050af-_002c62)" stroke="none" d="M27.188,4.875V5.969H22.688V4.875H8.062V5.969H3.5619999999999994V4.875H2.5619999999999994V26.125H3.5619999999999994V25.031H8.062V26.125H22.686999999999998V25.031H27.186999999999998V26.125H28.436999999999998V4.875H27.188ZM8.062,23.719H3.5619999999999994V20.594H8.062V23.719ZM8.062,19.281H3.5619999999999994V16.156H8.062V19.281ZM8.062,14.844H3.5619999999999994V11.719H8.062V14.844ZM8.062,10.406H3.5619999999999994V7.281H8.062V10.406ZM11.247,20.59V9.754L20.628999999999998,15.172L11.247,20.59ZM27.188,23.719H22.688V20.594H27.188V23.719ZM27.188,19.281H22.688V16.156H27.188V19.281ZM27.188,14.844H22.688V11.719H27.188V14.844ZM27.188,10.406H22.688V7.281H27.188V10.406Z" transform="matrix(1,0,0,1,4,4)" opacity="1" fill-opacity="1"></path>
+                            <rect style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); opacity: 0;" x="0" y="0" width="32" height="32" r="0" rx="0" ry="0" fill="#000000" stroke="#000" opacity="0"></rect>
+                        </g>
+                  </svg>
+                    <span>Video</span>
+                </a>-->
+                <a id="HomeMenuButton" class="menubutton active" data-content="HomeContent" href="#" >
+                    <svg width="30" height="30">
+                        <path d="M11.5,2 L22,12 L0,12 L18,12 L18,20 L13,20 L13,13 L9,13 L9,20 L4,20 L4,12 L0,12Z" fill="#000" />
+                    </svg>
+                    <span>Home</span>
+                </a>
+                <a id="PlaylistsMenuButton" class="menubutton" data-content="PlaylistsContent" href="#" >
+                    <svg width="22" height="22">
+                        <rect x="0" y="0.5" width="22" height="3" fill="#000"/>
+                        <rect x="0" y="6.5" width="22" height="3" fill="#000"/>
+                        <rect x="0" y="12.5" width="22" height="3" fill="#000"/>
+                        <rect x="0" y="18.5" width="22" height="3" fill="#000"/>
+                    </svg>
+                    <span>Playlists</span></a>
+                <!--                <a id="SettingsMenuButton" class="menubutton" data-content="SettingsContent" href="#">
+                                        <svg width="22" height="22">
+                                            <path d="M 18.6668,6.31016 16.3361,5.68686 15.7104,3.35456 18.2975,0.732562 C 16.681,0.202632 14.834,0.576752 13.5518,1.86138 12.1982,3.21496 11.8516,5.19756 12.5138,6.87006 L 9.69297,9.69256 6.87049,12.5151 C 5.19713,11.8529 3.2154,12.1978 1.86097,13.5514 0.576345,14.8344 0.203045,16.6806 0.732965,18.298 l 2.622015,-2.5872 2.33231,0.6249 0.62406,2.3307 -2.62851,2.5944 c 1.62141,0.5397 3.4798,0.168 4.76853,-1.1231 1.3617,-1.3618 1.70423,-3.354 1.0314,-5.0331 l 2.81033,-2.8111 2.8111,-2.81034 c 1.679,0.67204 3.6705,0.3295 5.0331,-1.0322 1.2919,-1.2895 1.6628,-3.1471 1.1231,-4.7685 l -2.5936,2.6277 z" fill="#000" />
+                                        </svg>
+                                        <span>Settings</span>
+                                    </a>-->
+                
                 <div id="ShuffleButton" title="Toggle Shuffle">
                     <svg width="16" height="16">
                         <path d="m 0,4 0,2 2.5,0 7,6 1.5,0 0,2 5,-3 -5,-3 0,2 -1.5,0 -7,-6 z" fill="#666" />
@@ -149,44 +181,6 @@
 
                 </div>
                 
-
-            </div>
-
-            <div id="VolumeSliderWrapper" class="volumeControl">
-                <input type="range" id="VolumeSlider" class="volumeControl" title="Current Volume" min="0" max="100" step="1" value="0" />
-            </div>
-
-            <div id="menu">
-<!--                <a id="VideoMenuButton" class="menubutton" data-content="VideoContent" href="#">
-                    <svg width="30" height="30" style="margin-left: -12px">
-                        <g transform="translate(-6.000000, -5.000000) scale(0.9, 0.9)">
-                            <path style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); stroke-linejoin: round; opacity: 0;" fill="none" stroke="#ffffff" d="M27.188,4.875V5.969H22.688V4.875H8.062V5.969H3.5619999999999994V4.875H2.5619999999999994V26.125H3.5619999999999994V25.031H8.062V26.125H22.686999999999998V25.031H27.186999999999998V26.125H28.436999999999998V4.875H27.188ZM8.062,23.719H3.5619999999999994V20.594H8.062V23.719ZM8.062,19.281H3.5619999999999994V16.156H8.062V19.281ZM8.062,14.844H3.5619999999999994V11.719H8.062V14.844ZM8.062,10.406H3.5619999999999994V7.281H8.062V10.406ZM11.247,20.59V9.754L20.628999999999998,15.172L11.247,20.59ZM27.188,23.719H22.688V20.594H27.188V23.719ZM27.188,19.281H22.688V16.156H27.188V19.281ZM27.188,14.844H22.688V11.719H27.188V14.844ZM27.188,10.406H22.688V7.281H27.188V10.406Z" stroke-width="3" stroke-linejoin="round" opacity="0" transform="matrix(1,0,0,1,4,4)"></path>
-                            <path style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); opacity: 1; fill-opacity: 1;" fill="url(#66790-_0050af-_002c62)" stroke="none" d="M27.188,4.875V5.969H22.688V4.875H8.062V5.969H3.5619999999999994V4.875H2.5619999999999994V26.125H3.5619999999999994V25.031H8.062V26.125H22.686999999999998V25.031H27.186999999999998V26.125H28.436999999999998V4.875H27.188ZM8.062,23.719H3.5619999999999994V20.594H8.062V23.719ZM8.062,19.281H3.5619999999999994V16.156H8.062V19.281ZM8.062,14.844H3.5619999999999994V11.719H8.062V14.844ZM8.062,10.406H3.5619999999999994V7.281H8.062V10.406ZM11.247,20.59V9.754L20.628999999999998,15.172L11.247,20.59ZM27.188,23.719H22.688V20.594H27.188V23.719ZM27.188,19.281H22.688V16.156H27.188V19.281ZM27.188,14.844H22.688V11.719H27.188V14.844ZM27.188,10.406H22.688V7.281H27.188V10.406Z" transform="matrix(1,0,0,1,4,4)" opacity="1" fill-opacity="1"></path>
-                            <rect style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); opacity: 0;" x="0" y="0" width="32" height="32" r="0" rx="0" ry="0" fill="#000000" stroke="#000" opacity="0"></rect>
-                        </g>
-                  </svg>
-                    <span>Video</span>
-                </a>-->
-                <a id="HomeMenuButton" class="menubutton active" data-content="HomeContent" href="#" >
-                    <svg width="30" height="30">
-                        <path d="M11.5,2 L22,12 L0,12 L18,12 L18,20 L13,20 L13,13 L9,13 L9,20 L4,20 L4,12 L0,12Z" fill="#000" />
-                    </svg>
-                    <span>Home</span>
-                </a>
-                <a id="PlaylistsMenuButton" class="menubutton" data-content="PlaylistsContent" href="#" >
-                    <svg width="22" height="22">
-                        <rect x="0" y="0.5" width="22" height="3" fill="#000"/>
-                        <rect x="0" y="6.5" width="22" height="3" fill="#000"/>
-                        <rect x="0" y="12.5" width="22" height="3" fill="#000"/>
-                        <rect x="0" y="18.5" width="22" height="3" fill="#000"/>
-                    </svg>
-                    <span>Playlists</span></a>
-<!--                <a id="SettingsMenuButton" class="menubutton" data-content="SettingsContent" href="#">
-                    <svg width="22" height="22">
-                        <path d="M 18.6668,6.31016 16.3361,5.68686 15.7104,3.35456 18.2975,0.732562 C 16.681,0.202632 14.834,0.576752 13.5518,1.86138 12.1982,3.21496 11.8516,5.19756 12.5138,6.87006 L 9.69297,9.69256 6.87049,12.5151 C 5.19713,11.8529 3.2154,12.1978 1.86097,13.5514 0.576345,14.8344 0.203045,16.6806 0.732965,18.298 l 2.622015,-2.5872 2.33231,0.6249 0.62406,2.3307 -2.62851,2.5944 c 1.62141,0.5397 3.4798,0.168 4.76853,-1.1231 1.3617,-1.3618 1.70423,-3.354 1.0314,-5.0331 l 2.81033,-2.8111 2.8111,-2.81034 c 1.679,0.67204 3.6705,0.3295 5.0331,-1.0322 1.2919,-1.2895 1.6628,-3.1471 1.1231,-4.7685 l -2.5936,2.6277 z" fill="#000" />
-                    </svg>
-                    <span>Settings</span>
-                </a>-->
             </div>
             
             <div id="VideoContent" class="content">

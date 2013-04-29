@@ -345,7 +345,7 @@
   overflow:visible;
   top:12px;
   left:20px;
-  right:180px;
+  right:140px;
   height:6px; 
   margin:0; 
   background-color:#222; 
@@ -382,7 +382,7 @@
 }
 
 #time {
-  right:80px;
+  right:40px;
   width:100px;
   font: bold 11px/30px sans-serif;
   color: #fff; 
@@ -391,7 +391,7 @@
   border-right:1px solid #666;
 }
 
-#SettingsButton, #MuteButton {
+#MuteButton {
   -webkit-box-shadow:inset 0 3px 5px #000;
   right:40px;
   top:0;
@@ -403,7 +403,7 @@
   background: rgba(0,0,0,.5)
 }
 
-#SettingsButton svg, #MuteButton svg {
+#MuteButton svg {
   position:absolute;
   top:50%;
   left:50%;
@@ -415,16 +415,6 @@
   border-right:none;
 }
 
-#SettingsButtonSvgWrapper {
-    width: 73%;
-    margin-left: 17%;
-}
-
-#SettingsSliderWrapper {
-    right: 40px !important;
-}
-
-#SettingsSliderWrapper,
 #VolumeSliderWrapper {
   -webkit-transition: top 0.5s;
   width:40px; 
@@ -446,20 +436,20 @@
 
 #ShuffleButton {
     position:absolute;
-    right: 12px;
-    top: 33px;
+    left: 6px;
+    bottom: 2px;
 }
 
 #RadioModeButton {
     position: absolute;
-    right: 13px;
-    top: 6px;
+    left: 28px;
+    bottom: 1px;
 }
 
 #RepeatButton {
     position: absolute;
-    right: 14px;
-    top: 58px;
+    right: 4px;
+    bottom: 3px;
 }
 
 #RepeatPlaylistSvgWrapper {
@@ -616,7 +606,7 @@
 }
 
 .pressed svg *{
-  fill: #fff !important;
+  fill: #6ABD45 !important;
 }
 
 .sidebar-button {
@@ -683,4 +673,9 @@
         -webkit-transform: rotate(360deg);
         transform: rotate(360deg);
     }
+}
+
+.ui-tooltip {
+    display: inline-block;
+    z-index:10;
 }

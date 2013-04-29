@@ -91,7 +91,7 @@ define(['backgroundManager'], function (backgroundManager) {
 
         function expand() {
             addCancelIcon.css('right', '0px').one('click', contract);
-            addButton.width('443');
+            addButton.width('382');
             addInput.css('opacity', 1).css('cursor', "auto").focus();
             addButton.find('span').hide();
             headerInput.attr('disabled', 'disabled');
@@ -101,12 +101,10 @@ define(['backgroundManager'], function (backgroundManager) {
             addButton.find('span').show();
             headerInput.removeAttr('disabled');
             
-            addButton.width('120px').one('click', expand);
+            addButton.width('59px').one('click', expand);
 
             addCancelIcon.css('right', '-30px');
             addInput.css('opacity', 0).css('cursor', "pointer").val('').blur();
-
-            
 
             //  Prevent click event from bubbling up so button does not expand on click.
             return false;

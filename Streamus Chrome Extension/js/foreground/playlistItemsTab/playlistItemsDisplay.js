@@ -105,6 +105,9 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
         }).appendTo(textWrapper);
 
         helpers.scrollElementInsideParent(itemTitle, textWrapper);
+        
+        //  Since we emptied our list we lost the selection, reselect.
+        scrollIntoView(item, true);
     });
 
     backgroundManager.on('change:activePlaylistItem', function (collection, item) {
@@ -122,17 +125,17 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
     });
 
     reload();
-    scrollActiveItemIntoView(backgroundManager.get('activePlaylistItem'), false);
+    scrollIntoView(backgroundManager.get('activePlaylistItem'), false);
     
     function visuallySelectItem(item) {
         //  Since we emptied our list we lost the selection, reselect.
-        scrollActiveItemIntoView(item, false);
+        scrollIntoView(item, false);
 
         var activeItemId = item.get('id');
         setListItemClass(activeItemId, 'loaded');
     }
     
-    function scrollActiveItemIntoView(activeItem, useAnimation) {
+    function scrollIntoView(activeItem, useAnimation) {
 
         //  Since we emptied our list we lost the selection, reselect.
         if (activeItem) {

@@ -27,7 +27,7 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
     backgroundManager.on('change:activePlaylist', function (collection, playlist) {
         
         if (playlist !== null) {
-            selectRow(playlist.get('id'));
+            visuallySelectPlaylist(playlist);
         } else {
             playlistList.find('li').removeClass('loaded');
         }
@@ -72,15 +72,36 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
                 spinner.stop();
             });
         }
+        
+        scrollIntoView(playlist, true);
     });
     
     //  Removes the old 'current' marking and move it to the newly selected row.
-    function selectRow(id) {
+    function visuallySelectPlaylist(playlist) {
+        //  Since we emptied our list we lost the selection, reselect.
+        scrollIntoView(playlist, false);
+
         playlistList.find('li').removeClass('loaded');
-        playlistList.find('li[data-playlistid="' + id + '"]').addClass('loaded');
+        playlistList.find('li[data-playlistid="' + playlist.get('id') + '"]').addClass('loaded');
     };
     
     reload();
+    scrollIntoView(backgroundManager.get('activePlaylist'), false);
+    
+    //  TODO: Needs to be dry with playlistItemsDisplay
+    function scrollIntoView(activePlaylist, useAnimation) {
+
+        //  Since we emptied our list we lost the selection, reselect.
+        if (activePlaylist) {
+            var loadedPlaylistId = activePlaylist.get('id');
+            var $activePlaylist = playlistList.find('li[data-playlistid="' + loadedPlaylistId + '"]');
+
+            if ($activePlaylist.length > 0) {
+                $activePlaylist.scrollIntoView(useAnimation);
+            }
+
+        }
+    }
 
     //  Refreshes the playlist display with the current playlist information.
     function reload() {
@@ -109,6 +130,15 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
                     contextMenu.show(e.pageY, e.pageX + 1);
                     //  Prevent default context menu display.
                     return false;
+                },
+
+                //  Clicking on a playlist will select that playlist.
+                click: function() {
+                    var playlistId = $(this).data('playlistid');
+                    var playlist = backgroundManager.getPlaylistById(playlistId);
+
+                    visuallySelectPlaylist(playlist);
+                    backgroundManager.set('activePlaylist', playlist);
                 }
             }).appendTo(playlistList);
             
@@ -147,17 +177,8 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
 
         var activePlaylist = backgroundManager.get('activePlaylist');
         if (activePlaylist !== null) {
-            selectRow(activePlaylist.get('id'));
+            visuallySelectPlaylist(activePlaylist);
         }
-
-        //  Clicking on a playlist will select that playlist.
-        playlistList.children().click(function () {
-
-            var playlistId = $(this).data('playlistid');
-            selectRow(playlistId);
-
-            var playlist = backgroundManager.getPlaylistById(playlistId);
-            backgroundManager.set('activePlaylist', playlist);
-        });
+       
     }
 });

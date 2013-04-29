@@ -1,5 +1,5 @@
 ﻿//  The repeat icon.
-define(['backgroundManager', 'player'], function(backgroundManager, player) {
+define(['backgroundManager', 'player', 'repeatButtonStates'], function(backgroundManager, player) {
     'use strict';
 
     var repeatButton = $('#RepeatButton');
@@ -21,6 +21,14 @@ define(['backgroundManager', 'player'], function(backgroundManager, player) {
             repeatVideoIcon.show();
         }
 
+        //var state = RepeatButtonStates.DISABLED;
+        
+        //localStorageManager.setRepeatButtonState({
+        //    state: state
+        //});
+
     });
+
+    repeatButton.tooltip();
 
 });

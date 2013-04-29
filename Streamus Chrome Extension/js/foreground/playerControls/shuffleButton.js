@@ -1,15 +1,6 @@
 define(['localStorageManager'], function(localStorageManager){
     'use strict';
 
-    var settingsSliderWrapper = $('#SettingsSliderWrapper');
-    var settingsControl = $('.settingsControl');
-    
-    settingsControl.mouseover(function () {
-        settingsSliderWrapper.css("top", "70px");
-    }).mouseout(function () {
-        settingsSliderWrapper.css("top", "-35px");
-    });
-
 	var shuffleButton = $('#ShuffleButton').click(toggleShuffleVideo);
 
     var isShuffleEnabled = localStorageManager.getIsShuffleEnabled();
@@ -26,5 +17,7 @@ define(['localStorageManager'], function(localStorageManager){
 		}
 
 	    localStorageManager.setIsShuffleEnabled(shuffleButton.hasClass('pressed'));
-	}
+    }
+
+    shuffleButton.tooltip();
 });
