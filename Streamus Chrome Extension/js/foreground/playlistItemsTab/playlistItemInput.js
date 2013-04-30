@@ -33,7 +33,13 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
             contentHeader.flashMessage('Thanks!', 2000);
             backgroundManager.get('activePlaylist').addItemByInformation(ui.item.value);
         }
-    });
+    //  http://stackoverflow.com/questions/3488016/using-html-in-jquery-ui-autocomplete
+    }).data("ui-autocomplete")._renderItem = function (ul, item) {
+        return $("<li></li>")
+            .data("item.autocomplete", item)
+            .append("<a>" + item.label + "</a>")
+            .appendTo(ul);
+    };
 
     addInput.on('input', function () {
         showVideoSuggestions(addInput.val());
@@ -84,7 +90,7 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
                         //  I wanted the label to be duration | title to help delinate between typing suggestions and actual videos.
                         var videoDuration = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
                         var videoTitle = videoInformation.title.$t;
-                        var label = helpers.prettyPrintTime(videoDuration) + " | " + videoTitle;
+                        var label = '<b>' + helpers.prettyPrintTime(videoDuration) + "</b>  " + videoTitle;
 
                         return {
                             label: label,
