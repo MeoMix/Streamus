@@ -6,6 +6,7 @@ var require = {
         'programState': 'programState',
         'background': 'background/background',
         'playerStates': 'playerStates',
+        'repeatButtonStates': 'repeatButtonStates',
         'dataSources': 'dataSources',
         'player': 'background/player',
         'playlistItem': 'background/playlistItem',

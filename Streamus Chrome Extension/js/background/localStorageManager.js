@@ -2,7 +2,7 @@
 var LocalStorageManager = null;
 
 //  Denormalization point for the Background's selected models.
-define(function () {
+define(['repeatButtonStates'], function (repeatButtonStates) {
     'use strict';
 
     var localStorageManagerModel = Backbone.Model.extend({
@@ -77,7 +77,17 @@ define(function () {
         
         setUserId: function(userId) {
             localStorage.setItem('userId', JSON.stringify(userId));
+        },
+        
+        getRepeatButtonState: function() {
+            var repeatButtonState = getItem('repeatButtonState') || repeatButtonStates.DISABLED;
+            return repeatButtonState;
+        },
+        
+        setRepeatButtonState: function (repeatButtonState) {
+            localStorage.setItem('repeatButtonState', JSON.stringify(repeatButtonState));
         }
+        
     });
     
     //  Fetch an item from localStorage, try and turn it from a string to an object literal if possible.

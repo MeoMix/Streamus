@@ -1,4 +1,5 @@
 //  When clicked -- skips to the next video. Skips from the end of the list to the front again.
+//  TODO: Rename to 'nextButton' so its similiar to previousButton.
 define(['backgroundManager'], function (backgroundManager) {
     'use strict';
     var skipButton = $('#SkipButton');
@@ -12,8 +13,14 @@ define(['backgroundManager'], function (backgroundManager) {
             var playlistId = activePlaylistItem.get('playlistId');
             var playlist = backgroundManager.getPlaylistById(playlistId);
 
-            var nextItem = playlist.skipItem('next');
+            var nextItem = playlist.gotoNextItem();
+
             backgroundManager.set('activePlaylistItem', nextItem);
+
+            //  Manually triggering the chance so that player can realize it needs to set its time back to 0:00.
+            if (activePlaylistItem === nextItem) {
+                backgroundManager.trigger('change:activePlaylistItem', backgroundManager, nextItem);
+            }
         }
 
     }, 100, true));

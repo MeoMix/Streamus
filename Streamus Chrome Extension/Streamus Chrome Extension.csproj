@@ -168,6 +168,7 @@
     <Content Include="js\inject.js" />
     <Content Include="js\playerStates.js" />
     <Content Include="js\programState.js" />
+    <Content Include="js\repeatButtonStates.js" />
     <Content Include="js\tests\background\playerSpec.js" />
     <Content Include="js\tests\background\playlistItemSpec.js" />
     <Content Include="js\tests\background\playlistSpec.js" />

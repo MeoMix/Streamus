@@ -44,6 +44,6 @@ var require = {
         'scrollIntoView': 'thirdParty/jquery.scrollIntoView',
         'intro': 'thirdParty/intro',
         'spin': 'thirdParty/jquery.spin',
-        'repeatButtonStates': 'foreground/playerControls/repeatButtonStates'
+        'repeatButtonStates': 'repeatButtonStates'
     }
 };

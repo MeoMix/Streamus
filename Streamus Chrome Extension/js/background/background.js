@@ -49,28 +49,15 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
         }
         //  If the video stopped playing and there is another video to play (not the same one), do so.
         else if (state === PlayerStates.ENDED) {
-            //  Radio mode being enabled will mean we always skip to a new song.
-            var isRadioModeEnabled = localStorageManager.getIsRadioModeEnabled();
-
             var activePlaylistItem = backgroundManager.get('activePlaylistItem');
             //  NOTE: No guarantee that the activePlaylistItem's playlistId will be activePlaylist's ID.
             var playlistId = activePlaylistItem.get('playlistId');
             var playlist = backgroundManager.getPlaylistById(playlistId);
             
-            //  TODO: Add repeat logic.
-            //  Don't keep playing the same video over and over if there's only 1 in the playlist.
-            if (playlist.get('items').length > 1 || isRadioModeEnabled) {
-                var nextItem;
-                if (isRadioModeEnabled) {
-                    var nextVideo = playlist.getRelatedVideo();
-                    nextItem = playlist.addItem(nextVideo);
-                } else {
-                    nextItem = playlist.gotoNextItem();
-                }
-
-                playlist.selectItem(nextItem);
+            var nextItem = playlist.gotoNextItem();
+            
+            if (nextItem !== null) {
                 backgroundManager.set('activePlaylistItem', nextItem);
-
                 player.loadVideoById(nextItem.get('video').get('id'));
             }
         }
@@ -89,7 +76,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
                     var playlistId = activePlaylistItem.get('playlistId');
                     var playlist = backgroundManager.getPlaylistById(playlistId);
 
-                    var nextItem = playlist.skipItem('next');
+                    var nextItem = playlist.gotoNextItem();
                     backgroundManager.set('activePlaylistItem', nextItem);
                 }
 
@@ -101,7 +88,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
                     var playlistId = activePlaylistItem.get('playlistId');
                     var playlist = backgroundManager.getPlaylistById(playlistId);
 
-                    var previousItem = playlist.skipItem('previous');
+                    var previousItem = playlist.gotoPreviousItem();
                     backgroundManager.set('activePlaylistItem', previousItem);
                 }
                 break;

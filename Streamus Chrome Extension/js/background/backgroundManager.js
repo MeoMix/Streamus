@@ -169,7 +169,7 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                 var playlist = self.getPlaylistById(playlistId);
                 
                 if (playlist.get('items').length > 0) {
-                    var newlyActiveItem = playlist.skipItem('next');
+                    var newlyActiveItem = playlist.gotoNextItem();
                     self.set('activePlaylistItem', newlyActiveItem);
                 } else {
                     player.pause();
@@ -239,16 +239,25 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
 
             if (activePlaylistItem == null) {
                 localStorageManager.setActivePlaylistItemId(null);
+                player.pause();
+
             } else {
                 localStorageManager.setActivePlaylistItemId(activePlaylistItem.get('id'));
                 
                 //  Make sure that the player keeps its video in sync with the activePlaylistItem's video.
                 var videoId = activePlaylistItem.get('video').get('id');
-                if (player.isPlaying()) {
-                    player.loadVideoById(videoId);
+                
+                //  If repeating the current video - don't do extra work.
+                if (player.get('loadedVideoId') === videoId) {
+                    player.seekTo(0);
                 } else {
-                    player.cueVideoById(videoId);
+                    if (player.isPlaying()) {
+                        player.loadVideoById(videoId);
+                    } else {
+                        player.cueVideoById(videoId);
+                    }
                 }
+                
             }
         });
 

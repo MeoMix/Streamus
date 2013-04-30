@@ -7,8 +7,9 @@ define(['ytHelper',
         'localStorageManager',
         'video',
         'videos',
-        'helpers'
-    ], function(ytHelper, PlaylistItems, PlaylistItem, programState, localStorageManager, Video, Videos, helpers) {
+        'helpers',
+        'repeatButtonStates'
+    ], function(ytHelper, PlaylistItems, PlaylistItem, programState, localStorageManager, Video, Videos, helpers, repeatButtonStates) {
         'use strict';
 
         var playlistModel = Backbone.Model.extend({
@@ -212,8 +213,6 @@ define(['ytHelper',
             selectItem: function (playlistItem) {
                 playlistItem.set('playedRecently', true);
 
-                console.log("Selecting item and adding it to history:", this.get('title'), playlistItem);
-
                 var history = this.get('history');
                 //  Unshift won't have an effect if item exists in history, so remove silently.
                 history.remove(playlistItem, { silent: true });
@@ -233,38 +232,63 @@ define(['ytHelper',
                 return randomRelatedVideo;
             },
             
-            //  TODO: This method name sucks and the method itself is doing too much. Refactor!
-            gotoNextItem: function() {
+            gotoNextItem: function () {
+
                 var nextItem = null;
+
+                var isRadioModeEnabled = localStorageManager.getIsRadioModeEnabled();
                 var isShuffleEnabled = localStorageManager.getIsShuffleEnabled();
-
-                if (isShuffleEnabled === true) {
-                    var items = this.get('items');
-                    var itemsNotPlayedRecently = items.where({ playedRecently: false });
-
-                    if (itemsNotPlayedRecently.length === 0) {
-                        items.each(function(item) {
-                            item.set('playedRecently', false);
-                            itemsNotPlayedRecently.push(item);
-                        });
-                    }
-
-                    nextItem = _.shuffle(itemsNotPlayedRecently)[0];
+                var repeatButtonState = localStorageManager.getRepeatButtonState();
+                
+                //  Radio mode overrides the other settings
+                if (isRadioModeEnabled) {
+                    var relatedVideo = this.getRelatedVideo();
+                    nextItem = this.addItem(relatedVideo);
                 } else {
-
-                    var selectedItem = this.get('history').at(0);
-
-                    if (selectedItem) {
-                        var nextItemId = selectedItem.get('nextItemId');
-                        nextItem = this.get('items').get(nextItemId);
+                    //  If repeat video is enabled then keep on the last item in history
+                    if (repeatButtonState === repeatButtonStates.REPEAT_VIDEO_ENABLED) {
+                        //  TODO: potentially need to be popping from history so gotoPrevious doesn't loop through same item a lot
+                        nextItem = this.get('history').at(0);
                     }
+                    else if (isShuffleEnabled) {
+
+                        var items = this.get('items');
+                        var itemsNotPlayedRecently = items.where({ playedRecently: false });
+
+                        if (itemsNotPlayedRecently.length === 0) {
+                            items.each(function (item) {
+                                item.set('playedRecently', false);
+                                itemsNotPlayedRecently.push(item);
+                            });
+                        }
+
+                        nextItem = _.shuffle(itemsNotPlayedRecently)[0];
+
+                    } else {
+
+                        var currentItem = this.get('history').at(0);
+                        var nextItemId = currentItem.get('nextItemId');
+                        var firstItemId = this.get('firstItemId');
+                        
+                        if (nextItemId === firstItemId && repeatButtonState === repeatButtonStates.REPEAT_PLAYLIST_ENABLED) {
+                            nextItem = this.get('items').get(nextItemId);
+                        }
+                        else if (nextItemId !== firstItemId) {
+                            nextItem = this.get('items').get(nextItemId);
+                        }
+
+                    }
+
                 }
+                
+                if (nextItem !== null) {
+                    this.selectItem(nextItem);
+                }
+
                 return nextItem;
             },
             
             gotoPreviousItem: function () {
-                console.log("History for playlist:", this.get('title'), this.get('history'));
-
                 var selectedItem = this.get('history').shift();
                 var previousItem = this.get('history').shift();
                 
@@ -273,6 +297,8 @@ define(['ytHelper',
                     var previousItemId = selectedItem.get('previousItemId');
                     previousItem = this.get('items').get(previousItemId);
                 }
+                
+                this.selectItem(previousItem);
 
                 return previousItem;
             },
@@ -413,30 +439,6 @@ define(['ytHelper',
                         window && console.error(error);
                     }
                 });
-            },
-
-            //  Skips to the next playlistItem. Will start playing the video if the player was already playing.
-            //  if where == "next" it'll skip to the next item otherwise it will skip to the previous.
-            //  TODO: break apart skipItem into a gotoNextItem and a gotoPreviousItem
-            skipItem: function (where) {
-                var nextItem;
-
-                if (where == "next") {
-                    var isRadioModeEnabled = localStorageManager.getIsRadioModeEnabled();
-
-                    if (isRadioModeEnabled) {
-                        var relatedVideo = this.getRelatedVideo();
-                        nextItem = this.addItem(relatedVideo);
-                    } else {
-
-                        nextItem = this.gotoNextItem();
-                    }
-                } else {
-                    nextItem = this.gotoPreviousItem();
-                }
-
-                this.selectItem(nextItem);
-                return nextItem;
             },
             
             moveItem: function (movedItemId, nextItemId) {

@@ -13,6 +13,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'localStorageManager', 'iconManager'], f
             volume: localStorageManager.getVolume(),
             //  This will be set after the player is ready and can communicate its true value.
             muted: false,
+            loadedVideoId: '',
             //  The actual YouTube player API object.
             youTubePlayer: null
         },
@@ -109,7 +110,8 @@ define(['youTubePlayerAPI', 'ytHelper', 'localStorageManager', 'iconManager'], f
             
         cueVideoById: function (videoId) {
             this.pause();
-
+            this.set('loadedVideoId', videoId);
+            
             this.get('youTubePlayer').cueVideoById({
                 videoId: videoId,
                 startSeconds: 0,
@@ -119,6 +121,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'localStorageManager', 'iconManager'], f
             
         loadVideoById: function (videoId) {
             this.set('buffering', true);
+            this.set('loadedVideoId', videoId);
 
             this.get('youTubePlayer').loadVideoById({
                 videoId: videoId,

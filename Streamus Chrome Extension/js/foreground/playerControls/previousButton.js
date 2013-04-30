@@ -11,8 +11,7 @@ define(['backgroundManager'], function (backgroundManager) {
             var playlistId = activePlaylistItem.get('playlistId');
             var playlist = backgroundManager.getPlaylistById(playlistId);
 
-            console.log("Playlist is skipping an item backwards:", playlist.get('title'));
-            var previousItem = playlist.skipItem('previous');
+            var previousItem = playlist.gotoPreviousItem();
             backgroundManager.set('activePlaylistItem', previousItem);
         }
         

@@ -19,5 +19,18 @@
         localStorageManager.setIsRadioModeEnabled(radioModeButton.hasClass('pressed'));
     }
     
-    radioModeButton.tooltip();
+    radioModeButton.tooltip({
+        position: {
+            my: "center bottom-20",
+            at: "center top",
+            using: function (position) {
+                $(this).css(position);
+
+                $('<div>', {
+                    'class': 'arrow bottom left'
+                }).appendTo(this);
+            }
+        }
+        
+    });
 });
