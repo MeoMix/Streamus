@@ -2,15 +2,14 @@
 //  Tries to load itself by ID stored in localStorage and then by chrome.storage.sync.
 //  If still unloaded, tells the server to create a new user and assumes that identiy.
 var User = null;
-define(['streams', 'programState', 'localStorageManager'], function (Streams, programState, localStorageManager) {
+define(['streams', 'programState'], function (Streams, programState) {
     'use strict';
-    var userIdKey = 'UserId';
 
     //  User data will be loaded either from cache or server.
     var userModel = Backbone.Model.extend({
         defaults: function() {
             return {
-                id: localStorageManager.getUserId(),
+                id: '',
                 name: '',
                 loaded: false,
                 streams: new Streams()
@@ -21,28 +20,22 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
 
         initialize: function () {
             
-            //  If user's ID wasn't found in local storage, check sync because its a pc-shareable location, but doesn't work synchronously.
-            if (this.isNew()) {
-                var self = this;
-                //  chrome.Storage.sync is cross-computer syncing with restricted read/write amounts.
-                
-                chrome.storage.sync.get(userIdKey, function (data) {
-                    //  Look for a user id in sync, it might be undefined though.
-                    var foundUserId = data[userIdKey];
+            var self = this;
+            //  chrome.Storage.sync is cross-computer syncing with restricted read/write amounts.
 
-                    if (typeof foundUserId === 'undefined') {
-                        createNewUser.call(self);
-                    } else {
-                        //  Update the model's id to proper value and call fetch to retrieve all data from server.
-                        self.set('id', foundUserId);
-                        fetchUser.call(self, false);
-                    }
-                });
+            chrome.storage.sync.get('UserId', function (data) {
+                //  Look for a user id in sync, it might be undefined though.
+                var foundUserId = data['UserId'];
 
-            } else {
-                //  User's ID was found in localStorage. Load immediately.
-                fetchUser.call(this, true);
-            }
+                if (typeof foundUserId === 'undefined') {
+                    createNewUser.call(self);
+                } else {
+                    //  Update the model's id to proper value and call fetch to retrieve all data from server.
+                    self.set('id', foundUserId);
+                    fetchUser.call(self, false);
+                }
+            });
+
         }
     });
     
@@ -76,10 +69,10 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
         //  TODO: Error handling for writing to sync too much.
         //  Write to sync as little as possible because it has restricted read/write limits per hour.
         if (shouldSetSyncStorage) {
-            chrome.storage.sync.set({ userIdKey: model.get('id') });
+            chrome.storage.sync.set({
+                'UserId': model.get('id')
+            });
         }
-
-        localStorageManager.setUserId(model.get('id'));
 
         //  Announce that user has loaded so managers can use it to fetch data.
         this.set('loaded', true);

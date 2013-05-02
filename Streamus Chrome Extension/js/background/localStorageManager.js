@@ -70,15 +70,6 @@ define(['repeatButtonStates'], function (repeatButtonStates) {
             localStorage.setItem('isShuffleEnabled', JSON.stringify(isShuffleEnabled));
         },
         
-        getUserId: function () {
-            var userId = getItem('userId');
-            return userId;
-        },
-        
-        setUserId: function(userId) {
-            localStorage.setItem('userId', JSON.stringify(userId));
-        },
-        
         getRepeatButtonState: function() {
             var repeatButtonState = getItem('repeatButtonState') || repeatButtonStates.DISABLED;
             return repeatButtonState;

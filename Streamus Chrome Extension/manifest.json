@@ -21,20 +21,12 @@
     "webRequest",
     "webRequestBlocking",
     "http://www.geoplugin.net/",
-    "http://www.beatport.com/top-100",
     "http://www.youtube.com/",
     "https://www.youtube.com/",
-    "https://graph.facebook.com/",
 	"http://localhost:61975/Streamus/",
-	"http://streamus.apphb.com/",
-    "tabs"
+	"http://streamus.apphb.com/"
 	],
   "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["js/thirdParty/jquery.js"],
-	  "all_frames": true
-	},
     {
       "matches": ["*://www.youtube.com/watch?v*"],
       "css": ["css/inject.css"],
@@ -62,7 +54,8 @@
     },
     "_execute_browser_action": {
       "suggested_key": {
-        "default": "Ctrl+B"
+        "default": "Ctrl+B",
+		"windows": "Ctrl+B"
       }
     }
   },
