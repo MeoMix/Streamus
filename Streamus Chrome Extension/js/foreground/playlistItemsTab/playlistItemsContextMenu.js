@@ -21,8 +21,8 @@ define(['contextMenu', 'backgroundManager'], function (contextMenu) {
                 item.destroy({
                     success: function() {
                     },
-                    error: function(error) {
-                        window && console.error(error);
+                    error: function (error) {
+                        window && console.error("Failed to destroy item", error);
                     }
                 });
             });

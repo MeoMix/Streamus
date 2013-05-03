@@ -57,13 +57,46 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
     backgroundManager.on('change:activePlaylist', reload);
     backgroundManager.get('allPlaylistItems').on('add', function(item) {
 
-        var previousItemId = item.get('previousItemId');
-        var previousItemLi = playlistItemList.find('li[data-itemid="' + previousItemId + '"]');
+        var listItem = buildListItem(item);
+
+        if (playlistItemList.find('li').length > 0) {
+            
+            var previousItemId = item.get('previousItemId');
+            var previousItemLi = playlistItemList.find('li[data-itemid="' + previousItemId + '"]');
+            listItem.insertAfter(previousItemLi);
+            
+        } else {
+            listItem.appendTo(playlistItemList);
+        }
+
+        //  Since we emptied our list we lost the selection, reselect.
+        scrollIntoView(item, true);
+    });
+
+    backgroundManager.on('change:activePlaylistItem', function (collection, item) {
         
-        //  TODO: Needs to be DRY with the reload method.
+        if (item !== null) {
+            visuallySelectItem(item);
+        } else {
+            playlistItemList.find('li').removeClass('loaded');
+        }
+
+    });
+
+    backgroundManager.get('allPlaylistItems').on('remove', function (item) {
+        playlistItemList.find('li[data-itemid="' + item.get('id') + '"]').remove();
+    });
+
+    reload();
+    scrollIntoView(backgroundManager.get('activePlaylistItem'), false);
+    
+    function buildListItem(item) {
+        
         var listItem = $('<li/>', {
             'data-itemid': item.get('id'),
             contextmenu: function (e) {
+                
+                var activePlaylist = backgroundManager.get('activePlaylist');
 
                 var clickedItemId = $(this).data('itemid');
                 var clickedItem = activePlaylist.get('items').get(clickedItemId);
@@ -80,8 +113,8 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
                 selectItemById(itemId);
                 setListItemClass(itemId, 'loaded');
             }
-        }).insertAfter(previousItemLi);
-
+        });
+        
         var video = item.get('video');
 
         $('<div>', {
@@ -103,29 +136,11 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
         $('<span/>', {
             text: helpers.prettyPrintTime(video.get('duration')) + ' by ' + video.get('author')
         }).appendTo(textWrapper);
-
+        
         helpers.scrollElementInsideParent(itemTitle, textWrapper);
-        
-        //  Since we emptied our list we lost the selection, reselect.
-        scrollIntoView(item, true);
-    });
 
-    backgroundManager.on('change:activePlaylistItem', function (collection, item) {
-        
-        if (item !== null) {
-            visuallySelectItem(item);
-        } else {
-            playlistItemList.find('li').removeClass('loaded');
-        }
-
-    });
-
-    backgroundManager.get('allPlaylistItems').on('remove', function (item) {
-        playlistItemList.find('li[data-itemid="' + item.get('id') + '"]').remove();
-    });
-
-    reload();
-    scrollIntoView(backgroundManager.get('activePlaylistItem'), false);
+        return listItem;
+    }
     
     function visuallySelectItem(item) {
         //  Since we emptied our list we lost the selection, reselect.
@@ -158,62 +173,22 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
         if (activePlaylist == null || activePlaylist.get('items').length === 0) return;
         
         var firstItemId = activePlaylist.get('firstItemId');
-        var currentItem = activePlaylist.get('items').get(firstItemId);
+        var item = activePlaylist.get('items').get(firstItemId);
         
         //  Build up the ul of li's representing each playlistItem.
         
         do {
             
-            if(currentItem == null) break;
+            if (item !== null) {
 
-            var listItem = $('<li/>', {
-                'data-itemid': currentItem.get('id'),
-                contextmenu: function (e) {
+                var listItem = buildListItem(item);
+                listItem.appendTo(playlistItemList);
 
-                    var clickedItemId = $(this).data('itemid');
-                    var clickedItem = activePlaylist.get('items').get(clickedItemId);
+                item = activePlaylist.get('items').get(item.get('nextItemId'));
 
-                    contextMenu.initialize(clickedItem);
+            }
 
-                    //  +1 offset because if contextmenu appears directly under mouse, hover css will be removed from element.
-                    contextMenu.show(e.pageY, e.pageX + 1);
-                    //  Prevent default context menu display.
-                    return false;
-                },
-                //  Load and start playing a video if it is double click.
-                click: function() {
-                    var itemId = $(this).data('itemid');
-                    selectItemById(itemId);
-                    setListItemClass(itemId, 'loaded');
-                }
-            }).appendTo(playlistItemList);
-
-            var currentVideo = currentItem.get('video');
-
-            $('<div>', {
-                'class': 'playlistItemVideoImage',
-                css: {
-                    backgroundImage: 'url(' + 'http://img.youtube.com/vi/' + currentVideo.get('id') + '/default.jpg' + ')',
-                }
-            }).appendTo(listItem);
-            
-            var textWrapper = $('<div>', {
-                'class': 'textWrapper'
-            }).appendTo(listItem);
-
-            var currentItemTitle = $('<span/>', {
-                text: currentItem.get('title')
-            });
-            currentItemTitle.appendTo(textWrapper);
-
-            $('<span/>', {
-                text: helpers.prettyPrintTime(currentVideo.get('duration')) + ' by ' + currentVideo.get('author')
-            }).appendTo(textWrapper);
-
-            helpers.scrollElementInsideParent(currentItemTitle, textWrapper);
-
-            currentItem = activePlaylist.get('items').get(currentItem.get('nextItemId'));
-        } while (currentItem && currentItem.get('id') !== firstItemId)
+        } while (item && item.get('id') !== firstItemId)
         
         //  TODO: Does not work when activePlaylist is not visible.
         var activeItem = backgroundManager.get('activePlaylistItem');

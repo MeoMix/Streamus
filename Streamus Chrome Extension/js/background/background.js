@@ -142,6 +142,20 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
                 break;
         }
     });
+
+    //  When the interactive flag is set to true, the user is asked to log in if they haven't already done so with a warning dialog that looks
+    //  something like this: "You must log into Chrome for the Calendar extension to receive push messages. Log in now?"
+        
+    //To provide your users with a better experience, the interactive flag should be set to false the first time your app or extension calls getChannelId. 
+    //Otherwise users will see the sign-in dialog with no context, even before they start your app or extension. If the first call fails because the user is not logged in, 
+    //then getChannelId can be called again with the flag set to true. You should provide a context dialog before the second call is made.
+    chrome.pushMessaging.getChannelId(false, function (a, e) {
+        console.log("getChannelId:", a, e);
+    });
+        
+    chrome.pushMessaging.onMessage.addListener(function(a, e) {
+        console.log("Message received", a, e);
+    });
     
     //  Modify the iFrame headers to force HTML5 player and to look like we're actually a YouTube page.
     //  The HTML5 player seems more reliable (doesn't crash when Flash goes down) and looking like YouTube

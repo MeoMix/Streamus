@@ -89,7 +89,7 @@ define(['ytHelper',
                         },
                         error: function (error) {
                             //  TODO: Rollback client-side transaction somehow?
-                            window && console.error("Error saving firstItemId", error);
+                            window && console.error("Error saving firstItemId", error, error.message);
                         }
                     });
                 });
