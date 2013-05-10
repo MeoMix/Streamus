@@ -2,7 +2,7 @@
 define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error', 'programState'],
     function (player, backgroundManager, localStorageManager, ytHelper, Error, programState) {
     'use strict';
-
+        
     //  TODO: This is the only place I really plan on referencing the error module,
     //  maybe I should move this window.onerror into the Error module?
     //  Send a log message whenever any client errors occur; for debugging purposes.
@@ -131,6 +131,9 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
 
                 sendResponse({ playlists: playlists });
                 break;
+            case 'videoStreamSrcChange':
+                player.set('videoStreamSrc', request.videoStreamSrc);
+                break;
             case 'addVideoByIdToPlaylist':
                 var playlist = backgroundManager.getPlaylistById(request.playlistId);
                 
@@ -156,7 +159,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
     chrome.pushMessaging.onMessage.addListener(function(a, e) {
         console.log("Message received", a, e);
     });
-    
+
     //  Modify the iFrame headers to force HTML5 player and to look like we're actually a YouTube page.
     //  The HTML5 player seems more reliable (doesn't crash when Flash goes down) and looking like YouTube
     //  means we can bypass a lot of the embed restrictions.
@@ -193,7 +196,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
     },
         ["blocking", "requestHeaders"]
     );
-    
+
     //  Build iframe after onBeforeSendHeaders listener to prevent errors and generate correct type of player.
     $('<iframe>', {
         id: 'MusicHolder',

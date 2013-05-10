@@ -42,16 +42,6 @@ define(['repeatButtonStates'], function (repeatButtonStates) {
             localStorage.setItem('isMuted', JSON.stringify(isMuted));
         },
         
-        getVolume: function () {
-            //  Default to 50 because having the music on and audible, but not blasting, seems like the best default if we fail for some reason. 
-            var volume = getItem('volume') || 50;
-            return volume;
-        },
-        
-        setVolume: function(volume) {
-            localStorage.setItem('volume', JSON.stringify(volume));
-        },
-        
         getIsRadioModeEnabled: function () {
             var isRadioModeEnabled = getItem('isRadioModeEnabled') || false;
             return isRadioModeEnabled;
@@ -77,6 +67,10 @@ define(['repeatButtonStates'], function (repeatButtonStates) {
         
         setRepeatButtonState: function (repeatButtonState) {
             localStorage.setItem('repeatButtonState', JSON.stringify(repeatButtonState));
+        },
+        
+        getUserId: function() {
+            return localStorage.getItem('UserId') || null;
         }
         
     });

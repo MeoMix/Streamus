@@ -2,7 +2,7 @@
 //  Tries to load itself by ID stored in localStorage and then by chrome.storage.sync.
 //  If still unloaded, tells the server to create a new user and assumes that identiy.
 var User = null;
-define(['streams', 'programState'], function (Streams, programState) {
+define(['streams', 'programState', 'localStorageManager'], function (Streams, programState, localStorageManager) {
     'use strict';
 
     //  User data will be loaded either from cache or server.
@@ -28,7 +28,16 @@ define(['streams', 'programState'], function (Streams, programState) {
                 var foundUserId = data['UserId'];
 
                 if (typeof foundUserId === 'undefined') {
-                    createNewUser.call(self);
+
+                    foundUserId = localStorageManager.getUserId();
+                    
+                    if (foundUserId !== null) {
+                        self.set('id', foundUserId);
+                        fetchUser.call(self, false);
+                    } else {
+                        createNewUser.call(self);
+                    }
+
                 } else {
                     //  Update the model's id to proper value and call fetch to retrieve all data from server.
                     self.set('id', foundUserId);

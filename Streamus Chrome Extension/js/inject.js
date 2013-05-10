@@ -1,5 +1,35 @@
 $(function () {
+
+    //  Monitor the video for change of src so that background can mimic player.
+    var videoStream = $('.video-stream');
+    var observer = new window.WebKitMutationObserver(function (mutations) {
+        mutations.forEach(function(mutation) {
+            var attributeName = mutation.attributeName;
+
+            if (attributeName === 'src') {
+
+                var videoStreamSrc = mutation.target.getAttribute(attributeName);
+
+                console.log("videoStreamSrc:", videoStreamSrc);
+                
+                //  Don't send a blank src across, I think?
+                if (videoStreamSrc != null && $.trim(videoStreamSrc) != '') {
+                    chrome.runtime.sendMessage({
+                        method: "videoStreamSrcChange", videoStreamSrc: videoStreamSrc
+                    });
+
+                    videoStream.attr('src', '');
+                }
+
+            }
+        });
+    });
     
+    observer.observe(videoStream[0], {
+        attributes: true,
+        subtree: false
+    });
+
     var style = document.createElement('link');
     style.rel = 'stylesheet';
     style.type = 'text/css';

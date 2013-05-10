@@ -25,9 +25,16 @@
     "http://www.youtube.com/",
     "https://www.youtube.com/",
 	"http://localhost:61975/Streamus/",
-	"http://streamus.apphb.com/"
+	"http://streamus.apphb.com/",
+	"http://www.youtube.com/embed/undefined?enablejsapi=1"
 	],
   "content_scripts": [
+    {
+      "matches": ["http://www.youtube.com/embed/*"],
+      "css": ["css/inject.css"],
+	  "all_frames": true,
+      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/inject.js"]
+    },
     {
       "matches": ["*://www.youtube.com/watch?v*"],
       "css": ["css/inject.css"],

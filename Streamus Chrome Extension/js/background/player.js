@@ -1,6 +1,7 @@
 //  TODO: Exposed globally so that Chrome Extension's foreground can access through chrome.extension.getBackgroundPage()
 var YouTubePlayer = null;
-define(['youTubePlayerAPI', 'ytHelper', 'localStorageManager', 'iconManager'], function (youTubePlayerAPI, ytHelper, localStorageManager, iconManager) {
+
+define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerAPI, ytHelper, iconManager) {
     'use strict';
 
     var youTubePlayerModel = Backbone.Model.extend({
@@ -10,7 +11,10 @@ define(['youTubePlayerAPI', 'ytHelper', 'localStorageManager', 'iconManager'], f
             currentTime: 0,
             ready: false,
             state: PlayerStates.UNSTARTED,
-            volume: localStorageManager.getVolume(),
+            videoStreamSrc: null,
+            //  This will be set after the player is ready and can communicate its true value.
+            //  Default to 50 because having the music on and audible, but not blasting, seems like the best default if we fail for some reason.
+            volume: 50,
             //  This will be set after the player is ready and can communicate its true value.
             muted: false,
             loadedVideoId: '',
@@ -21,6 +25,74 @@ define(['youTubePlayerAPI', 'ytHelper', 'localStorageManager', 'iconManager'], f
         //  Initialize the player by creating a YouTube Player IFrame hosting an HTML5 player
         initialize: function () {
             var self = this;
+            
+            function onReady(event) {
+                var youTubePlayer = event.target;
+                self.set('muted', youTubePlayer.isMuted ? youTubePlayer.isMuted() : youTubePlayer.muted);
+                self.set('volume', youTubePlayer.getVolume ? youTubePlayer.getVolume() : youTubePlayer.volume);
+
+                //  Start monitoring YouTube for current time changes, foreground will pick up on currentTime changes.
+                setInterval(function () {
+                    var currentTime = youTubePlayer.getCurrentTime ? youTubePlayer.getCurrentTime() : youTubePlayer.currentTime;
+
+                    if (!isNaN(currentTime)) {
+                        self.set('currentTime', Math.ceil(currentTime));
+                    }
+                }, 500);
+
+                //  Update the volume whenever the UI modifies the volume property.
+                self.on('change:volume', function (model, volume) {
+                    self.set('muted', false);
+
+                    youTubePlayer.setVolume(volume);
+                });
+
+                self.on('change:muted', function (model, isMuted) {
+
+                    if (isMuted) {
+                        
+                        if (youTubePlayer.mute) {
+                            youTubePlayer.mute();
+                        } else {
+                            youTubePlayer.muted = true;
+                        }
+
+                    } else {
+                        if (youTubePlayer.unMute) {
+                            youTubePlayer.unMute();
+                        } else {
+                            youTubePlayer.muted = false;
+                        }
+                    }
+
+                    iconManager.setIcon(this.get('state'), isMuted, this.get('volume'));
+                });
+
+                self.on('change:state', function (model, state) {
+                    iconManager.setIcon(state, this.get('muted'), this.get('volume'));
+                });
+
+                self.on('change:volume', function (model, volume) {
+                    iconManager.setIcon(this.get('state'), this.get('muted'), volume);
+                });
+
+                //  Keep the player out of UNSTARTED state because seekTo will start playing if in UNSTARTED and not PAUSED
+                self.pause();
+
+                iconManager.setIcon(self.get('state'), self.get('muted'), self.get('volume'));
+
+                //  Announce that the YouTube Player is ready to go.
+                self.set('ready', true);
+            }
+
+
+            this.on('change:videoStreamSrc', function (model, videoStreamSrc) {
+                var youTubeVideo = $('#YouTubeVideo');
+                
+                youTubeVideo.attr('src', videoStreamSrc);
+                youTubeVideo.on('canplay', onReady);
+            });
+
             youTubePlayerAPI.once('change:ready', function () {
 
                 //  https://developers.google.com/youtube/iframe_api_reference#Loading_a_Video_Player
@@ -28,57 +100,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'localStorageManager', 'iconManager'], f
                 //  At which point you can construct a YT.Player object to insert a video player on your page.
                 self.set('youTubePlayer', new window.YT.Player('MusicHolder', {
                     events: {
-                        'onReady': function () {
-
-                            //  Start monitoring YouTube for current time changes, foreground will pick up on currentTime changes.
-                            setInterval(function () {
-                                var currentTime = self.get('youTubePlayer').getCurrentTime();
-
-                                if (!isNaN(currentTime)) {
-                                    self.set('currentTime', Math.ceil(currentTime));
-                                }
-                            }, 500);
-
-                            var isMuted = self.get('youTubePlayer').isMuted();
-                            self.set('muted', isMuted);
-
-                            //  Update the volume whenever the UI modifies the volume property.
-                            self.on('change:volume', function (model, volume) {
-                                localStorageManager.setVolume(volume);
-                                self.set('muted', false);
-
-                                var youTubePlayer = self.get('youTubePlayer');
-                                youTubePlayer.setVolume(volume);
-                            });
-
-                            self.on('change:muted', function (model, isMuted) {
-                                var youTubePlayer = self.get('youTubePlayer');
-
-                                if (isMuted) {
-                                    youTubePlayer.mute();
-                                } else {
-                                    youTubePlayer.unMute();
-                                }
-
-                                iconManager.setIcon(this.get('state'), isMuted, this.get('volume'));
-                            });
-
-                            self.on('change:state', function(model, state) {
-                                iconManager.setIcon(state, this.get('muted'), this.get('volume'));
-                            });
-
-                            self.on('change:volume', function (model, volume) {
-                                iconManager.setIcon(this.get('state'), this.get('muted'), volume);
-                            });
-                            
-                            //  Keep the player out of UNSTARTED state because seekTo will start playing if in UNSTARTED and not PAUSED
-                            self.pause();
-
-                            iconManager.setIcon(self.get('state'), self.get('muted'), self.get('volume'));
-                            
-                            //  Announce that the YouTube Player is ready to go.
-                            self.set('ready', true);
-                        },
+                        'onReady': onReady,
                         'onStateChange': function (playerState) {
                             if (playerState.data === PlayerStates.BUFFERING) {
                                 self.set('buffering', true);
@@ -105,6 +127,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'localStorageManager', 'iconManager'], f
                         }
                     }
                 }));
+
             });
         },
             
@@ -132,6 +155,16 @@ define(['youTubePlayerAPI', 'ytHelper', 'localStorageManager', 'iconManager'], f
         
         isPlaying: function () {
             return this.get('state') === PlayerStates.PLAYING;
+        },
+        
+        mute: function () {
+            this.get('youTubePlayer').mute();
+            this.set('muted', true);
+        },
+        
+        unMute: function() {
+            this.get('youTubePlayer').unMute();
+            this.set('muted', false);
         },
 
         pause: function () {
