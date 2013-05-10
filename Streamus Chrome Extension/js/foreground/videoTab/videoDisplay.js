@@ -13,22 +13,6 @@
 
     draw();
 
-    //player.on('change:videoFrame', function (model, videoFrame) {
-
-
-    //    //injectedCanvasContext.drawImage($('#TestVideo')[0], 0, 0, 475, 286);
-    //    //var videoFrame = injectedCanvasContext.getImageData(0, 0, 475, 286);
-
-
-
-    //    window.requestAnimationFrame(function () {
-    //        ctx2.drawImage(testVideo[0], 0, 0, 475, 286);
-    //    });
-    //});
-
-
-
-
     //var activeItem = backgroundManager.get('activePlaylistItem');
     //var videoId = 'undefined';
     

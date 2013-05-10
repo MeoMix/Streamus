@@ -18,6 +18,8 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             //  This will be set after the player is ready and can communicate its true value.
             muted: false,
             loadedVideoId: '',
+            //  The video object which will hold the iframe-removed player
+            streamusPlayer: null,
             //  The actual YouTube player API object.
             youTubePlayer: null
         },
@@ -26,71 +28,85 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
         initialize: function () {
             var self = this;
             
-            function onReady(event) {
-                var youTubePlayer = event.target;
-                self.set('muted', youTubePlayer.isMuted ? youTubePlayer.isMuted() : youTubePlayer.muted);
-                self.set('volume', youTubePlayer.getVolume ? youTubePlayer.getVolume() : youTubePlayer.volume);
+            //  Update the volume whenever the UI modifies the volume property.
+            self.on('change:volume', function (model, volume) {
+                self.set('muted', false);
+                self.get('youTubePlayer').setVolume(volume);
+                
+                var streamusPlayer = self.get('streamusPlayer');
+                
+                if (streamusPlayer != null) {
+                    console.log("setting streamusPlayer volume to:", volume);
+                    
+                    streamusPlayer.volume = volume / 100;
+                } 
+            });
 
-                //  Start monitoring YouTube for current time changes, foreground will pick up on currentTime changes.
-                setInterval(function () {
-                    var currentTime = youTubePlayer.getCurrentTime ? youTubePlayer.getCurrentTime() : youTubePlayer.currentTime;
+            self.on('change:muted', function (model, isMuted) {
+                var youTubePlayer = self.get('youTubePlayer');
+                if (isMuted) {
+                    youTubePlayer.mute();
+                } else {
+                    youTubePlayer.unMute();
+                }
+                
+                var streamusPlayer = self.get('streamusPlayer');
+                
+                if (streamusPlayer != null) {
+                    streamusPlayer.muted = isMuted;
+                }
 
-                    if (!isNaN(currentTime)) {
-                        self.set('currentTime', Math.ceil(currentTime));
-                    }
-                }, 500);
+                iconManager.setIcon(this.get('state'), isMuted, this.get('volume'));
+            });
 
-                //  Update the volume whenever the UI modifies the volume property.
-                self.on('change:volume', function (model, volume) {
-                    self.set('muted', false);
+            self.on('change:state', function (model, state) {
+                iconManager.setIcon(state, this.get('muted'), this.get('volume'));
+            });
 
-                    youTubePlayer.setVolume(volume);
-                });
-
-                self.on('change:muted', function (model, isMuted) {
-
-                    if (isMuted) {
-                        
-                        if (youTubePlayer.mute) {
-                            youTubePlayer.mute();
-                        } else {
-                            youTubePlayer.muted = true;
-                        }
-
-                    } else {
-                        if (youTubePlayer.unMute) {
-                            youTubePlayer.unMute();
-                        } else {
-                            youTubePlayer.muted = false;
-                        }
-                    }
-
-                    iconManager.setIcon(this.get('state'), isMuted, this.get('volume'));
-                });
-
-                self.on('change:state', function (model, state) {
-                    iconManager.setIcon(state, this.get('muted'), this.get('volume'));
-                });
-
-                self.on('change:volume', function (model, volume) {
-                    iconManager.setIcon(this.get('state'), this.get('muted'), volume);
-                });
-
-                //  Keep the player out of UNSTARTED state because seekTo will start playing if in UNSTARTED and not PAUSED
-                self.pause();
-
-                iconManager.setIcon(self.get('state'), self.get('muted'), self.get('volume'));
-
-                //  Announce that the YouTube Player is ready to go.
-                self.set('ready', true);
-            }
-
-
+            self.on('change:volume', function (model, volume) {
+                iconManager.setIcon(this.get('state'), this.get('muted'), volume);
+            });
+            
             this.on('change:videoStreamSrc', function (model, videoStreamSrc) {
                 var youTubeVideo = $('#YouTubeVideo');
                 
+                //  Resetting streamusPlayer because it might not be able to play on src change.
+                self.set('streamusPlayer', null);
+                
                 youTubeVideo.attr('src', videoStreamSrc);
-                youTubeVideo.on('canplay', onReady);
+                youTubeVideo.on('canplay', function (event) {
+                    console.log("Streamus player ready");
+
+                    var streamusPlayer = event.target;
+                    //  TODO: This might be the wrong place to be setting this.
+                    self.set('streamusPlayer', streamusPlayer);
+                });
+
+                youTubeVideo.on('play', function () {
+                    console.log("playing");
+
+                    self.set('state', PlayerStates.PLAYING);
+                });
+
+                youTubeVideo.on('pause', function () {
+                    console.log("pausing");
+
+                    self.set('state', PlayerStates.PAUSED);
+                });
+
+                youTubeVideo.on('waiting', function () {
+                    console.log("waiting");
+
+                    self.set('buffering', true);
+                    self.set('state', PlayerStates.BUFFERING);
+                });
+                
+                //  TODO: Other events?
+
+                youTubeVideo.on('error', function(error) {
+                    window && console.error("Error:", error);
+                });
+
             });
 
             youTubePlayerAPI.once('change:ready', function () {
@@ -100,8 +116,43 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                 //  At which point you can construct a YT.Player object to insert a video player on your page.
                 self.set('youTubePlayer', new window.YT.Player('MusicHolder', {
                     events: {
-                        'onReady': onReady,
+                        'onReady': function (event) {
+                            console.log("onYouTubePlayerReady");
+                            var youTubePlayer = event.target;
+
+                            self.set('muted', youTubePlayer.isMuted());
+                            self.set('volume', youTubePlayer.getVolume());
+                            
+                            //  Start monitoring YouTube for current time changes, foreground will pick up on currentTime changes.
+                            setInterval(function () {
+
+                                var streamusPlayer = self.get('streamusPlayer');
+                                var currentTime;
+
+                                if (streamusPlayer == null) {
+                                    currentTime = youTubePlayer.getCurrentTime();
+                                } else {
+                                    currentTime = streamusPlayer.currentTime;
+                                }
+
+                                if (!isNaN(currentTime)) {
+                                    self.set('currentTime', Math.ceil(currentTime));
+                                }
+
+                            }, 500);
+
+                            //  Keep the player out of UNSTARTED state because seekTo will start playing if in UNSTARTED and not PAUSED
+                            self.pause();
+
+                            iconManager.setIcon(self.get('state'), self.get('muted'), self.get('volume'));
+
+                            //  Announce that the YouTube Player is ready to go.
+                            self.set('ready', true);
+                        },
                         'onStateChange': function (playerState) {
+
+                            console.log("onStateChange:", playerState);
+
                             if (playerState.data === PlayerStates.BUFFERING) {
                                 self.set('buffering', true);
                             }
@@ -113,17 +164,23 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                             }
                         },
                         'onError': function (error) {
-                            window && console.error("An error was encountered.", error);
 
-                            switch (error.data) {
-                                case 100:
-                                    alert("Video requested is not found. This occurs when a video has been removed or it has been marked as private.");
-                                    break;
-                                case 101:
-                                case 150:
-                                    alert("Video requested does not allow playback in the embedded players.");
-                                    break;
-                            }
+                            //var streamusPlayer = self.get('streamusPlayer');
+                            
+                            //if (streamusPlayer == null || error.data !== 5) {
+                                window && console.error("An error was encountered.", error);
+
+                                switch (error.data) {
+                                    case 100:
+                                        alert("Video requested is not found. This occurs when a video has been removed or it has been marked as private.");
+                                        break;
+                                    case 101:
+                                    case 150:
+                                        alert("Video requested does not allow playback in the embedded players.");
+                                        break;
+                                }                            
+                            //}
+
                         }
                     }
                 }));
@@ -145,7 +202,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
         loadVideoById: function (videoId) {
             this.set('buffering', true);
             this.set('loadedVideoId', videoId);
-
+            
             this.get('youTubePlayer').loadVideoById({
                 videoId: videoId,
                 startSeconds: 0,
@@ -158,17 +215,38 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
         },
         
         mute: function () {
-            this.get('youTubePlayer').mute();
             this.set('muted', true);
+
+            var streamusPlayer = this.get('streamusPlayer');
+
+            if (streamusPlayer) {
+                streamusPlayer.muted = true;
+            }
+
+            this.get('youTubePlayer').mute();
         },
         
-        unMute: function() {
-            this.get('youTubePlayer').unMute();
+        unMute: function () {
             this.set('muted', false);
+            
+            var streamusPlayer = this.get('streamusPlayer');
+
+            if (streamusPlayer) {
+                streamusPlayer.muted = false;
+            }
+
+            this.get('youTubePlayer').unMute();
         },
 
         pause: function () {
             this.set('buffering', false);
+            
+            var streamusPlayer = this.get('streamusPlayer');
+
+            if (streamusPlayer) {
+                streamusPlayer.pause();
+            }
+
             this.get('youTubePlayer').pauseVideo();
         },
             
@@ -176,6 +254,13 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             if (!this.isPlaying()) {
 
                 this.set('buffering', true);
+                
+                var streamusPlayer = this.get('streamusPlayer');
+
+                if (streamusPlayer) {
+                    streamusPlayer.play();
+                }
+
                 this.get('youTubePlayer').playVideo();
             }
         },
@@ -198,6 +283,13 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             } else {
                 //  The true paramater allows the youTubePlayer to seek ahead past its buffered video.
                 youTubePlayer.seekTo(timeInSeconds, true);
+                
+                var streamusPlayer = this.get('streamusPlayer');
+
+                if (streamusPlayer) {
+                    streamusPlayer.currentTime = timeInSeconds;
+                }
+
             }
             
         }
