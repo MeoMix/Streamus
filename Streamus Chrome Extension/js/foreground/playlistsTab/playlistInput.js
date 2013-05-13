@@ -11,15 +11,15 @@
     var addInput = $(contentHeader.addInputElement);
 
     //  Whenever the user submits a name for a new playlist create a new playlist with that name.
-    addInput.keydown(function (event) {
+    addInput.keydown(function(event) {
 
         if (event.which === $.ui.keyCode.ENTER) {
             processInput();
         }
-    }).on('paste drop', function () {
+    }).on('paste drop focus', function () {
         processInput();
     });
-
+    
     function processInput() {
         setTimeout(function () {
             var userInput = addInput.val();

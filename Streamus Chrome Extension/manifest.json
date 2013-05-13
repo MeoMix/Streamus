@@ -31,9 +31,8 @@
   "content_scripts": [
     {
       "matches": ["http://www.youtube.com/embed/*"],
-      "css": ["css/inject.css"],
 	  "all_frames": true,
-      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/inject.js"]
+      "js": ["js/thirdParty/jquery.js", "js/youTubeIFrameInject.js"]
     },
     {
       "matches": ["*://www.youtube.com/watch?v*"],

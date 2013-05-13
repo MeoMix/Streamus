@@ -41,10 +41,15 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
             .appendTo(ul);
     };
 
-    addInput.on('input', function () {
-        showVideoSuggestions(addInput.val());
-    }).on('paste drop', function () {
+    addInput.on('input', function() {
+        showVideoSuggestions($(this).val());
+    }).on('paste drop', function() {
         parseUrlInput();
+    }).on('focus', function () {
+        
+        if ($(this).val().trim() != '') {
+            $(this).autocomplete('search', '');
+        }
     });
         
     function handleValidInput(videoId) {

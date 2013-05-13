@@ -1,5 +1,5 @@
 //  The play/pause icon.
-define(['backgroundManager', 'player', 'spin', 'videoDisplay'], function (backgroundManager, player, Spin, videoDisplay) {
+define(['backgroundManager', 'player', 'spin', 'videoDisplay'], function (backgroundManager, player, Spin) {
 	'use strict';
 	var playPauseButton = $('#PlayPauseButton');
 	var pauseIcon = $('#PauseIcon');
@@ -28,7 +28,6 @@ define(['backgroundManager', 'player', 'spin', 'videoDisplay'], function (backgr
         if (!$(this).hasClass('disabled')) {
             if (player.isPlaying()) {
                 player.pause();
-                videoDisplay.pause();
                 pauseIcon.hide();
                 playIcon.show();
             } else {
@@ -36,7 +35,6 @@ define(['backgroundManager', 'player', 'spin', 'videoDisplay'], function (backgr
                 playIcon.hide();
                 pauseIcon.hide();
                 player.play();
-                videoDisplay.play();
             }
         }
 

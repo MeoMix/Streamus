@@ -200,7 +200,9 @@
     <EmbeddedResource Include="Domain\PlaylistItem.hbm.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Domain\Video.hbm.xml" />
+    <EmbeddedResource Include="Domain\Video.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Domain\User.hbm.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>

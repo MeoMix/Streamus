@@ -27,7 +27,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
         //  Initialize the player by creating a YouTube Player IFrame hosting an HTML5 player
         initialize: function () {
             var self = this;
-            
+   
             //  Update the volume whenever the UI modifies the volume property.
             self.on('change:volume', function (model, volume) {
                 self.set('muted', false);
@@ -36,8 +36,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                 var streamusPlayer = self.get('streamusPlayer');
                 
                 if (streamusPlayer != null) {
-                    console.log("setting streamusPlayer volume to:", volume);
-                    
+
                     streamusPlayer.volume = volume / 100;
                 } 
             });
@@ -72,31 +71,51 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                 
                 //  Resetting streamusPlayer because it might not be able to play on src change.
                 self.set('streamusPlayer', null);
-                
-                youTubeVideo.attr('src', videoStreamSrc);
-                youTubeVideo.on('canplay', function (event) {
-                    console.log("Streamus player ready");
 
+                var videoStreamSwfObjectId = 'videoStreamSwfObject';
+                
+                if ($('#' + videoStreamSwfObjectId).length > 0) {
+                    $('#' + videoStreamSwfObjectId).remove();
+                }
+
+                if (videoStreamSrc.indexOf('swf') > -1) {
+
+                    console.log("setting swf object");
+
+                    var videoStreamSwfObject = $('<object>', {
+                        id: 'videoStreamSwfObject',
+                        data: videoStreamSrc,
+                        type: 'application/x-shockwave-flash'
+                    });
+                    videoStreamSwfObject.appendTo(youTubeVideo);
+
+                    var videoStreamSwfParam = $('<param>', {
+                        value: videoStreamSrc,
+                        name: 'movie'
+                    });
+
+                    videoStreamSwfParam.appendTo(videoStreamSwfObject);
+
+                    youTubeVideo.attr('src', '');
+                } else {
+                    youTubeVideo.attr('src', videoStreamSrc);
+                }
+                
+                youTubeVideo.on('canplay', function (event) {
                     var streamusPlayer = event.target;
                     //  TODO: This might be the wrong place to be setting this.
                     self.set('streamusPlayer', streamusPlayer);
                 });
 
                 youTubeVideo.on('play', function () {
-                    console.log("playing");
-
                     self.set('state', PlayerStates.PLAYING);
                 });
 
                 youTubeVideo.on('pause', function () {
-                    console.log("pausing");
-
                     self.set('state', PlayerStates.PAUSED);
                 });
 
                 youTubeVideo.on('waiting', function () {
-                    console.log("waiting");
-
                     self.set('buffering', true);
                     self.set('state', PlayerStates.BUFFERING);
                 });
@@ -117,7 +136,6 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                 self.set('youTubePlayer', new window.YT.Player('MusicHolder', {
                     events: {
                         'onReady': function (event) {
-                            console.log("onYouTubePlayerReady");
                             var youTubePlayer = event.target;
 
                             self.set('muted', youTubePlayer.isMuted());
@@ -150,9 +168,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                             self.set('ready', true);
                         },
                         'onStateChange': function (playerState) {
-
-                            console.log("onStateChange:", playerState);
-
+                            
                             if (playerState.data === PlayerStates.BUFFERING) {
                                 self.set('buffering', true);
                             }

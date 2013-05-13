@@ -168,7 +168,7 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                 var playlistId = playlistItem.get('playlistId');
                 var playlist = self.getPlaylistById(playlistId);
                 
-                if (playlist.get('items').length > 0) {
+                if (playlist.get('items').length > 0) { 
                     var newlyActiveItem = playlist.gotoNextItem();
                     self.set('activePlaylistItem', newlyActiveItem);
                 } else {

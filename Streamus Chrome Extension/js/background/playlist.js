@@ -92,6 +92,7 @@ define(['ytHelper',
                             window && console.error("Error saving firstItemId", error, error.message);
                         }
                     });
+                    
                 });
 
                 var self = this;
@@ -372,9 +373,6 @@ define(['ytHelper',
                 var itemsToSave = new PlaylistItems();
                 var self = this;
 
-                console.log("Calling addItems with ", videos.length);
-                console.log("Last video:", videos.at(videos.length - 1));
-
                 videos.each(function (video) {
 
                     var playlistItem = new PlaylistItem({
@@ -388,18 +386,14 @@ define(['ytHelper',
                     var playlistItems = self.get('items');
                     var playlistItemId = playlistItem.get('id');
 
-                    console.log("playlistItemId:", playlistItemId);
-
                     if (playlistItems.length === 0) {
-
+                        //  This triggers an event which saves the firstItemId
                         self.set('firstItemId', playlistItemId);
                         playlistItem.set('nextItemId', playlistItemId);
                         playlistItem.set('previousItemId', playlistItemId);
                     } else {
                         var firstItem = playlistItems.get(self.get('firstItemId'));
                         var lastItem = playlistItems.get(firstItem.get('previousItemId'));
-
-                        console.log("setting lastItem's nextItem", lastItem.get('title'), playlistItem.get('title'));
 
                         lastItem.set('nextItemId', playlistItemId);
                         playlistItem.set('previousItemId', lastItem.get('id'));
@@ -442,6 +436,7 @@ define(['ytHelper',
             },
             
             moveItem: function (movedItemId, nextItemId) {
+                
                 var movedItem = this.get('items').get(movedItemId);
                 
                 //  The previous and next items of the movedItem's original position. Need to update these pointers.
@@ -466,10 +461,26 @@ define(['ytHelper',
 
                 //  If bumped forward the firstItem, update to new firstItemId.
                 if (nextItemId == this.get('firstItemId')) {
+                    //  This saves automatically with a triggered event.
                     this.set('firstItemId', movedItemId);
                 }
-
-                this.save();
+                
+                //  Save just the items that changed -- don't save the whole playlist because that is too costly for a move.
+                var itemsToSave = new PlaylistItems();
+                itemsToSave.add(movedItem);
+                itemsToSave.add(movedPreviousItem);
+                itemsToSave.add(movedNextItem);
+                itemsToSave.add(nextItem);
+                itemsToSave.add(previousItem);
+                
+                itemsToSave.save({}, {
+                    success: function() {
+                        
+                    },
+                    error: function (error) {
+                        window && console.error(error);
+                    }
+                });
             }
         });
 

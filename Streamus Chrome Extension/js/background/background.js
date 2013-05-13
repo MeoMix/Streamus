@@ -134,6 +134,9 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
             case 'videoStreamSrcChange':
                 player.set('videoStreamSrc', request.videoStreamSrc);
                 break;
+            case 'videoStreamBackgroundImage':
+                player.set('videoStreamBackgroundImage', request.videoStreamBackgroundImage);
+                break;
             case 'addVideoByIdToPlaylist':
                 var playlist = backgroundManager.getPlaylistById(request.playlistId);
                 
@@ -145,21 +148,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
                 break;
         }
     });
-
-    //  When the interactive flag is set to true, the user is asked to log in if they haven't already done so with a warning dialog that looks
-    //  something like this: "You must log into Chrome for the Calendar extension to receive push messages. Log in now?"
         
-    //To provide your users with a better experience, the interactive flag should be set to false the first time your app or extension calls getChannelId. 
-    //Otherwise users will see the sign-in dialog with no context, even before they start your app or extension. If the first call fails because the user is not logged in, 
-    //then getChannelId can be called again with the flag set to true. You should provide a context dialog before the second call is made.
-    chrome.pushMessaging.getChannelId(true, function (a, e) {
-        console.log("getChannelId:", a, e);
-    });
-        
-    chrome.pushMessaging.onMessage.addListener(function(a, e) {
-        console.log("Message received", a, e);
-    });
-
     //  Modify the iFrame headers to force HTML5 player and to look like we're actually a YouTube page.
     //  The HTML5 player seems more reliable (doesn't crash when Flash goes down) and looking like YouTube
     //  means we can bypass a lot of the embed restrictions.
@@ -182,17 +171,24 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
 			}
 
         }
-
-        //  Bypass YouTube's embedded player content restrictions by looking like YouTube
-        //  Any referer will do, maybe change to Streamus.com in the future? Or maybe leave as YouTube
-        //  to stay under the radar. Not sure which is less suspicious.
-        info.requestHeaders.push({  
-            name: "Referer",
-            value: "http://youtube.com"
+        var refererRequestHeader = _.find(info.requestHeaders, function(requestHeader) {
+            return requestHeader.name === 'Referer';
         });
+
+        if (refererRequestHeader == null) {
+            //  Bypass YouTube's embedded player content restrictions by looking like YouTube
+            //  Any referer will do, maybe change to Streamus.com in the future? Or maybe leave as YouTube
+            //  to stay under the radar. Not sure which is less suspicious.
+            info.requestHeaders.push({
+                name: "Referer",
+                value: "http://youtube.com/embed/undefined?enablejsapi=1"
+            });
+        }
+
         return { requestHeaders: info.requestHeaders };
     }, {
-        urls: ["<all_urls>"]
+        //  TODO: Probably shouldn't be all URLs.
+        urls: ["http://www.youtube.com/embed/undefined?enablejsapi=1"]
     },
         ["blocking", "requestHeaders"]
     );
@@ -200,9 +196,9 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
     //  Build iframe after onBeforeSendHeaders listener to prevent errors and generate correct type of player.
     $('<iframe>', {
         id: 'MusicHolder',
-        //  Width and height don't really matter as long as they stay about 200px each, per documentation.
-        width: 475,
-        height: 286,
+        //  Width and Height should have a ratio of 4 to 3
+        width: 480,
+        height: 360,
         src: 'http://www.youtube.com/embed/undefined?enablejsapi=1'
     }).appendTo('body');
 });

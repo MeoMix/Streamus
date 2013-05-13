@@ -130,6 +130,7 @@
     <Content Include="js\background\playlistItem.js" />
     <Content Include="js\background\playlistItems.js" />
     <Content Include="js\background\playlists.js" />
+    <Content Include="js\background\pushMessageManager.js" />
     <Content Include="js\background\requirePaths.js" />
     <Content Include="js\background\stream.js" />
     <Content Include="js\background\streams.js" />
@@ -197,6 +198,7 @@
     <Content Include="js\thirdParty\require.js" />
     <Content Include="js\thirdParty\jquery.spin.js" />
     <Content Include="js\thirdParty\underscore.js" />
+    <Content Include="js\youTubeIFrameInject.js" />
     <Content Include="js\youTubePlayerAPI.js" />
     <Content Include="js\ytHelper.js" />
     <Content Include="tests.htm" />
