@@ -235,6 +235,14 @@
   display: none;
 }
 
+#VideoContent {
+    background-color: black;
+}
+
+#VideoDisplay {
+    margin-top: 54px;
+}
+
 #PlayPauseButton {
   top:0;
   left:0;

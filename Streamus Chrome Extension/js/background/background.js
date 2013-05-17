@@ -134,8 +134,8 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
             case 'videoStreamSrcChange':
                 player.set('videoStreamSrc', request.videoStreamSrc);
                 break;
-            case 'videoStreamBackgroundImage':
-                player.set('videoStreamBackgroundImage', request.videoStreamBackgroundImage);
+            case 'imageDataChange':
+                player.set('imageData', request.imageData);
                 break;
             case 'addVideoByIdToPlaylist':
                 var playlist = backgroundManager.getPlaylistById(request.playlistId);
@@ -148,6 +148,35 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
                 break;
         }
     });
+
+    chrome.webRequest.onHeadersReceived.addListener(function (info) {
+        
+        //for (var i = 0; i < info.responseHeaders.length; ++i) {
+        //    if (info.responseHeaders[i].name === 'X-XSS-Protection') {
+        //        info.responseHeaders.splice(i, 1);
+        //        console.log("spliced");
+        //        break;
+        //    }
+        //}
+        
+
+        //for (var i = 0; i < info.responseHeaders.length; ++i) {
+        //    if (info.responseHeaders[i].name === 'X-Frame-Options') {
+        //        info.responseHeaders.splice(i, 1);
+        //        console.log("spliced 2");
+        //        break;
+        //    }
+        //}
+
+        //info.responseHeaders['Access-Control-Allow-Origin'] = '*';
+
+        return { responseHeaders: info.responseHeaders };
+    }, {
+        //  TODO: Probably shouldn't be all URLs.
+        urls: ["http://www.youtube.com/*"]
+    },
+        ["blocking", "responseHeaders"]
+    );
         
     //  Modify the iFrame headers to force HTML5 player and to look like we're actually a YouTube page.
     //  The HTML5 player seems more reliable (doesn't crash when Flash goes down) and looking like YouTube
@@ -171,6 +200,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
 			}
 
         }
+        
         var refererRequestHeader = _.find(info.requestHeaders, function(requestHeader) {
             return requestHeader.name === 'Referer';
         });
@@ -183,6 +213,15 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
                 name: "Referer",
                 value: "http://youtube.com/embed/undefined?enablejsapi=1"
             });
+        }
+
+        //  Make Streamus look like an iPhone to guarantee the html5 player shows up even if the video has an ad.
+        var userAgentRequestHeader = _.find(info.requestHeaders, function(requestHeader) {
+            return requestHeader.name === 'User-Agent';
+        });
+        
+        if (userAgentRequestHeader !== null) {
+            userAgentRequestHeader.value = 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5';
         }
 
         return { requestHeaders: info.requestHeaders };

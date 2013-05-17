@@ -21,7 +21,8 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             //  The video object which will hold the iframe-removed player
             streamusPlayer: null,
             //  The actual YouTube player API object.
-            youTubePlayer: null
+            youTubePlayer: null,
+            wasBuffering: false
         },
         
         //  Initialize the player by creating a YouTube Player IFrame hosting an HTML5 player
@@ -31,18 +32,20 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             //  Update the volume whenever the UI modifies the volume property.
             self.on('change:volume', function (model, volume) {
                 self.set('muted', false);
+                //  We want to update the youtube player's volume no matter what because it persists between browser sessions
+                //  thanks to YouTube saving it -- so should keep it always sync'ed.
                 self.get('youTubePlayer').setVolume(volume);
                 
                 var streamusPlayer = self.get('streamusPlayer');
                 
                 if (streamusPlayer != null) {
-
                     streamusPlayer.volume = volume / 100;
                 } 
             });
 
             self.on('change:muted', function (model, isMuted) {
                 var youTubePlayer = self.get('youTubePlayer');
+                //  Same logic here as with the volume
                 if (isMuted) {
                     youTubePlayer.mute();
                 } else {
@@ -65,46 +68,42 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             self.on('change:volume', function (model, volume) {
                 iconManager.setIcon(this.get('state'), this.get('muted'), volume);
             });
-            
+
+            this.on('change:loadedVideoId', function() {
+                clearInterval(seekToInterval);
+            });
+
+            var seekToInterval = null;
             this.on('change:videoStreamSrc', function (model, videoStreamSrc) {
                 var youTubeVideo = $('#YouTubeVideo');
                 
                 //  Resetting streamusPlayer because it might not be able to play on src change.
                 self.set('streamusPlayer', null);
 
-                var videoStreamSwfObjectId = 'videoStreamSwfObject';
-                
-                if ($('#' + videoStreamSwfObjectId).length > 0) {
-                    $('#' + videoStreamSwfObjectId).remove();
-                }
-
-                if (videoStreamSrc.indexOf('swf') > -1) {
-
-                    console.log("setting swf object");
-
-                    var videoStreamSwfObject = $('<object>', {
-                        id: 'videoStreamSwfObject',
-                        data: videoStreamSrc,
-                        type: 'application/x-shockwave-flash'
-                    });
-                    videoStreamSwfObject.appendTo(youTubeVideo);
-
-                    var videoStreamSwfParam = $('<param>', {
-                        value: videoStreamSrc,
-                        name: 'movie'
-                    });
-
-                    videoStreamSwfParam.appendTo(videoStreamSwfObject);
-
-                    youTubeVideo.attr('src', '');
-                } else {
-                    youTubeVideo.attr('src', videoStreamSrc);
-                }
+                console.log("setting new src");
+                youTubeVideo.attr('src', videoStreamSrc);
                 
                 youTubeVideo.on('canplay', function (event) {
                     var streamusPlayer = event.target;
-                    //  TODO: This might be the wrong place to be setting this.
                     self.set('streamusPlayer', streamusPlayer);
+                    
+                    //  I store volume out of 100 and volume on HTML5 player is range of 0 to 1 so divide by 100.
+                    streamusPlayer.volume = self.get('volume') / 100;
+
+                    //  This ensure that youTube continues to update blob data.
+                    if (videoStreamSrc.indexOf('blob') > -1) {
+                        seekToInterval = setInterval(function () {
+                            var youTubePlayer = self.get('youTubePlayer');
+
+                            if (self.get('streamusPlayer') != null) {
+                                var currentTime = self.get('streamusPlayer').currentTime;
+                                youTubePlayer.seekTo(currentTime, true);
+                            }
+
+
+                        }, 10000);
+                    }
+
                 });
 
                 youTubeVideo.on('play', function () {
@@ -154,6 +153,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                                 }
 
                                 if (!isNaN(currentTime)) {
+                                    console.log("setting current time to:", currentTime);
                                     self.set('currentTime', Math.ceil(currentTime));
                                 }
 
@@ -171,6 +171,12 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                             
                             if (playerState.data === PlayerStates.BUFFERING) {
                                 self.set('buffering', true);
+                            } else {
+                                if (self.get('buffering')) {
+                                    self.set('wasBuffering', true);
+                                } else {
+                                    self.set('wasBuffering', false);
+                                }
                             }
 
                             //  The vidcued -> paused transition needs to be partially consumed to be visually pleasing.
@@ -181,21 +187,17 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                         },
                         'onError': function (error) {
 
-                            //var streamusPlayer = self.get('streamusPlayer');
-                            
-                            //if (streamusPlayer == null || error.data !== 5) {
-                                window && console.error("An error was encountered.", error);
+                            window && console.error("An error was encountered.", error);
 
-                                switch (error.data) {
-                                    case 100:
-                                        alert("Video requested is not found. This occurs when a video has been removed or it has been marked as private.");
-                                        break;
-                                    case 101:
-                                    case 150:
-                                        alert("Video requested does not allow playback in the embedded players.");
-                                        break;
-                                }                            
-                            //}
+                            switch (error.data) {
+                                case 100:
+                                    alert("Video requested is not found. This occurs when a video has been removed or it has been marked as private.");
+                                    break;
+                                case 101:
+                                case 150:
+                                    alert("Video requested does not allow playback in the embedded players.");
+                                    break;
+                            }                            
 
                         }
                     }
@@ -237,9 +239,9 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
 
             if (streamusPlayer) {
                 streamusPlayer.muted = true;
+            } else {
+                this.get('youTubePlayer').mute();
             }
-
-            this.get('youTubePlayer').mute();
         },
         
         unMute: function () {
@@ -249,9 +251,10 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
 
             if (streamusPlayer) {
                 streamusPlayer.muted = false;
+            } else {
+                this.get('youTubePlayer').unMute();
             }
 
-            this.get('youTubePlayer').unMute();
         },
 
         pause: function () {
@@ -261,9 +264,9 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
 
             if (streamusPlayer) {
                 streamusPlayer.pause();
+            } else {
+                this.get('youTubePlayer').pauseVideo();
             }
-
-            this.get('youTubePlayer').pauseVideo();
         },
             
         play: function () {
@@ -275,9 +278,10 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
 
                 if (streamusPlayer) {
                     streamusPlayer.play();
+                } else {
+                    this.get('youTubePlayer').playVideo();
                 }
 
-                this.get('youTubePlayer').playVideo();
             }
         },
 
@@ -297,15 +301,16 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                 });
                 
             } else {
-                //  The true paramater allows the youTubePlayer to seek ahead past its buffered video.
-                youTubePlayer.seekTo(timeInSeconds, true);
-                
+
                 var streamusPlayer = this.get('streamusPlayer');
 
                 if (streamusPlayer) {
                     streamusPlayer.currentTime = timeInSeconds;
                 }
 
+                //  Seek even if streamusPlayer is defined because we probably need to update the blob if it is.
+                //  The true paramater allows the youTubePlayer to seek ahead past its buffered video.
+                youTubePlayer.seekTo(timeInSeconds, true);
             }
             
         }

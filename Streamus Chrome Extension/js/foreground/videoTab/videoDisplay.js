@@ -12,19 +12,31 @@
         videoDisplayCanvasContext.fillStyle = 'black';
         videoDisplayCanvasContext.fill();
     }
-
-    fillCanvasWithBlack();
-
+    
+    var youTubeVideo = $(chrome.extension.getBackgroundPage().document).find('#YouTubeVideo')[0];
     var initialImage = new Image();
-
+    
     initialImage.onload = function () {
         videoDisplayCanvasContext.drawImage(this, 0, 0, videoDisplayWidth, videoDisplayHeight);
     };
-
-    var loadedVideoId = player.get('loadedVideoId');
     
-    if (loadedVideoId != '') {
-        initialImage.src = 'http://i2.ytimg.com/vi/' + loadedVideoId + '/mqdefault.jpg ';
+    if (backgroundManager.get('activePlaylistItem') == null) {
+        fillCanvasWithBlack();
+
+    } else {
+
+        var playerState = player.get('state');
+        if (playerState == PlayerStates.PLAYING || playerState == PlayerStates.PAUSED) {
+            videoDisplayCanvasContext.drawImage(youTubeVideo, 0, 0, videoDisplayWidth, videoDisplayHeight);
+        } else {
+
+            var loadedVideoId = player.get('loadedVideoId');
+
+            if (loadedVideoId != '') {
+                initialImage.src = 'http://i2.ytimg.com/vi/' + loadedVideoId + '/mqdefault.jpg ';
+            }
+        }
+
     }
 
     backgroundManager.on('change:activePlaylistItem', function(model, activePlaylistItem) {
@@ -36,12 +48,17 @@
         }
     });
 
-    var youTubeVideo = $(chrome.extension.getBackgroundPage().document).find('#YouTubeVideo')[0];
+    //  Start drawing again when the player is playing.
+    player.on('change:state', function (model, playerState) {
+        if (playerState === PlayerStates.PLAYING) {
+            draw();
+        }
+    });
     
     function draw() {
-        window.requestAnimationFrame(draw);
-        
-        if (player.isPlaying()) {
+        //  Stop drawing entirely when the player stops.
+        if (window != null && player.isPlaying()) {
+            window.requestAnimationFrame(draw);
             videoDisplayCanvasContext.drawImage(youTubeVideo, 0, 0, videoDisplayWidth, videoDisplayHeight);
         }
     }

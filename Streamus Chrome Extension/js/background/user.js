@@ -27,13 +27,15 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
                 //  Look for a user id in sync, it might be undefined though.
                 var foundUserId = data['UserId'];
 
+                console.log("foundUserId:", foundUserId);
+
                 if (typeof foundUserId === 'undefined') {
 
                     foundUserId = localStorageManager.getUserId();
                     
                     if (foundUserId !== null) {
                         self.set('id', foundUserId);
-                        fetchUser.call(self, false);
+                        fetchUser.call(self, true);
                     } else {
                         createNewUser.call(self);
                     }
@@ -41,7 +43,7 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
                 } else {
                     //  Update the model's id to proper value and call fetch to retrieve all data from server.
                     self.set('id', foundUserId);
-                    fetchUser.call(self, false);
+                    fetchUser.call(self, true);
                 }
             });
 
@@ -75,11 +77,17 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
             silent: true
         });
 
+        console.log("shouldSetSyncStorage:", shouldSetSyncStorage);
+
         //  TODO: Error handling for writing to sync too much.
         //  Write to sync as little as possible because it has restricted read/write limits per hour.
         if (shouldSetSyncStorage) {
-            chrome.storage.sync.set({
-                'UserId': model.get('id')
+
+            console.log("writing to UserId value:", model.get('id'));
+
+            chrome.storage.sync.set({ 'userid': model.get('id') }, function () {
+                // Notify that we saved.
+                console.log('Settings saved');
             });
         }
 
