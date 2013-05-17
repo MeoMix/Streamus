@@ -254,7 +254,6 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                     if (player.isPlaying() || player.get('wasBuffering')) {
                         player.loadVideoById(videoId);
                     } else {
-                        console.log("cueuing video");
                         player.cueVideoById(videoId);
                     }
                 }

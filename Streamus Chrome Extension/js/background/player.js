@@ -80,10 +80,10 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                 //  Resetting streamusPlayer because it might not be able to play on src change.
                 self.set('streamusPlayer', null);
 
-                console.log("setting new src");
                 youTubeVideo.attr('src', videoStreamSrc);
                 
                 youTubeVideo.on('canplay', function (event) {
+
                     var streamusPlayer = event.target;
                     self.set('streamusPlayer', streamusPlayer);
                     
@@ -153,7 +153,6 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                                 }
 
                                 if (!isNaN(currentTime)) {
-                                    console.log("setting current time to:", currentTime);
                                     self.set('currentTime', Math.ceil(currentTime));
                                 }
 
@@ -168,7 +167,12 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                             self.set('ready', true);
                         },
                         'onStateChange': function (playerState) {
-                            
+
+                            //  Skip unstarted events because they cause the UI to flicker
+                            if (playerState.data === PlayerStates.UNSTARTED) {
+                                return;
+                            }
+
                             if (playerState.data === PlayerStates.BUFFERING) {
                                 self.set('buffering', true);
                             } else {

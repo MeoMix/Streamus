@@ -120,11 +120,10 @@ $(function () {
         id: 'playlistSelect',
         'class': 'yt-uix-form-input-text share-panel-url',
         change: function() {
-            console.log("onChange");
+
             var match = document.URL.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/);
             var videoId = (match && match[2].length === 11) ? match[2] : null;
             
-
         }
     });
 

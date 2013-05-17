@@ -5,6 +5,8 @@ var User = null;
 define(['streams', 'programState', 'localStorageManager'], function (Streams, programState, localStorageManager) {
     'use strict';
 
+    var syncUserIdKey = 'UserId';
+
     //  User data will be loaded either from cache or server.
     var userModel = Backbone.Model.extend({
         defaults: function() {
@@ -23,11 +25,9 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
             var self = this;
             //  chrome.Storage.sync is cross-computer syncing with restricted read/write amounts.
 
-            chrome.storage.sync.get('UserId', function (data) {
+            chrome.storage.sync.get(syncUserIdKey, function (data) {
                 //  Look for a user id in sync, it might be undefined though.
-                var foundUserId = data['UserId'];
-
-                console.log("foundUserId:", foundUserId);
+                var foundUserId = data[syncUserIdKey];
 
                 if (typeof foundUserId === 'undefined') {
 
@@ -43,7 +43,9 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
                 } else {
                     //  Update the model's id to proper value and call fetch to retrieve all data from server.
                     self.set('id', foundUserId);
-                    fetchUser.call(self, true);
+                    
+                    //  Pass false due to success of fetching from chrome.storage.sync -- no need to overwrite with same data.
+                    fetchUser.call(self, false);
                 }
             });
 
@@ -77,18 +79,16 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
             silent: true
         });
 
-        console.log("shouldSetSyncStorage:", shouldSetSyncStorage);
-
         //  TODO: Error handling for writing to sync too much.
         //  Write to sync as little as possible because it has restricted read/write limits per hour.
         if (shouldSetSyncStorage) {
 
-            console.log("writing to UserId value:", model.get('id'));
-
-            chrome.storage.sync.set({ 'userid': model.get('id') }, function () {
-                // Notify that we saved.
-                console.log('Settings saved');
-            });
+            //  Using the bracket access notation here to leverage the variable which stores the key for chrome.storage.sync
+            //  I want to be able to ensure I am getting/setting from the same location, thus the variable.
+            var storedKey = [];
+            storedKey[syncUserIdKey] = model.get('id');
+            
+            chrome.storage.sync.set(storedKey);
         }
 
         //  Announce that user has loaded so managers can use it to fetch data.

@@ -148,35 +148,6 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
                 break;
         }
     });
-
-    chrome.webRequest.onHeadersReceived.addListener(function (info) {
-        
-        //for (var i = 0; i < info.responseHeaders.length; ++i) {
-        //    if (info.responseHeaders[i].name === 'X-XSS-Protection') {
-        //        info.responseHeaders.splice(i, 1);
-        //        console.log("spliced");
-        //        break;
-        //    }
-        //}
-        
-
-        //for (var i = 0; i < info.responseHeaders.length; ++i) {
-        //    if (info.responseHeaders[i].name === 'X-Frame-Options') {
-        //        info.responseHeaders.splice(i, 1);
-        //        console.log("spliced 2");
-        //        break;
-        //    }
-        //}
-
-        //info.responseHeaders['Access-Control-Allow-Origin'] = '*';
-
-        return { responseHeaders: info.responseHeaders };
-    }, {
-        //  TODO: Probably shouldn't be all URLs.
-        urls: ["http://www.youtube.com/*"]
-    },
-        ["blocking", "responseHeaders"]
-    );
         
     //  Modify the iFrame headers to force HTML5 player and to look like we're actually a YouTube page.
     //  The HTML5 player seems more reliable (doesn't crash when Flash goes down) and looking like YouTube

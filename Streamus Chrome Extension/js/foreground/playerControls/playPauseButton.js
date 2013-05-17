@@ -28,12 +28,8 @@ define(['backgroundManager', 'player', 'spin', 'videoDisplay'], function (backgr
         if (!$(this).hasClass('disabled')) {
             if (player.isPlaying()) {
                 player.pause();
-                pauseIcon.hide();
-                playIcon.show();
+                setToPlay();
             } else {
-
-                playIcon.hide();
-                pauseIcon.hide();
                 player.play();
             }
         }
@@ -68,8 +64,8 @@ define(['backgroundManager', 'player', 'spin', 'videoDisplay'], function (backgr
 
     //  Whenever the YouTube player changes playing state -- update whether icon shows play or pause.
     function makeIconReflectPlayerState() {
+
         if (player.isPlaying()) {
-            pauseIcon.show();
             setToPause();
         }
         else if (!player.get('buffering')) {
