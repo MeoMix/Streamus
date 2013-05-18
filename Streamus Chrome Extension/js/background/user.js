@@ -85,8 +85,10 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
 
             //  Using the bracket access notation here to leverage the variable which stores the key for chrome.storage.sync
             //  I want to be able to ensure I am getting/setting from the same location, thus the variable.
-            var storedKey = [];
+            var storedKey = {};
             storedKey[syncUserIdKey] = model.get('id');
+
+            console.log("Stored key:", storedKey);
             
             chrome.storage.sync.set(storedKey);
         }
