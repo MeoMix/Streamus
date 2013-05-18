@@ -239,7 +239,7 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
 
             if (activePlaylistItem == null) {
                 localStorageManager.setActivePlaylistItemId(null);
-                player.pause();
+                player.stop();
 
             } else {
                 localStorageManager.setActivePlaylistItemId(activePlaylistItem.get('id'));

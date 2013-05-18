@@ -42,11 +42,17 @@ define(['backgroundManager', 'player', 'spin', 'videoDisplay'], function (backgr
 	        pauseIcon.hide();
 	        spinner.spin($('#LoadingSpinner')[0]);
 	    } else {
-	        spinner.stop();
+
+            if (player.isPlaying()) {
+                setToPause();
+            } else {
+                setToPlay();
+            }
+
 	    }
     });
-   
-	player.on('change:state', makeIconReflectPlayerState);
+
+    player.on('change:state', makeIconReflectPlayerState);
 	makeIconReflectPlayerState();
 
     backgroundManager.on('change:activePlaylistItem', function(model, activePlaylistItem) {
@@ -87,12 +93,14 @@ define(['backgroundManager', 'player', 'spin', 'videoDisplay'], function (backgr
 
     //  Change the music button to the 'Play' image
     function setToPlay() {
+        spinner.stop();
         pauseIcon.hide();
         playIcon.show();
     }
 
     //  Change the music button to the 'Pause' image
     function setToPause() {
+        spinner.stop();
         pauseIcon.show();
         playIcon.hide();
     }

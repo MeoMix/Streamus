@@ -61,7 +61,8 @@ define(['ytHelper',
                     });
                 }
 
-                this.on('change:title', function (model, title) {
+                //  Debounce because I want automatic typing but no reason to spam server with saves.
+                this.on('change:title', _.debounce(function (model, title) {
                     $.ajax({
                         url: programState.getBaseUrl() + 'Playlist/UpdateTitle',
                         type: 'POST',
@@ -75,7 +76,7 @@ define(['ytHelper',
                             window && console.error("Error saving title", error);
                         }
                     });
-                });
+                }, 2000));
                 
                 this.on('change:firstItemId', function (model, firstItemId) {
 

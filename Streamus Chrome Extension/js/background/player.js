@@ -72,59 +72,72 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             this.on('change:loadedVideoId', function() {
                 clearInterval(seekToInterval);
             });
+            
+            var youTubeVideo = $('#YouTubeVideo');
+            youTubeVideo.off('play').on('play', function () {
+                self.set('buffering', false);
+                self.set('state', PlayerStates.PLAYING);
+            });
 
+            youTubeVideo.on('pause', function () {
+                self.set('buffering', false);
+                self.set('state', PlayerStates.PAUSED);
+            });
+
+            youTubeVideo.on('waiting', function () {
+                self.set('buffering', true);
+                self.set('state', PlayerStates.BUFFERING);
+            });
+
+            youTubeVideo.on('seeking', function () {
+                self.set('buffering', true);
+            });
+
+            youTubeVideo.on('seeked', function () {
+                self.set('buffering', false);
+            });
+
+            youTubeVideo.on('ended', function () {
+                self.set('state', PlayerStates.ENDED);
+            });
+
+            youTubeVideo.on('error', function (error) {
+                window && console.error("Error:", error);
+            });
+            
+            youTubeVideo.on('loadedmetadata', function () {
+                this.currentTime = self.get('currentTime');
+            });
+            
             var seekToInterval = null;
+            youTubeVideo.on('canplay', function () {
+                self.set('streamusPlayer', this);
+
+                //  I store volume out of 100 and volume on HTML5 player is range of 0 to 1 so divide by 100.
+                this.volume = self.get('volume') / 100;
+                this.play();
+
+                var videoStreamSrc = youTubeVideo.attr('src');
+
+                //  This ensure that youTube continues to update blob data.
+                if (videoStreamSrc.indexOf('blob') > -1) {
+                    seekToInterval = setInterval(function () {
+                        var youTubePlayer = self.get('youTubePlayer');
+
+                        if (self.get('streamusPlayer') != null) {
+                            var currentTime = self.get('streamusPlayer').currentTime;
+                            youTubePlayer.seekTo(currentTime, true);
+                        }
+
+                    }, 10000);
+                }
+
+            });
+
             this.on('change:videoStreamSrc', function (model, videoStreamSrc) {
-                var youTubeVideo = $('#YouTubeVideo');
-                
                 //  Resetting streamusPlayer because it might not be able to play on src change.
                 self.set('streamusPlayer', null);
-
                 youTubeVideo.attr('src', videoStreamSrc);
-                
-                youTubeVideo.on('canplay', function (event) {
-
-                    var streamusPlayer = event.target;
-                    self.set('streamusPlayer', streamusPlayer);
-                    
-                    //  I store volume out of 100 and volume on HTML5 player is range of 0 to 1 so divide by 100.
-                    streamusPlayer.volume = self.get('volume') / 100;
-
-                    //  This ensure that youTube continues to update blob data.
-                    if (videoStreamSrc.indexOf('blob') > -1) {
-                        seekToInterval = setInterval(function () {
-                            var youTubePlayer = self.get('youTubePlayer');
-
-                            if (self.get('streamusPlayer') != null) {
-                                var currentTime = self.get('streamusPlayer').currentTime;
-                                youTubePlayer.seekTo(currentTime, true);
-                            }
-
-
-                        }, 10000);
-                    }
-
-                });
-
-                youTubeVideo.on('play', function () {
-                    self.set('state', PlayerStates.PLAYING);
-                });
-
-                youTubeVideo.on('pause', function () {
-                    self.set('state', PlayerStates.PAUSED);
-                });
-
-                youTubeVideo.on('waiting', function () {
-                    self.set('buffering', true);
-                    self.set('state', PlayerStates.BUFFERING);
-                });
-                
-                //  TODO: Other events?
-
-                youTubeVideo.on('error', function(error) {
-                    window && console.error("Error:", error);
-                });
-
             });
 
             youTubePlayerAPI.once('change:ready', function () {
@@ -144,17 +157,15 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                             setInterval(function () {
 
                                 var streamusPlayer = self.get('streamusPlayer');
-                                var currentTime;
+                                
+                                if (streamusPlayer != null) {
+                                    var currentTime = streamusPlayer.currentTime;
 
-                                if (streamusPlayer == null) {
-                                    currentTime = youTubePlayer.getCurrentTime();
-                                } else {
-                                    currentTime = streamusPlayer.currentTime;
+                                    if (!isNaN(currentTime)) {
+                                        self.set('currentTime', Math.ceil(currentTime));
+                                    }
                                 }
 
-                                if (!isNaN(currentTime)) {
-                                    self.set('currentTime', Math.ceil(currentTime));
-                                }
 
                             }, 500);
 
@@ -183,11 +194,6 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                                 }
                             }
 
-                            //  The vidcued -> paused transition needs to be partially consumed to be visually pleasing.
-                            //  If the last state was vidcued AND the current state is paused -- skip.
-                            if (!(self.get('state') === PlayerStates.VIDCUED && playerState.data === PlayerStates.PAUSED)) {
-                                self.set('state', playerState.data);
-                            }
                         },
                         'onError': function (error) {
 
@@ -213,6 +219,13 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
         cueVideoById: function (videoId) {
             this.pause();
             this.set('loadedVideoId', videoId);
+            this.set('currentTime', 0);
+
+            var streamusPlayer = this.get('streamusPlayer');
+            
+            if (streamusPlayer != null) {
+                streamusPlayer.currentTime = 0;
+            }
             
             this.get('youTubePlayer').cueVideoById({
                 videoId: videoId,
@@ -224,6 +237,13 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
         loadVideoById: function (videoId) {
             this.set('buffering', true);
             this.set('loadedVideoId', videoId);
+            this.set('currentTime', 0);
+            
+            var streamusPlayer = this.get('streamusPlayer');
+
+            if (streamusPlayer != null) {
+                streamusPlayer.currentTime = 0;
+            }
             
             this.get('youTubePlayer').loadVideoById({
                 videoId: videoId,
@@ -260,6 +280,16 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             }
 
         },
+        
+        stop: function () {
+            this.set('buffering', false);
+
+            $('#YouTubeVideo').attr('src', '');
+            this.set('streamusPlayer', null);
+
+            this.get('youTubePlayer').stopVideo();
+            this.set('loadedVideoId', '');
+        },
 
         pause: function () {
             this.set('buffering', false);
@@ -291,6 +321,8 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
 
         seekTo: function (timeInSeconds) {
 
+            this.set('currentTime', timeInSeconds);
+
             var youTubePlayer = this.get('youTubePlayer');
             //  YouTube documentation states that SeekTo will start playing when transitioning from the UNSTARTED state.
             //  This is counter-intuitive because UNSTARTED and PAUSED are the same to a user, but result in different effects.
@@ -307,14 +339,15 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             } else {
 
                 var streamusPlayer = this.get('streamusPlayer');
-
-                if (streamusPlayer) {
+                
+                if (streamusPlayer != null) {
                     streamusPlayer.currentTime = timeInSeconds;
                 }
 
                 //  Seek even if streamusPlayer is defined because we probably need to update the blob if it is.
                 //  The true paramater allows the youTubePlayer to seek ahead past its buffered video.
                 youTubePlayer.seekTo(timeInSeconds, true);
+                
             }
             
         }

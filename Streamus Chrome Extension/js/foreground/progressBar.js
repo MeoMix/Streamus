@@ -60,6 +60,7 @@ define(['backgroundManager', 'player', 'helpers'], function (backgroundManager, 
             setCurrentTime(0);
             setTotalTime(0);
         } else {
+
             setCurrentTime(0);
             setTotalTime(getCurrentVideoDuration());
         }
@@ -73,6 +74,7 @@ define(['backgroundManager', 'player', 'helpers'], function (backgroundManager, 
     
     //  Keep the progress bar up to date. 
     player.on('change:currentTime', function (model, currentTime) {
+
         if (!isSeeking) {
             setCurrentTime(currentTime);
         }

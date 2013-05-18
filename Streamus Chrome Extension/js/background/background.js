@@ -49,6 +49,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
         }
         //  If the video stopped playing and there is another video to play (not the same one), do so.
         else if (state === PlayerStates.ENDED) {
+
             var activePlaylistItem = backgroundManager.get('activePlaylistItem');
             //  NOTE: No guarantee that the activePlaylistItem's playlistId will be activePlaylist's ID.
             var playlistId = activePlaylistItem.get('playlistId');

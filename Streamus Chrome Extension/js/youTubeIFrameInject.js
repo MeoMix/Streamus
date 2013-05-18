@@ -20,7 +20,7 @@
                             method: "videoStreamSrcChange", videoStreamSrc: videoStreamSrc
                         });
 
-                        videoStream.attr('src', '');
+                        videoStream.removeAttr('src');
                     }
 
                 }

@@ -1,4 +1,4 @@
-define(function(){
+define(['localStorageManager'], function(localStorageManager){
     'use strict';
     
     var menuButtons = $('.menubutton');
@@ -14,6 +14,12 @@ define(function(){
             $(this).addClass('active');
             $('.content:visible').hide();
             $('#' + $(this).data('content')).show();
+
+            localStorageManager.setActiveContentButtonId($(this).attr('id'));
         }
     });
+
+    //  Set the initially loaded content to whatever was clicked last or the home page as a default
+    var activeContentButtonId = localStorageManager.getActiveContentButtonId();
+    $('#' + activeContentButtonId).click();
 });

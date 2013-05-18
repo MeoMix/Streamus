@@ -1,8 +1,6 @@
 ﻿define(function() {
     'use strict';
     
-
-
     var pushMessageManagerModel = Backbone.Model.extend({
         defaults: {
             channelId: null

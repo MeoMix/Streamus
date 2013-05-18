@@ -8,12 +8,6 @@ define(['backgroundManager'], function (backgroundManager) {
             'class': 'headerTitle'
         }).appendTo(contentHeader);
 
-        function processTitle(playlistTitle){
-            if (playlistTitle !== '') {
-                backgroundManager.get('activePlaylist').set('title', playlistTitle);
-            }
-        }
-
         var activePlaylist = backgroundManager.get('activePlaylist');
         var activePlaylistTitle = '';
         
@@ -29,28 +23,25 @@ define(['backgroundManager'], function (backgroundManager) {
             'class': 'headerInput',
             type: 'text',
             value: activePlaylistTitle,
-            originalValue: '',
             mouseover: function(){
-                this.originalValue = $(this).val();
                 $(this).css('border-color', '#EEE');
             },
-            mouseout: function(){
-                if(this.originalValue !== $(this).val()){
-                    processTitle($(this).val());
-                }
-                $(this).blur();
-                $(this).css('border-color', 'transparent');
+            input: function () {
+                backgroundManager.get('activePlaylist').set('title', $(this).val());
             },
-            keyup: function (e) {
-                var code = e.which;
-
-                if (code === $.ui.keyCode.ENTER){
-                    processTitle($(this).val()); 
+            mouseout: function () {
+                //  Don't blur if they're trying to highlight some text to edit and go outside the bounds.
+                if (window.getSelection().toString() === '') {
                     $(this).blur();
-                    $(this).css('border-color', 'transparent');
                 }
-
+            },
+            blur: function() {
+                $(this).css('border-color', 'transparent');
             }
+        });
+
+        headerInput.on('input', function() {
+            backgroundManager.get('activePlaylist').set('title', $(this).val());
         });
         
         headerInput.appendTo(headerTitle);
@@ -79,6 +70,7 @@ define(['backgroundManager'], function (backgroundManager) {
         var addInput = $('<input/>', {
             'class': 'addInput',
             type: 'text',
+            maxlength: 255,
             placeholder: config.addInputPlaceholder
         }).appendTo(addButton);
 

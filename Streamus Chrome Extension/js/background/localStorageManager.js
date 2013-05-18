@@ -71,6 +71,14 @@ define(['repeatButtonStates'], function (repeatButtonStates) {
         
         getUserId: function() {
             return localStorage.getItem('UserId') || null;
+        },
+        
+        setActiveContentButtonId: function(activeContentButtonId) {
+            localStorage.setItem('activeContentButtonId', activeContentButtonId);
+        },
+        
+        getActiveContentButtonId: function() {
+            return localStorage.getItem('activeContentButtonId') || 'HomeMenuButton';
         }
         
     });
