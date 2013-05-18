@@ -39,11 +39,6 @@
       "css": ["css/inject.css"],
 	  "all_frames": true,
       "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/inject.js"]
-    },
-    {
-      "matches": ["http://www.facebook.com/robots.txt*"],
-      "js": ["js/thirdParty/oauth2/oauth2_inject.js"],
-      "run_at": "document_start"
     }
   ],
   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDmO/I2g0AsHj5gwKYcAv19xa/E4FYE3gD1DtReHysli/YvzOX2X/VOgPMNCB9d5PvuWNH0xud21ztmk7wsNxKLcEuDTENgGqA9voTTG+3hgT1zH5R7rm8E0Kw590KhNattqwXkoRqdvavMjnUzlB9gDbU1duI1V8U03etW4Ta8EwIDAQAB",

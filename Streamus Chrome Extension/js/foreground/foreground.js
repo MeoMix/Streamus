@@ -3,7 +3,7 @@
 define(['backgroundManager',
         'volumeSlider',
         'playPauseButton',
-        'skipButton',
+        'nextButton',
         'previousButton',
         'shuffleButton',
         'radioModeButton',

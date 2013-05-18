@@ -93,7 +93,6 @@
     <Content Include="css\desktopNotification.css" />
     <Content Include="css\foreground.css" />
     <Content Include="css\inject.css" />
-    <Content Include="css\introjs.css" />
     <Content Include="css\jasmine.css" />
     <Content Include="desktopNotification.htm" />
     <Content Include="foreground.htm" />
@@ -153,7 +152,7 @@
     <Content Include="js\foreground\playerControls\radioModeButton.js" />
     <Content Include="js\foreground\playerControls\repeatButton.js" />
     <Content Include="js\foreground\playerControls\shuffleButton.js" />
-    <Content Include="js\foreground\playerControls\skipButton.js" />
+    <Content Include="js\foreground\playerControls\nextButton.js" />
     <Content Include="js\foreground\playerControls\volumeSlider.js" />
     <Content Include="js\foreground\playlistItemsTab\playlistItemInput.js" />
     <Content Include="js\foreground\playlistItemsTab\playlistItemsContextMenu.js" />
@@ -186,15 +185,6 @@
     <Content Include="js\thirdParty\jqueryMousewheel.js" />
     <Content Include="js\thirdParty\jqueryUi.js" />
     <Content Include="js\thirdParty\levenshtein.js" />
-    <Content Include="js\thirdParty\oauth2\adapters\bitly.js" />
-    <Content Include="js\thirdParty\oauth2\adapters\facebook.js" />
-    <Content Include="js\thirdParty\oauth2\adapters\github.js" />
-    <Content Include="js\thirdParty\oauth2\adapters\google.js" />
-    <Content Include="js\thirdParty\oauth2\adapters\sample.js" />
-    <Content Include="js\thirdParty\oauth2\oauth2.html" />
-    <Content Include="js\thirdParty\oauth2\oauth2.js" />
-    <Content Include="js\thirdParty\oauth2\oauth2_finish.js" />
-    <Content Include="js\thirdParty\oauth2\oauth2_inject.js" />
     <Content Include="js\thirdParty\require.js" />
     <Content Include="js\thirdParty\jquery.spin.js" />
     <Content Include="js\thirdParty\underscore.js" />

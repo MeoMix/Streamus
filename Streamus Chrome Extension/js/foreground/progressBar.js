@@ -54,13 +54,12 @@ define(['backgroundManager', 'player', 'helpers'], function (backgroundManager, 
         }
     });
 
-    backgroundManager.on('change:activePlaylistItem', function(activePlaylistItem) {
+    backgroundManager.on('change:activePlaylistItem', function(model, activePlaylistItem) {
 
         if (activePlaylistItem === null) {
             setCurrentTime(0);
             setTotalTime(0);
         } else {
-
             setCurrentTime(0);
             setTotalTime(getCurrentVideoDuration());
         }

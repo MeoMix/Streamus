@@ -6,7 +6,6 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
 
     var youTubePlayerModel = Backbone.Model.extend({
         defaults: {
-            buffering: false,
             //  Returns the elapsed time of the currently loaded video. Returns 0 if no video is playing
             currentTime: 0,
             ready: false,
@@ -21,8 +20,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             //  The video object which will hold the iframe-removed player
             streamusPlayer: null,
             //  The actual YouTube player API object.
-            youTubePlayer: null,
-            wasBuffering: false
+            youTubePlayer: null
         },
         
         //  Initialize the player by creating a YouTube Player IFrame hosting an HTML5 player
@@ -75,29 +73,27 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             
             var youTubeVideo = $('#YouTubeVideo');
             youTubeVideo.off('play').on('play', function () {
-                self.set('buffering', false);
                 self.set('state', PlayerStates.PLAYING);
             });
 
             youTubeVideo.on('pause', function () {
-                console.log("pausing");
-
-
-                self.set('buffering', false);
                 self.set('state', PlayerStates.PAUSED);
             });
 
             youTubeVideo.on('waiting', function () {
-                self.set('buffering', true);
                 self.set('state', PlayerStates.BUFFERING);
             });
 
             youTubeVideo.on('seeking', function () {
-                self.set('buffering', true);
+                if (self.get('state') === PlayerStates.PLAYING) {
+                    self.set('state', PlayerStates.BUFFERING);
+                }
             });
 
             youTubeVideo.on('seeked', function () {
-                self.set('buffering', false);
+                if (self.get('state') === PlayerStates.BUFFERING) {
+                    self.set('state', PlayerStates.PLAYING);
+                }
             });
 
             youTubeVideo.on('ended', function () {
@@ -105,13 +101,13 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             });
 
             youTubeVideo.on('error', function (error) {
-                
-                if (typeof (error.data) === 'undefined') {
-                    console.log("error detected, playing");
-                    $('#YouTubeVideo')[0].play();
-                }
 
                 window && console.error("Error:", error);
+            });
+
+            //  TODO: Would be nice to use this instead of a polling interval.
+            youTubeVideo.on('timeupdate', function() {
+                self.set('currentTime', Math.ceil(this.currentTime));
             });
             
             youTubeVideo.on('loadedmetadata', function () {
@@ -124,7 +120,10 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
 
                 //  I store volume out of 100 and volume on HTML5 player is range of 0 to 1 so divide by 100.
                 this.volume = self.get('volume') / 100;
-                this.play();
+                
+
+
+                //this.play();
 
                 var videoStreamSrc = youTubeVideo.attr('src');
 
@@ -143,7 +142,12 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
 
             });
 
+            this.on('change:loadedVideoId', function() {
+                youTubeVideo.currentTime = 0;
+            });
+            
             this.on('change:videoStreamSrc', function (model, videoStreamSrc) {
+
                 //  Resetting streamusPlayer because it might not be able to play on src change.
                 self.set('streamusPlayer', null);
                 youTubeVideo.attr('src', videoStreamSrc);
@@ -162,22 +166,6 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                             self.set('muted', youTubePlayer.isMuted());
                             self.set('volume', youTubePlayer.getVolume());
                             
-                            //  Start monitoring YouTube for current time changes, foreground will pick up on currentTime changes.
-                            setInterval(function () {
-
-                                var streamusPlayer = self.get('streamusPlayer');
-                                
-                                if (streamusPlayer != null) {
-                                    var currentTime = streamusPlayer.currentTime;
-
-                                    if (!isNaN(currentTime)) {
-                                        self.set('currentTime', Math.ceil(currentTime));
-                                    }
-                                }
-
-
-                            }, 500);
-
                             //  Keep the player out of UNSTARTED state because seekTo will start playing if in UNSTARTED and not PAUSED
                             self.pause();
 
@@ -185,24 +173,6 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
 
                             //  Announce that the YouTube Player is ready to go.
                             self.set('ready', true);
-                        },
-                        'onStateChange': function (playerState) {
-
-                            //  Skip unstarted events because they cause the UI to flicker
-                            if (playerState.data === PlayerStates.UNSTARTED) {
-                                return;
-                            }
-
-                            if (playerState.data === PlayerStates.BUFFERING) {
-                                self.set('buffering', true);
-                            } else {
-                                if (self.get('buffering')) {
-                                    self.set('wasBuffering', true);
-                                } else {
-                                    self.set('wasBuffering', false);
-                                }
-                            }
-
                         },
                         'onError': function (error) {
 
@@ -228,15 +198,10 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
         cueVideoById: function (videoId) {
             this.pause();
             this.set('loadedVideoId', videoId);
-            this.set('currentTime', 0);
 
-            var streamusPlayer = this.get('streamusPlayer');
-            
-            if (streamusPlayer != null) {
-                streamusPlayer.currentTime = 0;
-            }
-            
-            this.get('youTubePlayer').cueVideoById({
+            $(this.get('streamusPlayer')).removeAttr('autoplay');
+
+            this.get('youTubePlayer').loadVideoById({
                 videoId: videoId,
                 startSeconds: 0,
                 suggestedQuality: 'default'
@@ -244,15 +209,12 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
         },
             
         loadVideoById: function (videoId) {
-            this.set('buffering', true);
+            this.set('state', PlayerStates.BUFFERING);
             this.set('loadedVideoId', videoId);
-            this.set('currentTime', 0);
-            
-            var streamusPlayer = this.get('streamusPlayer');
 
-            if (streamusPlayer != null) {
-                streamusPlayer.currentTime = 0;
-            }
+            $(this.get('streamusPlayer')).attr('autoplay', 'true');
+
+            console.log("Setting currentTime to 0");
             
             this.get('youTubePlayer').loadVideoById({
                 videoId: videoId,
@@ -287,11 +249,10 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             } else {
                 this.get('youTubePlayer').unMute();
             }
-
         },
         
         stop: function () {
-            this.set('buffering', false);
+            this.set('state', PlayerStates.UNSTARTED);
 
             $('#YouTubeVideo').attr('src', '');
             this.set('streamusPlayer', null);
@@ -301,28 +262,30 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
         },
 
         pause: function () {
-            this.set('buffering', false);
-            
             var streamusPlayer = this.get('streamusPlayer');
 
             if (streamusPlayer) {
                 streamusPlayer.pause();
             } else {
+                //  If YouTubeVideo is loading its metadata we need to keep its state in sync regardless.
+                $('#YouTubeVideo').removeAttr('autoplay');
                 this.get('youTubePlayer').pauseVideo();
             }
         },
             
         play: function () {
-            console.log('trying to play');
+  
             if (!this.isPlaying()) {
-                console.log('playing');
-                this.set('buffering', true);
+
+                this.set('state', PlayerStates.BUFFERING);
                 
                 var streamusPlayer = this.get('streamusPlayer');
 
                 if (streamusPlayer) {
                     streamusPlayer.play();
                 } else {
+                    //  If YouTubeVideo is loading its metadata we need to keep its state in sync regardless.
+                    $('#YouTubeVideo').attr('autoplay', 'true');
                     this.get('youTubePlayer').playVideo();
                 }
 

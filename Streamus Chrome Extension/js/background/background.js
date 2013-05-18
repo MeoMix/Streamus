@@ -21,10 +21,8 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
     };
         
     player.on('change:state', function (model, state) {
-        
-        if (state === PlayerStates.PLAYING) {
-            player.set('buffering', false);
 
+        if (state === PlayerStates.PLAYING) {
             //  Check if the foreground UI is open.
             var foreground = chrome.extension.getViews({ type: "popup" });
   
@@ -56,11 +54,21 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
             var playlist = backgroundManager.getPlaylistById(playlistId);
             
             var nextItem = playlist.gotoNextItem();
+
+            backgroundManager.set('activePlaylistItem', nextItem);
+
+            var nextVideoId = nextItem.get('video').get('id');
             
-            if (nextItem !== null) {
-                backgroundManager.set('activePlaylistItem', nextItem);
-                player.loadVideoById(nextItem.get('video').get('id'));
+            var repeatButtonState = localStorageManager.getRepeatButtonState();
+            var shouldRepeatPlaylist = repeatButtonState === repeatButtonStates.REPEAT_PLAYLIST_ENABLED;
+
+            //  Cue the next video if looping around to the top of the playlist and we're not supposed to repeat playlists.
+            if (nextItem.get('id') === playlist.get('firstItemId') && !shouldRepeatPlaylist) {
+                player.cueVideoById(nextVideoId);
+            } else {
+                player.loadVideoById(nextVideoId);
             }
+
         }
 
     });
@@ -134,9 +142,6 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
                 break;
             case 'videoStreamSrcChange':
                 player.set('videoStreamSrc', request.videoStreamSrc);
-                break;
-            case 'imageDataChange':
-                player.set('imageData', request.imageData);
                 break;
             case 'addVideoByIdToPlaylist':
                 var playlist = backgroundManager.getPlaylistById(request.playlistId);

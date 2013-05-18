@@ -252,7 +252,7 @@
   cursor:pointer;
 }
 
-#SkipButton {
+#NextButton {
   top:0;
   right:0;
   width:40px;
@@ -274,20 +274,20 @@
 }
 
 #PlayPauseButton.disabled:hover,
-#SkipButton.disabled:hover,
+#NextButton.disabled:hover,
 #PreviousButton.disabled:hover {
   background-color: transparent;
   cursor: default;
 }
 
 #PlayPauseButton.disabled:active,
-#SkipButton.disabled:active, 
+#NextButton.disabled:active, 
 #PreviousButton.disabled:active{
   background-image: none;
 }
 
 #PlayPauseButton:hover, 
-#SkipButton:hover,
+#NextButton:hover,
 #PreviousButton:hover,
 #HomeMenuButton:hover,
 #SettingsMenuButton:hover,
@@ -296,7 +296,7 @@
 }
 
 #PlayPauseButton:active, 
-#SkipButton:active,
+#NextButton:active,
 #PreviousButton:active {
   background-image: -webkit-gradient(linear,left top, left bottom, from(rgba(0,0,0,.1)), color-stop(0.5,rgba(0,0,0,0)));
 }
@@ -308,7 +308,7 @@
   margin:-11px 0 0 -11px;
 }
 
-#SkipButton svg {
+#NextButton svg {
   position:absolute; 
   top:50%;
   left:50%;

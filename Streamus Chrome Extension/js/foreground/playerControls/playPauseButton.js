@@ -28,7 +28,6 @@ define(['backgroundManager', 'player', 'spin', 'videoDisplay'], function (backgr
         if (!$(this).hasClass('disabled')) {
             if (player.isPlaying()) {
                 player.pause();
-                setToPlay();
             } else {
                 player.play();
             }
@@ -36,26 +35,26 @@ define(['backgroundManager', 'player', 'spin', 'videoDisplay'], function (backgr
 
 	}, 100, true));
 
-	player.on('change:buffering', function (model, isBuffering) {
-	    if (isBuffering) {
-	        playIcon.hide();
-	        pauseIcon.hide();
-	        spinner.spin($('#LoadingSpinner')[0]);
-	    } else {
-
-            if (player.isPlaying()) {
-                setToPause();
-            } else {
-                setToPlay();
-            }
-
-	    }
+    player.on('change:state', function(model, playerState) {
+        makeIconReflectPlayerState(playerState);
     });
+    
+    var initialPlayerState = player.get('state');
+    makeIconReflectPlayerState(initialPlayerState);
 
-    player.on('change:state', makeIconReflectPlayerState);
-	makeIconReflectPlayerState();
+    //  Whenever the YouTube player changes playing state -- update whether icon shows play or pause.
+    function makeIconReflectPlayerState(playerState) {
 
-    backgroundManager.on('change:activePlaylistItem', function(model, activePlaylistItem) {
+        if (playerState === PlayerStates.BUFFERING) {
+            showBufferingIcon();
+        } else if (playerState === PlayerStates.PLAYING) {
+            showPauseIcon();
+        } else {
+            showPlayIcon();
+        }
+    }
+    
+    backgroundManager.on('change:activePlaylistItem', function (model, activePlaylistItem) {
         if (activePlaylistItem === null) {
             disableButton();
         } else {
@@ -68,17 +67,6 @@ define(['backgroundManager', 'player', 'spin', 'videoDisplay'], function (backgr
         enableButton();
     }
 
-    //  Whenever the YouTube player changes playing state -- update whether icon shows play or pause.
-    function makeIconReflectPlayerState() {
-
-        if (player.isPlaying()) {
-            setToPause();
-        }
-        else if (!player.get('buffering')) {
-            setToPlay();
-        }
-    }
-    
     //  Paint button's path black and allow it to be clicked
     function enableButton() {
         playPauseButton.removeClass('disabled');
@@ -90,16 +78,22 @@ define(['backgroundManager', 'player', 'spin', 'videoDisplay'], function (backgr
         playPauseButton.addClass('disabled');
         playPauseButton.find('.path').css('fill', 'gray');
     }
+            
+    function showBufferingIcon(){
+        playIcon.hide();
+        pauseIcon.hide();
+        spinner.spin($('#LoadingSpinner')[0]);
+    }
 
     //  Change the music button to the 'Play' image
-    function setToPlay() {
+    function showPlayIcon() {
         spinner.stop();
         pauseIcon.hide();
         playIcon.show();
     }
 
     //  Change the music button to the 'Pause' image
-    function setToPause() {
+    function showPauseIcon() {
         spinner.stop();
         pauseIcon.show();
         playIcon.hide();

@@ -17,7 +17,7 @@ define(['backgroundManager'], function (backgroundManager) {
         
     }, 100, true));
 
-    backgroundManager.on('change:activePlaylistItem', function(activePlaylistItem) {
+    backgroundManager.on('change:activePlaylistItem', function(model, activePlaylistItem) {
         if (activePlaylistItem === null) {
             disableButton();
         }

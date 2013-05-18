@@ -17,6 +17,7 @@
     var initialImage = new Image();
     
     initialImage.onload = function () {
+        console.log("Drawing an initial image");
         videoDisplayCanvasContext.drawImage(this, 0, 0, videoDisplayWidth, videoDisplayHeight);
     };
     
@@ -41,15 +42,19 @@
 
     backgroundManager.on('change:activePlaylistItem', function(model, activePlaylistItem) {
 
-        if (activePlaylistItem == null) {
+        if (activePlaylistItem === null) {
             fillCanvasWithBlack();
         } else {
-            initialImage.src = 'http://i2.ytimg.com/vi/' + activePlaylistItem.get('video').get('id') + '/hqdefault.jpg ';
+            var videoId = activePlaylistItem.get('video').get('id');
+            initialImage.src = 'http://i2.ytimg.com/vi/' + videoId + '/hqdefault.jpg ';
         }
     });
 
     //  Start drawing again when the player is playing.
     player.on('change:state', function (model, playerState) {
+
+        console.log("playerStateChange:", playerState);
+
         if (playerState === PlayerStates.PLAYING) {
             draw();
         }

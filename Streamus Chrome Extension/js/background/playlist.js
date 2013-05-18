@@ -97,29 +97,6 @@ define(['ytHelper',
                 });
 
                 var self = this;
-                this.get('items').on('remove', function (removedItem) {
-                    var playlistItems = self.get('items');
-                        
-                    if (playlistItems.length > 0) {
-                        
-                        //  Update firstItem if it was removed
-                        if (self.get('firstItemId') === removedItem.get('id')) {
-                            self.set('firstItemId', removedItem.get('nextItemId'));
-                        }
-                        
-                        //  Update linked list pointers
-                        var previousItem = playlistItems.get(removedItem.get('previousItemId'));
-                        var nextItem = playlistItems.get(removedItem.get('nextItemId'));
-
-                        //  Remove the item from linked list.
-                        previousItem.set('nextItemId', nextItem.get('id'));
-                        nextItem.set('previousItemId', previousItem.get('id'));
-
-                    } else {
-                        self.set('firstItemId', '00000000-0000-0000-0000-000000000000');
-                    }
-
-                });
                 
                 //  Load videos from datasource if provided.
                 var dataSource = this.get('dataSource');
@@ -269,15 +246,10 @@ define(['ytHelper',
                     } else {
 
                         var currentItem = this.get('history').at(0);
+
                         var nextItemId = currentItem.get('nextItemId');
-                        var firstItemId = this.get('firstItemId');
-                        
-                        if (nextItemId === firstItemId && repeatButtonState === repeatButtonStates.REPEAT_PLAYLIST_ENABLED) {
-                            nextItem = this.get('items').get(nextItemId);
-                        }
-                        else if (nextItemId !== firstItemId) {
-                            nextItem = this.get('items').get(nextItemId);
-                        }
+
+                        nextItem = this.get('items').get(nextItemId);
 
                     }
 

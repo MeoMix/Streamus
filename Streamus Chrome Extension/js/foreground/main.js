@@ -6,8 +6,7 @@ require(['jquery',
         'playerStates',
         'dataSources',
         'helpers',
-        'underscore',
-        'oauth2'
+        'underscore'
     ], function () {
     'use strict';
 

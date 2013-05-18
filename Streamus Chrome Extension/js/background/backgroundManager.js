@@ -5,8 +5,8 @@ var BackgroundManager = null;
 //  NOTE: It is important to understand that the activePlaylistItem is NOT guaranteed to be in the activePlaylist.
 //  The same applies for activePlaylist being under the activeStream. The user can click around, but this shouldn't affect state
 //  until they make a decision.
-define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', 'streams'],
-    function (user, player, localStorageManager, PlaylistItems, Playlists, Streams) {
+define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', 'streams', 'repeatButtonStates'],
+    function (user, player, localStorageManager, PlaylistItems, Playlists, Streams, repeatButtonStates) {
     'use strict';
 
     var backgroundManagerModel = Backbone.Model.extend({
@@ -162,18 +162,41 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
 
             self.get('allPlaylistItems').remove(playlistItem);
 
+            var playlistId = playlistItem.get('playlistId');
+            var playlist = self.getPlaylistById(playlistId);
+            var playlistItems = playlist.get('items');
+
             if (self.get('activePlaylistItem') === playlistItem) {
-                self.set('activePlaylistItem', null);
-                
-                var playlistId = playlistItem.get('playlistId');
-                var playlist = self.getPlaylistById(playlistId);
-                
-                if (playlist.get('items').length > 0) { 
+
+                if (playlistItems.length > 0) {
+
                     var newlyActiveItem = playlist.gotoNextItem();
                     self.set('activePlaylistItem', newlyActiveItem);
                 } else {
-                    player.pause();
+
+                    self.set('activePlaylistItem', null);
                 }
+            }
+            
+            //  TODO: I'd like to have this logic inside of playlist and not backgroundManager but the first bit of code
+            //  needs to run first because playlist.gotoNextItem is dependent on the old firstItemId to know the next item.
+            if (playlistItems.length > 0) {
+
+                //  Update firstItem if it was removed
+                if (playlist.get('firstItemId') === playlistItem.get('id')) {
+                    playlist.set('firstItemId', playlistItem.get('nextItemId'));
+                }
+
+                //  Update linked list pointers
+                var previousItem = playlistItems.get(playlistItem.get('previousItemId'));
+                var nextItem = playlistItems.get(playlistItem.get('nextItemId'));
+
+                //  Remove the item from linked list.
+                previousItem.set('nextItemId', nextItem.get('id'));
+                nextItem.set('previousItemId', previousItem.get('id'));
+
+            } else {
+                playlist.set('firstItemId', '00000000-0000-0000-0000-000000000000');
             }
         });
     }
@@ -249,10 +272,26 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                 
                 //  If repeating the current video - don't do extra work.
                 if (player.get('loadedVideoId') === videoId) {
+                    console.log("seeking to 0");
                     player.seekTo(0);
                 } else {
-                    if (player.isPlaying() || player.get('wasBuffering')) {
-                        player.loadVideoById(videoId);
+                    var playerIsPlaying = player.isPlaying();
+
+                    if (playerIsPlaying) {
+
+                        var playlist = this.getPlaylistById(activePlaylistItem.get('playlistId'));
+                        var isFirstItem = activePlaylistItem.get('id') === playlist.get('firstItemId');
+                        var repeatButtonState = localStorageManager.getRepeatButtonState();
+                        
+                        //  TODO: This probably does something weird with going previous now.
+                        //  If skipping around to the front of the list and don't have repeat playlist enabled - pause.
+                        if (isFirstItem && repeatButtonState !== repeatButtonStates.REPEAT_PLAYLIST_ENABLED) {
+                            player.cueVideoById(videoId);
+                        } else {
+                            console.log("Loading video by ID");
+                            player.loadVideoById(videoId);
+                        }
+                        
                     } else {
                         player.cueVideoById(videoId);
                     }

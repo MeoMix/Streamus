@@ -25,7 +25,6 @@ var require = {
         'levenshtein': 'thirdParty/levenshtein',
         'underscore': 'thirdParty/underscore',
         'user': 'background/user',
-        'oauth2': 'thirdParty/oauth2/oauth2',
         'backbone': 'thirdParty/backbone',
         'backgroundManager': 'background/backgroundManager',
         'localStorageManager': 'background/localStorageManager',
