@@ -80,6 +80,9 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             });
 
             youTubeVideo.on('pause', function () {
+                console.log("pausing");
+
+
                 self.set('buffering', false);
                 self.set('state', PlayerStates.PAUSED);
             });
@@ -102,6 +105,12 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             });
 
             youTubeVideo.on('error', function (error) {
+                
+                if (typeof (error.data) === 'undefined') {
+                    console.log("error detected, playing");
+                    $('#YouTubeVideo')[0].play();
+                }
+
                 window && console.error("Error:", error);
             });
             
@@ -304,8 +313,9 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
         },
             
         play: function () {
+            console.log('trying to play');
             if (!this.isPlaying()) {
-
+                console.log('playing');
                 this.set('buffering', true);
                 
                 var streamusPlayer = this.get('streamusPlayer');
