@@ -1,30 +1,30 @@
 ﻿define(['localStorageManager'], function (localStorageManager) {
     'use strict';
 
-    var settingsSliderWrapper = $('#SettingsSliderWrapper');
-    var settingsControl = $('.settingsControl');
-
-    settingsControl.mouseover(function () {
-        settingsSliderWrapper.css("top", "70px");
-    }).mouseout(function () {
-        settingsSliderWrapper.css("top", "-35px");
-    });
-
     var radioModeButton = $('#RadioModeButton').click(toggleRadioMode);
+    var radioModeEnabledTitle = 'Radio Mode is enabled. Click to disable.';
+    var radioModeDisabledTitle = 'Radio Mode is disabled. Click to enable.';
 
     var isRadioModeEnabled = localStorageManager.getIsRadioModeEnabled();
     if (isRadioModeEnabled) {
-        radioModeButton.addClass('pressed');
+        radioModeButton
+            .addClass('pressed')
+            .attr('title', radioModeEnabledTitle);
     }
 
     function toggleRadioMode() {
         if (radioModeButton.hasClass('pressed')) {
-            radioModeButton.removeClass('pressed');
+            radioModeButton
+                .removeClass('pressed')
+                .attr('title', radioModeDisabledTitle);
         }
         else {
-            radioModeButton.addClass('pressed');
+            radioModeButton
+                .addClass('pressed')
+                .attr('title', radioModeEnabledTitle);
         }
 
         localStorageManager.setIsRadioModeEnabled(radioModeButton.hasClass('pressed'));
     }
+
 });

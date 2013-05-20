@@ -11,13 +11,13 @@ define(['backgroundManager'], function (backgroundManager) {
             var playlistId = activePlaylistItem.get('playlistId');
             var playlist = backgroundManager.getPlaylistById(playlistId);
 
-            var previousItem = playlist.skipItem('previous');
+            var previousItem = playlist.gotoPreviousItem();
             backgroundManager.set('activePlaylistItem', previousItem);
         }
         
     }, 100, true));
 
-    backgroundManager.on('change:activePlaylistItem', function(activePlaylistItem) {
+    backgroundManager.on('change:activePlaylistItem', function(model, activePlaylistItem) {
         if (activePlaylistItem === null) {
             disableButton();
         }

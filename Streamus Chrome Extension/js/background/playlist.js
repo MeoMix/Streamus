@@ -5,20 +5,27 @@ define(['ytHelper',
         'playlistItem',
         'programState',
         'localStorageManager',
-        'video'
-    ], function(ytHelper, PlaylistItems, PlaylistItem, programState, localStorageManager, Video) {
+        'video',
+        'videos',
+        'helpers',
+        'repeatButtonStates'
+    ], function(ytHelper, PlaylistItems, PlaylistItem, programState, localStorageManager, Video, Videos, helpers, repeatButtonStates) {
         'use strict';
 
         var playlistModel = Backbone.Model.extend({
-            defaults: {
-                id: null,
-                streamId: null,
-                title: 'New Playlist',
-                firstItemId: null,
-                nextListId: null,
-                previousListId: null,
-                history: new PlaylistItems(),
-                items: new PlaylistItems()
+            defaults: function() {
+                return {
+                    id: null,
+                    streamId: null,
+                    title: 'New Playlist',
+                    firstItemId: null,
+                    nextListId: null,
+                    previousListId: null,
+                    history: new PlaylistItems(),
+                    items: new PlaylistItems(),
+                    dataSource: null,
+                    dataSourceLoaded: false
+                };
             },
 
             urlRoot: programState.getBaseUrl() + 'Playlist/',
@@ -54,7 +61,8 @@ define(['ytHelper',
                     });
                 }
 
-                this.on('change:title', function (model, title) {
+                //  Debounce because I want automatic typing but no reason to spam server with saves.
+                this.on('change:title', _.debounce(function (model, title) {
                     $.ajax({
                         url: programState.getBaseUrl() + 'Playlist/UpdateTitle',
                         type: 'POST',
@@ -68,7 +76,7 @@ define(['ytHelper',
                             window && console.error("Error saving title", error);
                         }
                     });
-                });
+                }, 2000));
                 
                 this.on('change:firstItemId', function (model, firstItemId) {
 
@@ -82,35 +90,102 @@ define(['ytHelper',
                         },
                         error: function (error) {
                             //  TODO: Rollback client-side transaction somehow?
-                            window && console.error("Error saving firstItemId", error);
+                            window && console.error("Error saving firstItemId", error, error.message);
                         }
                     });
+                    
                 });
 
                 var self = this;
-                this.get('items').on('remove', function (removedItem) {
-                    var playlistItems = self.get('items');
-                        
-                    if (playlistItems.length > 0) {
-                        
-                        //  Update firstItem if it was removed
-                        if (self.get('firstItemId') === removedItem.get('id')) {
-                            self.set('firstItemId', removedItem.get('nextItemId'));
-                        }
-                        
-                        //  Update linked list pointers
-                        var previousItem = playlistItems.get(removedItem.get('previousItemId'));
-                        var nextItem = playlistItems.get(removedItem.get('nextItemId'));
+                
+                //  Load videos from datasource if provided.
+                var dataSource = this.get('dataSource');
 
-                        //  Remove the item from linked list.
-                        previousItem.set('nextItemId', nextItem.get('id'));
-                        nextItem.set('previousItemId', previousItem.get('id'));
+                if (dataSource != null) {
+                    var ytHelperDataFunction = null;
 
-                    } else {
-                        self.set('firstItemId', '00000000-0000-0000-0000-000000000000');
+                    switch (dataSource.type) {
+                        case DataSources.YOUTUBE_PLAYLIST:
+                            ytHelperDataFunction = ytHelper.getPlaylistResults;
+                            break;
+                        case DataSources.YOUTUBE_CHANNEL:
+                            ytHelperDataFunction = ytHelper.getFeedResults;
+                            break;
+                        default:
+                            window && console.error("Unhandled dataSource type:", dataSource.type);
                     }
+                    
+                    if (ytHelperDataFunction != null) {
 
-                });
+                        var getVideosCallCount = 0;
+                        var unsavedVideoCount = 0;
+                        var orderedVideosArray = [];
+
+                        var getVideosInterval = setInterval(function () {
+
+                            ytHelperDataFunction(dataSource.id, getVideosCallCount, function (results) {
+
+                                //  Results will be null if an error occurs while fetching data.
+                                if (results == null || results.length === 0) {
+                                    clearInterval(getVideosInterval);
+                                    self.set('dataSourceLoaded', true);
+                                } else {
+
+                                    _.each(results, function (entry, index) {
+                                        var videoId = entry.media$group.yt$videoid.$t;
+                                        addVideoByIdAtIndex(videoId, entry.title.$t, index, results.length);
+                                    });
+
+                                    getVideosCallCount++;
+                                }
+
+                            });
+
+                            function addVideoByIdAtIndex(videoId, videoTitle, index, resultCount) {
+                                ytHelper.getVideoInformation(videoId, videoTitle, function (videoInformation) {
+
+                                    if (videoInformation != null) {
+                                        var video = getVideoFromInformation(videoInformation);
+                                        //  Insert at index to preserve order of videos retrieved from YouTube API
+                                        orderedVideosArray[index] = video;
+                                    }
+
+                                    unsavedVideoCount++;
+
+                                    //  Periodicially send bursts of packets (up to 50 videos in length) to the server and trigger visual update.
+                                    if (unsavedVideoCount == resultCount) {
+
+                                        var videos = new Videos(orderedVideosArray);
+                                        
+                                        //  orderedVideosArray may have some empty slots which get converted to empty Video objects; drop 'em.
+                                        var videosWithIds = videos.withIds();
+                                        
+                                        self.addItems(videosWithIds);
+                                        orderedVideosArray = [];
+                                        unsavedVideoCount = 0;
+                                    }
+
+                                });
+                            }
+
+                            //  TODO: Rewrite the Video constructor such that it can create a Video object from videoInformation
+                            function getVideoFromInformation(videoInformation) {
+                                var id = videoInformation.media$group.yt$videoid.$t;
+                                var durationInSeconds = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
+                                var author = videoInformation.author[0].name.$t;
+
+                                return new Video({
+                                    id: id,
+                                    title: videoInformation.title.$t,
+                                    duration: durationInSeconds,
+                                    author: author
+                                });
+                            }
+
+
+                        }, 4000);
+                    }
+                }
 
             },
             
@@ -136,36 +211,58 @@ define(['ytHelper',
                 return randomRelatedVideo;
             },
             
-            //  TODO: This method name sucks and the method itself is doing too much. Refactor!
-            gotoNextItem: function() {
+            gotoNextItem: function () {
+
                 var nextItem = null;
+
+                var isRadioModeEnabled = localStorageManager.getIsRadioModeEnabled();
                 var isShuffleEnabled = localStorageManager.getIsShuffleEnabled();
-
-                if (isShuffleEnabled === true) {
-                    var items = this.get('items');
-                    var itemsNotPlayedRecently = items.where({ playedRecently: false });
-
-                    if (itemsNotPlayedRecently.length === 0) {
-                        items.each(function(item) {
-                            item.set('playedRecently', false);
-                            itemsNotPlayedRecently.push(item);
-                        });
-                    }
-
-                    nextItem = _.shuffle(itemsNotPlayedRecently)[0];
+                var repeatButtonState = localStorageManager.getRepeatButtonState();
+                
+                //  Radio mode overrides the other settings
+                if (isRadioModeEnabled) {
+                    var relatedVideo = this.getRelatedVideo();
+                    nextItem = this.addItem(relatedVideo);
                 } else {
-
-                    var selectedItem = this.get('history').at(0);
-
-                    if (selectedItem) {
-                        var nextItemId = selectedItem.get('nextItemId');
-                        nextItem = this.get('items').get(nextItemId);
+                    //  If repeat video is enabled then keep on the last item in history
+                    if (repeatButtonState === repeatButtonStates.REPEAT_VIDEO_ENABLED) {
+                        //  TODO: potentially need to be popping from history so gotoPrevious doesn't loop through same item a lot
+                        nextItem = this.get('history').at(0);
                     }
+                    else if (isShuffleEnabled) {
+
+                        var items = this.get('items');
+                        var itemsNotPlayedRecently = items.where({ playedRecently: false });
+
+                        if (itemsNotPlayedRecently.length === 0) {
+                            items.each(function (item) {
+                                item.set('playedRecently', false);
+                                itemsNotPlayedRecently.push(item);
+                            });
+                        }
+
+                        nextItem = _.shuffle(itemsNotPlayedRecently)[0];
+
+                    } else {
+
+                        var currentItem = this.get('history').at(0);
+
+                        var nextItemId = currentItem.get('nextItemId');
+
+                        nextItem = this.get('items').get(nextItemId);
+
+                    }
+
                 }
+                
+                if (nextItem !== null) {
+                    this.selectItem(nextItem);
+                }
+
                 return nextItem;
             },
             
-            gotoPreviousItem: function() {
+            gotoPreviousItem: function () {
                 var selectedItem = this.get('history').shift();
                 var previousItem = this.get('history').shift();
                 
@@ -174,58 +271,10 @@ define(['ytHelper',
                     var previousItemId = selectedItem.get('previousItemId');
                     previousItem = this.get('items').get(previousItemId);
                 }
+                
+                this.selectItem(previousItem);
 
                 return previousItem;
-            },
-
-            addItems: function(videos, callback) {
-                var createdItems = new PlaylistItems();
-                var self = this;
-
-                videos.each(function (video) {
-
-                    var playlistItem = new PlaylistItem({
-                        playlistId: self.get('id'),
-                        video: video,
-                        //  PlaylistItem title is mutable, video title is immutable.
-                        title: video.get('title'),
-                        relatedVideoInformation: []
-                    });
-
-                    var playlistItems = self.get('items');
-                    var playlistItemId = playlistItem.get('id');
-                    if (playlistItems.length === 0) {
-                        
-                        self.set('firstItemId', playlistItemId);
-                        playlistItem.set('nextItemId', playlistItemId);
-                        playlistItem.set('previousItemId', playlistItemId);
-                    } else {
-                        var firstItem = playlistItems.get(self.get('firstItemId'));
-                        var lastItem = playlistItems.get(firstItem.get('previousItemId'));
-
-                        lastItem.set('nextItemId', playlistItemId);
-                        playlistItem.set('previousItemId', lastItem.get('id'));
-
-                        firstItem.set('previousItemId', playlistItemId);
-                        playlistItemId.set('nextItemId', firstItem.get('id'));
-
-                    }
-
-                    createdItems.push(playlistItem);
-
-                    ytHelper.getRelatedVideoInformation(video.get('id'), function (relatedVideoInformation) {
-                        playlistItem.set('relatedVideoInformation', relatedVideoInformation);
-                    });
-
-                    self.get('items').push(playlistItem);
-                });
-                
-                createdItems.save({}, {
-                    success: callback,
-                    error: function(error) {
-                        window && console.error(error);
-                    }
-                });
             },
 
             //  This is generally called from the foreground to not couple the Video object with the foreground.
@@ -234,11 +283,14 @@ define(['ytHelper',
                 //  Strip out the id. An example of $t's contents: tag:youtube.com,2008:video:UwHQp8WWMlg
                 var id = videoInformation.media$group.yt$videoid.$t;
                 var durationInSeconds = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
+                var author = videoInformation.author[0].name.$t;
 
                 var video = new Video({
+                    type: 'youTubeApi',
                     id: id,
                     title: videoInformation.title.$t,
-                    duration: durationInSeconds
+                    duration: durationInSeconds,
+                    author: author
                 });
                 
                 return this.addItem(video);
@@ -266,12 +318,7 @@ define(['ytHelper',
                     playlistItem.set('previousItemId', playlistItemId);
                 } else {
                     var firstItem = playlistItems.get(this.get('firstItemId'));
-
-                    console.log("First item:", firstItem);
-
                     var lastItem = playlistItems.get(firstItem.get('previousItemId'));
-
-                    console.log("lastItem is:", lastItem);
 
                     lastItem.set('nextItemId', playlistItemId);
                     playlistItem.set('previousItemId', lastItem.get('id'));
@@ -294,32 +341,75 @@ define(['ytHelper',
                
                 return playlistItem;
             },
+            
+            addItems: function (videos, callback) {
+                var itemsToSave = new PlaylistItems();
+                var self = this;
 
-            //  Skips to the next playlistItem. Will start playing the video if the player was already playing.
-            //  if where == "next" it'll skip to the next item otherwise it will skip to the previous.
-            //  TODO: break apart skipItem into a gotoNextItem and a gotoPreviousItem
-            skipItem: function (where) {
-                var nextItem;
+                videos.each(function (video) {
 
-                if (where == "next") {
-                    var isRadioModeEnabled = localStorageManager.getIsRadioModeEnabled();
+                    var playlistItem = new PlaylistItem({
+                        playlistId: self.get('id'),
+                        video: video,
+                        //  PlaylistItem title is mutable, video title is immutable.
+                        title: video.get('title'),
+                        relatedVideoInformation: []
+                    });
 
-                    if (isRadioModeEnabled) {
-                        var relatedVideo = this.getRelatedVideo();
-                        nextItem = this.addItem(relatedVideo);
+                    var playlistItems = self.get('items');
+                    var playlistItemId = playlistItem.get('id');
+
+                    if (playlistItems.length === 0) {
+                        //  This triggers an event which saves the firstItemId
+                        self.set('firstItemId', playlistItemId);
+                        playlistItem.set('nextItemId', playlistItemId);
+                        playlistItem.set('previousItemId', playlistItemId);
                     } else {
+                        var firstItem = playlistItems.get(self.get('firstItemId'));
+                        var lastItem = playlistItems.get(firstItem.get('previousItemId'));
 
-                        nextItem = this.gotoNextItem();
+                        lastItem.set('nextItemId', playlistItemId);
+                        playlistItem.set('previousItemId', lastItem.get('id'));
+
+                        firstItem.set('previousItemId', playlistItemId);
+                        playlistItem.set('nextItemId', firstItem.get('id'));
+
+                        itemsToSave.add(firstItem, { merge: true });
+                        itemsToSave.add(lastItem, { merge: true });
                     }
-                } else {
-                    nextItem = this.gotoPreviousItem();
-                }
 
-                this.selectItem(nextItem);
-                return nextItem;
+                    itemsToSave.push(playlistItem);
+                    self.get('items').push(playlistItem);
+                });
+
+                //  TODO: Could probably be improved for very large playlists being added.
+                //  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
+                var sampleSize = videos.length > 30 ? 30 : videos.length;
+                var randomSampleIndices = helpers.getRandomNonOverlappingNumbers(sampleSize, videos.length);
+
+                _.each(randomSampleIndices, function (randomIndex) {
+                    var randomVideo = videos.at(randomIndex);
+                    
+                    ytHelper.getRelatedVideoInformation(randomVideo.get('id'), function (relatedVideoInformation) {
+
+                        var playlistItem = self.get('items').find(function (item) {
+                            return item.get('video').get('id') == randomVideo.get('id');
+                        });
+
+                        playlistItem.set('relatedVideoInformation', relatedVideoInformation);
+                    });
+                });
+
+                itemsToSave.save({}, {
+                    success: callback,
+                    error: function (error) {
+                        window && console.error(error);
+                    }
+                });
             },
             
             moveItem: function (movedItemId, nextItemId) {
+                
                 var movedItem = this.get('items').get(movedItemId);
                 
                 //  The previous and next items of the movedItem's original position. Need to update these pointers.
@@ -344,10 +434,26 @@ define(['ytHelper',
 
                 //  If bumped forward the firstItem, update to new firstItemId.
                 if (nextItemId == this.get('firstItemId')) {
+                    //  This saves automatically with a triggered event.
                     this.set('firstItemId', movedItemId);
                 }
-
-                this.save();
+                
+                //  Save just the items that changed -- don't save the whole playlist because that is too costly for a move.
+                var itemsToSave = new PlaylistItems();
+                itemsToSave.add(movedItem);
+                itemsToSave.add(movedPreviousItem);
+                itemsToSave.add(movedNextItem);
+                itemsToSave.add(nextItem);
+                itemsToSave.add(previousItem);
+                
+                itemsToSave.save({}, {
+                    success: function() {
+                        
+                    },
+                    error: function (error) {
+                        window && console.error(error);
+                    }
+                });
             }
         });
 

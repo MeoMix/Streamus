@@ -16,6 +16,9 @@ define(['backgroundManager', 'player', 'helpers'], function (backgroundManager, 
         //  Don't divide by 0.
         var fill = totalTime !== 0 ? currentTime / totalTime : 0;
 
+        window && console.log("Fill:", fill);
+        window && console.log("Total time and current time:", totalTime, currentTime);
+
         var backgroundImage = '-webkit-gradient(linear,left top, right top, from(#ccc), color-stop(' + fill + ',#ccc), color-stop(' + fill + ',rgba(0,0,0,0)), to(rgba(0,0,0,0)))';
         $(this).css('background-image', backgroundImage);
         
@@ -54,7 +57,7 @@ define(['backgroundManager', 'player', 'helpers'], function (backgroundManager, 
         }
     });
 
-    backgroundManager.on('change:activePlaylistItem', function(activePlaylistItem) {
+    backgroundManager.on('change:activePlaylistItem', function(model, activePlaylistItem) {
 
         if (activePlaylistItem === null) {
             setCurrentTime(0);
@@ -73,6 +76,7 @@ define(['backgroundManager', 'player', 'helpers'], function (backgroundManager, 
     
     //  Keep the progress bar up to date. 
     player.on('change:currentTime', function (model, currentTime) {
+
         if (!isSeeking) {
             setCurrentTime(currentTime);
         }

@@ -1,10 +1,10 @@
-//  When clicked -- skips to the next video. Skips from the end of the list to the front again.
+//  When clicked -- goes to the next video. Can potentially go from the end of the list to the front if repeat playlist is toggled on
 define(['backgroundManager'], function (backgroundManager) {
     'use strict';
-    var skipButton = $('#SkipButton');
+    var nextButton = $('#NextButton');
 
     //  Prevent spamming by only allowing a next click once every 100ms.
-    skipButton.click(_.debounce(function () {
+    nextButton.click(_.debounce(function () {
 
         if (!$(this).hasClass('disabled')) {
 
@@ -12,13 +12,20 @@ define(['backgroundManager'], function (backgroundManager) {
             var playlistId = activePlaylistItem.get('playlistId');
             var playlist = backgroundManager.getPlaylistById(playlistId);
 
-            var nextItem = playlist.skipItem('next');
+            var nextItem = playlist.gotoNextItem();
+
             backgroundManager.set('activePlaylistItem', nextItem);
+
+            //  Manually triggering the change so that player can realize it needs to set its time back to 0:00.
+            if (activePlaylistItem === nextItem) {
+                backgroundManager.trigger('change:activePlaylistItem', backgroundManager, nextItem);
+            }
         }
 
     }, 100, true));
 
-    backgroundManager.on('change:activePlaylistItem', function (activePlaylistItem) {
+    backgroundManager.on('change:activePlaylistItem', function (model, activePlaylistItem) {
+
         if (activePlaylistItem === null) {
             disableButton();
         } else {
@@ -32,13 +39,13 @@ define(['backgroundManager'], function (backgroundManager) {
 
     //  Paint the button's path black and bind its click event.
     function enableButton() {
-        skipButton.prop('src', 'images/skip.png').removeClass('disabled');
-        skipButton.find('.path').css('fill', 'black');
+        nextButton.prop('src', 'images/skip.png').removeClass('disabled');
+        nextButton.find('.path').css('fill', 'black');
     }
     
     //  Paint the button's path gray and unbind its click event.
     function disableButton() {
-        skipButton.prop('src', 'images/skip-disabled.png').addClass('disabled');
-        $(skipButton).find('.path').css('fill', 'gray');
+        nextButton.prop('src', 'images/skip-disabled.png').addClass('disabled');
+        nextButton.find('.path').css('fill', 'gray');
     }
 });

@@ -4,24 +4,34 @@ require(['jquery',
         'jqueryMousewheel',
         'scrollIntoView',
         'playerStates',
+        'dataSources',
         'helpers',
-        'underscore',
-        'oauth2'
+        'underscore'
     ], function () {
     'use strict';
 
     //  TODO: Would like to access through define module, but not sure how..
-    var user = chrome.extension.getBackgroundPage().User;
     var player = chrome.extension.getBackgroundPage().YouTubePlayer;
         
-    //  If the foreground is opened before the background has had a chance to load, wait for the background.
-    //  This is easier than having every control on the foreground guard against the background not existing.
-    if (user.get('loaded')) {
-        loadForeground();
-    } else {
-        user.once('change:loaded', loadForeground);
-    }
-    
+    var waitForUserInterval = setInterval(function () {
+
+        var user = chrome.extension.getBackgroundPage().User;
+        
+        if (user != null) {
+            clearInterval(waitForUserInterval);
+
+            //  If the foreground is opened before the background has had a chance to load, wait for the background.
+            //  This is easier than having every control on the foreground guard against the background not existing.
+            if (user.get('loaded')) {
+                loadForeground();
+            } else {
+                user.once('change:loaded', loadForeground);
+            }
+        }
+
+    }, 100);
+        
+
     function loadForeground() {
 
         if (player.get('ready')) {

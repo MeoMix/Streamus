@@ -68,30 +68,38 @@ namespace Streamus.Controllers
         }
 
         [HttpDelete]
-        public EmptyResult Delete(Guid id)
+        public JsonResult Delete(Guid id)
         {
             var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
             playlistManager.DeletePlaylistById(id);
 
-            return new EmptyResult();
+            return Json(new
+            {
+                success = true
+            });
         }
 
         [HttpPost]
-        public EmptyResult UpdateTitle(Guid playlistId, string title)
+        public JsonResult UpdateTitle(Guid playlistId, string title)
         {
             var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
             playlistManager.UpdateTitle(playlistId, title);
 
-            return new EmptyResult();
+            return Json(new{
+                success = true
+            });
         }
 
         [HttpPost]
-        public EmptyResult UpdateFirstItemId(Guid playlistId, Guid firstItemId)
+        public JsonResult UpdateFirstItemId(Guid playlistId, Guid firstItemId)
         {
             var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
             playlistManager.UpdateFirstItemId(playlistId, firstItemId);
 
-            return new EmptyResult();
+            return Json(new
+            {
+                success = true
+            });
         }
     }
 }

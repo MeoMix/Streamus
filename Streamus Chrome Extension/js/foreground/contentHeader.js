@@ -1,17 +1,12 @@
 define(['backgroundManager'], function (backgroundManager) {
     'use strict';
-    return function(selector, addText, addInputPlaceholder){
-        var contentHeader = $(selector);
+    return function (config) {
+        
+        var contentHeader = $(config.selector);
 
         var headerTitle = $('<span/>', {
             'class': 'headerTitle'
         }).appendTo(contentHeader);
-
-        function processTitle(playlistTitle){
-            if (playlistTitle !== '') {
-                backgroundManager.get('activePlaylist').set('title', playlistTitle);
-            }
-        }
 
         var activePlaylist = backgroundManager.get('activePlaylist');
         var activePlaylistTitle = '';
@@ -28,28 +23,25 @@ define(['backgroundManager'], function (backgroundManager) {
             'class': 'headerInput',
             type: 'text',
             value: activePlaylistTitle,
-            originalValue: '',
             mouseover: function(){
-                this.originalValue = $(this).val();
                 $(this).css('border-color', '#EEE');
             },
-            mouseout: function(){
-                if(this.originalValue !== $(this).val()){
-                    processTitle($(this).val());
-                }
-                $(this).blur();
-                $(this).css('border-color', 'transparent');
+            input: function () {
+                backgroundManager.get('activePlaylist').set('title', $(this).val());
             },
-            keyup: function (e) {
-                var code = e.which;
-
-                if (code === $.ui.keyCode.ENTER){
-                    processTitle($(this).val()); 
+            mouseout: function () {
+                //  Don't blur if they're trying to highlight some text to edit and go outside the bounds.
+                if (window.getSelection().toString() === '') {
                     $(this).blur();
-                    $(this).css('border-color', 'transparent');
                 }
-
+            },
+            blur: function() {
+                $(this).css('border-color', 'transparent');
             }
+        });
+
+        headerInput.on('input', function() {
+            backgroundManager.get('activePlaylist').set('title', $(this).val());
         });
         
         headerInput.appendTo(headerTitle);
@@ -72,13 +64,14 @@ define(['backgroundManager'], function (backgroundManager) {
 
         $('<span/>', {
             'class': 'addText',
-            text: addText
+            text: config.addText
         }).appendTo(addButton);
 
         var addInput = $('<input/>', {
             'class': 'addInput',
             type: 'text',
-            placeholder: addInputPlaceholder
+            maxlength: 255,
+            placeholder: config.addInputPlaceholder
         }).appendTo(addButton);
 
         var addCancelIcon = $('<div/>', {
@@ -90,12 +83,17 @@ define(['backgroundManager'], function (backgroundManager) {
 
         function expand() {
             addCancelIcon.css('right', '0px').one('click', contract);
-            addButton.width('443');
+            addButton.width('382');
             addInput.css('opacity', 1).css('cursor', "auto").focus();
+            addButton.find('span').hide();
+            headerInput.attr('disabled', 'disabled');
         }
         
         function contract() {
-            addButton.width('120px').one('click', expand);
+            addButton.find('span').show();
+            headerInput.removeAttr('disabled');
+            
+            addButton.width('59px').one('click', expand);
 
             addCancelIcon.css('right', '-30px');
             addInput.css('opacity', 0).css('cursor', "pointer").val('').blur();
@@ -103,10 +101,17 @@ define(['backgroundManager'], function (backgroundManager) {
             //  Prevent click event from bubbling up so button does not expand on click.
             return false;
         }
+        
+        if (config.expanded) {
+            expand();
+        } else {
+            contract();
+        }
 
         return {
             expand: expand,
             contract: contract,
+            addInputElement: addInput,
             
             //  Display a message for X milliseconds inside of the input. 
             flashMessage: function (message, durationInMilliseconds) {

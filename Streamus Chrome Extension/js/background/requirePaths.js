@@ -6,6 +6,8 @@ var require = {
         'programState': 'programState',
         'background': 'background/background',
         'playerStates': 'playerStates',
+        'repeatButtonStates': 'repeatButtonStates',
+        'dataSources': 'dataSources',
         'player': 'background/player',
         'playlistItem': 'background/playlistItem',
         'playlistItems': 'background/playlistItems',
@@ -23,9 +25,11 @@ var require = {
         'levenshtein': 'thirdParty/levenshtein',
         'underscore': 'thirdParty/underscore',
         'user': 'background/user',
-        'oauth2': 'thirdParty/oauth2/oauth2',
         'backbone': 'thirdParty/backbone',
         'backgroundManager': 'background/backgroundManager',
-        'localStorageManager': 'background/localStorageManager'
+        'localStorageManager': 'background/localStorageManager',
+        'pushMessageManager': 'background/pushMessageManager',
+        'iconManager': 'background/iconManager',
+        'spin': 'thirdParty/jquery.spin'
     }
 };

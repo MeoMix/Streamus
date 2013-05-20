@@ -42,9 +42,13 @@ define(['player'], function (player) {
     
     function toggleMutedClass(isMuted) {
         if (isMuted) {
-            muteButton.addClass('muted');
+            muteButton
+                .addClass('muted')
+                .attr('title', 'Click to unmute.');
         } else {
-            muteButton.removeClass('muted');
+            muteButton
+                .removeClass('muted')
+                .attr('title', 'Click to mute.');
         }
     }
     
@@ -53,25 +57,12 @@ define(['player'], function (player) {
         var backgroundImage = '-webkit-gradient(linear,left top, right top, from(#ccc), color-stop(' + newVolume / 100 + ',#ccc), color-stop(' + newVolume / 100 + ',rgba(0,0,0,0)), to(rgba(0,0,0,0)))';
         volumeSlider.css('background-image', backgroundImage);
 
-        var activeBars = parseInt(newVolume / 25);
+        var activeBars = Math.ceil((newVolume / 25));
         muteButton.find('.MuteButtonBar:lt(' + activeBars + ')').css('fill', '#fff');
-        muteButton.find('.MuteButtonBar:gt(' + activeBars + ')').css('fill', '#555');
+        muteButton.find('.MuteButtonBar:gt(' + activeBars + ')').css('fill', '#666');
 
         if (activeBars === 0) {
-            muteButton.find('.MuteButtonBar').css('fill', '#555');
+            muteButton.find('.MuteButtonBar').css('fill', '#666');
         }
     }
-
-	//player.on('change:state', setVolumeIfPlayerReady);
-	//setVolumeIfPlayerReady();
-    
-	//function setVolumeIfPlayerReady(model, playerState) {
-
-	//    if (playerState === PlayerStates.VIDCUED || playerState === PlayerStates.PLAYING) {
-	//        //  Volume only becomes available once a video has become cued or when popup reopens.
-	//        var playerVolume = player.get('volume');
-
-	//        volumeSlider.val(playerVolume).trigger('change');
-	//    }
-    //}
 })

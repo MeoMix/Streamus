@@ -6,6 +6,7 @@
     
     <property name="Title" not-null="true" />
     <property name="Duration" not-null="true" />
+    <property name="Author" not-null="true" />
   </class>
   
 </hibernate-mapping>

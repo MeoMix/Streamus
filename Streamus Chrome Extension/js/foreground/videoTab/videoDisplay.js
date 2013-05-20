@@ -1,64 +1,69 @@
-﻿define(['youTubePlayerAPI', 'backgroundManager', 'player'], function (youTubePlayerAPI, backgroundManager, player) {
+﻿define(['backgroundManager', 'player'], function (backgroundManager, player) {
     'use strict';
 
-    //var selectedItem = playlistManager.getStream().getSelectedPlaylist().getSelectedItem();
-    //var videoId = 'undefined';
+    var videoDisplay = $('#VideoDisplay');
+    var videoDisplayCanvasContext = videoDisplay[0].getContext('2d');
+
+    var videoDisplayWidth = videoDisplay[0].width;
+    var videoDisplayHeight = videoDisplay[0].height;
     
-    //if (selectedItem !== null) {
-    //    videoId = selectedItem.get('video').get('id');
-    //}
+    function fillCanvasWithBlack() {
+        videoDisplayCanvasContext.rect(0, 0, videoDisplayWidth, videoDisplayHeight);
+        videoDisplayCanvasContext.fillStyle = 'black';
+        videoDisplayCanvasContext.fill();
+    }
     
-    ////  Build iframe AFTER onBeforeSendHeaders listener.
-    //$('<iframe>', {
-    //    id: 'ForegroundPlayer',
-    //    width: 475,
-    //    height: 286,
-    //    src: 'http://www.youtube.com/embed/' + videoId + '?enablejsapi=1&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3'
-    //}).appendTo('#VideoContent');
-
-    //var videoDisplay;
+    var youTubeVideo = $(chrome.extension.getBackgroundPage().document).find('#YouTubeVideo')[0];
+    var initialImage = new Image();
     
-    ////  Initialize the player by creating YT player iframe.
-    //youTubePlayerAPI.onApiReady(function () {
+    initialImage.onload = function () {
+        videoDisplayCanvasContext.drawImage(this, 0, 0, videoDisplayWidth, videoDisplayHeight);
+    };
+    
+    if (backgroundManager.get('activePlaylistItem') == null) {
+        fillCanvasWithBlack();
 
-    //    //  https://developers.google.com/youtube/iframe_api_reference#Loading_a_Video_Player
-    //    //  After the API's JavaScript code loads, the API will call the onYouTubeIframeAPIReady function.
-    //    //  At which point you can construct a YT.Player object to insert a video player on your page. 
-    //    videoDisplay = new YT.Player('ForegroundPlayer', {
-    //        events: {
-    //            'onReady': function () {
-    //                videoDisplay.mute();
-    //                videoDisplay.seekTo(player.get('currnetTime'), true);
-                    
-    //                if (player.isPlaying()) {
-    //                    videoDisplay.play();
-    //                }
+    } else {
 
+        var playerState = player.get('state');
+        if (playerState == PlayerStates.PLAYING || playerState == PlayerStates.PAUSED) {
+            videoDisplayCanvasContext.drawImage(youTubeVideo, 0, 0, videoDisplayWidth, videoDisplayHeight);
+        } else {
 
-    //            },
-    //            'onStateChange': function (playerState) {
-    //                if (playerState.data === PlayerStates.PLAYING) {
-    //                    player.play();
-    //                }
-    //                else if (playerState.data === PlayerStates.PAUSED) {
-    //                    player.pause();
-    //                }
-    //            },
-    //            'onError': function (error) {
-    //                window && console.error("An error was encountered.", error);
+            var loadedVideoId = player.get('loadedVideoId');
 
-    //                switch (error.data) {
-    //                    case 100:
-    //                        alert("Video requested is not found. This occurs when a video has been removed or it has been marked as private.");
-    //                        break;
-    //                    case 101:
-    //                    case 150:
-    //                        alert("Video requested does not allow playback in the embedded players.");
-    //                        break;
-    //                }
-    //            }
-    //        }
-    //    });
-    //});
+            if (loadedVideoId != '') {
+                initialImage.src = 'http://i2.ytimg.com/vi/' + loadedVideoId + '/mqdefault.jpg ';
+            }
+        }
 
+    }
+
+    backgroundManager.on('change:activePlaylistItem', function(model, activePlaylistItem) {
+
+        if (activePlaylistItem === null) {
+            fillCanvasWithBlack();
+        } else {
+            var videoId = activePlaylistItem.get('video').get('id');
+            initialImage.src = 'http://i2.ytimg.com/vi/' + videoId + '/hqdefault.jpg ';
+        }
+    });
+
+    //  Start drawing again when the player is playing.
+    player.on('change:state', function (model, playerState) {
+
+        if (playerState === PlayerStates.PLAYING) {
+            draw();
+        }
+    });
+    
+    function draw() {
+        //  Stop drawing entirely when the player stops.
+        if (window != null && player.isPlaying()) {
+            window.requestAnimationFrame(draw);
+            videoDisplayCanvasContext.drawImage(youTubeVideo, 0, 0, videoDisplayWidth, videoDisplayHeight);
+        }
+    }
+
+    draw();
 });

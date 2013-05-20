@@ -1,5 +1,5 @@
-﻿define(['playlistItem', 'ytHelper', 'video', 'levenshtein', 'programState'],
-    function (PlaylistItem, ytHelper, Video, levDistance, programState) {
+﻿define(['playlistItem', 'ytHelper', 'video', 'videos', 'levenshtein', 'programState', 'helpers'],
+    function (PlaylistItem, ytHelper, Video, Videos, levDistance, programState, helpers) {
         'use strict';
 
     var playlistItemsCollection = Backbone.Collection.extend({
@@ -31,12 +31,14 @@
                     //  Strip out the id. An example of $t's contents: tag:youtube.com,2008:video:UwHQp8WWMlg
                     var id = videoInformation.media$group.yt$videoid.$t;
                     var durationInSeconds = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
+                    var author = videoInformation.author[0].name.$t;
 
                     //  Don't forget to set the playlistId after adding a related video to a playlist later.
                     var video = new Video({
                         id: id,
                         title: videoInformation.title.$t,
-                        duration: durationInSeconds
+                        duration: durationInSeconds,
+                        author: author
                     });
 
                     return video;
@@ -77,14 +79,22 @@
     //  Public exposure of a constructor for building new PlaylistItem objects.
     return function(config) {
         var playlistItems = new playlistItemsCollection(config);
-
+        
         //  TODO: Can I move this to an initialize?
-        playlistItems.each(function(item) {
+        
+        //  TODO: Could probably be improved for very large playlists being added.
+        //  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
+        var sampleSize = playlistItems.length > 30 ? 30 : playlistItems.length;
+        var randomSampleIndices = helpers.getRandomNonOverlappingNumbers(sampleSize, playlistItems.length);
+
+        _.each(randomSampleIndices, function (randomIndex) {
+            
+            var randomItem = playlistItems.at(randomIndex);
+            
             //  Fetch all the related videos for videos on load. I don't want to save these to the DB because they're bulky and constantly change.
             //  Data won't appear immediately as it is an async request, I just want to get the process started now.
-
-            ytHelper.getRelatedVideoInformation(item.get('video').get('id'), function(relatedVideoInformation) {
-                item.set('relatedVideoInformation', relatedVideoInformation);
+            ytHelper.getRelatedVideoInformation(randomItem.get('video').get('id'), function (relatedVideoInformation) {
+                randomItem.set('relatedVideoInformation', relatedVideoInformation);
             });
         });
 

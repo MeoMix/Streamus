@@ -2,7 +2,7 @@
 var LocalStorageManager = null;
 
 //  Denormalization point for the Background's selected models.
-define(function () {
+define(['repeatButtonStates'], function (repeatButtonStates) {
     'use strict';
 
     var localStorageManagerModel = Backbone.Model.extend({
@@ -42,16 +42,6 @@ define(function () {
             localStorage.setItem('isMuted', JSON.stringify(isMuted));
         },
         
-        getVolume: function () {
-            //  Default to 50 because having the music on and audible, but not blasting, seems like the best default if we fail for some reason. 
-            var volume = getItem('volume') || 50;
-            return volume;
-        },
-        
-        setVolume: function(volume) {
-            localStorage.setItem('volume', JSON.stringify(volume));
-        },
-        
         getIsRadioModeEnabled: function () {
             var isRadioModeEnabled = getItem('isRadioModeEnabled') || false;
             return isRadioModeEnabled;
@@ -70,14 +60,27 @@ define(function () {
             localStorage.setItem('isShuffleEnabled', JSON.stringify(isShuffleEnabled));
         },
         
-        getUserId: function () {
-            var userId = getItem('userId');
-            return userId;
+        getRepeatButtonState: function() {
+            var repeatButtonState = getItem('repeatButtonState') || repeatButtonStates.DISABLED;
+            return repeatButtonState;
         },
         
-        setUserId: function(userId) {
-            localStorage.setItem('userId', JSON.stringify(userId));
+        setRepeatButtonState: function (repeatButtonState) {
+            localStorage.setItem('repeatButtonState', JSON.stringify(repeatButtonState));
+        },
+        
+        getUserId: function() {
+            return localStorage.getItem('UserId') || null;
+        },
+        
+        setActiveContentButtonId: function(activeContentButtonId) {
+            localStorage.setItem('activeContentButtonId', activeContentButtonId);
+        },
+        
+        getActiveContentButtonId: function() {
+            return localStorage.getItem('activeContentButtonId') || 'HomeMenuButton';
         }
+        
     });
     
     //  Fetch an item from localStorage, try and turn it from a string to an object literal if possible.

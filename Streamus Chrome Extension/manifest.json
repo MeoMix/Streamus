@@ -1,6 +1,11 @@
 ﻿{
+<<<<<<< HEAD
   "name": "Streamus™",
   "version": "0.53",
+=======
+  "name": "Streamus™ (Beta!)",
+  "version": "0.56",
+>>>>>>> origin/Development
   "manifest_version": 2,
   "description": "A YouTube music player built into your browser. Stream videos and songs; share playlists with friends!",
   "background":{
@@ -8,13 +13,20 @@
   },
   "browser_action": {
     "default_icon": {
+<<<<<<< HEAD
        "19": "images/streamus_icon19.png",
        "38": "images/streamus_icon38.png"
     },
     "default_title": "Streamus: Drop the 'ic' from streamed music.",
+=======
+       "19": "images/Yellow 4.png"
+    },
+    "default_title": "Streamus™ (Beta!)",
+>>>>>>> origin/Development
     "default_popup": "foreground.htm"
   },
   "permissions": [
+    "pushMessaging",
     "contextMenus",
     "clipboardWrite",
 	"notifications",
@@ -22,32 +34,26 @@
     "webRequest",
     "webRequestBlocking",
     "http://www.geoplugin.net/",
-    "http://www.beatport.com/top-100",
     "http://www.youtube.com/",
     "https://www.youtube.com/",
-    "https://graph.facebook.com/",
 	"http://localhost:61975/Streamus/",
 	"http://streamus.apphb.com/",
-    "tabs"
+	"http://www.youtube.com/embed/undefined?enablejsapi=1"
 	],
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["js/thirdParty/jquery.js"],
-	  "all_frames": true
-	},
+      "matches": ["http://www.youtube.com/embed/*"],
+	  "all_frames": true,
+      "js": ["js/thirdParty/jquery.js", "js/youTubeIFrameInject.js"]
+    },
     {
       "matches": ["*://www.youtube.com/watch?v*"],
       "css": ["css/inject.css"],
 	  "all_frames": true,
       "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/inject.js"]
-    },
-    {
-      "matches": ["http://www.facebook.com/robots.txt*"],
-      "js": ["js/thirdParty/oauth2/oauth2_inject.js"],
-      "run_at": "document_start"
     }
   ],
+  "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDmO/I2g0AsHj5gwKYcAv19xa/E4FYE3gD1DtReHysli/YvzOX2X/VOgPMNCB9d5PvuWNH0xud21ztmk7wsNxKLcEuDTENgGqA9voTTG+3hgT1zH5R7rm8E0Kw590KhNattqwXkoRqdvavMjnUzlB9gDbU1duI1V8U03etW4Ta8EwIDAQAB",
   "commands": {
     "nextVideo": {
       "suggested_key": { "default": "Alt+P" },
@@ -63,7 +69,8 @@
     },
     "_execute_browser_action": {
       "suggested_key": {
-        "default": "Ctrl+B"
+        "default": "Ctrl+B",
+		"windows": "Ctrl+B"
       }
     }
   },

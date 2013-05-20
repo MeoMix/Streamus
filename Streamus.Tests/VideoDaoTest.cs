@@ -45,7 +45,7 @@ namespace Streamus.Tests
         [Test]
         public void Saves()
         {
-            var video = new Video("s91jgcmQoB0", "Tristam - Chairs", 219);
+            var video = new Video("s91jgcmQoB0", "Tristam - Chairs", 219, "MeoMix");
             VideoManager.Save(video);
 
             //  Remove entity from NHibernate cache to force DB query to ensure actually created.
@@ -65,8 +65,8 @@ namespace Streamus.Tests
         [Test]
         public void GetsByIds()
         {
-            VideoManager.Save(new Video("s91jgcmQoB0", "Tristam - Chairs", 219));
-            VideoManager.Save(new Video("M5USD-Smthk", "Flosstradamus - Roll Up (Baauer Remix)", 195));
+            VideoManager.Save(new Video("s91jgcmQoB0", "Tristam - Chairs", 219, "MeoMix"));
+            VideoManager.Save(new Video("M5USD-Smthk", "Flosstradamus - Roll Up (Baauer Remix)", 195, "McMouse"));
 
             IList<Video> videos = VideoDao.Get(new List<string> {"s91jgcmQoB0", "M5USD-Smthk"});
 

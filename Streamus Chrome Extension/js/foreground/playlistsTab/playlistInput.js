@@ -1,42 +1,57 @@
 ﻿define(['contentHeader', 'ytHelper', 'backgroundManager'], function (ContentHeader, ytHelper, backgroundManager) {
     'use strict';
     
-    var contentHeader = new ContentHeader('#PlaylistDisplay', 'Add Playlist', 'Enter a playlist name');
-    contentHeader.contract();
-
-    var addInput = $('#PlaylistDisplay .addInput').attr('placeholder', 'Enter a playlist name or YouTube playlist URL');
-
-    //Whenever the user submits a name for a new playlist create a new playlist with that name.
-    addInput.keyup(function (e) {
-        var code = e.which;
-        //ENTER: 13
-        if (code === 13) {
-            processInput();
-        }
-    }).bind('paste drop', function () {
-        processInput();
+    var contentHeader = new ContentHeader({
+        selector: '#PlaylistDisplay',
+        addText: 'Add Playlist',
+        addInputPlaceholder: 'Enter a new playlist name or YouTube playlist URL',
+        expanded: false
     });
 
+    var addInput = $(contentHeader.addInputElement);
+
+    //  Whenever the user submits a name for a new playlist create a new playlist with that name.
+    addInput.keydown(function(event) {
+
+        if (event.which === $.ui.keyCode.ENTER) {
+            processInput();
+        }
+    }).on('paste drop focus', function () {
+        processInput();
+    });
+    
     function processInput() {
         setTimeout(function () {
             var userInput = addInput.val();
-            var youtubePlaylistId = ytHelper.parseUrlForPlaylistId(userInput);
-
-            if (youtubePlaylistId !== null) {
+            
+            //  Only add the playlist if something was provided.
+            if (userInput.trim() !== '') {
                 contentHeader.flashMessage('Thanks!', 2000);
 
-                ytHelper.getPlaylistTitle(youtubePlaylistId, function (playlistTitle) {
-                    if (playlistTitle) {
-                        backgroundManager.get('activeStream').addPlaylist(playlistTitle, youtubePlaylistId);
+                var dataSource = ytHelper.parseUrlForDataSource(userInput);
+                var activeStream = backgroundManager.get('activeStream');
+
+                //  If unable to parse userInput then create playlist with userInput as title and no data.
+                if (dataSource == null) {
+                    activeStream.addPlaylistByDataSource(userInput);
+                } else {
+                   
+                    switch(dataSource.type) {
+                        case DataSources.YOUTUBE_PLAYLIST:
+                            ytHelper.getPlaylistTitle(dataSource.id, function (youTubePlaylistTitle) {
+                                activeStream.addPlaylistByDataSource(youTubePlaylistTitle, dataSource);
+                            });
+                            break;
+                        case DataSources.YOUTUBE_CHANNEL:
+                            var playlistTitle = dataSource.id + '\'s Feed';
+                            activeStream.addPlaylistByDataSource(playlistTitle, dataSource);
+                            break;
+                        default:
+                            console && console.error("Unhandled dataSource type:", dataSource.type);
                     }
-                });
-            }
-            else {
-                //  Only add the playlist if a name was provided.
-                if (userInput.trim() !== '') {
-                    backgroundManager.get('activeStream').addPlaylist(userInput);
-                    contentHeader.flashMessage('Thanks!', 2000);
+
                 }
+                
             }
         });
     };

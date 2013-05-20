@@ -4,10 +4,11 @@ var require = {
         'main': 'foreground/main',
         'playerStates': 'playerStates',
         'programState': 'programState',
+        'dataSources': 'dataSources',
         'foreground': 'foreground/foreground',
         'volumeSlider': 'foreground/playerControls/volumeSlider',
         'playPauseButton': 'foreground/playerControls/playPauseButton',
-        'skipButton': 'foreground/playerControls/skipButton',
+        'nextButton': 'foreground/playerControls/nextButton',
         'previousButton': 'foreground/playerControls/previousButton',
         'shuffleButton': 'foreground/playerControls/shuffleButton',
         'radioModeButton': 'foreground/playerControls/radioModeButton',
@@ -34,13 +35,13 @@ var require = {
         'geoplugin': 'thirdParty/geoplugin',
         'levenshtein': 'thirdParty/levenshtein',
         'underscore': 'thirdParty/underscore',
-        'oauth2': 'thirdParty/oauth2/oauth2',
         'backbone': 'thirdParty/backbone',
         'backgroundManager': 'foreground/backgroundManager',
         'localStorageManager': 'foreground/localStorageManager',
         'player': 'foreground/player',
         'videoDisplay': 'foreground/videoTab/videoDisplay',
         'scrollIntoView': 'thirdParty/jquery.scrollIntoView',
-        'intro': 'thirdParty/intro'
+        'spin': 'thirdParty/jquery.spin',
+        'repeatButtonStates': 'repeatButtonStates'
     }
 };

@@ -1,5 +1,5 @@
 $(function () {
-    
+
     var style = document.createElement('link');
     style.rel = 'stylesheet';
     style.type = 'text/css';
@@ -120,11 +120,10 @@ $(function () {
         id: 'playlistSelect',
         'class': 'yt-uix-form-input-text share-panel-url',
         change: function() {
-            console.log("onChange");
+
             var match = document.URL.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/);
             var videoId = (match && match[2].length === 11) ? match[2] : null;
             
-
         }
     });
 
@@ -186,7 +185,7 @@ $(function () {
 
             } else {
                 var firstPlaylist = _.find(streams[0].playlists, function (playlist) {
-                    return playlist.id == stream.firstListId;
+                    return playlist.id == streams[0].firstListId;
                 });
                 
                 $('<option>', {
@@ -227,7 +226,6 @@ $(function () {
 
     //  TODO: Connect to YouTube pages and live-update the injected selects instead of the user needing to refresh the page.
     //chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    //    console.log("MESSAGE RECEIVED:", request);
     //    switch (request.method) {
 
     //        case 'streamAdded':

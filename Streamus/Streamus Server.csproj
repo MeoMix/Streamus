@@ -43,9 +43,24 @@
     <Reference Include="Antlr3.Runtime">
       <HintPath>..\packages\WebGrease.1.1.0\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="DotNetOpenAuth">
+      <HintPath>..\..\..\..\Downloads\google-api-dotnet-client-1.3.0-beta.binary\DotNetOpenAuth.dll</HintPath>
+    </Reference>
     <Reference Include="FluentValidation, Version=3.4.6.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\FluentValidation.3.4.6.0\lib\Net40\FluentValidation.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis">
+      <HintPath>..\..\..\..\Downloads\google-api-dotnet-client-1.3.0-beta.binary\Google.Apis.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Authentication.OAuth2">
+      <HintPath>..\..\..\..\Downloads\google-api-dotnet-client-1.3.0-beta.binary\Google.Apis.Authentication.OAuth2.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Tasks.v1">
+      <HintPath>..\..\..\..\Downloads\google-tasks-v1-rev14-csharp-1.3.0-beta (1)\tasks\google-tasks-v1-rev14-csharp-1.3.0-beta-bin\Google.Apis.Tasks.v1.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Tools.CodeGen">
+      <HintPath>..\..\..\..\Downloads\google-api-dotnet-client-1.3.0-beta.binary\Google.Apis.Tools.CodeGen.dll</HintPath>
     </Reference>
     <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -185,7 +200,9 @@
     <EmbeddedResource Include="Domain\PlaylistItem.hbm.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Domain\Video.hbm.xml" />
+    <EmbeddedResource Include="Domain\Video.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Domain\User.hbm.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>

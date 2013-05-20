@@ -4,43 +4,51 @@
 var User = null;
 define(['streams', 'programState', 'localStorageManager'], function (Streams, programState, localStorageManager) {
     'use strict';
-    var userIdKey = 'UserId';
+
+    var syncUserIdKey = 'UserId';
 
     //  User data will be loaded either from cache or server.
     var userModel = Backbone.Model.extend({
-        defaults: {
-            id: localStorageManager.getUserId(),
-            name: '',
-            loaded: false,
-            streams: new Streams()
+        defaults: function() {
+            return {
+                id: '',
+                name: '',
+                loaded: false,
+                streams: new Streams()
+            };
         },
         
         urlRoot: programState.getBaseUrl() + 'User/',
 
         initialize: function () {
             
-            //  If user's ID wasn't found in local storage, check sync because its a pc-shareable location, but doesn't work synchronously.
-            if (this.isNew()) {
-                var self = this;
-                //  chrome.Storage.sync is cross-computer syncing with restricted read/write amounts.
-                
-                chrome.storage.sync.get(userIdKey, function (data) {
-                    //  Look for a user id in sync, it might be undefined though.
-                    var foundUserId = data[userIdKey];
+            var self = this;
+            //  chrome.Storage.sync is cross-computer syncing with restricted read/write amounts.
 
-                    if (typeof foundUserId === 'undefined') {
-                        createNewUser.call(self);
-                    } else {
-                        //  Update the model's id to proper value and call fetch to retrieve all data from server.
+            chrome.storage.sync.get(syncUserIdKey, function (data) {
+                //  Look for a user id in sync, it might be undefined though.
+                var foundUserId = data[syncUserIdKey];
+
+                if (typeof foundUserId === 'undefined') {
+
+                    foundUserId = localStorageManager.getUserId();
+                    
+                    if (foundUserId !== null) {
                         self.set('id', foundUserId);
-                        fetchUser.call(self, false);
+                        fetchUser.call(self, true);
+                    } else {
+                        createNewUser.call(self);
                     }
-                });
 
-            } else {
-                //  User's ID was found in localStorage. Load immediately.
-                fetchUser.call(this, true);
-            }
+                } else {
+                    //  Update the model's id to proper value and call fetch to retrieve all data from server.
+                    self.set('id', foundUserId);
+                    
+                    //  Pass false due to success of fetching from chrome.storage.sync -- no need to overwrite with same data.
+                    fetchUser.call(self, false);
+                }
+            });
+
         }
     });
     
@@ -74,10 +82,14 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
         //  TODO: Error handling for writing to sync too much.
         //  Write to sync as little as possible because it has restricted read/write limits per hour.
         if (shouldSetSyncStorage) {
-            chrome.storage.sync.set({ userIdKey: model.get('id') });
-        }
 
-        localStorageManager.setUserId(model.get('id'));
+            //  Using the bracket access notation here to leverage the variable which stores the key for chrome.storage.sync
+            //  I want to be able to ensure I am getting/setting from the same location, thus the variable.
+            var storedKey = {};
+            storedKey[syncUserIdKey] = model.get('id');
+
+            chrome.storage.sync.set(storedKey);
+        }
 
         //  Announce that user has loaded so managers can use it to fetch data.
         this.set('loaded', true);
@@ -96,7 +108,7 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
             },
             error: function (error) {
 
-                //  Failed to fetch the user... recover by creating a new user for now. Should probably do some sort of notify.
+                //  Failed to fetch the user. Recover by creating a new user for now. Should probably do some sort of notify.
                 createNewUser.call(self);
                 window && console.error(error);
             }

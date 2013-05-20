@@ -1,7 +1,7 @@
 ﻿//  Background.js is a bit of a dumping ground for code which needs a permanent housing spot.
-define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error', 'programState'],
-    function (player, backgroundManager, localStorageManager, ytHelper, Error, programState) {
-    'use strict';
+define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManager', 'ytHelper', 'error', 'programState', 'repeatButtonStates'],
+    function (player, backgroundManager, localStorageManager, pushMessageManager, ytHelper, Error, programState, repeatButtonStates) {
+        'use strict';
 
     //  TODO: This is the only place I really plan on referencing the error module,
     //  maybe I should move this window.onerror into the Error module?
@@ -19,19 +19,19 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
             error.save();
         }
     };
-
-    player.on('change:state', function (model, state) {
         
-        if (state === PlayerStates.PLAYING) {
+    player.on('change:state', function (model, state) {
 
+        if (state === PlayerStates.PLAYING) {
             //  Check if the foreground UI is open.
             var foreground = chrome.extension.getViews({ type: "popup" });
   
-            if (foreground.length == 0) {
+            if (foreground.length === 0) {
 
                 //  If the foreground UI is not open, show a notification to indicate active video.
                 var activeVideoId = backgroundManager.get('activePlaylistItem').get('video').get('id');
 
+                //  TODO: Create HTML notification in the future. Doesn't have all the support we need currently.
                 var notification = window.webkitNotifications.createNotification(
                   'http://img.youtube.com/vi/' + activeVideoId + '/default.jpg',
                   'Now Playing',
@@ -42,35 +42,33 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
 
                 setTimeout(function () {
                     notification.close();
-                }, 5000);
+                }, 3000);
             }
         }
         //  If the video stopped playing and there is another video to play (not the same one), do so.
         else if (state === PlayerStates.ENDED) {
-            //  Radio mode being enabled will mean we always skip to a new song.
-            var isRadioModeEnabled = localStorageManager.getIsRadioModeEnabled();
 
             var activePlaylistItem = backgroundManager.get('activePlaylistItem');
             //  NOTE: No guarantee that the activePlaylistItem's playlistId will be activePlaylist's ID.
             var playlistId = activePlaylistItem.get('playlistId');
             var playlist = backgroundManager.getPlaylistById(playlistId);
             
-            //  TODO: Add repeat logic.
-            //  Don't keep playing the same video over and over if there's only 1 in the playlist.
-            if (playlist.get('items').length > 1 || isRadioModeEnabled) {
-                var nextItem;
-                if (isRadioModeEnabled) {
-                    var nextVideo = playlist.getRelatedVideo();
-                    nextItem = playlist.addItem(nextVideo);
-                } else {
-                    nextItem = playlist.gotoNextItem();
-                }
+            var nextItem = playlist.gotoNextItem();
 
-                playlist.selectItem(nextItem);
-                backgroundManager.set('activePlaylistItem', nextItem);
+            backgroundManager.set('activePlaylistItem', nextItem);
 
-                player.loadVideoById(nextItem.get('video').get('id'));
+            var nextVideoId = nextItem.get('video').get('id');
+            
+            var repeatButtonState = localStorageManager.getRepeatButtonState();
+            var shouldRepeatPlaylist = repeatButtonState === repeatButtonStates.REPEAT_PLAYLIST_ENABLED;
+
+            //  Cue the next video if looping around to the top of the playlist and we're not supposed to repeat playlists.
+            if (nextItem.get('id') === playlist.get('firstItemId') && !shouldRepeatPlaylist) {
+                player.cueVideoById(nextVideoId);
+            } else {
+                player.loadVideoById(nextVideoId);
             }
+
         }
 
     });
@@ -87,7 +85,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
                     var playlistId = activePlaylistItem.get('playlistId');
                     var playlist = backgroundManager.getPlaylistById(playlistId);
 
-                    var nextItem = playlist.skipItem('next');
+                    var nextItem = playlist.gotoNextItem();
                     backgroundManager.set('activePlaylistItem', nextItem);
                 }
 
@@ -99,7 +97,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
                     var playlistId = activePlaylistItem.get('playlistId');
                     var playlist = backgroundManager.getPlaylistById(playlistId);
 
-                    var previousItem = playlist.skipItem('previous');
+                    var previousItem = playlist.gotoPreviousItem();
                     backgroundManager.set('activePlaylistItem', previousItem);
                 }
                 break;
@@ -121,7 +119,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
             //  http://stackoverflow.com/questions/5235719/how-to-copy-text-to-clipboard-from-a-google-chrome-extension
             //  Copies text to the clipboard. Has to happen on background page due to elevated privs.
             case 'copy':
-                console.log("copying");
+
                 var hiddenClipboard = document.getElementById("HiddenClipboard");
                 hiddenClipboard.value = request.text;
                 //  Copy text from hidden field to clipboard.
@@ -142,10 +140,13 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
 
                 sendResponse({ playlists: playlists });
                 break;
+            case 'videoStreamSrcChange':
+                player.set('videoStreamSrc', request.videoStreamSrc);
+                break;
             case 'addVideoByIdToPlaylist':
                 var playlist = backgroundManager.getPlaylistById(request.playlistId);
                 
-                ytHelper.getVideoInformationFromId(request.videoId, function (videoInformation) {
+                ytHelper.getVideoInformationFromId(request.videoId, '', function (videoInformation) {
                     var addedItem = playlist.addItemByInformation(videoInformation);
                     //  TODO: Send response and update YouTube visually to indicate that item has been successfully added
                 });
@@ -153,7 +154,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
                 break;
         }
     });
-    
+        
     //  Modify the iFrame headers to force HTML5 player and to look like we're actually a YouTube page.
     //  The HTML5 player seems more reliable (doesn't crash when Flash goes down) and looking like YouTube
     //  means we can bypass a lot of the embed restrictions.
@@ -176,27 +177,43 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
 			}
 
         }
-
-        //  Bypass YouTube's embedded player content restrictions by looking like YouTube
-        //  Any referer will do, maybe change to Streamus.com in the future? Or maybe leave as YouTube
-        //  to stay under the radar. Not sure which is less suspicious.
-        info.requestHeaders.push({  
-            name: "Referer",
-            value: "http://youtube.com"
+        
+        var refererRequestHeader = _.find(info.requestHeaders, function(requestHeader) {
+            return requestHeader.name === 'Referer';
         });
+
+        if (refererRequestHeader == null) {
+            //  Bypass YouTube's embedded player content restrictions by looking like YouTube
+            //  Any referer will do, maybe change to Streamus.com in the future? Or maybe leave as YouTube
+            //  to stay under the radar. Not sure which is less suspicious.
+            info.requestHeaders.push({
+                name: "Referer",
+                value: "http://youtube.com/embed/undefined?enablejsapi=1"
+            });
+        }
+
+        //  Make Streamus look like an iPhone to guarantee the html5 player shows up even if the video has an ad.
+        var userAgentRequestHeader = _.find(info.requestHeaders, function(requestHeader) {
+            return requestHeader.name === 'User-Agent';
+        });
+        
+        if (userAgentRequestHeader !== null) {
+            userAgentRequestHeader.value = 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5';
+        }
+
         return { requestHeaders: info.requestHeaders };
     }, {
-        urls: ["<all_urls>"]
+        urls: ["http://www.youtube.com/embed/undefined?enablejsapi=1"]
     },
         ["blocking", "requestHeaders"]
     );
-    
+
     //  Build iframe after onBeforeSendHeaders listener to prevent errors and generate correct type of player.
     $('<iframe>', {
         id: 'MusicHolder',
-        //  Width and height don't really matter as long as they stay about 200px each, per documentation.
-        width: 475,
-        height: 286,
+        //  Width and Height should have a ratio of 4 to 3
+        width: 480,
+        height: 360,
         src: 'http://www.youtube.com/embed/undefined?enablejsapi=1'
     }).appendTo('body');
 });

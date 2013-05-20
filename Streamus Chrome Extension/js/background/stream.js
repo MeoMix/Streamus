@@ -1,5 +1,5 @@
 ﻿//  A stream is a collection of playlists
-define(['playlists', 'playlist', 'videos', 'player', 'programState', 'ytHelper', 'localStorageManager'], function (Playlists, Playlist, Videos, player, programState, ytHelper, localStorageManager) {
+define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'ytHelper', 'localStorageManager'], function (Playlists, Playlist, Videos, Video, player, programState, ytHelper, localStorageManager) {
     'use strict';
     
     var streamModel = Backbone.Model.extend({
@@ -9,7 +9,7 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState', 'ytHelper',
                 userId: null,
                 title: '',
                 playlists: new Playlists(),
-                firstListId: null
+                firstListId: null,
             };
         },
         urlRoot: programState.getBaseUrl() + 'Video/',
@@ -44,12 +44,12 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState', 'ytHelper',
                         }
                     });
 
-                    playlist.get('items').on('remove', function (item, collection) {
+                    //playlist.get('items').on('remove', function (item, collection) {
 
-                        if (collection.length == 0) {
-                            player.pause();
-                        }
-                    });
+                    //    if (collection.length == 0) {
+                    //        player.pause();
+                    //    }
+                    //});
                 } else {
                     if (self.getSelectedPlaylist() === playlist) {
                         playlist.get('items').off('change:selected add remove');
@@ -82,16 +82,18 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState', 'ytHelper',
                 }
 
             });
+
         },
         
         addVideoByIdToPlaylist: function (id, playlistId) {
             this.get('playlists').get(playlistId).addVideoByIdToPlaylist(id);
         },
 
-        addPlaylist: function (playlistTitle, optionalPlaylistId, callback) {
+        addPlaylistByDataSource: function(playlistTitle, dataSource, callback) {
             var playlist = new Playlist({
                 title: playlistTitle,
-                streamId: this.get('id')
+                streamId: this.get('id'),
+                dataSource: dataSource
             });
 
             var currentPlaylists = this.get('playlists');
@@ -99,7 +101,7 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState', 'ytHelper',
             var self = this;
             //  Save the playlist, but push after version from server because the ID will have changed.
             playlist.save(new Array(), {
-                success: function() {
+                success: function () {
                     var playlistId = playlist.get('id');
 
                     if (currentPlaylists.length === 0) {
@@ -123,98 +125,10 @@ define(['playlists', 'playlist', 'videos', 'player', 'programState', 'ytHelper',
                         callback(playlist);
                     }
                 },
-                error: function(error) {
+                error: function (error) {
                     window && console.error(error);
                 }
             });
-                
-            //  TODO: Refactor/simplify. This loads a bulk collection of videos for a YouTube playlist.
-            if (optionalPlaylistId) {
-                    
-                var startIndex = 1;
-                var maxResultsPerSearch = 50;
-                var totalVideosProcessed = 0;
-
-                var videos = new Videos();
-
-                var getVideosInterval = setInterval(function () {
-                    $.ajax({
-
-                        type: 'GET',
-                        url: 'https://gdata.youtube.com/feeds/api/playlists/' + optionalPlaylistId,
-                        dataType: 'json',
-                        data: {
-                            v: 2,
-                            alt: 'json',
-                            'max-results': maxResultsPerSearch,
-                            'start-index': startIndex,
-                        },
-                        success: function (result) {
-
-                            _.each(result.feed.entry, function (entry) {
-                                //  If the title is blank the video has been deleted from the playlist, no data to fetch.
-                                if (entry.title.$t !== "") {
-                                    var videoId = entry.media$group.yt$videoid.$t;
-
-                                    ytHelper.getVideoInformationFromId(videoId, function (videoInformation) {
-                                        //  videoInformation will be null if it has been banned on copyright grounds
-
-                                        if (videoInformation === null) {
-
-                                            ytHelper.findPlayableByTitle(entry.title.$t, function (playableVideoInformation) {
-                                                var id = playableVideoInformation.media$group.yt$videoid.$t;
-                                                var durationInSeconds = parseInt(playableVideoInformation.media$group.yt$duration.seconds, 10);
-
-                                                videos.push({
-                                                    id: id,
-                                                    playlistId: playlistId,
-                                                    title: playableVideoInformation.title.$t,
-                                                    duration: durationInSeconds
-                                                });
-                                                    
-                                                totalVideosProcessed++;
-
-                                                if (totalVideosProcessed == result.feed.entry.length) {
-                                                    playlist.addItems(videos);
-                                                }
-                                            });
-
-                                        } else {
-
-                                            videos.add(video);
-                                            totalVideosProcessed++;
-
-                                            if (totalVideosProcessed == result.feed.entry.length) {
-                                                playlist.addItems(videos);
-                                            }
-                                        }
-
-                                    });
-                                } else {
-
-                                    totalVideosProcessed++;
-
-                                    if (totalVideosProcessed == result.feed.entry.length) {
-                                        playlist.addItems(videos);
-                                    }
-                                }
-                            });
-
-                            //If X videos are received and X+C videos were requested, stop because no more videos in playlist.
-                            //TODO: Maybe I just always want to return.
-                            if (result.feed.entry.length < maxResultsPerSearch) {
-                                clearInterval(getVideosInterval);
-                            }
-
-                            startIndex += maxResultsPerSearch;
-                        },
-                        error: function (error) {
-                            window && console.error(error);
-                            clearInterval(getVideosInterval);
-                        }
-                    });
-                }, 5000); 
-            }
         },
         
         removePlaylistById: function(playlistId) {

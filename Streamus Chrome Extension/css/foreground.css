@@ -1,6 +1,10 @@
 ﻿body {
   min-width: 513px;
+<<<<<<< HEAD
   min-height:452px;
+=======
+  min-height:450px;
+>>>>>>> origin/Development
   background:#fff;
   -webkit-user-select: none;
   font: 12px/1.3 sans-serif;
@@ -35,6 +39,8 @@
   text-shadow: 0 1px 0 #fff;
   overflow: hidden;
 }
+
+
   
 .gradient {
   background-image:-webkit-gradient(linear,left top, left bottom, from(rgba(255,255,255,.1)), to(rgba(0,0,0,.1)));
@@ -130,6 +136,8 @@
   padding-right: 3px;
   outline: none;
   -webkit-transition: border-color .2s;
+  background-color: white;
+  color: rgb(0, 0, 0);
 }
 
 .addButton {
@@ -138,7 +146,7 @@
   bottom:6px; 
   padding: 0 20px 0 40px; 
   width: 120px; 
-  cursor: pointer; 
+  cursor: auto; 
   -webkit-transition: all 0.5s; 
   border: 1px solid #ccc; 
   border-radius:5px; 
@@ -158,7 +166,8 @@
   top:0; 
   left: 40px; 
   font: bold 12px/27px sans-serif;
-  color: #555;
+  color: #666;
+  cursor: pointer;
 }
 
 .addButton input {
@@ -204,9 +213,12 @@
 }
 
 .ui-autocomplete {
-  max-height: 260px;
-  max-width: 433px;
+  max-height: 346px;
+  max-width: 523px;
+  width: 523px !important;
   overflow-y: auto;
+  left: 0 !important;
+  top: 110px !important;
 }
 
 .content {
@@ -227,6 +239,14 @@
   display: none;
 }
 
+#VideoContent {
+    background-color: black;
+}
+
+#VideoDisplay {
+    margin-top: 54px;
+}
+
 #PlayPauseButton {
   top:0;
   left:0;
@@ -236,7 +256,7 @@
   cursor:pointer;
 }
 
-#SkipButton {
+#NextButton {
   top:0;
   right:0;
   width:40px;
@@ -258,20 +278,20 @@
 }
 
 #PlayPauseButton.disabled:hover,
-#SkipButton.disabled:hover,
+#NextButton.disabled:hover,
 #PreviousButton.disabled:hover {
   background-color: transparent;
   cursor: default;
 }
 
 #PlayPauseButton.disabled:active,
-#SkipButton.disabled:active, 
+#NextButton.disabled:active, 
 #PreviousButton.disabled:active{
   background-image: none;
 }
 
 #PlayPauseButton:hover, 
-#SkipButton:hover,
+#NextButton:hover,
 #PreviousButton:hover,
 #HomeMenuButton:hover,
 #SettingsMenuButton:hover,
@@ -280,7 +300,7 @@
 }
 
 #PlayPauseButton:active, 
-#SkipButton:active,
+#NextButton:active,
 #PreviousButton:active {
   background-image: -webkit-gradient(linear,left top, left bottom, from(rgba(0,0,0,.1)), color-stop(0.5,rgba(0,0,0,0)));
 }
@@ -292,7 +312,7 @@
   margin:-11px 0 0 -11px;
 }
 
-#SkipButton svg {
+#NextButton svg {
   position:absolute; 
   top:50%;
   left:50%;
@@ -333,7 +353,7 @@
   overflow:visible;
   top:12px;
   left:20px;
-  right:180px;
+  right:140px;
   height:6px; 
   margin:0; 
   background-color:#222; 
@@ -365,12 +385,12 @@
   height:30px; 
   border-left: 1px solid #000; 
   border-top:1px solid #000; 
-  background-color: #555;
+  background-color: #666;
   background-image: -webkit-gradient(linear,left top, left bottom, from(rgba(0,0,0,.5)), to(rgba(0,0,0,0)));
 }
 
 #time {
-  right:80px;
+  right:40px;
   width:100px;
   font: bold 11px/30px sans-serif;
   color: #fff; 
@@ -379,7 +399,7 @@
   border-right:1px solid #666;
 }
 
-#SettingsButton, #MuteButton {
+#MuteButton {
   -webkit-box-shadow:inset 0 3px 5px #000;
   right:40px;
   top:0;
@@ -391,16 +411,11 @@
   background: rgba(0,0,0,.5)
 }
 
-#SettingsButton svg, #MuteButton svg {
+#MuteButton svg {
   position:absolute;
   top:50%;
   left:50%;
   margin: -8px 0 0 -8px;
-}
-
-#SettingsButton:active, 
-#MuteButton:active {
-  background-image: -webkit-gradient(linear,left top, left bottom,color-stop(0.5,rgba(255,255,255,0)), to(rgba(255,255,255,0.25)));
 }
 
 #MuteButton {
@@ -408,16 +423,6 @@
   border-right:none;
 }
 
-#SettingsButtonSvgWrapper {
-    width: 80%;
-    margin-left: 9%;
-}
-
-#SettingsSliderWrapper {
-    right: 40px !important;
-}
-
-#SettingsSliderWrapper,
 #VolumeSliderWrapper {
   -webkit-transition: top 0.5s;
   width:40px; 
@@ -439,20 +444,20 @@
 
 #ShuffleButton {
     position:absolute;
-    right: 12px;
-    top: 33px;
+    left: 6px;
+    bottom: 2px;
 }
 
 #RadioModeButton {
     position: absolute;
-    right: 13px;
-    top: 6px;
+    left: 28px;
+    bottom: 1px;
 }
 
 #RepeatButton {
     position: absolute;
-    right: 14px;
-    top: 58px;
+    right: 4px;
+    bottom: 3px;
 }
 
 #RepeatPlaylistSvgWrapper {
@@ -469,7 +474,7 @@
    
   background-color:#222; 
   border-bottom:1px solid #000; 
-  border-top: 1px solid #555;
+  border-top: 1px solid #666;
   border-radius: 3px;
   position:absolute;
   top:45px;
@@ -527,7 +532,7 @@
 }
 
 .list ul {
-  margin:5px 0;
+  margin:2px 0;
   padding:0;
   list-style: none;
 }
@@ -549,38 +554,31 @@
   color: black;
 }
 
-.list li:nth-child(even) {
+.list li:nth-child(odd),
+.ui-autocomplete li:nth-child(odd) {
   background-color: #eaeaea
 }
 
-/*.list li:active {
-  background-color: #09f;
-  color:#fff;
-  text-shadow: 0 1px #06d;
-  background-image:-webkit-gradient(linear,left top, left bottom, from(rgba(255,255,255,.1)), to(rgba(0,0,0,.1)));
-}
-
-.list li:active svg *{
-  fill:#fff
-}*/
-
-.list a {
-  position:absolute; 
-  top:0;
-  left:60px;
-  right:0; 
+.list span {
   overflow: hidden; 
-  font: 12px/18px sans-serif;
-  height: 38px;
+  height: 19px;
   margin-top: 5px;
+  left: 0;
 }
 
-#PlaylistsContent .list a {
-    left: 10px !important;
-    top: 7px !important;
+.list span:nth-of-type(1) {
+  font: 12px/18px sans-serif;
+  top: 5px;
+  z-index: 5;
 }
 
-.loaded a {
+.list span:nth-of-type(2) {
+  top: 20px;
+  color: #666;
+  position: absolute;
+}
+
+.loaded span {
     font-weight: bold !important;
 }
 
@@ -617,7 +615,7 @@
 }
 
 .pressed svg *{
-  fill:#060 !important;
+  fill: #6ABD45 !important;
 }
 
 .sidebar-button {
@@ -639,22 +637,40 @@
 }
 
 #LoadingSpinner {
-    background-image: url(../images/spinner.svg);
     width: 48px;
     height: 48px;
-    background-size: contain;
-    margin-top: 11px;
-    margin-left: 11px;
-    opacity: .7;
-    -webkit-animation:rotate 1.5s infinite steps(12);
-    display: none;
+    margin-top: 9px;
+    margin-left: 10px;
 }
 
+.spinner,
+.spinner * {
+    overflow: visible !important;
+}
+
+.textWrapper {
+    height: 44px;
+    width: 384px;
+    left: 60px;
+    right: 0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding-top: 5px;
+}
+
+#PlaylistsContent .textWrapper {
+    left: 10px;
+    width: 434px;
+}
 
 .playlistItemVideoImage {
     margin-top: 3px;
     margin-left: 3px;
     width: 50px;
+    height: 38px;
+    background-size: 100% auto;
+    z-index: 10;
 }
 
 @-webkit-keyframes "rotate" {
@@ -667,3 +683,59 @@
         transform: rotate(360deg);
     }
 }
+
+.ui-tooltip {
+    display: inline-block;
+    z-index:10;
+}
+
+.ui-tooltip, .arrow:after {
+    background: black;
+    border: 2px solid white;
+  }
+
+  .ui-tooltip {
+    padding: 10px 20px;
+    color: white;
+    border-radius: 20px;
+    font: bold 14px "Helvetica Neue", Sans-Serif;
+    text-transform: uppercase;
+    box-shadow: 0 0 7px black;
+      position: absolute;
+  }
+  .arrow {
+    width: 70px;
+    height: 16px;
+    overflow: hidden;
+    position: absolute;
+    left: 50%;
+    margin-left: -35px;
+    bottom: -16px;
+  }
+  .arrow.top {
+    top: -16px;
+    bottom: auto;
+  }
+  .arrow.left {
+    left: 20%;
+  }
+  .arrow.farleft {
+      left: 8%;
+  }
+
+  .arrow:after {
+    content: "";
+    position: absolute;
+    left: 20px;
+    top: -20px;
+    width: 25px;
+    height: 25px;
+    box-shadow: 6px 5px 9px -9px black;
+    -webkit-transform: rotate(45deg);
+    tranform: rotate(45deg);
+  }
+  
+  .arrow.top:after {
+    bottom: -20px;
+    top: auto;
+  }

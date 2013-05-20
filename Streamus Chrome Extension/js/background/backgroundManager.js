@@ -5,8 +5,8 @@ var BackgroundManager = null;
 //  NOTE: It is important to understand that the activePlaylistItem is NOT guaranteed to be in the activePlaylist.
 //  The same applies for activePlaylist being under the activeStream. The user can click around, but this shouldn't affect state
 //  until they make a decision.
-define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', 'streams'],
-    function (user, player, localStorageManager, PlaylistItems, Playlists, Streams) {
+define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', 'streams', 'repeatButtonStates'],
+    function (user, player, localStorageManager, PlaylistItems, Playlists, Streams, repeatButtonStates) {
     'use strict';
 
     var backgroundManagerModel = Backbone.Model.extend({
@@ -147,7 +147,9 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
         var self = this;
         playlist.get('items').on('add', function (playlistItem) {
             
-            self.get('allPlaylistItems').add(playlistItem);
+            self.get('allPlaylistItems').add(playlistItem, {
+                merge: true
+            });
 
             if (self.get('activePlaylistItem') === null) {
                 self.set('activePlaylistItem', playlistItem);
@@ -158,20 +160,47 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
 
         playlist.get('items').on('remove', function (playlistItem) {
 
-            self.get('allPlaylistItems').remove(playlistItem);
+            var playlistId = playlistItem.get('playlistId');
+            var playlist = self.getPlaylistById(playlistId);
+            var playlistItems = playlist.get('items');
 
+            //  Update these before getting nextItem because we don't want to have something point to the removed item.
+            if (playlistItems.length > 0) {
+                //  Update linked list pointers
+                var previousItem = playlistItems.get(playlistItem.get('previousItemId'));
+                var nextItem = playlistItems.get(playlistItem.get('nextItemId'));
+
+                //  Remove the item from linked list.
+                previousItem.set('nextItemId', nextItem.get('id'));
+                nextItem.set('previousItemId', previousItem.get('id'));
+            }
+
+            self.get('allPlaylistItems').remove(playlistItem);
+            
             if (self.get('activePlaylistItem') === playlistItem) {
-                self.set('activePlaylistItem', null);
-                
-                var playlistId = playlistItem.get('playlistId');
-                var playlist = self.getPlaylistById(playlistId);
-                
-                if (playlist.get('items').length > 0) {
-                    var newlyActiveItem = playlist.skipItem('next');
+
+                if (playlistItems.length > 0) {
+                    var newlyActiveItem = playlist.gotoNextItem();
+
                     self.set('activePlaylistItem', newlyActiveItem);
                 } else {
-                    player.pause();
+
+                    self.set('activePlaylistItem', null);
                 }
+
+            }
+            
+            //  TODO: I'd like to have this logic inside of playlist and not backgroundManager but the first bit of code
+            //  needs to run first because playlist.gotoNextItem is dependent on the old firstItemId to know the next item.
+            if (playlistItems.length > 0) {
+
+                //  Update firstItem if it was removed
+                if (playlist.get('firstItemId') === playlistItem.get('id')) {
+                    playlist.set('firstItemId', playlistItem.get('nextItemId'));
+                }
+
+            } else {
+                playlist.set('firstItemId', '00000000-0000-0000-0000-000000000000');
             }
         });
     }
@@ -232,21 +261,45 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
     }
     
     function loadActivePlaylistItem() {
-
+        var self = this;
         this.on('change:activePlaylistItem', function (model, activePlaylistItem) {
 
             if (activePlaylistItem == null) {
                 localStorageManager.setActivePlaylistItemId(null);
+                player.stop();
+
             } else {
                 localStorageManager.setActivePlaylistItemId(activePlaylistItem.get('id'));
                 
                 //  Make sure that the player keeps its video in sync with the activePlaylistItem's video.
                 var videoId = activePlaylistItem.get('video').get('id');
-                if (player.isPlaying()) {
-                    player.loadVideoById(videoId);
+                
+                //  If repeating the current video - don't do extra work.
+                if (player.get('loadedVideoId') === videoId) {
+                    player.seekTo(0);
                 } else {
-                    player.cueVideoById(videoId);
+                    var playerIsPlaying = player.isPlaying();
+
+                    if (playerIsPlaying) {
+
+                        var playlist = this.getPlaylistById(activePlaylistItem.get('playlistId'));
+                        var isFirstItem = activePlaylistItem.get('id') === playlist.get('firstItemId');
+                        var repeatButtonState = localStorageManager.getRepeatButtonState();
+                        var previousActiveItem = self.previous('activePlaylistItem');
+
+                        //  If skipping around to the front of the list and don't have repeat playlist enabled - pause.
+                        //  Check to make sure that the last active was the last item in the list (first item's previous) -- could be coming back from the 2nd item in which case don't pause
+                        if (isFirstItem && previousActiveItem.get('id') === activePlaylistItem.get('previousItemId') && repeatButtonState !== repeatButtonStates.REPEAT_PLAYLIST_ENABLED) {
+                            player.cueVideoById(videoId);
+                        } else {
+                            player.loadVideoById(videoId);
+                        }
+                        
+                    } else {
+                        player.cueVideoById(videoId);
+                    }
                 }
+                
             }
         });
 

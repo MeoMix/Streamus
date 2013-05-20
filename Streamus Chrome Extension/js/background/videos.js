@@ -16,6 +16,13 @@
                     window && console.error(error);
                 }
             });
+        },
+        withIds: function() {
+            var videosWithIds = this.filter(function(video) {
+                return video.get('id') != '';
+            });
+
+            return new videoCollection(videosWithIds);
         }
     });
 
