@@ -21,6 +21,7 @@
             });
 
             chrome.pushMessaging.onMessage.addListener(function (message) {
+                console.log("Message received", message);
                 
                 if (message.event == null) {
                     throw "Expected message to contain an event.";
@@ -35,7 +36,7 @@
                         
                 }
 
-                console.log("Message received", message);
+                
             });
 
         }

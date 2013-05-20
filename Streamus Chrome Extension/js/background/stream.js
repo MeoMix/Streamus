@@ -44,12 +44,12 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'y
                         }
                     });
 
-                    playlist.get('items').on('remove', function (item, collection) {
+                    //playlist.get('items').on('remove', function (item, collection) {
 
-                        if (collection.length == 0) {
-                            player.pause();
-                        }
-                    });
+                    //    if (collection.length == 0) {
+                    //        player.pause();
+                    //    }
+                    //});
                 } else {
                     if (self.getSelectedPlaylist() === playlist) {
                         playlist.get('items').off('change:selected add remove');

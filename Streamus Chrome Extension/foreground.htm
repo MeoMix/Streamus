@@ -12,7 +12,7 @@
     <body>
         <div id="content" >
             <div id="head" class="gradient">
-                <div id="PlayPauseButton" class="disabled" title="Toggle Play/Pause">
+                <div id="PlayPauseButton" class="disabled" title="Play disabled. Try adding a video to your playlist, first!">
                     <svg id="PlayIcon" width="22" height="22">
                         <polygon class="path" fill="gray" points="0,0 16.5,11 0,22 "/>
                     </svg>
@@ -28,14 +28,14 @@
                         Welcome to Streamus
                     </span>
                 </div>
-                <div id="NextButton" class="disabled" title="Next Video">
+                <div id="NextButton" class="disabled" title="Skip to the next video.">
                     <svg width="16px" height="16px">
                         <rect class="path" x="14" y="3" width="2" height="10" fill="gray" />
                         <path class="path" d="M0,3 L7,8 L0,13z" fill="gray" />
                         <path class="path" d="M7,3 L14,8, L7,13z" fill="gray" />
                     </svg> 
                 </div>
-                <div id="PreviousButton" class="disabled" title="Previous Video">
+                <div id="PreviousButton" class="disabled" title="Go back to the previous video.">
                     <svg width="16px" height="16px">
                         <rect class="path" x="0" y="3" width="2" height="10" fill="gray" />
                         <path class="path" d="M9,3 L2,8 L9,13z" fill="gray" />
@@ -43,7 +43,7 @@
                     </svg>  
                 </div>
                 <div id="rowBottom">
-                    <input type="range" id="VideoTimeProgressBar" title="Current Video Time" min="0" step="1" max="0" value="0" />
+                    <input type="range" id="VideoTimeProgressBar" title="Click or drag to change the time." min="0" step="1" max="0" value="0" />
 
                     <div id="time">
                         <label class="TimeDisplay" id="CurrentTimeLabel" title="Elapsed Time">00:00</label>
@@ -63,11 +63,11 @@
             </div>
 
             <div id="VolumeSliderWrapper" class="volumeControl">
-                <input type="range" id="VolumeSlider" class="volumeControl" title="Current Volume" min="0" max="100" step="1" value="0" />
+                <input type="range" id="VolumeSlider" class="volumeControl" title="Click or drag to change the volume." min="0" max="100" step="1" value="0" />
             </div>
 
             <div id="menu">
-                <a id="VideoMenuButton" class="menubutton" data-content="VideoContent" href="#">
+                <a id="VideoMenuButton" class="menubutton" data-content="VideoContent" title="Watch the current YouTube video." href="#">
                     <svg width="30" height="30" style="margin-left: -12px">
                         <g transform="translate(-6.000000, -5.000000) scale(0.9, 0.9)">
                             <path style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); stroke-linejoin: round; opacity: 0;" fill="none" stroke="#ffffff" d="M27.188,4.875V5.969H22.688V4.875H8.062V5.969H3.5619999999999994V4.875H2.5619999999999994V26.125H3.5619999999999994V25.031H8.062V26.125H22.686999999999998V25.031H27.186999999999998V26.125H28.436999999999998V4.875H27.188ZM8.062,23.719H3.5619999999999994V20.594H8.062V23.719ZM8.062,19.281H3.5619999999999994V16.156H8.062V19.281ZM8.062,14.844H3.5619999999999994V11.719H8.062V14.844ZM8.062,10.406H3.5619999999999994V7.281H8.062V10.406ZM11.247,20.59V9.754L20.628999999999998,15.172L11.247,20.59ZM27.188,23.719H22.688V20.594H27.188V23.719ZM27.188,19.281H22.688V16.156H27.188V19.281ZM27.188,14.844H22.688V11.719H27.188V14.844ZM27.188,10.406H22.688V7.281H27.188V10.406Z" stroke-width="3" stroke-linejoin="round" opacity="0" transform="matrix(1,0,0,1,4,4)"></path>
@@ -77,13 +77,13 @@
                   </svg>
                     <span>Video</span>
                 </a>
-                <a id="HomeMenuButton" class="menubutton active" data-content="HomeContent" href="#" >
+                <a id="HomeMenuButton" class="menubutton active" data-content="HomeContent" title="See your current playlist videos." href="#" >
                     <svg width="30" height="30">
                         <path d="M11.5,2 L22,12 L0,12 L18,12 L18,20 L13,20 L13,13 L9,13 L9,20 L4,20 L4,12 L0,12Z" fill="#000" />
                     </svg>
                     <span>Home</span>
                 </a>
-                <a id="PlaylistsMenuButton" class="menubutton" data-content="PlaylistsContent" href="#" >
+                <a id="PlaylistsMenuButton" class="menubutton" data-content="PlaylistsContent" title="See your playlists." href="#" >
                     <svg width="22" height="22">
                         <rect x="0" y="0.5" width="22" height="3" fill="#000"/>
                         <rect x="0" y="6.5" width="22" height="3" fill="#000"/>
@@ -98,13 +98,13 @@
                                         <span>Settings</span>
                                     </a>-->
                 
-                <span id="ShuffleButton" title="Toggle Shuffle">
+                <span id="ShuffleButton" title='Playlist shuffling is disabled. Click to enable.'>
                     <svg width="16" height="16">
                         <path d="m 0,4 0,2 2.5,0 7,6 1.5,0 0,2 5,-3 -5,-3 0,2 -1.5,0 -7,-6 z" fill="#666" />
                         <path d="m 11,2 0,2 -1.5,0 -7,6 -2.5,0 0,2 2.5,0 7,-6 1.5,0 0,2 5,-3 z" fill="#666" />
                     </svg>
                 </span>
-                <span id="RadioModeButton" title="Toggle Radio Mode">
+                <span id="RadioModeButton" title='Radio Mode is disabled. Click to enable.'>
                     <svg width="16" height="18">
                         <g transform="translate(0,20) scale(0.0075,-0.0075)" fill="#666" stroke="none">
                             <path d="M482 2761 c-151 -125 -261 -302 -318 -511 -28 -102 -26 -358 4 -467
@@ -151,7 +151,7 @@
                     </svg>
                 </span>
                 
-                <span id="RepeatButton" title="Toggle Repeat Video or Playlist">
+                <span id="RepeatButton" title='Repeat is disabled. Click to enable Repeat Video.'>
                     
                     <span id="RepeatVideoSvgWrapper">
                         <svg width="16" height="16">

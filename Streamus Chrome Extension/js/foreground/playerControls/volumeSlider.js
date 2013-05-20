@@ -42,9 +42,13 @@ define(['player'], function (player) {
     
     function toggleMutedClass(isMuted) {
         if (isMuted) {
-            muteButton.addClass('muted');
+            muteButton
+                .addClass('muted')
+                .attr('title', 'Click to unmute.');
         } else {
-            muteButton.removeClass('muted');
+            muteButton
+                .removeClass('muted')
+                .attr('title', 'Click to mute.');
         }
     }
     

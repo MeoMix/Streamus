@@ -160,22 +160,34 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
 
         playlist.get('items').on('remove', function (playlistItem) {
 
-            self.get('allPlaylistItems').remove(playlistItem);
-
             var playlistId = playlistItem.get('playlistId');
             var playlist = self.getPlaylistById(playlistId);
             var playlistItems = playlist.get('items');
 
+            //  Update these before getting nextItem because we don't want to have something point to the removed item.
+            if (playlistItems.length > 0) {
+                //  Update linked list pointers
+                var previousItem = playlistItems.get(playlistItem.get('previousItemId'));
+                var nextItem = playlistItems.get(playlistItem.get('nextItemId'));
+
+                //  Remove the item from linked list.
+                previousItem.set('nextItemId', nextItem.get('id'));
+                nextItem.set('previousItemId', previousItem.get('id'));
+            }
+
+            self.get('allPlaylistItems').remove(playlistItem);
+            
             if (self.get('activePlaylistItem') === playlistItem) {
 
                 if (playlistItems.length > 0) {
-
                     var newlyActiveItem = playlist.gotoNextItem();
+
                     self.set('activePlaylistItem', newlyActiveItem);
                 } else {
 
                     self.set('activePlaylistItem', null);
                 }
+
             }
             
             //  TODO: I'd like to have this logic inside of playlist and not backgroundManager but the first bit of code
@@ -186,14 +198,6 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                 if (playlist.get('firstItemId') === playlistItem.get('id')) {
                     playlist.set('firstItemId', playlistItem.get('nextItemId'));
                 }
-
-                //  Update linked list pointers
-                var previousItem = playlistItems.get(playlistItem.get('previousItemId'));
-                var nextItem = playlistItems.get(playlistItem.get('nextItemId'));
-
-                //  Remove the item from linked list.
-                previousItem.set('nextItemId', nextItem.get('id'));
-                nextItem.set('previousItemId', previousItem.get('id'));
 
             } else {
                 playlist.set('firstItemId', '00000000-0000-0000-0000-000000000000');
@@ -257,7 +261,7 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
     }
     
     function loadActivePlaylistItem() {
-
+        var self = this;
         this.on('change:activePlaylistItem', function (model, activePlaylistItem) {
 
             if (activePlaylistItem == null) {
@@ -272,7 +276,6 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                 
                 //  If repeating the current video - don't do extra work.
                 if (player.get('loadedVideoId') === videoId) {
-                    console.log("seeking to 0");
                     player.seekTo(0);
                 } else {
                     var playerIsPlaying = player.isPlaying();
@@ -282,13 +285,13 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                         var playlist = this.getPlaylistById(activePlaylistItem.get('playlistId'));
                         var isFirstItem = activePlaylistItem.get('id') === playlist.get('firstItemId');
                         var repeatButtonState = localStorageManager.getRepeatButtonState();
-                        
-                        //  TODO: This probably does something weird with going previous now.
+                        var previousActiveItem = self.previous('activePlaylistItem');
+
                         //  If skipping around to the front of the list and don't have repeat playlist enabled - pause.
-                        if (isFirstItem && repeatButtonState !== repeatButtonStates.REPEAT_PLAYLIST_ENABLED) {
+                        //  Check to make sure that the last active was the last item in the list (first item's previous) -- could be coming back from the 2nd item in which case don't pause
+                        if (isFirstItem && previousActiveItem.get('id') === activePlaylistItem.get('previousItemId') && repeatButtonState !== repeatButtonStates.REPEAT_PLAYLIST_ENABLED) {
                             player.cueVideoById(videoId);
                         } else {
-                            console.log("Loading video by ID");
                             player.loadVideoById(videoId);
                         }
                         

@@ -5,7 +5,7 @@ define(['repeatButtonStates', 'localStorageManager'], function (repeatButtonStat
     var repeatButton = $('#RepeatButton');
     var repeatVideoIcon = $('#RepeatVideoSvgWrapper');
     var repeatPlaylistIcon = $('#RepeatPlaylistSvgWrapper');
-
+    
     var repeatButtonState = localStorageManager.getRepeatButtonState();
     repeatButton.data('state', repeatButtonState);
 
@@ -45,38 +45,26 @@ define(['repeatButtonStates', 'localStorageManager'], function (repeatButtonStat
                     .show()
                     .removeClass('pressed');
                 repeatPlaylistIcon.hide();
+                repeatButton.attr('title', 'Repeat is disabled. Click to enable Repeat Video.');
 
                 break;
             case repeatButtonStates.REPEAT_VIDEO_ENABLED:
 
                 repeatVideoIcon.addClass('pressed');
+                repeatButton.attr('title', 'Repeat Video is enabled. Click to enable Repeat Playlist.');
 
                 break;
             case repeatButtonStates.REPEAT_PLAYLIST_ENABLED:
 
                 repeatPlaylistIcon.show();
                 repeatVideoIcon.hide();
-
+                repeatButton.attr('title', 'Repeat Playlist is enabled. Click to disable.');
+                
                 break;
             default:
                 window && console.error("Unhandled repeatButtonState:", state);
                 break;
         }
     }
-
-    repeatButton.tooltip({
-        position: {
-            my: "center bottom-20",
-            at: "center top",
-            using: function (position) {
-                $(this).css(position);
-
-                $('<div>', {
-                    'class': 'arrow bottom left'
-                }).appendTo(this);
-            }
-        }
-
-    });
 
 });

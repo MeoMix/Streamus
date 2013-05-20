@@ -38,9 +38,9 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
         var activePlaylistItem = backgroundManager.get('activePlaylistItem');
 
         //  If the item is already selected then it is cued up -- so just play it.
-        //if (activePlaylistItem !== null && activePlaylistItem.get('id') === itemId) {
-        //    player.play();
-        //} else {
+        if (activePlaylistItem !== null && activePlaylistItem.get('id') === itemId) {
+            player.play();
+        } else {
             var playlistItem = backgroundManager.getPlaylistItemById(itemId);
             
             var playlistId = playlistItem.get('playlistId');
@@ -51,7 +51,7 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
 
             var videoId = playlistItem.get('video').get('id');
             player.loadVideoById(videoId);
-        //}
+        }
     }
     
     backgroundManager.on('change:activePlaylist', reload);

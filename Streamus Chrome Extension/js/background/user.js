@@ -88,8 +88,6 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
             var storedKey = {};
             storedKey[syncUserIdKey] = model.get('id');
 
-            console.log("Stored key:", storedKey);
-            
             chrome.storage.sync.set(storedKey);
         }
 

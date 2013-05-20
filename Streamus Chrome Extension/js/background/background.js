@@ -1,8 +1,8 @@
 ﻿//  Background.js is a bit of a dumping ground for code which needs a permanent housing spot.
-define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error', 'programState'],
-    function (player, backgroundManager, localStorageManager, ytHelper, Error, programState) {
-    'use strict';
-        
+define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManager', 'ytHelper', 'error', 'programState', 'repeatButtonStates'],
+    function (player, backgroundManager, localStorageManager, pushMessageManager, ytHelper, Error, programState, repeatButtonStates) {
+        'use strict';
+
     //  TODO: This is the only place I really plan on referencing the error module,
     //  maybe I should move this window.onerror into the Error module?
     //  Send a log message whenever any client errors occur; for debugging purposes.
@@ -26,7 +26,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
             //  Check if the foreground UI is open.
             var foreground = chrome.extension.getViews({ type: "popup" });
   
-            if (foreground.length == 0) {
+            if (foreground.length === 0) {
 
                 //  If the foreground UI is not open, show a notification to indicate active video.
                 var activeVideoId = backgroundManager.get('activePlaylistItem').get('video').get('id');
@@ -42,7 +42,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
 
                 setTimeout(function () {
                     notification.close();
-                }, 5000);
+                }, 3000);
             }
         }
         //  If the video stopped playing and there is another video to play (not the same one), do so.
@@ -203,7 +203,6 @@ define(['player', 'backgroundManager', 'localStorageManager', 'ytHelper', 'error
 
         return { requestHeaders: info.requestHeaders };
     }, {
-        //  TODO: Probably shouldn't be all URLs.
         urls: ["http://www.youtube.com/embed/undefined?enablejsapi=1"]
     },
         ["blocking", "requestHeaders"]

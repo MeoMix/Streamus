@@ -71,12 +71,14 @@ define(['backgroundManager', 'player', 'spin', 'videoDisplay'], function (backgr
     function enableButton() {
         playPauseButton.removeClass('disabled');
         playPauseButton.find('.path').css('fill', 'black');
+        playPauseButton.attr('title', 'Click to play the current video.');
     }
     
     //  Paint the button's path gray and disallow it to be clicked
     function disableButton() {
         playPauseButton.addClass('disabled');
         playPauseButton.find('.path').css('fill', 'gray');
+        playPauseButton.attr('title', 'Play disabled. Try adding a video to your playlist, first!');
     }
             
     function showBufferingIcon(){
@@ -90,6 +92,7 @@ define(['backgroundManager', 'player', 'spin', 'videoDisplay'], function (backgr
         spinner.stop();
         pauseIcon.hide();
         playIcon.show();
+        playPauseButton.attr('title', 'Click to play the current video.');
     }
 
     //  Change the music button to the 'Pause' image
@@ -97,6 +100,7 @@ define(['backgroundManager', 'player', 'spin', 'videoDisplay'], function (backgr
         spinner.stop();
         pauseIcon.show();
         playIcon.hide();
+        playPauseButton.attr('title', 'Click to pause the current video.');
     }
  
 });

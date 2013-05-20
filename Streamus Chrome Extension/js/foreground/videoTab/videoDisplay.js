@@ -17,7 +17,6 @@
     var initialImage = new Image();
     
     initialImage.onload = function () {
-        console.log("Drawing an initial image");
         videoDisplayCanvasContext.drawImage(this, 0, 0, videoDisplayWidth, videoDisplayHeight);
     };
     
@@ -52,8 +51,6 @@
 
     //  Start drawing again when the player is playing.
     player.on('change:state', function (model, playerState) {
-
-        console.log("playerStateChange:", playerState);
 
         if (playerState === PlayerStates.PLAYING) {
             draw();

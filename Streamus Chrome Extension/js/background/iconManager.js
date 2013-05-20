@@ -9,7 +9,7 @@ define(function () {
             if (isMuted) {
                 iconColor = 'Red';
             }
-            else if (playerState === PlayerStates.PLAYING) {
+            else if (playerState === PlayerStates.PLAYING || playerState === PlayerStates.BUFFERING) {
                 iconColor = 'Green';
             } else {
                 iconColor = 'Yellow';

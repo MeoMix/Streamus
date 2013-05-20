@@ -97,6 +97,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             });
 
             youTubeVideo.on('ended', function () {
+                window && console.log("song ended");
                 self.set('state', PlayerStates.ENDED);
             });
 
@@ -120,16 +121,13 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
 
                 //  I store volume out of 100 and volume on HTML5 player is range of 0 to 1 so divide by 100.
                 this.volume = self.get('volume') / 100;
-                
-
-
-                //this.play();
 
                 var videoStreamSrc = youTubeVideo.attr('src');
 
                 //  This ensure that youTube continues to update blob data.
                 if (videoStreamSrc.indexOf('blob') > -1) {
                     seekToInterval = setInterval(function () {
+                        console.log("Fetching data to keep blob going");
                         var youTubePlayer = self.get('youTubePlayer');
 
                         if (self.get('streamusPlayer') != null) {
@@ -214,8 +212,6 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
 
             $(this.get('streamusPlayer')).attr('autoplay', 'true');
 
-            console.log("Setting currentTime to 0");
-            
             this.get('youTubePlayer').loadVideoById({
                 videoId: videoId,
                 startSeconds: 0,

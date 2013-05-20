@@ -4,12 +4,12 @@ using System.Net.Http;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Web.Script.Serialization;
-//using DotNetOpenAuth.OAuth2;
-//using Google.Apis.Authentication.OAuth2;
-//using Google.Apis.Authentication.OAuth2.DotNetOpenAuth;
-//using Google.Apis.Services;
-//using Google.Apis.Tasks.v1;
-//using Google.Apis.Tasks.v1.Data;
+using DotNetOpenAuth.OAuth2;
+using Google.Apis.Authentication.OAuth2;
+using Google.Apis.Authentication.OAuth2.DotNetOpenAuth;
+using Google.Apis.Services;
+using Google.Apis.Tasks.v1;
+using Google.Apis.Tasks.v1.Data;
 using System;
 using System.Web.Mvc;
 
@@ -27,13 +27,20 @@ namespace Streamus.Controllers
             //var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://www.googleapis.com/gcm_for_chrome/v1/messages");
             //httpWebRequest.ContentType = "application/json; charset=utf-8";
             //httpWebRequest.Method = "POST";
-            //httpWebRequest.Headers.Add("Authorization", "OAuth ya29.AHES6ZSUPGy2h4MlxcnIu83IcxTvzeLsDoY9fzJvBr2SZA");
+            //httpWebRequest.Headers.Add("Authorization", "OAuth ya29.AHES6ZSOGZnMyX7CVcKt2te70ky7WC43o1pUPB0Y_36_vy4ZOfZtJw");
 
+            //var provider = new NativeApplicationClient(GoogleAuthenticationServer.Description)
+            //{
+            //    ClientIdentifier = "346456917689-kmkvbtmhafoak5glon55do0ukqppsh6l.apps.googleusercontent.com",
+            //    ClientSecret = "VfOFLGVHO58dNQ3qVPqkah0H"
+            //};
+            //var auth = new OAuth2Authenticator<NativeApplicationClient>(provider, GetAuthorization);
+                       
             //using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             //{
             //    string json = new JavaScriptSerializer().Serialize(new
             //        {
-            //            channelId = "15312359557864779180/bdgchhpopfleappenolmfpfmklcmhmbf",
+            //            channelId = "15312359557864779180/jbnkffmindojffecdhbbmekbmkkfpmjd",
             //            subchannelId = "0",
             //            payload = "Hello World!"
             //        });
