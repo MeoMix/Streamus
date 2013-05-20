@@ -4,12 +4,6 @@ using System.Net.Http;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Web.Script.Serialization;
-using DotNetOpenAuth.OAuth2;
-using Google.Apis.Authentication.OAuth2;
-using Google.Apis.Authentication.OAuth2.DotNetOpenAuth;
-using Google.Apis.Services;
-using Google.Apis.Tasks.v1;
-using Google.Apis.Tasks.v1.Data;
 using System;
 using System.Web.Mvc;
 
