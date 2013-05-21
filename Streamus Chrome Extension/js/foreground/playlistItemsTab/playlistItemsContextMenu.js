@@ -8,7 +8,7 @@ define(['contextMenu', 'backgroundManager'], function (contextMenu) {
         initialize: function(item) {
             this.empty();
 
-            this.addContextMenuItem('Copy URL', function () {
+            this.addContextMenuItem('Copy URL', false, function () {
 
                 chrome.extension.sendMessage({
                     method: 'copy',
@@ -17,7 +17,7 @@ define(['contextMenu', 'backgroundManager'], function (contextMenu) {
 
             });
 
-            this.addContextMenuItem('Delete', function () {
+            this.addContextMenuItem('Delete', false, function () {
                 item.destroy({
                     success: function() {
                     },

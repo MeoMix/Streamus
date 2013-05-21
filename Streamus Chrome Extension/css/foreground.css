@@ -273,6 +273,13 @@
   cursor:pointer;
 }
 
+.contextMenuItem[disabled=disabled] {
+    color: gray !important;
+    cursor: default;
+    background-color: transparent !important;
+    text-decoration: line-through !important;
+}
+
 #PlayPauseButton.disabled:hover,
 #NextButton.disabled:hover,
 #PreviousButton.disabled:hover {

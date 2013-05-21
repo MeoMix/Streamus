@@ -54,7 +54,9 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
         }
     }
     
+
     backgroundManager.on('change:activePlaylist', reload);
+    var emptyPlaylistNotificationId = 'EmptyPlaylistNotification';
     backgroundManager.get('allPlaylistItems').on('add', function(item) {
 
         var listItem = buildListItem(item);
@@ -68,6 +70,8 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
         } else {
             listItem.appendTo(playlistItemList);
         }
+
+        $('#' + emptyPlaylistNotificationId).remove();
 
         //  Since we emptied our list we lost the selection, reselect.
         scrollIntoView(item, true);
@@ -85,10 +89,29 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
 
     backgroundManager.get('allPlaylistItems').on('remove', function (item) {
         playlistItemList.find('li[data-itemid="' + item.get('id') + '"]').remove();
+        
+        if(playlistItemList.find('li').length === 0){
+            showEmptyPlaylistNotification();
+        }
+
     });
 
     reload();
     scrollIntoView(backgroundManager.get('activePlaylistItem'), false);
+    
+    function showEmptyPlaylistNotification() {
+        var emptyPlaylistNotification = $('<div>', {
+            id: emptyPlaylistNotificationId,
+            text: 'Your Playlist is empty. Try adding some videos by clicking above.',
+            css: {
+                fontSize: '14px',
+                top: '154px',
+                left: '23px'
+            }
+        });
+
+        emptyPlaylistNotification.insertBefore(playlistItemList);
+    }
     
     function buildListItem(item) {
         
@@ -170,32 +193,38 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
 
         var activePlaylist = backgroundManager.get('activePlaylist');
 
-        if (activePlaylist == null || activePlaylist.get('items').length === 0) return;
-        
-        var firstItemId = activePlaylist.get('firstItemId');
-        var item = activePlaylist.get('items').get(firstItemId);
-        
-        //  Build up the ul of li's representing each playlistItem.
-        
-        do {
+        if (activePlaylist == null || activePlaylist.get('items').length === 0) {
+            showEmptyPlaylistNotification();
+        } else {
             
-            if (item !== null) {
 
-                var listItem = buildListItem(item);
-                listItem.appendTo(playlistItemList);
+            
+            var firstItemId = activePlaylist.get('firstItemId');
+            var item = activePlaylist.get('items').get(firstItemId);
 
-                item = activePlaylist.get('items').get(item.get('nextItemId'));
+            //  Build up the ul of li's representing each playlistItem.
 
+            do {
+
+                if (item !== null) {
+
+                    var listItem = buildListItem(item);
+                    listItem.appendTo(playlistItemList);
+
+                    item = activePlaylist.get('items').get(item.get('nextItemId'));
+
+                }
+
+            } while (item && item.get('id') !== firstItemId)
+
+            //  TODO: Does not work when activePlaylist is not visible.
+            var activeItem = backgroundManager.get('activePlaylistItem');
+
+            //  Since we emptied our list we lost the selection, reselect.
+            if (activeItem) {
+                visuallySelectItem(activeItem);
             }
-
-        } while (item && item.get('id') !== firstItemId)
-        
-        //  TODO: Does not work when activePlaylist is not visible.
-        var activeItem = backgroundManager.get('activePlaylistItem');
-
-        //  Since we emptied our list we lost the selection, reselect.
-        if (activeItem) {
-            visuallySelectItem(activeItem);
+            
         }
     }
 });
