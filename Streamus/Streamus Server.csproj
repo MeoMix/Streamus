@@ -136,9 +136,13 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\ShareCodeController.cs" />
+    <Compile Include="Dao\ShareCodeDao.cs" />
     <Compile Include="Dao\ErrorDao.cs" />
     <Compile Include="Dao\StreamDao.cs" />
     <Compile Include="Dao\PlaylistItemDao.cs" />
+    <Compile Include="Domain\Interfaces\IShareCodeDao.cs" />
+    <Compile Include="Domain\ShareCode.cs" />
     <Compile Include="Domain\Error.cs" />
     <Compile Include="Domain\Interfaces\IErrorDao.cs" />
     <Compile Include="Domain\Interfaces\IStreamDao.cs" />
@@ -154,6 +158,7 @@
     <Compile Include="Domain\Managers\PlaylistManager.cs" />
     <Compile Include="Domain\Managers\UserManager.cs" />
     <Compile Include="Domain\Playlist.cs" />
+    <Compile Include="Domain\Validators\ShareCodeValidator.cs" />
     <Compile Include="Domain\Validators\ErrorValidator.cs" />
     <Compile Include="Domain\Validators\StreamValidator.cs" />
     <Compile Include="Domain\Validators\PlaylistItemValidator.cs" />
@@ -181,7 +186,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include=".gitignore" />
     <EmbeddedResource Include="Domain\PlaylistItem.hbm.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -196,13 +200,15 @@
     <EmbeddedResource Include="Domain\Error.hbm.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Domain\ShareCode.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <Content Include="hibernate.cfg.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <Content Include="README.md" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

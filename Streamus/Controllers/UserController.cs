@@ -18,6 +18,7 @@ namespace Streamus.Controllers
         private readonly IPlaylistDao PlaylistDao;
         private readonly IPlaylistItemDao PlaylistItemDao;
         private readonly IVideoDao VideoDao;
+        private readonly IShareCodeDao ShareCodeDao;
 
         private readonly PlaylistManager PlaylistManager;
 
@@ -30,8 +31,9 @@ namespace Streamus.Controllers
                 PlaylistDao = new PlaylistDao();
                 PlaylistItemDao = new PlaylistItemDao();
                 VideoDao = new VideoDao();
+                ShareCodeDao = new ShareCodeDao();
 
-                PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
+                PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
             }
             catch (TypeInitializationException exception)
             {

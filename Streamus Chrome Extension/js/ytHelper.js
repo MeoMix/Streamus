@@ -143,8 +143,18 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                         id: dataSourceId,
                         type: DataSources.YOUTUBE_CHANNEL
                     };
-                }
+                } else {
 
+                    dataSourceId = tryGetIdFromUrl(url, 'streamus:');
+                    
+                    if (dataSourceId !== '') {
+                        dataSource = {
+                            id: dataSourceId,
+                            type: DataSources.SHARED_PLAYLIST
+                        };
+                    }
+
+                }
             }
 
             return dataSource;

@@ -14,12 +14,14 @@ namespace Streamus.Domain.Managers
         private IPlaylistDao PlaylistDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
         private IVideoDao VideoDao { get; set; }
+        private IShareCodeDao ShareCodeDao { get; set; }
 
-        public PlaylistManager(IPlaylistDao playlistDao, IPlaylistItemDao playlistItemDao, IVideoDao videoDao)
+        public PlaylistManager(IPlaylistDao playlistDao, IPlaylistItemDao playlistItemDao, IVideoDao videoDao, IShareCodeDao shareCodeDao)
         {
             PlaylistDao = playlistDao;
             PlaylistItemDao = playlistItemDao;
             VideoDao = videoDao;
+            ShareCodeDao = shareCodeDao;
         }
 
         public void Save(Playlist playlist)
@@ -30,6 +32,28 @@ namespace Streamus.Domain.Managers
                 
                 playlist.ValidateAndThrow();
                 PlaylistDao.Save(playlist);
+
+                NHibernateSessionManager.Instance.CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
+                throw;
+            }
+        }
+
+        public void Save(IEnumerable<Playlist> playlists)
+        {
+            try
+            {
+                NHibernateSessionManager.Instance.BeginTransaction();
+
+                foreach (Playlist playlist in playlists)
+                {
+                    playlist.ValidateAndThrow();
+                    PlaylistDao.SaveOrUpdate(playlist);
+                }
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
@@ -261,6 +285,55 @@ namespace Streamus.Domain.Managers
                 NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
+        }
+
+        public string GetShareCode(Guid playlistId)
+        {
+            string shareCodeString;
+
+            try
+            {
+                NHibernateSessionManager.Instance.BeginTransaction();
+
+                Playlist playlist = PlaylistDao.Get(playlistId);
+
+                if (playlist == null)
+                {
+                    string errorMessage = string.Format("No playlist found with id: {0}", playlistId);
+                    throw new ApplicationException(errorMessage);
+                }
+
+                Playlist shareablePlaylistCopy = new Playlist();
+
+                //  TODO: Reconsider this.
+                shareablePlaylistCopy.NextPlaylist = shareablePlaylistCopy;
+                shareablePlaylistCopy.PreviousPlaylist = shareablePlaylistCopy;
+
+                shareablePlaylistCopy.ValidateAndThrow();
+                PlaylistDao.Save(shareablePlaylistCopy);
+
+                shareablePlaylistCopy.Copy(playlist);
+                PlaylistDao.Update(shareablePlaylistCopy);
+
+                //  Gotta do this manually.
+                shareablePlaylistCopy.Items.ToList().ForEach(PlaylistItemDao.Save);
+
+                ShareCode shareCode = new ShareCode(ShareableEntityType.Playlist, shareablePlaylistCopy.Id);
+
+                shareCode.ValidateAndThrow();
+                ShareCodeDao.Save(shareCode);
+
+                shareCodeString = shareCode.ToString();
+                NHibernateSessionManager.Instance.CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
+                throw;
+            }
+
+            return shareCodeString;
         }
     }
 }

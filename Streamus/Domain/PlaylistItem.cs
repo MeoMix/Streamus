@@ -47,6 +47,15 @@ namespace Streamus.Domain
             Video = video;
         }
 
+        public PlaylistItem(PlaylistItem playlistItem)
+            : this()
+        {
+            Id = Guid.NewGuid();
+            PlaylistId = playlistItem.PlaylistId;
+            Title = playlistItem.Title;
+            Video = playlistItem.Video;
+        }
+
         public void ValidateAndThrow()
         {
             var validator = new PlaylistItemValidator();

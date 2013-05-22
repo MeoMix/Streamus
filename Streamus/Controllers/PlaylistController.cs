@@ -16,6 +16,7 @@ namespace Streamus.Controllers
         private readonly IPlaylistItemDao PlaylistItemDao;
         private readonly IStreamDao StreamDao;
         private readonly IVideoDao VideoDao;
+        private readonly IShareCodeDao ShareCodeDao;
 
         public PlaylistController()
         {
@@ -25,6 +26,7 @@ namespace Streamus.Controllers
                 PlaylistItemDao = new PlaylistItemDao();
                 StreamDao = new StreamDao();
                 VideoDao = new VideoDao();
+                ShareCodeDao = new ShareCodeDao();
             }
             catch (TypeInitializationException exception)
             {
@@ -36,7 +38,7 @@ namespace Streamus.Controllers
         [HttpPost]
         public ActionResult Create(Playlist playlist)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
 
             playlist.Stream.AddPlaylist(playlist);
 
@@ -53,7 +55,7 @@ namespace Streamus.Controllers
         [HttpPut]
         public ActionResult Update(Playlist playlist)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
             playlistManager.Update(playlist);
 
             return new JsonDataContractActionResult(playlist);
@@ -70,7 +72,7 @@ namespace Streamus.Controllers
         [HttpDelete]
         public JsonResult Delete(Guid id)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
             playlistManager.DeletePlaylistById(id);
 
             return Json(new
@@ -82,7 +84,7 @@ namespace Streamus.Controllers
         [HttpPost]
         public JsonResult UpdateTitle(Guid playlistId, string title)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
             playlistManager.UpdateTitle(playlistId, title);
 
             return Json(new{
@@ -93,13 +95,22 @@ namespace Streamus.Controllers
         [HttpPost]
         public JsonResult UpdateFirstItemId(Guid playlistId, Guid firstItemId)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
             playlistManager.UpdateFirstItemId(playlistId, firstItemId);
 
             return Json(new
             {
                 success = true
             });
+        }
+
+        [HttpGet]
+        public JsonResult GetShareCode(Guid playlistId)
+        {
+            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
+            string shareCode = playlistManager.GetShareCode(playlistId);
+
+            return Json(shareCode, JsonRequestBehavior.AllowGet);
         }
     }
 }

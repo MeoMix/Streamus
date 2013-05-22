@@ -1,5 +1,5 @@
 ﻿//  A stream is a collection of playlists
-define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'ytHelper', 'localStorageManager'], function (Playlists, Playlist, Videos, Video, player, programState, ytHelper, localStorageManager) {
+define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'helpers', 'shareCode', 'playlistItems'], function (Playlists, Playlist, Videos, Video, player, programState, helpers, ShareCode, PlaylistItems) {
     'use strict';
     
     var streamModel = Backbone.Model.extend({
@@ -44,12 +44,6 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'y
                         }
                     });
 
-                    //playlist.get('items').on('remove', function (item, collection) {
-
-                    //    if (collection.length == 0) {
-                    //        player.pause();
-                    //    }
-                    //});
                 } else {
                     if (self.getSelectedPlaylist() === playlist) {
                         playlist.get('items').off('change:selected add remove');
@@ -99,36 +93,97 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'y
             var currentPlaylists = this.get('playlists');
 
             var self = this;
-            //  Save the playlist, but push after version from server because the ID will have changed.
-            playlist.save(new Array(), {
-                success: function () {
-                    var playlistId = playlist.get('id');
+            
+            function onAddPlaylistSuccess() {
+                var playlistId = playlist.get('id');
 
-                    if (currentPlaylists.length === 0) {
-                        self.set('firstListId', playlistId);
-                        playlist.set('nextListId', playlistId);
-                        playlist.set('previousListId', playlistId);
-                    } else {
-                        var firstList = currentPlaylists.get(self.get('firstListId'));
-                        var lastList = currentPlaylists.get(firstList.get('previousListId'));
+                if (currentPlaylists.length === 0) {
+                    self.set('firstListId', playlistId);
+                    playlist.set('nextListId', playlistId);
+                    playlist.set('previousListId', playlistId);
+                } else {
+                    var firstList = currentPlaylists.get(self.get('firstListId'));
+                    var lastList = currentPlaylists.get(firstList.get('previousListId'));
 
-                        lastList.set('nextListId', playlistId);
-                        playlist.set('previousListId', lastList.get('id'));
+                    lastList.set('nextListId', playlistId);
+                    playlist.set('previousListId', lastList.get('id'));
 
-                        firstList.set('previousListId', playlistId);
-                        playlist.set('nextListId', firstList.get('id'));
-                    }
-
-                    currentPlaylists.push(playlist);
-
-                    if (callback) {
-                        callback(playlist);
-                    }
-                },
-                error: function (error) {
-                    window && console.error(error);
+                    firstList.set('previousListId', playlistId);
+                    playlist.set('nextListId', firstList.get('id'));
                 }
-            });
+
+                currentPlaylists.push(playlist);
+
+                if (callback) {
+                    callback(playlist);
+                }
+            }
+            
+            if (dataSource && dataSource.type === DataSources.SHARED_PLAYLIST) {
+
+                var shareCode = new ShareCode({
+                    id: dataSource.id
+                });
+
+                shareCode.fetch({
+                    success: function() {
+                        console.log("shareCode:", shareCode);
+
+                        var sharedPlaylist = new Playlist({
+                            id: shareCode.get('entityId')
+                        });
+
+                        console.log("Fetching a shared playlist");
+                        sharedPlaylist.fetch({
+                            success: function () {
+
+                                console.log("Shared playlist:", sharedPlaylist);
+                                
+                                playlist.set('title', sharedPlaylist.get('title'), {silent: true});
+
+                                var items = new PlaylistItems(sharedPlaylist.get('items').map(function(item) {
+
+                                    var newItem = item.clone();
+                                    newItem.set('id', helpers.generateGuid());
+
+                                    return newItem;
+                                }));
+
+                                //  Deep copy the sharedPlaylist's items but change their id so each shared copy affects new items.
+                                playlist.set('items', items, { silent: true });
+
+                                //  Save the playlist, but push after version from server because the ID will have changed.
+                                playlist.save(new Array(), {
+                                    success: onAddPlaylistSuccess,
+                                    error: function (error) {
+                                        window && console.error(error);
+                                    }
+                                });
+                                
+                            },
+                            error: function(error) {
+                                window && console.error(error);
+                            }
+                        });
+
+                    },
+                    error: function(error) {
+                        window && console.error(error);
+                    }
+                });
+
+            } else {
+
+                //  Save the playlist, but push after version from server because the ID will have changed.
+                playlist.save(new Array(), {
+                    success: onAddPlaylistSuccess,
+                    error: function (error) {
+                        window && console.error(error);
+                    }
+                });
+                
+            }
+
         },
         
         removePlaylistById: function(playlistId) {
