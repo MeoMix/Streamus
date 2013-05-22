@@ -115,16 +115,24 @@ $(function () {
     });
 
     selectPlaylistContent.appendTo(selectPlaylistButton);
+
+    var successEventNotification = $('<div>', {
+        id: 'successEventNotification',
+        text: 'Video successfully added to Streamus.',
+        'class': 'eventNotification'
+    });
+    successEventNotification.appendTo(sharePanelMainButtons);
     
+    var errorEventNotification = $('<div>', {
+        id: 'errorEventNotification',
+        text: 'An error was encountered.',
+        'class': 'eventNotification'
+    });
+    errorEventNotification.appendTo(sharePanelMainButtons);
+
     var playlistSelect = $('<select>', {
         id: 'playlistSelect',
-        'class': 'yt-uix-form-input-text share-panel-url',
-        change: function() {
-
-            var match = document.URL.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/);
-            var videoId = (match && match[2].length === 11) ? match[2] : null;
-            
-        }
+        'class': 'yt-uix-form-input-text share-panel-url'
     });
 
     playlistSelect.appendTo(sharePanelPlaylistSelect);
@@ -134,18 +142,42 @@ $(function () {
         value: 'Add Video',
         title: 'Add Video',
         id: 'streamusVideoAddButton',
-        'class': 'yt-uix-button',
+        'class': 'yt-uix-button yt-uix-tooltip',
         click: function () {
-            console.log("clicked.. sending message");
+
+            $(this).val('Working...');
+            $(this).attr('disabled', true);
+
             var match = document.URL.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/);
             var videoId = (match && match[2].length === 11) ? match[2] : null;
 
             var playlistId = playlistSelect.val();
 
+            var self = this;
             chrome.runtime.sendMessage({
                 method: "addVideoByIdToPlaylist",
                 playlistId: playlistId,
                 videoId: videoId
+            }, function (response) {
+                
+                if (response.result === 'success') {
+                    $(self).removeAttr('disabled');
+                    $(self).val('Add Video');
+                    successEventNotification.fadeIn().css("display", "inline-block");
+
+                    setTimeout(function() {
+                        successEventNotification.fadeOut();
+                    }, 3000);
+                } else {
+                    $(self).removeAttr('disabled');
+                    $(self).val('Add Video');
+                    errorEventNotification.fadeIn().css("display", "inline-block");
+                    setTimeout(function () {
+                        errorEventNotification.fadeOut();
+                    }, 3000);
+                }
+
+
             });
         }
     });
@@ -223,6 +255,28 @@ $(function () {
             streamOption.appendTo(streamSelect);
         });
     });
+    
+    chrome.runtime.onMessage.addListener(function (request) {
+        switch(request.event) {
+            case 'add':
+                var playlistOption = $('<option>', {
+                    value: request.data.id,
+                    text: request.data.title
+                });
+
+                playlistOption.appendTo(playlistSelect);
+                break;
+            case 'remove':
+                playlistSelect.find('option[value="' + request.data.id + '"]').remove();
+                break;
+            case 'rename':                
+                playlistSelect.find('option[value="' + request.data.id + '"]').text(request.data.title);
+                break;
+            default:
+                window && console.error("Unhandled request", request);
+                break;
+        }
+  });
 
     //  TODO: Connect to YouTube pages and live-update the injected selects instead of the user needing to refresh the page.
     //chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {

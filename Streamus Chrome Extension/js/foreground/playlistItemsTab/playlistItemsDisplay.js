@@ -196,9 +196,8 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
         if (activePlaylist == null || activePlaylist.get('items').length === 0) {
             showEmptyPlaylistNotification();
         } else {
-            
+            $('#' + emptyPlaylistNotificationId).remove();
 
-            
             var firstItemId = activePlaylist.get('firstItemId');
             var item = activePlaylist.get('items').get(firstItemId);
 
