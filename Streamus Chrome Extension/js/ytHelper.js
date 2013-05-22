@@ -174,6 +174,7 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
             });
         },
         
+        //  TODO: Change this to taking an object so its easier to specify the optionalVideoTitle
         //  Returns NULL if the request throws a 403 error if videoId has been banned on copyright grounds.
         getVideoInformation: function (videoId, optionalVideoTitle, callback) {
 

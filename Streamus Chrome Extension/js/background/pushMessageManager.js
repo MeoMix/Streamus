@@ -17,24 +17,24 @@
             //then getChannelId can be called again with the flag set to true. You should provide a context dialog before the second call is made.
             chrome.pushMessaging.getChannelId(true, function (response) {
                 self.channelId = response.channelId;
-                console.log("getChannelId:", response);
+                //console.log("getChannelId:", response);
             });
 
             chrome.pushMessaging.onMessage.addListener(function (message) {
-                console.log("Message received", message);
+                //console.log("Message received", message);
                 
-                if (message.event == null) {
-                    throw "Expected message to contain an event.";
-                }
+                //if (message.event == null) {
+                //    throw "Expected message to contain an event.";
+                //}
                 
-                switch (message.event) {
-                    case '':
-                        break;
+                //switch (message.event) {
+                //    case '':
+                //        break;
                         
-                    default:
-                        console.error("Unhandled message event:", message.event);
+                //    default:
+                //        console.error("Unhandled message event:", message.event);
                         
-                }
+                //}
 
                 
             });

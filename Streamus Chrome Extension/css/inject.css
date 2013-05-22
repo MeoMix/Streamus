@@ -49,3 +49,28 @@
     border-radius: 2px;
     margin-top: 2px !important;
 }
+
+.eventNotification {
+    font-weight: bold;
+    border-radius: 2px;
+    padding: 4px;
+    margin-top: 2px;
+    display: inline-block;
+    border-radius: 2px;
+}
+
+#successEventNotification {
+    background: #E1F2DA;
+    border: 1px solid #590;
+    color: black;
+    margin-left: 9%;
+    display: none;
+}
+
+#errorEventNotification {
+    background: #FCC;
+    border: 1px solid red;
+    color: darkred;
+    margin-left: 18%;
+    display: none;
+}
