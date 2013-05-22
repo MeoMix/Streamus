@@ -33,18 +33,29 @@
 
                 //  If unable to parse userInput then create playlist with userInput as title and no data.
                 if (dataSource == null) {
-                    activeStream.addPlaylistByDataSource(userInput);
+                    activeStream.addPlaylistByDataSource(userInput, null, function(playlist) {
+                        backgroundManager.set('activePlaylist', playlist);
+                    });
                 } else {
                    
                     switch(dataSource.type) {
                         case DataSources.YOUTUBE_PLAYLIST:
                             ytHelper.getPlaylistTitle(dataSource.id, function (youTubePlaylistTitle) {
-                                activeStream.addPlaylistByDataSource(youTubePlaylistTitle, dataSource);
+                                activeStream.addPlaylistByDataSource(youTubePlaylistTitle, dataSource, function(playlist) {
+                                    backgroundManager.set('activePlaylist', playlist);
+                                });
                             });
                             break;
                         case DataSources.YOUTUBE_CHANNEL:
                             var playlistTitle = dataSource.id + '\'s Feed';
-                            activeStream.addPlaylistByDataSource(playlistTitle, dataSource);
+                            activeStream.addPlaylistByDataSource(playlistTitle, dataSource, function (playlist) {
+                                backgroundManager.set('activePlaylist', playlist);
+                            });
+                            break;
+                        case DataSources.SHARED_PLAYLIST:
+                            activeStream.addPlaylistByDataSource('', dataSource, function(playlist) {
+                                backgroundManager.set('activePlaylist', playlist);
+                            });
                             break;
                         default:
                             console && console.error("Unhandled dataSource type:", dataSource.type);

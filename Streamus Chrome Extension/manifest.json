@@ -1,6 +1,6 @@
 ﻿{
   "name": "Streamus™ (Beta!)",
-  "version": "0.56",
+  "version": "0.57",
   "manifest_version": 2,
   "description": "A YouTube music player built into your browser. Stream videos and songs; share playlists with friends!",
   "background":{
@@ -42,7 +42,6 @@
       "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/inject.js"]
     }
   ],
-  "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDmO/I2g0AsHj5gwKYcAv19xa/E4FYE3gD1DtReHysli/YvzOX2X/VOgPMNCB9d5PvuWNH0xud21ztmk7wsNxKLcEuDTENgGqA9voTTG+3hgT1zH5R7rm8E0Kw590KhNattqwXkoRqdvavMjnUzlB9gDbU1duI1V8U03etW4Ta8EwIDAQAB",
   "commands": {
     "nextVideo": {
       "suggested_key": { "default": "Alt+P" },

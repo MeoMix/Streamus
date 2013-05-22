@@ -64,7 +64,7 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
     backgroundManager.get('allPlaylists').on('add', function (playlist) {
         reload();
 
-        if (playlist.has('dataSource')) {
+        if (playlist.has('dataSource') && playlist.get('dataSource').type !== DataSources.SHARED_PLAYLIST) {
             var playlistLink = playlistList.find('li[data-playlistid="' + playlist.get('id') + '"]');
             spinner.spin(playlistLink[0]);
 

@@ -30,6 +30,7 @@ var require = {
         'localStorageManager': 'background/localStorageManager',
         'pushMessageManager': 'background/pushMessageManager',
         'iconManager': 'background/iconManager',
-        'spin': 'thirdParty/jquery.spin'
+        'spin': 'thirdParty/jquery.spin',
+        'shareCode': 'background/shareCode'
     }
 };

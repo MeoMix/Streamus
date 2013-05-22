@@ -96,6 +96,22 @@ namespace Streamus.Domain
             Title = title;
         }
 
+        public void Copy(Playlist playlist)
+        {
+            Title = playlist.Title;
+
+            foreach (PlaylistItem playlistItem in playlist.Items)
+            {
+                PlaylistItem shareableItemCopy = new PlaylistItem(playlistItem);
+                AddItem(shareableItemCopy);
+
+                if (playlistItem.Id == playlist.FirstItemId)
+                {
+                    FirstItemId = shareableItemCopy.Id;
+                }
+            }
+        }
+
         public void AddItem(PlaylistItem playlistItem)
         {
             if (Items.Count == 0)
@@ -118,6 +134,7 @@ namespace Streamus.Domain
                 playlistItem.NextItemId = firstItem.Id;
             }
 
+            playlistItem.PlaylistId = Id;
             Items.Add(playlistItem);
         }
 

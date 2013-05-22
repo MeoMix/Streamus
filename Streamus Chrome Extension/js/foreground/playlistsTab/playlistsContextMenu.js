@@ -8,12 +8,21 @@ define(['contextMenu', 'backgroundManager'], function (contextMenu, backgroundMa
         initialize: function (playlist) {
 
             this.empty();
+            
+            this.addContextMenuItem('Get share code', false, function () {
+
+                playlist.getShareCode(function (shareCode) {
+                    chrome.extension.sendMessage({
+                        method: 'copy',
+                        text: 'streamus:' + shareCode
+                    });
+                });
+
+            });
 
             var stream = backgroundManager.getStreamById(playlist.get('streamId'));
             //  Don't allow deleting of the last playlist in a stream ( at least for now )
             var isDeleteDisabled = stream.get('playlists').length === 1;
-
-            console.log("is Delete Disabled:", isDeleteDisabled);
 
             this.addContextMenuItem('Delete playlist', isDeleteDisabled, function () {
 
@@ -26,6 +35,7 @@ define(['contextMenu', 'backgroundManager'], function (contextMenu, backgroundMa
                 });
 
             });
+
         }
     });
 

@@ -34,6 +34,8 @@ define(['ytHelper',
             //  Need to recreate submodels as Backbone.Models else they will just be regular Objects.
             parse: function (data) {
 
+                console.log("parse getting called, data:", data);
+
                 if (data.items.length > 0) {
                     //  Reset will load the server's response into items as a Backbone.Collection
                     this.get('items').reset(data.items);
@@ -110,6 +112,10 @@ define(['ytHelper',
                             break;
                         case DataSources.YOUTUBE_CHANNEL:
                             ytHelperDataFunction = ytHelper.getFeedResults;
+                            break;
+                        //  This datasource works differently.
+                        case DataSources.SHARED_PLAYLIST:
+                            ytHelperDataFunction = null;
                             break;
                         default:
                             window && console.error("Unhandled dataSource type:", dataSource.type);
@@ -454,6 +460,30 @@ define(['ytHelper',
                         window && console.error(error);
                     }
                 });
+            },
+            
+            getShareCode: function(callback) {
+
+                var self = this;
+                $.ajax({
+                    url: programState.getBaseUrl() + 'Playlist/GetShareCode',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        playlistId: self.get('id')
+                    },
+                    success: function (shareCode) {
+                        if (callback) {
+                            callback(shareCode);
+                        }
+                    },
+                    error: function (error) {
+                        //  TODO: Rollback client-side transaction somehow?
+                        window && console.error("Error saving firstItemId", error, error.message);
+                    }
+                });
+                
+
             }
         });
 

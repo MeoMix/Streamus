@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Streamus" namespace="Streamus.Domain">
+  
+  <class name="ShareCode" table="[ShareCodes]" lazy="false">
+    <id name="Id" unsaved-value="00000000-0000-0000-0000-000000000000">
+      <generator class="guid" />
+    </id>
+    
+    <property name="EntityType" not-null="true" />
+    <property name="EntityId" not-null="true" />
+  </class>
+  
+</hibernate-mapping>

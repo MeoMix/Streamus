@@ -2,4 +2,5 @@
 var DataSources = Object.freeze({
     YOUTUBE_PLAYLIST: 0,
     YOUTUBE_CHANNEL: 1,
+    SHARED_PLAYLIST: 2
 });

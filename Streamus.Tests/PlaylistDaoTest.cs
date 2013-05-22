@@ -14,6 +14,7 @@ namespace Streamus.Tests
         private IPlaylistDao PlaylistDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
         private IStreamDao StreamDao { get; set; }
+        private IShareCodeDao ShareCodeDao { get; set; }
         private IVideoDao VideoDao { get; set; }
         private User User { get; set; }
         private Video Video { get; set; }
@@ -30,6 +31,7 @@ namespace Streamus.Tests
                 PlaylistDao = new PlaylistDao();
                 PlaylistItemDao = new PlaylistItemDao();
                 StreamDao = new StreamDao();
+                ShareCodeDao = new ShareCodeDao();
                 VideoDao = new VideoDao();
             }
             catch (TypeInitializationException exception)
@@ -50,7 +52,7 @@ namespace Streamus.Tests
         public void SetupContext()
         {
             //  Create managers here because every client request will require new managers.
-            PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao);
+            PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
         }
 
         [Test]

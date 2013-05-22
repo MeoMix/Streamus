@@ -120,6 +120,7 @@
     <Content Include="images\Yellow 4.png" />
     <Content Include="js\background\background.js" />
     <Content Include="js\background\backgroundManager.js" />
+    <Content Include="js\background\shareCode.js" />
     <Content Include="js\background\error.js" />
     <Content Include="js\background\iconManager.js" />
     <Content Include="js\background\localStorageManager.js" />
