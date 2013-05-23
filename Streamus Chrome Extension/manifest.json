@@ -23,15 +23,14 @@
     "webRequest",
     "webRequestBlocking",
     "http://www.geoplugin.net/",
-    "http://www.youtube.com/",
     "https://www.youtube.com/",
 	"http://localhost:61975/Streamus/",
 	"http://streamus.apphb.com/",
-	"http://www.youtube.com/embed/undefined?enablejsapi=1"
+	"https://www.youtube.com/embed/undefined?enablejsapi=1"
 	],
   "content_scripts": [
     {
-      "matches": ["http://www.youtube.com/embed/*"],
+      "matches": ["https://www.youtube.com/embed/*"],
 	  "all_frames": true,
       "js": ["js/thirdParty/jquery.js", "js/youTubeIFrameInject.js"]
     },
@@ -70,5 +69,5 @@
     "css/inject.css"
   ],
   "content_security_policy": 
-    "script-src 'self' 'unsafe-eval' https://graph.facebook.com https://www.youtube.com https://ssl.google-analytics.com https://gdata.youtube.com https://suggestqueries.google.com https://www.youtube.com https://s.ytimg.com; object-src 'self'"
+    "script-src 'self' 'unsafe-eval' https://graph.facebook.com https://www.youtube.com https://ssl.google-analytics.com https://gdata.youtube.com https://suggestqueries.google.com https://s.ytimg.com; object-src 'self'"
 }
