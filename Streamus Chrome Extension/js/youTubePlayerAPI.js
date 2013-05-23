@@ -17,7 +17,7 @@ define(['jquery'], function () {
                 self.set('ready', true);
             };
 
-            //  I get an error: Unable to post message to http://www.youtube.com. Recipient has origin chrome-extension://pfphaniogbicpiiennilpbbkfmciobch.
+            //  I get an error: Unable to post message to https://www.youtube.com. Recipient has origin chrome-extension://pfphaniogbicpiiennilpbbkfmciobch.
             //  unless I wrap this in a document.ready.
             $(function () {
                 //  This code will trigger onYouTubePlayerAPIReady

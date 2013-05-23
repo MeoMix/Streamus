@@ -237,7 +237,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
             //  to stay under the radar. Not sure which is less suspicious.
             info.requestHeaders.push({
                 name: "Referer",
-                value: "http://youtube.com/embed/undefined?enablejsapi=1"
+                value: "https://youtube.com/embed/undefined?enablejsapi=1"
             });
         }
 
@@ -252,7 +252,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
 
         return { requestHeaders: info.requestHeaders };
     }, {
-        urls: ["http://www.youtube.com/embed/undefined?enablejsapi=1"]
+        urls: ["https://www.youtube.com/embed/undefined?enablejsapi=1"]
     },
         ["blocking", "requestHeaders"]
     );
@@ -263,6 +263,6 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
         //  Width and Height should have a ratio of 4 to 3
         width: 480,
         height: 360,
-        src: 'http://www.youtube.com/embed/undefined?enablejsapi=1'
+        src: 'https://www.youtube.com/embed/undefined?enablejsapi=1'
     }).appendTo('body');
 });
