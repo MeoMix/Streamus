@@ -41,7 +41,8 @@
                     switch(dataSource.type) {
                         case DataSources.YOUTUBE_PLAYLIST:
                             ytHelper.getPlaylistTitle(dataSource.id, function (youTubePlaylistTitle) {
-                                activeStream.addPlaylistByDataSource(youTubePlaylistTitle, dataSource, function(playlist) {
+                                activeStream.addPlaylistByDataSource(youTubePlaylistTitle, dataSource, function (playlist) {
+                                    console.log("Setting active playlist");
                                     backgroundManager.set('activePlaylist', playlist);
                                 });
                             });
@@ -53,7 +54,8 @@
                             });
                             break;
                         case DataSources.SHARED_PLAYLIST:
-                            activeStream.addPlaylistByDataSource('', dataSource, function(playlist) {
+                            activeStream.addPlaylistByDataSource('', dataSource, function (playlist) {
+                                console.log("Setting active playlist:", playlist);
                                 backgroundManager.set('activePlaylist', playlist);
                             });
                             break;

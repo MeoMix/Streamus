@@ -114,6 +114,8 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'h
 
                 currentPlaylists.push(playlist);
 
+                console.log("Playlist added successfully", playlist);
+
                 if (callback) {
                     callback(playlist);
                 }
@@ -127,19 +129,13 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'h
 
                 shareCode.fetch({
                     success: function() {
-                        console.log("shareCode:", shareCode);
 
-                        var sharedPlaylist = new Playlist({
-                            id: shareCode.get('entityId')
-                        });
+                        var sharedPlaylist = new Playlist({ id: shareCode.get('entityId') });
 
-                        console.log("Fetching a shared playlist");
                         sharedPlaylist.fetch({
                             success: function () {
-
-                                console.log("Shared playlist:", sharedPlaylist);
                                 
-                                playlist.set('title', sharedPlaylist.get('title'), {silent: true});
+                                playlist.set('title', sharedPlaylist.get('title'), { silent: true });
 
                                 var items = new PlaylistItems(sharedPlaylist.get('items').map(function(item) {
 
