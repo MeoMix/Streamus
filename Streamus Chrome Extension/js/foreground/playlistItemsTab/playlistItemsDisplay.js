@@ -55,7 +55,10 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
     }
     
 
-    backgroundManager.on('change:activePlaylist', reload);
+    backgroundManager.on('change:activePlaylist', function() {
+        window && console.log("activePLaylist change detected, reloading");
+        reload();
+    });
     var emptyPlaylistNotificationId = 'EmptyPlaylistNotification';
     backgroundManager.get('allPlaylistItems').on('add', function(item) {
 
@@ -200,6 +203,8 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
 
             var firstItemId = activePlaylist.get('firstItemId');
             var item = activePlaylist.get('items').get(firstItemId);
+
+            console.log("activePlaylist:", activePlaylist);
 
             //  Build up the ul of li's representing each playlistItem.
 
