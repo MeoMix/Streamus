@@ -38,6 +38,9 @@ namespace Streamus.App_Start
             routes.MapRoute("getShareCode", "Playlist/GetShareCode", new { controller = "Playlist", action = "GetShareCode" },
                 new { httpMethod = new HttpMethodConstraint("GET") });
 
+            routes.MapRoute("createAndGetCopyByShareCode", "Playlist/CreateAndGetCopyByShareCode", new { controller = "Playlist", action = "CreateAndGetCopyByShareCode" },
+                new { httpMethod = new HttpMethodConstraint("GET") });
+
             routes.MapRoute("get-Playlist", "Playlist/{id}", new {controller = "Playlist", action = "get"},
                             new {httpMethod = new HttpMethodConstraint("GET")});
 

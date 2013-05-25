@@ -42,6 +42,7 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
         var playlistId = playlistItem.get('playlistId');
         var playlistLink = playlistList.find('li[data-playlistid="' + playlistId + '"]');
 
+        window && console.log("Getting playlist by id:", playlistId);
         var playlist = backgroundManager.getPlaylistById(playlistId);
 
         var currentItems = playlist.get('items');

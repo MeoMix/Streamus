@@ -1,26 +1,22 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using NUnit.Framework;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
-using System;
 
 namespace Streamus.Tests
 {
     [TestFixture]
     public class PlaylistItemDaoTest
     {
-        private IUserDao UserDao { get; set; }
-        private IPlaylistDao PlaylistDao { get; set; }
         private IVideoDao VideoDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
-        private IShareCodeDao ShareCodeDao { get; set; }
-        private IStreamDao StreamDao { get; set; }
         private User User { get; set; }
         private Playlist Playlist { get; set; }
         private Video Video { get; set; }
-        private PlaylistManager PlaylistManager { get; set; }
+        private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -30,11 +26,7 @@ namespace Streamus.Tests
         {
             try
             {
-                UserDao = new UserDao();
-                PlaylistDao = new PlaylistDao();
                 PlaylistItemDao = new PlaylistItemDao();
-                StreamDao = new StreamDao();
-                ShareCodeDao = new ShareCodeDao();
                 VideoDao = new VideoDao();
             }
             catch (TypeInitializationException exception)
@@ -42,9 +34,9 @@ namespace Streamus.Tests
                 throw exception.InnerException;
             }
 
-            User = new UserManager(UserDao, StreamDao).CreateUser();
+            User = new UserManager().CreateUser();
             Video = new Video("s91jgcmQoB0", "Tristam - Chairs", 219, "MeoMix");
-            new VideoManager(VideoDao).Save(Video);
+            new VideoManager().Save(Video);
         }
 
         /// <summary>
@@ -53,14 +45,11 @@ namespace Streamus.Tests
         [SetUp]
         public void SetupContext()
         {
-            //  Create managers here because every client request will require new managers.
-            PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
-
-            var stream = User.Streams.First();
+            Stream stream = User.Streams.First();
 
             //  Make a new Playlist object each time to ensure no side-effects from previous test case.
             Playlist = stream.CreatePlaylist();
-            
+
             PlaylistManager.Save(Playlist);
         }
 
@@ -105,7 +94,7 @@ namespace Streamus.Tests
             PlaylistManager.UpdatePlaylistItem(secondItem);
 
             PlaylistManager.DeleteItem(firstItem.Id, firstItem.PlaylistId);
-                
+
             //  Remove entity from NHibernate cache to force DB query to ensure actually created.
             NHibernateSessionManager.Instance.Clear();
 
@@ -120,6 +109,6 @@ namespace Streamus.Tests
             //  TODO: Not sure if this is right. Only works if the playlist only had 2 items in it.
             Assert.AreEqual(updatedPlaylistItem.Id, updatedPlaylistItem.PreviousItemId);
             Assert.AreEqual(updatedPlaylistItem.Id, updatedPlaylistItem.NextItemId);
-        } 
+        }
     }
 }

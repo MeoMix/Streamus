@@ -12,7 +12,7 @@ namespace Streamus.Tests
     public class VideoDaoTest
     {
         private IVideoDao VideoDao { get; set; }
-        private VideoManager VideoManager { get; set; }
+        private static readonly VideoManager VideoManager = new VideoManager();
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -29,17 +29,7 @@ namespace Streamus.Tests
                 throw exception.InnerException;
             }
 
-            new UserManager(new UserDao(), new StreamDao()).CreateUser();
-        }
-
-        /// <summary>
-        ///     This code runs before every test.
-        /// </summary>
-        [SetUp]
-        public void SetupContext()
-        {
-            //  Create managers here because every Client request will require new managers.
-            VideoManager = new VideoManager(VideoDao);
+            new UserManager().CreateUser();
         }
 
         [Test]

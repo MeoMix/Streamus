@@ -1,44 +1,19 @@
-﻿using log4net;
-using Streamus.Dao;
-using Streamus.Domain;
-using Streamus.Domain.Interfaces;
+﻿using Streamus.Domain;
 using Streamus.Domain.Managers;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
     public class PlaylistItemController : Controller
     {
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly IPlaylistDao PlaylistDao;
-        private readonly IPlaylistItemDao PlaylistItemDao;
-        private readonly IVideoDao VideoDao;
-        private readonly IShareCodeDao ShareCodeDao;
-
-        public PlaylistItemController()
-        {
-            try
-            {
-                PlaylistDao = new PlaylistDao();
-                PlaylistItemDao = new PlaylistItemDao();
-                VideoDao = new VideoDao();
-                ShareCodeDao = new ShareCodeDao();
-            }
-            catch (TypeInitializationException exception)
-            {
-                Logger.Error(exception.InnerException);
-                throw exception.InnerException;
-            }
-        }
+        private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
 
         [HttpPut]
         public ActionResult Update(PlaylistItem playlistItem)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
-            playlistManager.UpdatePlaylistItem(playlistItem);
+            PlaylistManager.UpdatePlaylistItem(playlistItem);
 
             return new JsonDataContractActionResult(playlistItem);
         }
@@ -46,8 +21,7 @@ namespace Streamus.Controllers
         [HttpPut]
         public ActionResult UpdateMultiple(IEnumerable<PlaylistItem> playlistItems)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
-            playlistManager.UpdatePlaylistItems(playlistItems);
+            PlaylistManager.UpdatePlaylistItems(playlistItems);
 
             return new JsonDataContractActionResult(playlistItems);
         }
@@ -55,8 +29,7 @@ namespace Streamus.Controllers
         [HttpDelete]
         public JsonResult Delete(Guid id, Guid playlistId)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
-            playlistManager.DeleteItem(id, playlistId);
+            PlaylistManager.DeleteItem(id, playlistId);
 
             return Json(new
             {

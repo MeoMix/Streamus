@@ -1,8 +1,11 @@
-﻿using System.Web;
+﻿using System;
+using System.ComponentModel;
+using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Streamus.App_Start;
+using Streamus.Dao;
 
 namespace Streamus
 {
@@ -21,6 +24,22 @@ namespace Streamus
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+
+            //  Register your new model binder
+            ModelBinders.Binders.DefaultBinder = new JsonEmptyStringNotNullModelBinder();
+
+            AutofacRegistrations.RegisterDaoFactory();
+        }
+    }
+
+    public class JsonEmptyStringNotNullModelBinder : DefaultModelBinder
+    {
+        //  Ensures that when JSON is deserialized null strings become empty.strings before persisting to the database.
+        public override object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext)
+        {
+            bindingContext.ModelMetadata.ConvertEmptyStringToNull = false;
+            Binders = new ModelBinderDictionary() { DefaultBinder = this };
+            return base.BindModel(controllerContext, bindingContext);
         }
     }
 }

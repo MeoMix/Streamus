@@ -18,7 +18,8 @@ namespace Streamus.Controllers
         {
             string googleOAuthUrl = GetGoogleOAuthUrl();
 
-            return Redirect(googleOAuthUrl);
+            //return Redirect(googleOAuthUrl);
+            return View();
         }
 
         private static string GetGoogleOAuthUrl()

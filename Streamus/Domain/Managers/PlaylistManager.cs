@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Autofac;
 using Streamus.Dao;
 using Streamus.Domain.Interfaces;
 using log4net;
@@ -11,17 +12,23 @@ namespace Streamus.Domain.Managers
     public class PlaylistManager
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ILifetimeScope Scope;
+        private readonly IDaoFactory DaoFactory;
+
         private IPlaylistDao PlaylistDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
         private IVideoDao VideoDao { get; set; }
         private IShareCodeDao ShareCodeDao { get; set; }
 
-        public PlaylistManager(IPlaylistDao playlistDao, IPlaylistItemDao playlistItemDao, IVideoDao videoDao, IShareCodeDao shareCodeDao)
+        public PlaylistManager()
         {
-            PlaylistDao = playlistDao;
-            PlaylistItemDao = playlistItemDao;
-            VideoDao = videoDao;
-            ShareCodeDao = shareCodeDao;
+            Scope = AutofacRegistrations.Container.BeginLifetimeScope();
+            DaoFactory = Scope.Resolve<IDaoFactory>();
+
+            PlaylistDao = DaoFactory.GetPlaylistDao();
+            PlaylistItemDao = DaoFactory.GetPlaylistItemDao();
+            VideoDao = DaoFactory.GetVideoDao();
+            ShareCodeDao = DaoFactory.GetShareCodeDao();
         }
 
         public void Save(Playlist playlist)

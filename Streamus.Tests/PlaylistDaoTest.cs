@@ -1,10 +1,10 @@
-﻿using System;
-using System.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
+using System;
+using System.Linq;
 
 namespace Streamus.Tests
 {
@@ -13,12 +13,10 @@ namespace Streamus.Tests
     {
         private IPlaylistDao PlaylistDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
-        private IStreamDao StreamDao { get; set; }
-        private IShareCodeDao ShareCodeDao { get; set; }
         private IVideoDao VideoDao { get; set; }
         private User User { get; set; }
         private Video Video { get; set; }
-        private PlaylistManager PlaylistManager { get; set;}
+        private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -30,8 +28,6 @@ namespace Streamus.Tests
             {
                 PlaylistDao = new PlaylistDao();
                 PlaylistItemDao = new PlaylistItemDao();
-                StreamDao = new StreamDao();
-                ShareCodeDao = new ShareCodeDao();
                 VideoDao = new VideoDao();
             }
             catch (TypeInitializationException exception)
@@ -39,20 +35,10 @@ namespace Streamus.Tests
                 throw exception.InnerException;
             }
 
-            User = new UserManager(new UserDao(), StreamDao).CreateUser();
+            User = new UserManager().CreateUser();
 
             Video = new Video("s91jgcmQoB0", "Tristam - Chairs", 219, "MeoMix");
-            new VideoManager(VideoDao).Save(Video);
-        }
-
-        /// <summary>
-        ///     This code runs before every test.
-        /// </summary>
-        [SetUp]
-        public void SetupContext()
-        {
-            //  Create managers here because every client request will require new managers.
-            PlaylistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
+            new VideoManager().Save(Video);
         }
 
         [Test]
