@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using Autofac;
 using Streamus.Dao;
 using Streamus.Domain.Interfaces;
 using log4net;
@@ -12,13 +13,17 @@ namespace Streamus.Domain.Managers
     public class UserManager
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private IUserDao UserDao { get; set; }
-        private IStreamDao StreamDao { get; set; }
+        private readonly ILifetimeScope Scope;
+        private readonly IDaoFactory DaoFactory;
 
-        public UserManager(IUserDao userDao, IStreamDao streamDao)
+        private IUserDao UserDao { get; set; }
+
+        public UserManager()
         {
-            UserDao = userDao;
-            StreamDao = streamDao;
+            Scope = AutofacRegistrations.Container.BeginLifetimeScope();
+            DaoFactory = Scope.Resolve<IDaoFactory>();
+
+            UserDao = DaoFactory.GetUserDao();
         }
 
         /// <summary>

@@ -108,6 +108,22 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
 
             stream.get('playlists').on('add', function (playlist) {
                 self.get('allPlaylists').add(playlist);
+                console.log("Adding playlist to stream detected:", playlist);
+
+                var playlistItems = playlist.get('items');
+
+                playlistItems.each(function(playlistItem) {
+                    self.get('allPlaylistItems').add(playlistItem, {
+                        merge: true
+                    });
+
+                    if (self.get('activePlaylistItem') === null) {
+                        self.set('activePlaylistItem', playlistItem);
+                        playlist.selectItem(playlistItem);
+                    }
+                });
+                
+
                 bindEventsToPlaylist.call(self, playlist);
             });
 

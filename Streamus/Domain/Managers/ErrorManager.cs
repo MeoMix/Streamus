@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using Autofac;
 using Streamus.Dao;
 using Streamus.Domain.Interfaces;
 using log4net;
@@ -12,11 +13,16 @@ namespace Streamus.Domain.Managers
     public class ErrorManager
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ILifetimeScope Scope;
+        private readonly IDaoFactory DaoFactory;
+
         private IErrorDao ErrorDao { get; set; }
 
-        public ErrorManager(IErrorDao errorDao)
+        public ErrorManager()
         {
-            ErrorDao = errorDao;
+            Scope = AutofacRegistrations.Container.BeginLifetimeScope();
+            DaoFactory = Scope.Resolve<IDaoFactory>();
+            ErrorDao = DaoFactory.GetErrorDao();
         }
 
         public void Save(Error error)

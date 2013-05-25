@@ -83,101 +83,90 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'h
             this.get('playlists').get(playlistId).addVideoByIdToPlaylist(id);
         },
 
-        addPlaylistByDataSource: function(playlistTitle, dataSource, callback) {
-            var playlist = new Playlist({
-                title: playlistTitle,
-                streamId: this.get('id'),
-                dataSource: dataSource
-            });
-
+        addPlaylistByDataSource: function (playlistTitle, dataSource, callback) {
+            var self = this;
             var currentPlaylists = this.get('playlists');
 
-            var self = this;
-            
-            function onAddPlaylistSuccess() {
-                var playlistId = playlist.get('id');
-
-                if (currentPlaylists.length === 0) {
-                    self.set('firstListId', playlistId);
-                    playlist.set('nextListId', playlistId);
-                    playlist.set('previousListId', playlistId);
-                } else {
-                    var firstList = currentPlaylists.get(self.get('firstListId'));
-                    var lastList = currentPlaylists.get(firstList.get('previousListId'));
-
-                    lastList.set('nextListId', playlistId);
-                    playlist.set('previousListId', lastList.get('id'));
-
-                    firstList.set('previousListId', playlistId);
-                    playlist.set('nextListId', firstList.get('id'));
-                }
-
-                currentPlaylists.push(playlist);
-
-                console.log("Playlist added successfully", playlist);
-
-                if (callback) {
-                    callback(playlist);
-                }
-            }
-            
             if (dataSource && dataSource.type === DataSources.SHARED_PLAYLIST) {
 
-                var shareCode = new ShareCode({
-                    id: dataSource.id
-                });
-
-                shareCode.fetch({
-                    success: function() {
-
-                        var sharedPlaylist = new Playlist({ id: shareCode.get('entityId') });
-
-                        sharedPlaylist.fetch({
-                            success: function () {
-                                
-                                playlist.set('title', sharedPlaylist.get('title'), { silent: true });
-
-                                var items = new PlaylistItems(sharedPlaylist.get('items').map(function(item) {
-
-                                    var newItem = item.clone();
-                                    newItem.set('id', helpers.generateGuid());
-
-                                    return newItem;
-                                }));
-
-                                //  Deep copy the sharedPlaylist's items but change their id so each shared copy affects new items.
-                                playlist.set('items', items, { silent: true });
-
-                                //  Save the playlist, but push after version from server because the ID will have changed.
-                                playlist.save(new Array(), {
-                                    success: onAddPlaylistSuccess,
-                                    error: function (error) {
-                                        window && console.error(error);
-                                    }
-                                });
-                                
-                            },
-                            error: function(error) {
-                                window && console.error(error);
-                            }
-                        });
-
+                $.ajax({
+                    url: programState.getBaseUrl() + 'Playlist/CreateAndGetCopyByShareCode',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        shareCodeId: dataSource.id,
+                        streamId: self.get('id')
                     },
-                    error: function(error) {
-                        window && console.error(error);
+                    success: function (playlistCopy) {
+                        //  Convert back from JSON to a backbone object.
+                        playlistCopy = new Playlist(playlistCopy);
+
+                        var playlistId = playlistCopy.get('id');
+                        
+                        if (currentPlaylists.length === 0) {
+                            self.set('firstListId', playlistId);;
+                        } else {
+                            var firstList = currentPlaylists.get(self.get('firstListId'));
+                            var lastList = currentPlaylists.get(firstList.get('previousListId'));
+                            
+                            lastList.set('nextListId', playlistId);
+                            firstList.set('previousListId', playlistId);
+                        }
+
+                        currentPlaylists.push(playlistCopy);
+
+                        if (callback) {
+                            callback(playlistCopy);
+                        }
+                    },
+                    error: function (error) {
+                        //  TODO: Rollback client-side transaction somehow?
+                        window && console.error("Error saving title", error);
                     }
                 });
 
             } else {
+                
+                var playlist = new Playlist({
+                    title: playlistTitle,
+                    streamId: this.get('id'),
+                    dataSource: dataSource
+                });
 
                 //  Save the playlist, but push after version from server because the ID will have changed.
                 playlist.save(new Array(), {
-                    success: onAddPlaylistSuccess,
+                    success: function () {
+
+                        var playlistId = playlist.get('id');
+
+                        if (currentPlaylists.length === 0) {
+                            self.set('firstListId', playlistId);
+                            playlist.set('nextListId', playlistId);
+                            playlist.set('previousListId', playlistId);
+                        } else {
+                            var firstList = currentPlaylists.get(self.get('firstListId'));
+                            var lastList = currentPlaylists.get(firstList.get('previousListId'));
+
+                            lastList.set('nextListId', playlistId);
+                            playlist.set('previousListId', lastList.get('id'));
+
+                            firstList.set('previousListId', playlistId);
+                            playlist.set('nextListId', firstList.get('id'));
+                        }
+
+                        currentPlaylists.push(playlist);
+                        console.log("Playlist added successfully", playlist);
+
+                        if (callback) {
+                            callback(playlist);
+                        }
+
+                    },
                     error: function (error) {
                         window && console.error(error);
                     }
                 });
-                
+
             }
 
         },

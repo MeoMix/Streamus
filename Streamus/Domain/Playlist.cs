@@ -105,6 +105,8 @@ namespace Streamus.Domain
                 PlaylistItem shareableItemCopy = new PlaylistItem(playlistItem);
                 AddItem(shareableItemCopy);
 
+                //  If the old playlist's firstItemId was the currently old item we're iterating over,
+                //  set the current new item as the first item.
                 if (playlistItem.Id == playlist.FirstItemId)
                 {
                     FirstItemId = shareableItemCopy.Id;

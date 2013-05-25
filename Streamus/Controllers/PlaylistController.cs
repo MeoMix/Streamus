@@ -12,10 +12,10 @@ namespace Streamus.Controllers
     public class PlaylistController : Controller
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
+
         private readonly IPlaylistDao PlaylistDao;
-        private readonly IPlaylistItemDao PlaylistItemDao;
         private readonly IStreamDao StreamDao;
-        private readonly IVideoDao VideoDao;
         private readonly IShareCodeDao ShareCodeDao;
 
         public PlaylistController()
@@ -23,9 +23,7 @@ namespace Streamus.Controllers
             try
             {
                 PlaylistDao = new PlaylistDao();
-                PlaylistItemDao = new PlaylistItemDao();
                 StreamDao = new StreamDao();
-                VideoDao = new VideoDao();
                 ShareCodeDao = new ShareCodeDao();
             }
             catch (TypeInitializationException exception)
@@ -38,16 +36,10 @@ namespace Streamus.Controllers
         [HttpPost]
         public ActionResult Create(Playlist playlist)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
-
             playlist.Stream.AddPlaylist(playlist);
-
-            playlist.ValidateAndThrow();
-            PlaylistDao.Save(playlist);
-
             StreamDao.Save(playlist.Stream);
 
-            playlistManager.Save(playlist);
+            PlaylistManager.Save(playlist);
 
             return new JsonDataContractActionResult(playlist);
         }
@@ -55,8 +47,7 @@ namespace Streamus.Controllers
         [HttpPut]
         public ActionResult Update(Playlist playlist)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
-            playlistManager.Update(playlist);
+            PlaylistManager.Update(playlist);
 
             return new JsonDataContractActionResult(playlist);
         }
@@ -72,8 +63,7 @@ namespace Streamus.Controllers
         [HttpDelete]
         public JsonResult Delete(Guid id)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
-            playlistManager.DeletePlaylistById(id);
+            PlaylistManager.DeletePlaylistById(id);
 
             return Json(new
             {
@@ -84,8 +74,7 @@ namespace Streamus.Controllers
         [HttpPost]
         public JsonResult UpdateTitle(Guid playlistId, string title)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
-            playlistManager.UpdateTitle(playlistId, title);
+            PlaylistManager.UpdateTitle(playlistId, title);
 
             return Json(new{
                 success = true
@@ -95,8 +84,7 @@ namespace Streamus.Controllers
         [HttpPost]
         public JsonResult UpdateFirstItemId(Guid playlistId, Guid firstItemId)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
-            playlistManager.UpdateFirstItemId(playlistId, firstItemId);
+            PlaylistManager.UpdateFirstItemId(playlistId, firstItemId);
 
             return Json(new
             {
@@ -107,10 +95,38 @@ namespace Streamus.Controllers
         [HttpGet]
         public JsonResult GetShareCode(Guid playlistId)
         {
-            var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
-            string shareCode = playlistManager.GetShareCode(playlistId);
+            string shareCode = PlaylistManager.GetShareCode(playlistId);
 
             return Json(shareCode, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult CreateAndGetCopyByShareCode(Guid shareCodeId, Guid streamId)
+        {
+            ShareCode shareCode = ShareCodeDao.Get(shareCodeId);
+
+            if (shareCode.EntityType != ShareableEntityType.Playlist)
+            {
+                throw new ApplicationException("Expected shareCode to have entityType of Playlist");
+            }
+
+            //  Never return the sharecode's playlist reference. Make a copy of it to give out so people can't modify the original.
+            Playlist copyablePlaylist = PlaylistDao.Get(shareCode.EntityId);
+
+            Stream stream = StreamDao.Get(streamId);
+
+            Playlist playlist = new Playlist();
+            stream.AddPlaylist(playlist);
+            StreamDao.Save(stream);
+
+            //  TODO: I think I have to call save on my playlist before calling copy to add items to it because it expects the playlist to have an ID already
+            PlaylistDao.Save(playlist);
+
+            playlist.Copy(copyablePlaylist);
+
+            PlaylistManager.Save(playlist);
+
+            return new JsonDataContractActionResult(playlist);
         }
     }
 }

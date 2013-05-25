@@ -14,7 +14,7 @@ namespace Streamus.Tests
     {
         private Configuration Configuration { get; set; }
         private IUserDao UserDao { get; set; }
-        private UserManager UserManager { get; set; }
+        private static readonly UserManager UserManager = new UserManager();
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -42,16 +42,6 @@ namespace Streamus.Tests
 
                 new SchemaExport(Configuration).Execute(false, true, false);
             }
-        }
-
-        /// <summary>
-        ///     This code runs before every test.
-        /// </summary>
-        [SetUp]
-        public void SetupContext()
-        {
-            //  Create managers here because every client request will require new managers.
-            UserManager = new UserManager(UserDao, new StreamDao());
         }
 
         [Test]

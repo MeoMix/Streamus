@@ -1,32 +1,13 @@
-﻿using log4net;
-using Streamus.Dao;
-using Streamus.Domain;
-using Streamus.Domain.Interfaces;
+﻿using Streamus.Domain;
 using Streamus.Domain.Managers;
-using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
     public class VideoController : Controller
     {
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly IVideoDao VideoDao;
-
-        public VideoController()
-        {
-            try
-            {
-                VideoDao = new VideoDao();
-            }
-            catch (TypeInitializationException exception)
-            {
-                Logger.Error(exception.InnerException);
-                throw exception.InnerException;
-            }
-        }
+        private static readonly VideoManager VideoManager = new VideoManager();
 
         /// <summary>
         ///     Save's a Video. It's a PUT because the video's ID will already
@@ -36,24 +17,21 @@ namespace Streamus.Controllers
         [HttpPut]
         public ActionResult Update(Video video)
         {
-            var videoManager = new VideoManager(VideoDao);
-            videoManager.Save(video);
+            VideoManager.Save(video);
             return new JsonDataContractActionResult(video);
         }
 
         [HttpGet]
         public ActionResult Get(string id)
         {
-            var videoManager = new VideoManager(VideoDao);
-            Video video = videoManager.Get(id);
+            Video video = VideoManager.Get(id);
             return new JsonDataContractActionResult(video);
         }
 
         [HttpPost]
         public ActionResult SaveVideos(List<Video> videos)
         {
-            var videoManager = new VideoManager(VideoDao);
-            videoManager.Save(videos);
+            VideoManager.Save(videos);
             return new JsonDataContractActionResult(videos);
         }
 
@@ -65,8 +43,7 @@ namespace Streamus.Controllers
             //  The default model binder doesn't support passing an empty array as JSON to MVC controller, so check null.
             if (ids != null)
             {
-                var videoManager = new VideoManager(VideoDao);
-                videos = videoManager.Get(ids);
+                videos = VideoManager.Get(ids);
             }
 
             return new JsonDataContractActionResult(videos);
