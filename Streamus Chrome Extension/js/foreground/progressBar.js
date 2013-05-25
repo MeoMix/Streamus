@@ -87,7 +87,7 @@ define(['backgroundManager', 'player', 'helpers'], function (backgroundManager, 
 
         if (currentTime > progressBar.prop('max')) {
             window && console.trace();
-            throw "CurrentTime: " + currentTime + " . TotalTime: " + progressBar.prop('max');
+            window && console.error("CurrentTime: " + currentTime + " . TotalTime: " + progressBar.prop('max'));
         }
 
         progressBar.val(currentTime).trigger('change');
