@@ -97,7 +97,6 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             });
 
             youTubeVideo.on('ended', function () {
-                window && console.log("song ended");
                 self.set('state', PlayerStates.ENDED);
             });
 
@@ -112,6 +111,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             });
             
             youTubeVideo.on('loadedmetadata', function () {
+                console.log("loadedmetadata, setting my current time:", self.get('currentTime'));
                 this.currentTime = self.get('currentTime');
             });
             
@@ -124,6 +124,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
 
                 var videoStreamSrc = youTubeVideo.attr('src');
 
+                //  TODO: Probably need to turn this polling on/off intelligently.
                 //  This ensure that youTube continues to update blob data.
                 if (videoStreamSrc.indexOf('blob') > -1) {
                     seekToInterval = setInterval(function () {
@@ -194,10 +195,15 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
         },
             
         cueVideoById: function (videoId) {
-            this.pause();
+            
             this.set('loadedVideoId', videoId);
 
-            $(this.get('streamusPlayer')).removeAttr('autoplay');
+            var streamusPlayer = this.get('streamusPlayer');
+            
+            if (streamusPlayer != null) {
+                streamusPlayer.pause();
+                $(streamusPlayer).removeAttr('autoplay');
+            }
 
             this.get('youTubePlayer').loadVideoById({
                 videoId: videoId,
@@ -207,10 +213,15 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
         },
             
         loadVideoById: function (videoId) {
+            var streamusPlayer = this.get('streamusPlayer');
+
+            if (streamusPlayer != null) {
+                streamusPlayer.pause();
+                $(streamusPlayer).attr('autoplay', true);
+            }
+            
             this.set('state', PlayerStates.BUFFERING);
             this.set('loadedVideoId', videoId);
-
-            $(this.get('streamusPlayer')).attr('autoplay', 'true');
 
             this.get('youTubePlayer').loadVideoById({
                 videoId: videoId,
@@ -248,9 +259,17 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
         },
         
         stop: function () {
+
             this.set('state', PlayerStates.UNSTARTED);
 
-            $('#YouTubeVideo').attr('src', '');
+            //$('#YouTubeVideo').attr('src', '');
+            
+            var streamusPlayer = this.get('streamusPlayer');
+
+            if (streamusPlayer) {
+                streamusPlayer.pause();
+            }
+            
             this.set('streamusPlayer', null);
 
             this.get('youTubePlayer').stopVideo();
@@ -290,6 +309,8 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
 
         seekTo: function (timeInSeconds) {
 
+            console.log("Seeking to and playerState:", this.get('state'));
+
             this.set('currentTime', timeInSeconds);
 
             var youTubePlayer = this.get('youTubePlayer');
@@ -298,7 +319,8 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             //  As such, I re-cue the video with a different start time if the user seeks.
             if (this.get('state') === PlayerStates.UNSTARTED) {
                 var videoId = ytHelper.parseVideoIdFromUrl(youTubePlayer.getVideoUrl());
- 
+
+                console.log("Cueuing video at time:", timeInSeconds);
                 youTubePlayer.cueVideoById({
                     videoId: videoId,
                     startSeconds: timeInSeconds,
@@ -308,7 +330,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             } else {
 
                 var streamusPlayer = this.get('streamusPlayer');
-                
+                console.log("Streamus player exists?:", streamusPlayer);
                 if (streamusPlayer != null) {
                     streamusPlayer.currentTime = timeInSeconds;
                 }

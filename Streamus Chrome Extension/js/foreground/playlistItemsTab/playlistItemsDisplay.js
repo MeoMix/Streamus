@@ -39,7 +39,13 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
 
         //  If the item is already selected then it is cued up -- so just play it.
         if (activePlaylistItem !== null && activePlaylistItem.get('id') === itemId) {
-            player.play();
+            
+            if (player.isPlaying()) {
+                player.pause();
+            } else {
+                player.play();
+            }
+
         } else {
             var playlistItem = backgroundManager.getPlaylistItemById(itemId);
             
@@ -48,9 +54,6 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
 
             playlist.selectItem(playlistItem);
             backgroundManager.set('activePlaylistItem', playlistItem);
-
-            var videoId = playlistItem.get('video').get('id');
-            player.loadVideoById(videoId);
         }
     }
     
