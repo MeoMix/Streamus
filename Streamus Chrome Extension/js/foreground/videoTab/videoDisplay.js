@@ -16,11 +16,13 @@
     var youTubeVideo = $(chrome.extension.getBackgroundPage().document).find('#YouTubeVideo')[0];
     var initialImage = new Image();
     
+    //  TODO: Can I condense this code with what happens on the change activeplalyistitem bit? I think so
     initialImage.onload = function () {
         videoDisplayCanvasContext.drawImage(this, 0, 0, videoDisplayWidth, videoDisplayHeight);
     };
     
     if (backgroundManager.get('activePlaylistItem') == null) {
+
         fillCanvasWithBlack();
 
     } else {
@@ -53,7 +55,13 @@
     player.on('change:state', function (model, playerState) {
 
         if (playerState === PlayerStates.PLAYING) {
-            draw();
+
+            //  Lagging for a little to avoid this black blip on the video when clicking next on a playing song.
+            //  If you can figure it out -- go for it.
+            setTimeout(function() {
+                draw();
+            }, 0);
+
         }
     });
     

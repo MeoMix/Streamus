@@ -73,6 +73,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             
             var youTubeVideo = $('#YouTubeVideo');
             youTubeVideo.off('play').on('play', function () {
+                console.log("setting myself to play");
                 self.set('state', PlayerStates.PLAYING);
             });
 
@@ -216,7 +217,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             var streamusPlayer = this.get('streamusPlayer');
 
             if (streamusPlayer != null) {
-                streamusPlayer.pause();
+                //streamusPlayer.pause();
                 $(streamusPlayer).attr('autoplay', true);
             }
             
@@ -293,7 +294,6 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             if (!this.isPlaying()) {
 
                 this.set('state', PlayerStates.BUFFERING);
-                
                 var streamusPlayer = this.get('streamusPlayer');
 
                 if (streamusPlayer) {
@@ -309,38 +309,16 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
 
         seekTo: function (timeInSeconds) {
 
-            console.log("Seeking to and playerState:", this.get('state'));
-
             this.set('currentTime', timeInSeconds);
+            var streamusPlayer = this.get('streamusPlayer');
 
-            var youTubePlayer = this.get('youTubePlayer');
-            //  YouTube documentation states that SeekTo will start playing when transitioning from the UNSTARTED state.
-            //  This is counter-intuitive because UNSTARTED and PAUSED are the same to a user, but result in different effects.
-            //  As such, I re-cue the video with a different start time if the user seeks.
-            if (this.get('state') === PlayerStates.UNSTARTED) {
-                var videoId = ytHelper.parseVideoIdFromUrl(youTubePlayer.getVideoUrl());
-
-                console.log("Cueuing video at time:", timeInSeconds);
-                youTubePlayer.cueVideoById({
-                    videoId: videoId,
-                    startSeconds: timeInSeconds,
-                    suggestedQuality: 'default'
-                });
-                
-            } else {
-
-                var streamusPlayer = this.get('streamusPlayer');
-                console.log("Streamus player exists?:", streamusPlayer);
-                if (streamusPlayer != null) {
-                    streamusPlayer.currentTime = timeInSeconds;
-                }
-
-                //  Seek even if streamusPlayer is defined because we probably need to update the blob if it is.
-                //  The true paramater allows the youTubePlayer to seek ahead past its buffered video.
-                youTubePlayer.seekTo(timeInSeconds, true);
-                
+            if (streamusPlayer != null) {
+                streamusPlayer.currentTime = timeInSeconds;
             }
             
+            //  Seek even if streamusPlayer is defined because we probably need to update the blob if it is.
+            //  The true paramater allows the youTubePlayer to seek ahead past its buffered video.
+            this.get('youTubePlayer').seekTo(timeInSeconds, true);
         }
     });
 

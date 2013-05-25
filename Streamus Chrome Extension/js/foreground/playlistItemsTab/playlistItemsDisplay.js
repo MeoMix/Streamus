@@ -207,8 +207,6 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
             var firstItemId = activePlaylist.get('firstItemId');
             var item = activePlaylist.get('items').get(firstItemId);
 
-            console.log("activePlaylist:", activePlaylist);
-
             //  Build up the ul of li's representing each playlistItem.
 
             do {

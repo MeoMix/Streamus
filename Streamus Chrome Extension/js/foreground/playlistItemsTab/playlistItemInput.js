@@ -56,6 +56,7 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
         contentHeader.flashMessage('Thanks!', 2000);
 
         ytHelper.getVideoInformation(videoId, '', function (videoInformation) {
+            window && console.error("videoInformation was null for:", videoId);
             if (videoInformation == null) {
                 dialogs.showBannedVideoDialog();
             } else {
