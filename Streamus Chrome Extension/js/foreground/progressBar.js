@@ -48,6 +48,7 @@ define(['backgroundManager', 'player', 'helpers'], function (backgroundManager, 
         if (event.which === 1) {
             //  Bind to progressBar mouse-up to support dragging as well as clicking.
             //  I don't want to send a message until drag ends, so mouseup works nicely. 
+
             player.seekTo($(this).val());
 
             setTimeout(function() {
@@ -83,9 +84,10 @@ define(['backgroundManager', 'player', 'helpers'], function (backgroundManager, 
     });
     
     function setCurrentTime(currentTime) {
+
         if (currentTime > progressBar.prop('max')) {
-            window && console.error("CurrentTime and TotalTime:", currentTime, progressBar.prop('max'));
-            throw "Need to update max time before setting current time!";
+            window && console.trace();
+            throw "CurrentTime: " + currentTime + " . TotalTime: " + progressBar.prop('max');
         }
 
         progressBar.val(currentTime).trigger('change');

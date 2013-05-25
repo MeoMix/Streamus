@@ -123,7 +123,6 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                     
                     //  Update activePlaylist to the next playlist if there is another.
                     if (stream.get('playlists').length > 0) {
-
                         var newlyActivePlaylist = stream.getPlaylistById(playlist.get('nextListId'));
                         self.set('activePlaylist', newlyActivePlaylist);
                     }
@@ -132,7 +131,6 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                 //  If the currently playing item was in the playlist that has been removed - stop the music / refresh the UI.
                 var activePlaylistItem = self.get('activePlaylistItem');
                 if (activePlaylistItem !== null && activePlaylistItem.get('playlistId') === playlist.id) {
-                    player.pause();
                     self.set('activePlaylistItem', null);
                 }
             });
@@ -296,6 +294,7 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                         }
                         
                     } else {
+
                         player.cueVideoById(videoId);
                     }
                 }

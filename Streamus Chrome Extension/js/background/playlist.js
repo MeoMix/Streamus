@@ -34,8 +34,6 @@ define(['ytHelper',
             //  Need to recreate submodels as Backbone.Models else they will just be regular Objects.
             parse: function (data) {
 
-                console.log("parse getting called, data:", data);
-
                 if (data.items.length > 0) {
                     //  Reset will load the server's response into items as a Backbone.Collection
                     this.get('items').reset(data.items);

@@ -45,7 +45,7 @@
             fillCanvasWithBlack();
         } else {
             var videoId = activePlaylistItem.get('video').get('id');
-            initialImage.src = 'http://i2.ytimg.com/vi/' + videoId + '/hqdefault.jpg ';
+            initialImage.src = 'http://i2.ytimg.com/vi/' + videoId + '/mqdefault.jpg ';
         }
     });
 
