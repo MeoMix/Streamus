@@ -47,7 +47,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
         }
         //  If the video stopped playing and there is another video to play (not the same one), do so.
         else if (state === PlayerStates.ENDED) {
-
+            window && console.log("ENDED DETECTED!!!!");
             var activePlaylistItem = backgroundManager.get('activePlaylistItem');
             //  NOTE: No guarantee that the activePlaylistItem's playlistId will be activePlaylist's ID.
             var playlistId = activePlaylistItem.get('playlistId');
