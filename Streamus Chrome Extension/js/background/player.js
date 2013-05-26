@@ -98,6 +98,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             });
 
             youTubeVideo.on('ended', function () {
+                window && console.log("setting to ENDED!!");
                 self.set('state', PlayerStates.ENDED);
             });
 
