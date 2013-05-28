@@ -1,13 +1,18 @@
 //  TODO: Exposed globally so that Chrome Extension's foreground can access through chrome.extension.getBackgroundPage()
 var YouTubePlayer = null;
 
-define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerAPI, ytHelper, iconManager) {
+define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
     'use strict';
+
+    //  This is the actual YouTube Player API object housed within the iframe.
+    //  Only player.js should be able to interact with it; all public needs go through streamusPlayer.
+    var youTubePlayer = null;
 
     var youTubePlayerModel = Backbone.Model.extend({
         defaults: {
             //  Returns the elapsed time of the currently loaded video. Returns 0 if no video is playing
             currentTime: 0,
+            //  API will fire a 'ready' event after initialization which indicates the player can now respond accept commands
             ready: false,
             state: PlayerStates.UNSTARTED,
             videoStreamSrc: null,
@@ -18,9 +23,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             muted: false,
             loadedVideoId: '',
             //  The video object which will hold the iframe-removed player
-            streamusPlayer: null,
-            //  The actual YouTube player API object.
-            youTubePlayer: null
+            streamusPlayer: null
         },
         
         //  Initialize the player by creating a YouTube Player IFrame hosting an HTML5 player
@@ -32,7 +35,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                 self.set('muted', false);
                 //  We want to update the youtube player's volume no matter what because it persists between browser sessions
                 //  thanks to YouTube saving it -- so should keep it always sync'ed.
-                self.get('youTubePlayer').setVolume(volume);
+                youTubePlayer.setVolume(volume);
                 
                 var streamusPlayer = self.get('streamusPlayer');
                 
@@ -42,7 +45,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             });
 
             self.on('change:muted', function (model, isMuted) {
-                var youTubePlayer = self.get('youTubePlayer');
+
                 //  Same logic here as with the volume
                 if (isMuted) {
                     youTubePlayer.mute();
@@ -55,16 +58,6 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                 if (streamusPlayer != null) {
                     streamusPlayer.muted = isMuted;
                 }
-
-                iconManager.setIcon(this.get('state'), isMuted, this.get('volume'));
-            });
-
-            self.on('change:state', function (model, state) {
-                iconManager.setIcon(state, this.get('muted'), this.get('volume'));
-            });
-
-            self.on('change:volume', function (model, volume) {
-                iconManager.setIcon(this.get('state'), this.get('muted'), volume);
             });
 
             this.on('change:loadedVideoId', function() {
@@ -131,7 +124,6 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                 if (videoStreamSrc.indexOf('blob') > -1) {
                     seekToInterval = setInterval(function () {
                         console.log("Fetching data to keep blob going");
-                        var youTubePlayer = self.get('youTubePlayer');
 
                         if (self.get('streamusPlayer') != null) {
                             var currentTime = self.get('streamusPlayer').currentTime;
@@ -156,21 +148,14 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
 
             youTubePlayerAPI.once('change:ready', function () {
 
+                //  Injected YouTube code creates a global YT object with which a 'YouTube Player' object can be created.
                 //  https://developers.google.com/youtube/iframe_api_reference#Loading_a_Video_Player
-                //  After the API's JavaScript code loads, the API will call the onYouTubeIframeAPIReady function.
-                //  At which point you can construct a YT.Player object to insert a video player on your page.
-                self.set('youTubePlayer', new window.YT.Player('MusicHolder', {
+                youTubePlayer = new window.YT.Player('MusicHolder', {
                     events: {
-                        'onReady': function (event) {
-                            var youTubePlayer = event.target;
-
+                        'onReady': function () {
+           
                             self.set('muted', youTubePlayer.isMuted());
                             self.set('volume', youTubePlayer.getVolume());
-                            
-                            //  Keep the player out of UNSTARTED state because seekTo will start playing if in UNSTARTED and not PAUSED
-                            self.pause();
-
-                            iconManager.setIcon(self.get('state'), self.get('muted'), self.get('volume'));
 
                             //  Announce that the YouTube Player is ready to go.
                             self.set('ready', true);
@@ -191,7 +176,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
 
                         }
                     }
-                }));
+                });
 
             });
         },
@@ -207,7 +192,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                 $(streamusPlayer).removeAttr('autoplay');
             }
 
-            this.get('youTubePlayer').loadVideoById({
+            youTubePlayer.loadVideoById({
                 videoId: videoId,
                 startSeconds: 0,
                 suggestedQuality: 'default'
@@ -225,7 +210,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             this.set('state', PlayerStates.BUFFERING);
             this.set('loadedVideoId', videoId);
 
-            this.get('youTubePlayer').loadVideoById({
+            youTubePlayer.loadVideoById({
                 videoId: videoId,
                 startSeconds: 0,
                 suggestedQuality: 'default'
@@ -244,7 +229,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             if (streamusPlayer) {
                 streamusPlayer.muted = true;
             } else {
-                this.get('youTubePlayer').mute();
+                youTubePlayer.mute();
             }
         },
         
@@ -256,7 +241,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             if (streamusPlayer) {
                 streamusPlayer.muted = false;
             } else {
-                this.get('youTubePlayer').unMute();
+                youTubePlayer.unMute();
             }
         },
         
@@ -274,7 +259,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             
             this.set('streamusPlayer', null);
 
-            this.get('youTubePlayer').stopVideo();
+            youTubePlayer.stopVideo();
             this.set('loadedVideoId', '');
         },
 
@@ -286,7 +271,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             } else {
                 //  If YouTubeVideo is loading its metadata we need to keep its state in sync regardless.
                 $('#YouTubeVideo').removeAttr('autoplay');
-                this.get('youTubePlayer').pauseVideo();
+                youTubePlayer.pauseVideo();
             }
         },
             
@@ -302,7 +287,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
                 } else {
                     //  If YouTubeVideo is loading its metadata we need to keep its state in sync regardless.
                     $('#YouTubeVideo').attr('autoplay', 'true');
-                    this.get('youTubePlayer').playVideo();
+                    youTubePlayer.playVideo();
                 }
 
             }
@@ -319,7 +304,7 @@ define(['youTubePlayerAPI', 'ytHelper', 'iconManager'], function (youTubePlayerA
             
             //  Seek even if streamusPlayer is defined because we probably need to update the blob if it is.
             //  The true paramater allows the youTubePlayer to seek ahead past its buffered video.
-            this.get('youTubePlayer').seekTo(timeInSeconds, true);
+            youTubePlayer.seekTo(timeInSeconds, true);
         }
     });
 
