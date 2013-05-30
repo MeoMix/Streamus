@@ -1,30 +1,44 @@
 ﻿define(['localStorageManager'], function (localStorageManager) {
     'use strict';
 
-    var radioModeButton = $('#RadioModeButton').click(toggleRadioMode);
-    var radioModeEnabledTitle = 'Radio Mode is enabled. Click to disable.';
-    var radioModeDisabledTitle = 'Radio Mode is disabled. Click to enable.';
+    var radioModeButtonView = Backbone.View.extend({
+        el: $('#RadioModeButton'),
+        
+        events: {
+            'click': 'toggleRadioMode'
+        },
 
-    var isRadioModeEnabled = localStorageManager.getIsRadioModeEnabled();
-    if (isRadioModeEnabled) {
-        radioModeButton
-            .addClass('pressed')
-            .attr('title', radioModeEnabledTitle);
-    }
+        enabledTitle: 'Radio Mode is enabled. Click to disable.',
+        disabledTitle: 'Radio Mode is disabled. Click to enable.',
+        
+        initialize: function () {
+            
+            var isRadioModeEnabled = localStorageManager.getIsRadioModeEnabled();
+            
+            if (isRadioModeEnabled) {
+                this.$el
+                    .addClass('pressed')
+                    .attr('title', this.enabledTitle);
+            }
+            
+        },
+        
+        toggleRadioMode: function () {
 
-    function toggleRadioMode() {
-        if (radioModeButton.hasClass('pressed')) {
-            radioModeButton
-                .removeClass('pressed')
-                .attr('title', radioModeDisabledTitle);
+            this.$el.toggleClass('pressed');
+            
+            var isPressed = this.$el.hasClass('pressed');
+            
+            if (isPressed) {
+                this.$el.attr('title', this.enabledTitle);
+            } else {
+                this.$el.attr('title', this.disabledTitle);
+            }
+
+            localStorageManager.setIsRadioModeEnabled(isPressed);
         }
-        else {
-            radioModeButton
-                .addClass('pressed')
-                .attr('title', radioModeEnabledTitle);
-        }
 
-        localStorageManager.setIsRadioModeEnabled(radioModeButton.hasClass('pressed'));
-    }
+    });
 
+    var radioModeButton = new radioModeButtonView;
 });

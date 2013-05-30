@@ -65,7 +65,7 @@ define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
             });
             
             var youTubeVideo = $('#YouTubeVideo');
-            youTubeVideo.off('play').on('play', function () {
+            youTubeVideo.on('play', function () {
                 console.log("setting myself to play");
                 self.set('state', PlayerStates.PLAYING);
             });

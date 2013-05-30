@@ -287,6 +287,16 @@
   cursor: default;
 }
 
+#PreviousButton.disabled > svg *,
+#NextButton.disabled > svg * {
+    fill: gray;
+}
+
+#PreviousButton > svg *,
+#NextButton > svg * {
+    fill: black;
+}
+
 #PlayPauseButton.disabled:active,
 #NextButton.disabled:active, 
 #PreviousButton.disabled:active{
