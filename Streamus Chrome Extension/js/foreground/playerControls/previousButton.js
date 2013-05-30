@@ -1,54 +1,57 @@
 //  When clicked -- skips to the last video. Skips from the begining of the list to the end.
 define(['backgroundManager'], function (backgroundManager) {
     'use strict';
-    var previousButton = $('#PreviousButton');
-    
-    //  Prevent spamming by only allowing a previous click once every 100ms.
-    previousButton.click(_.debounce(function () {
-        
-        if (!$(this).hasClass('disabled')) {
-            var activePlaylistItem = backgroundManager.get('activePlaylistItem');
-            var playlistId = activePlaylistItem.get('playlistId');
-            var playlist = backgroundManager.getPlaylistById(playlistId);
 
-            var previousItem = playlist.gotoPreviousItem();
-            backgroundManager.set('activePlaylistItem', previousItem);
-        }
+    var previousButtonView = Backbone.View.extend({
+        el: $('#PreviousButton'),
         
-    }, 100, true));
+        events: {
+            'click': 'gotoPreviousVideo'
+        },
+        
+        render: function () {
+            
+            if (backgroundManager.get('activePlaylistItem') === null) {
+                this.disable();
+            } else {
+                this.enable();
+            }
 
-    backgroundManager.on('change:activePlaylistItem', function(model, activePlaylistItem) {
-        if (activePlaylistItem === null) {
-            disableButton();
-        }
-        else {
-            enableButton();
+            return this;
+        },
+        
+        initialize: function() {
+            this.listenTo(backgroundManager, 'change:activePlaylistItem', this.render);
+            this.render();
+        },
+        
+        //  Prevent spamming by only allowing a previous click once every 100ms.
+        gotoPreviousVideo: _.debounce(function () {
+
+            if (!this.$el.hasClass('disabled')) {
+                
+                var activePlaylistItem = backgroundManager.get('activePlaylistItem');
+                var playlistId = activePlaylistItem.get('playlistId');
+                var playlist = backgroundManager.getPlaylistById(playlistId);
+
+                var previousItem = playlist.gotoPreviousItem();
+                backgroundManager.set('activePlaylistItem', previousItem);
+                
+            }
+
+        }, 100, true),
+        
+        //  Paint the button's path black and bind its click event.
+        enable: function() {
+            this.$el.prop('src', 'images/skip.png').removeClass('disabled');
+        },
+        
+        //  Paint the button's path gray and unbind its click event.
+        disable: function() {
+            this.$el.prop('src', 'images/skip-disabled.png').addClass('disabled');
         }
     });
 
-    enableIfItemsInPlaylist(backgroundManager.get('activePlaylist'));
-    
-    function enableIfItemsInPlaylist(playlist) {
-        if (playlist !== null) {
-
-            var itemCount = playlist.get('items').length;
-
-            if (itemCount > 0) {
-                enableButton();
-            }
-            
-        }
-    }
-
-    //  Paint the button's path black and bind its click event.
-    function enableButton() {
-        previousButton.prop('src', 'images/skip.png').removeClass('disabled');
-        previousButton.find('.path').css('fill', 'black');
-    }
-
-    //  Paint the button's path gray and unbind its click event.
-    function disableButton() {
-        previousButton.prop('src', 'images/skip-disabled.png').addClass('disabled');
-        $(previousButton).find('.path').css('fill', 'gray');
-    }
+    //  TODO: Maybe should be returned to be part of a bigger picture, but for now it is self-enclosing.
+    var previousButton = new previousButtonView;
 });

@@ -1,3 +1,5 @@
+console = window && console;
+
 require(['jquery',
         'jqueryUi',
         'backbone',
