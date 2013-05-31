@@ -473,7 +473,7 @@
     bottom: 3px;
 }
 
-#RepeatPlaylistSvgWrapper {
+#RepeatPlaylistSvg {
     display: none;
 }
 
@@ -627,6 +627,7 @@
     color: #fff;
 }
 
+.pressed *,
 .pressed svg *{
   fill: #6ABD45 !important;
 }

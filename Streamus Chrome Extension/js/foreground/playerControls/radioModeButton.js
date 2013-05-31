@@ -12,7 +12,7 @@
         disabledTitle: 'Radio Mode is disabled. Click to enable.',
         
         initialize: function () {
-            
+            //  Remember the initial state across pop-up sessions by writing to/from localStorage.
             var isRadioModeEnabled = localStorageManager.getIsRadioModeEnabled();
             
             if (isRadioModeEnabled) {
