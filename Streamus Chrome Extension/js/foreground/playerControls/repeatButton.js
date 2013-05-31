@@ -2,69 +2,88 @@
 define(['repeatButtonStates', 'localStorageManager'], function (repeatButtonStates, localStorageManager) {
     'use strict';
 
-    var repeatButton = $('#RepeatButton');
-    var repeatVideoIcon = $('#RepeatVideoSvgWrapper');
-    var repeatPlaylistIcon = $('#RepeatPlaylistSvgWrapper');
-    
-    var repeatButtonState = localStorageManager.getRepeatButtonState();
-    repeatButton.data('state', repeatButtonState);
+    var repeatButtonView = Backbone.View.extend({
+        el: $('#RepeatButton'),
 
-    setRepeatButtonIcon(repeatButtonState);
-
-    repeatButton.click(function () {
-
-        var currentState = $(this).data('state');
-        var nextState = null;
+        events: {
+            'click': 'toggleRepeat'
+        },
         
-        switch(currentState) {
-            case repeatButtonStates.DISABLED:
-                nextState = repeatButtonStates.REPEAT_VIDEO_ENABLED;
-                break;
-            case repeatButtonStates.REPEAT_VIDEO_ENABLED:
-                nextState = repeatButtonStates.REPEAT_PLAYLIST_ENABLED;
-                break;
-            case repeatButtonStates.REPEAT_PLAYLIST_ENABLED:
-                nextState = repeatButtonStates.DISABLED;
-                break;
-            default:
-                window && console.error("Unhandled repeatButtonState:", currentState);
-                break;
-        }
+        disabledTitle: 'Repeat is disabled. Click to enable Repeat Video.',
+        repeatVideoEnabledTitle: 'Repeat Video is enabled. Click to enable Repeat Playlist.',
+        repeatPlaylistEnabledTitle: 'Repeat Playlist is enabled. Click to disable.',
 
-        repeatButton.data('state', nextState);
-        localStorageManager.setRepeatButtonState(nextState);
-        setRepeatButtonIcon(nextState);
+        state: '',
+        
+        render: function () {
+            var repeatVideoSvg = $('#RepeatVideoSvg');
+            var repeatPlaylistSvg = $('#RepeatPlaylistSvg');
+
+            switch(this.state) {
+                case repeatButtonStates.DISABLED:
+                    //  Can't use .removeClass() on svg elements.
+                    repeatVideoSvg
+                        .show()
+                        .attr('class', '');
+                    
+                    repeatPlaylistSvg.hide();
+                    this.$el.attr('title', this.disabledTitle);
+
+                    break;
+                case repeatButtonStates.REPEAT_VIDEO_ENABLED:                    
+                    //  Can't use .addClass() on svg elements.
+                    repeatVideoSvg.attr('class', 'pressed');
+                    this.$el.attr('title', this.repeatVideoEnabledTitle);
+
+                    break;
+                case repeatButtonStates.REPEAT_PLAYLIST_ENABLED:
+
+                    repeatPlaylistSvg.show();
+                    repeatVideoSvg.hide();
+                    this.$el.attr('title', this.repeatPlaylistEnabledTitle);
+
+                    break;
+                default:
+                    window && console.error("Unhandled repeatButtonState:", state);
+                    break;
+            }
+
+        },
+        
+        initialize: function () {
+            
+            this.state = localStorageManager.getRepeatButtonState();
+            this.render();
+
+        },
+        
+        toggleRepeat: function() {
+
+            var nextState = null;
+
+            switch (this.state) {
+                case repeatButtonStates.DISABLED:
+                    nextState = repeatButtonStates.REPEAT_VIDEO_ENABLED;
+                    break;
+                case repeatButtonStates.REPEAT_VIDEO_ENABLED:
+                    nextState = repeatButtonStates.REPEAT_PLAYLIST_ENABLED;
+                    break;
+                case repeatButtonStates.REPEAT_PLAYLIST_ENABLED:
+                    nextState = repeatButtonStates.DISABLED;
+                    break;
+                default:
+                    window && console.error("Unhandled repeatButtonState:", this.state);
+                    break;
+            }
+
+            this.state = nextState;
+            localStorageManager.setRepeatButtonState(nextState);
+
+            this.render();
+        }
 
     });
-    
-    function setRepeatButtonIcon(state) {
-        switch (state) {
-            case repeatButtonStates.DISABLED:
 
-                repeatVideoIcon
-                    .show()
-                    .removeClass('pressed');
-                repeatPlaylistIcon.hide();
-                repeatButton.attr('title', 'Repeat is disabled. Click to enable Repeat Video.');
-
-                break;
-            case repeatButtonStates.REPEAT_VIDEO_ENABLED:
-
-                repeatVideoIcon.addClass('pressed');
-                repeatButton.attr('title', 'Repeat Video is enabled. Click to enable Repeat Playlist.');
-
-                break;
-            case repeatButtonStates.REPEAT_PLAYLIST_ENABLED:
-
-                repeatPlaylistIcon.show();
-                repeatVideoIcon.hide();
-                repeatButton.attr('title', 'Repeat Playlist is enabled. Click to disable.');
-                
-                break;
-            default:
-                window && console.error("Unhandled repeatButtonState:", state);
-                break;
-        }
-    }
+    var repeatButton = new repeatButtonView;
 
 });

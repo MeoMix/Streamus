@@ -1,30 +1,44 @@
 define(['localStorageManager'], function(localStorageManager){
     'use strict';
 
-    var shuffleButton = $('#ShuffleButton').click(toggleShuffleVideo);
-    var shuffleEnabledTitle = 'Playlist shuffling is enabled. Click to disable.';
-    var shuffleDisabledTitle = 'Playlist shuffling is disabled. Click to enable.';
+    var shuffleButtonView = Backbone.View.extend({
+        el: $('#ShuffleButton'),
+        
+        events: {
+            'click': 'toggleShuffleVideo'
+        },
+        
+        enabledTitle: 'Playlist shuffling is enabled. Click to disable.',
+        disabledTitle: 'Playlist shuffling is disabled. Click to enable.',
+        
+        initialize: function() {
+            //  Remember the initial state across pop-up sessions by writing to/from localStorage.
+            var isShuffleEnabled = localStorageManager.getIsShuffleEnabled();
+            
+            if (isShuffleEnabled) {
+                this.$el
+                    .addClass('pressed')
+                    .attr('title', this.enabledTitle);
+            }
+            
+        },
+        
+        toggleShuffleVideo: function () {
 
-    //  Remember the shuffled state across pop-up sessions by writing to/from localStorage.
-    var isShuffleEnabled = localStorageManager.getIsShuffleEnabled();
-    if (isShuffleEnabled) {
-        shuffleButton
-            .addClass('pressed')
-            .attr('title', shuffleEnabledTitle);
-    }
+            this.$el.toggleClass('pressed');
+            
+            var isPressed = this.$el.hasClass('pressed');
+            
+            if (isPressed) {
+                this.$el.attr('title', this.enabledTitle);
+            } else {
+                this.$el.attr('title', this.disabledTitle);
+            }
 
-    function toggleShuffleVideo() {
-		if(shuffleButton.hasClass('pressed')){
-		    shuffleButton
-		        .removeClass('pressed')
-		        .attr('title', shuffleDisabledTitle);
-		}
-		else{
-		    shuffleButton
-		        .addClass('pressed')
-		        .attr('title', shuffleEnabledTitle);
-		}
-
-	    localStorageManager.setIsShuffleEnabled(shuffleButton.hasClass('pressed'));
-    }
+            localStorageManager.setIsShuffleEnabled(isPressed);
+        }
+        
+    });
+    
+    var shuffleButton = new shuffleButtonView;
 });
