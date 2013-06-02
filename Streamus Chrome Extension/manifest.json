@@ -24,14 +24,13 @@
     "webRequest",
     "webRequestBlocking",
     "http://www.geoplugin.net/",
-    "https://www.youtube.com/",
+    "*://www.youtube.com/",
 	"http://localhost:61975/Streamus/",
-	"http://streamus.apphb.com/",
-	"https://www.youtube.com/embed/undefined?enablejsapi=1"
+	"http://streamus.apphb.com/"
 	],
   "content_scripts": [
     {
-      "matches": ["https://www.youtube.com/embed/*"],
+      "matches": ["*://www.youtube.com/embed/*"],
 	  "all_frames": true,
       "js": ["js/thirdParty/jquery.js", "js/youTubeIFrameInject.js"]
     },

@@ -1,106 +1,103 @@
 //  The play/pause icon.
-define(['backgroundManager', 'player', 'spin', 'videoDisplay'], function (backgroundManager, player, Spin) {
-	'use strict';
-	var playPauseButton = $('#PlayPauseButton');
-	var pauseIcon = $('#PauseIcon');
-	var playIcon = $('#PlayIcon');
-
-	var spinner = new Spin({
-	    lines: 13, // The number of lines to draw
-	    length: 6, // The length of each line
-	    width: 2, // The line thickness
-	    radius: 10, // The radius of the inner circle
-	    corners: 1, // Corner roundness (0..1)
-	    rotate: 0, // The rotation offset
-	    direction: 1, // 1: clockwise, -1: counterclockwise
-	    color: '#000', // #rgb or #rrggbb
-	    speed: 2, // Rounds per second
-	    trail: 25, // Afterglow percentage
-	    shadow: false, // Whether to render a shadow
-	    hwaccel: true, // Whether to use hardware acceleration
-	    className: 'spinner', // The CSS class to assign to the spinner
-	    zIndex: 2e9 // The z-index (defaults to 2000000000)
-	});
-
-    //  Only allow changing once every 100ms to preent spamming.
-	playPauseButton.click(_.debounce(function () {
-	    
-        if (!$(this).hasClass('disabled')) {
-            if (player.isPlaying()) {
-                player.pause();
-            } else {
-                player.play();
-            }
-        }
-
-	}, 100, true));
-
-    player.on('change:state', function(model, playerState) {
-        makeIconReflectPlayerState(playerState);
-    });
+define(['backgroundManager', 'player', 'spinnerManager'], function (backgroundManager, player, spinnerManager) {
+    'use strict';
     
-    var initialPlayerState = player.get('state');
-    makeIconReflectPlayerState(initialPlayerState);
+    var playPauseButtonView = Backbone.View.extend({
+        el: $('#PlayPauseButton'),
+        
+        events: {
+            'click': 'togglePlayingState'
+        },
+        
+        spinner: spinnerManager.getPlayPauseSpinner(),
+        
+        disabledTitle: 'Play disabled. Try adding a video to your playlist, first!',
+        pauseTitle: 'Click to pause the current video.',
+        playTitle: 'Click to play the current video.',
+        
+        render: function () {
 
-    //  Whenever the YouTube player changes playing state -- update whether icon shows play or pause.
-    function makeIconReflectPlayerState(playerState) {
-
-        if (playerState === PlayerStates.BUFFERING) {
-            showBufferingIcon();
-        } else if (playerState === PlayerStates.PLAYING) {
-            showPauseIcon();
-        } else {
-            showPlayIcon();
-        }
-    }
-    
-    backgroundManager.on('change:activePlaylistItem', function (model, activePlaylistItem) {
-        if (activePlaylistItem === null) {
-            disableButton();
-        } else {
-            enableButton();
-        }
-
-    });
-
-    if (backgroundManager.get('activePlaylistItem') != null) {
-        enableButton();
-    }
-
-    //  Paint button's path black and allow it to be clicked
-    function enableButton() {
-        playPauseButton.removeClass('disabled');
-        playPauseButton.find('.path').css('fill', 'black');
-        playPauseButton.attr('title', 'Click to play the current video.');
-    }
-    
-    //  Paint the button's path gray and disallow it to be clicked
-    function disableButton() {
-        playPauseButton.addClass('disabled');
-        playPauseButton.find('.path').css('fill', 'gray');
-        playPauseButton.attr('title', 'Play disabled. Try adding a video to your playlist, first!');
-    }
+            var pauseIcon = $('#PauseIcon');
+            var playIcon = $('#PlayIcon');
             
-    function showBufferingIcon(){
-        playIcon.hide();
-        pauseIcon.hide();
-        spinner.spin($('#LoadingSpinner')[0]);
-    }
+            //  Whenever the YouTube player changes playing state -- update whether icon shows play or pause.
+            var playerState = player.get('state');
 
-    //  Change the music button to the 'Play' image
-    function showPlayIcon() {
-        spinner.stop();
-        pauseIcon.hide();
-        playIcon.show();
-        playPauseButton.attr('title', 'Click to play the current video.');
-    }
+            if (playerState === PlayerStates.BUFFERING) {
+                //  Show buffering icon and hide the others.
+                this.spinner.spin($('#LoadingSpinner')[0]);
 
-    //  Change the music button to the 'Pause' image
-    function showPauseIcon() {
-        spinner.stop();
-        pauseIcon.show();
-        playIcon.hide();
-        playPauseButton.attr('title', 'Click to pause the current video.');
-    }
- 
+                playIcon.hide();
+                pauseIcon.hide();
+            } else {
+                // Not buffering, so hide the spinner.
+                this.spinner.stop();
+
+                if (playerState === PlayerStates.PLAYING) {
+                    //  Change the music button to the 'Pause' image
+                    pauseIcon.show();
+                    playIcon.hide();
+                    this.$el.attr('title', this.pauseTitle);
+                } else {
+                    //  Change the music button to the 'Play' image
+                    this.spinner.stop();
+                    pauseIcon.hide();
+                    playIcon.show();
+                    this.$el.attr('title', this.playTitle);
+                }
+            }
+
+            return this;
+        },
+        
+        initialize: function () {
+
+            var self = this;
+            
+            //  Only allowed to play if an item exists in the current playlist.
+            this.listenTo(backgroundManager, 'change:activePlaylistItem', function (model, activePlaylistItem) {
+                if (activePlaylistItem === null) {
+                    self.disable();
+                } else {
+                    self.enable();
+                }
+
+            });
+
+            if (backgroundManager.get('activePlaylistItem') !== null) {
+                self.enable();
+            }
+
+            this.listenTo(player, 'change:state', this.render);
+            this.render();
+        },
+        
+        //  Only allow changing once every 100ms to preent spamming.
+        togglePlayingState: _.debounce(function () {
+
+            if (!$(this).hasClass('disabled')) {
+                if (player.isPlaying()) {
+                    player.pause();
+                } else {
+                    player.play();
+                }
+            }
+
+        }, 100, true),
+
+        //  Paint button's path black and allow it to be clicked
+        enable: function() {
+            this.$el.removeClass('disabled');
+            this.$el.attr('title', this.playTitle);
+        },
+        
+        //  Paint the button's path gray and disallow it to be clicked
+        disable: function() {
+            this.$el.addClass('disabled');
+            this.$el.attr('title', this.disabledTitle);
+        },
+    });
+
+    var playPauseButton = new playPauseButtonView;
+
 });

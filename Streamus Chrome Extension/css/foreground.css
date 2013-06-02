@@ -252,6 +252,10 @@
   cursor:pointer;
 }
 
+#PlayPauseButton .path {
+    fill: black;
+}
+
 #NextButton {
   top:0;
   right:0;
@@ -287,6 +291,7 @@
   cursor: default;
 }
 
+#PlayPauseButton.disabled .path,
 #PreviousButton.disabled > svg *,
 #NextButton.disabled > svg * {
     fill: gray;

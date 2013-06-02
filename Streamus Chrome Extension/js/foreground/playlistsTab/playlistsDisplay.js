@@ -1,25 +1,9 @@
 //  This is the list of playlists on the playlists tab.
-define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spin'], function (contextMenu, ytHelper, backgroundManager, helpers, Spin) {
+define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerManager'], function (contextMenu, ytHelper, backgroundManager, helpers, spinnerManager) {
     //  TODO: Make this sortable and should inherit from a common List object. 
     var playlistList = $('#PlaylistList ul');
-   
-    var spinner = new Spin({
-        lines: 13, // The number of lines to draw
-        length: 6, // The length of each line
-        width: 2, // The line thickness
-        radius: 8, // The radius of the inner circle
-        corners: 1, // Corner roundness (0..1)
-        rotate: 0, // The rotation offset
-        direction: 1, // 1: clockwise, -1: counterclockwise
-        color: '#000', // #rgb or #rrggbb
-        speed: 2, // Rounds per second
-        trail: 25, // Afterglow percentage
-        shadow: false, // Whether to render a shadow
-        hwaccel: true, // Whether to use hardware acceleration
-        className: 'spinner', // The CSS class to assign to the spinner
-        zIndex: 2e9, // The z-index (defaults to 2000000000),
-        top: 5
-    });
+
+    var spinner = spinnerManager.getPlaylistSpinner();
 
     backgroundManager.on('change:activeStream', reload);
     backgroundManager.get('allPlaylists').on('remove change:title', reload);
