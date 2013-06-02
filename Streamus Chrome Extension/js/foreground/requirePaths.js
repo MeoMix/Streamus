@@ -42,6 +42,7 @@ var require = {
         'videoDisplay': 'foreground/videoTab/videoDisplay',
         'scrollIntoView': 'thirdParty/jquery.scrollIntoView',
         'spin': 'thirdParty/jquery.spin',
-        'repeatButtonStates': 'repeatButtonStates'
+        'repeatButtonStates': 'repeatButtonStates',
+        'spinnerManager': 'foreground/spinnerManager'
     }
 };
