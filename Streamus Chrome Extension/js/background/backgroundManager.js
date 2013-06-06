@@ -178,6 +178,8 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
             var playlist = self.getPlaylistById(playlistId);
             var playlistItems = playlist.get('items');
 
+            //  TODO: I'd like to have this logic inside of playlist and not backgroundManager but the first bit of code
+            //  needs to run first because playlist.gotoNextItem is dependent on the old firstItemId to know the next item.
             //  Update these before getting nextItem because we don't want to have something point to the removed item.
             if (playlistItems.length > 0) {
                 //  Update linked list pointers
@@ -187,8 +189,16 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                 //  Remove the item from linked list.
                 previousItem.set('nextItemId', nextItem.get('id'));
                 nextItem.set('previousItemId', previousItem.get('id'));
-            }
+                
+                //  Update firstItem if it was removed
+                if (playlist.get('firstItemId') === playlistItem.get('id')) {
+                    playlist.set('firstItemId', playlistItem.get('nextItemId'));
+                }
 
+            } else {
+                playlist.set('firstItemId', '00000000-0000-0000-0000-000000000000');
+            }
+            
             self.get('allPlaylistItems').remove(playlistItem);
             
             if (self.get('activePlaylistItem') === playlistItem) {
@@ -203,19 +213,7 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                 }
 
             }
-            
-            //  TODO: I'd like to have this logic inside of playlist and not backgroundManager but the first bit of code
-            //  needs to run first because playlist.gotoNextItem is dependent on the old firstItemId to know the next item.
-            if (playlistItems.length > 0) {
 
-                //  Update firstItem if it was removed
-                if (playlist.get('firstItemId') === playlistItem.get('id')) {
-                    playlist.set('firstItemId', playlistItem.get('nextItemId'));
-                }
-
-            } else {
-                playlist.set('firstItemId', '00000000-0000-0000-0000-000000000000');
-            }
         });
     }
     

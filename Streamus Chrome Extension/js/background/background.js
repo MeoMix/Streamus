@@ -154,6 +154,22 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
                     });
 
                 });
+
+                break;
+            case 'addPlaylistByShareCode':
+                var activeStream = backgroundManager.get('activeStream');
+                
+                //  TODO: This is sloppy.
+                var dataSource = {
+                    id: request.shareCode,
+                    type: DataSources.SHARED_PLAYLIST
+                };
+
+                activeStream.addPlaylistByDataSource('', dataSource, function() {
+                    sendResponse({
+                        result: 'success' 
+                    });
+                });
                 
                 break;
         }

@@ -30,15 +30,20 @@
 	],
   "content_scripts": [
     {
-      "matches": ["*://www.youtube.com/embed/*"],
+      "matches": ["*://*.youtube.com/embed/*"],
 	  "all_frames": true,
       "js": ["js/thirdParty/jquery.js", "js/youTubeIFrameInject.js"]
     },
     {
-      "matches": ["*://www.youtube.com/watch?v*"],
+      "matches": ["*://*.youtube.com/watch?v*"],
       "css": ["css/inject.css"],
 	  "all_frames": true,
-      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/inject.js"]
+      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/youTubeInject.js"]
+    },
+    {
+      "matches": ["*://*.share.streamus.com/*"],
+	  "all_frames": true,
+      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/shareInject.js"]
     }
   ],
   "commands": {

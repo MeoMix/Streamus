@@ -226,6 +226,7 @@ define(['ytHelper',
                 //  Radio mode overrides the other settings
                 if (isRadioModeEnabled) {
                     var relatedVideo = this.getRelatedVideo();
+                    console.log("Fetch related video:", relatedVideo);
                     nextItem = this.addItem(relatedVideo);
                 } else {
                     //  If repeat video is enabled then keep on the last item in history
