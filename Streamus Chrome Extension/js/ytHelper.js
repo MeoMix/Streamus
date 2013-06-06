@@ -2,10 +2,47 @@
 define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
     'use strict';
 
-    var videoInformationFields = 'author,title,media:group(yt:videoid,yt:duration)';
+    var videoInformationFields = 'author,title,media:group(yt:videoid,yt:duration),yt:accessControl';
     var videosInformationFields = 'entry(' + videoInformationFields + ')';
+    //  TODO: Uhhh should this be in here?
     var developerKey = 'AI39si7voIBGFYe-bcndXXe8kex6-N_OSzM5iMuWCdPCSnZxLB_qIEnQ-HMijHrwN1Y9sFINBi_frhjzVVrYunHH8l77wfbLCA';
     
+    //  Additional processing is required to ensure provided videos are playable. Replace with video of similiar name if unplayable.
+    function validateEntryAndReplaceIfUnplayable(entry, callback) {
+        
+        //  TODO: I might need to do syndication as well, but I do not believe so.
+        var ytAccessControlList = entry.yt$accessControl;
+
+        var embedAccessControl = _.find(ytAccessControlList, function (accessControl) {
+            return accessControl.action === 'embed';
+        });
+
+        var isEmbedAllowed = embedAccessControl.permissions === 'allowed';
+
+        if (isEmbedAllowed) {
+            callback(entry);
+        } else {
+
+            findPlayableByTitle(entry.title.$t, function (playableVideoInformation) {
+                callback(playableVideoInformation);
+            });
+
+        }
+
+    }
+    
+    function findPlayableByTitle(title, callback) {
+        search(title, function (videoInformationList) {
+
+            videoInformationList.sort(function (a, b) {
+                return levDist(a.title.$t, title) - levDist(b.title.$t, title);
+            });
+
+            var videoInformation = videoInformationList.length > 0 ? videoInformationList[0] : null;
+            callback(videoInformation);
+        });
+    };
+
     //  Performs a search of YouTube with the provided text and returns a list of playable videos (<= max-results)
     function search(text, callback) {
 
@@ -98,9 +135,36 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                     strict: true
                 },
                 success: function (result) {
+                    
                     if (callback) {
                         callback(result.feed.entry);
                     }
+
+                    //var playableEntryList = [];
+                    //var deferredEvents = [];
+
+                    //_.each(result.feed.entry, function (entry) {
+
+                    //    var deferred = $.Deferred(function (dfd) {
+                            
+                    //        validateEntryAndReplaceIfUnplayable(entry, function (playableEntry) {
+                    //            playableEntryList.push(playableEntry);
+                    //            console.log("resolving dfd");
+                    //            dfd.resolve();
+                    //        });
+
+                    //    }).promise();
+                    //    deferredEvents.push(deferred);
+                        
+                    //});
+
+                    //$.when(deferredEvents).then(function () {
+                    //    console.log("calling callback");
+                    //    if (callback) {
+                    //        callback(playableEntryList);
+                    //    }
+                    //});
+
                 },
                 error: function(error) {
                     window && console.error(error);
@@ -197,11 +261,13 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                 data: {
                     v: 2,
                     alt: 'json',
+                    format: 5,
                     key: developerKey,
                     fields: videoInformationFields,
                     strict: true
                 },
                 success: function (result) {
+                    console.log("Result:", result);
 
                     //  result will be null if it has been banned on copyright grounds
                     if (result == null) {
@@ -209,7 +275,7 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                         
                         if (optionalVideoTitle && $.trim(optionalVideoTitle) != '') {
 
-                            self.findPlayableByTitle(optionalVideoTitle, function (playableVideoInformation) {
+                            findPlayableByTitle(optionalVideoTitle, function (playableVideoInformation) {
 
                                 if (callback) {
                                     callback(playableVideoInformation);
@@ -220,9 +286,11 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
 
                     } else {
 
-                        if (callback) {
-                            callback(result.entry);
-                        }
+                        validateEntryAndReplaceIfUnplayable(result.entry, function(playableEntry) {
+                            if (callback) {
+                                callback(playableEntry);
+                            }
+                        });
 
                     }
 
@@ -312,18 +380,6 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                         callback(null);
                     }
                 }
-            });
-        },
-
-        findPlayableByTitle: function(title, callback) {
-            search(title, function (videoInformationList) {
-
-                videoInformationList.sort(function(a, b) {
-                    return levDist(a.title.$t, title) - levDist(b.title.$t, title);
-                });
-
-                var videoInformation = videoInformationList.length > 0 ? videoInformationList[0] : null;
-                callback(videoInformation);
             });
         }
     };
