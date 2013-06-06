@@ -2,9 +2,9 @@
 //  Provides an interface to the YouTube iFrame.
 //  Starts up Player object after receiving a ready response from the YouTube API.
 define(['jquery'], function () {
-    //'use strict';
+    'use strict';
 
-    var YouTubePlayerAPI = Backbone.Model.extend({
+    var youTubePlayerApiModel = Backbone.Model.extend({
         defaults: {
             ready: false
         },
@@ -29,5 +29,5 @@ define(['jquery'], function () {
         }
     });
     
-    return new YouTubePlayerAPI();
+    return new youTubePlayerApiModel();
 });
