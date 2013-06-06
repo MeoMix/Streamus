@@ -14,7 +14,7 @@ define(['contextMenu', 'backgroundManager'], function (contextMenu, backgroundMa
                 playlist.getShareCode(function (shareCode) {
                     chrome.extension.sendMessage({
                         method: 'copy',
-                        text: 'streamus:' + shareCode
+                        text: 'http://share.streamus.com/playlist/' + shareCode
                     });
                 });
 

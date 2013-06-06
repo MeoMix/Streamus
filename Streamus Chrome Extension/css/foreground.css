@@ -36,10 +36,12 @@
   overflow: hidden;
 }
 
-
-  
 .gradient {
   background-image:-webkit-gradient(linear,left top, left bottom, from(rgba(255,255,255,.1)), to(rgba(0,0,0,.1)));
+}
+
+.halfGradient {
+  background-image:-webkit-gradient(linear,left top, left bottom, from(rgba(255,255,255,.1)), to(rgba(103, 103, 103,.1)));
 }
 
 #head {
@@ -264,6 +266,7 @@
   border-left:1px solid #ccc; 
   border-bottom: 1px solid #fff;
   cursor:pointer;
+  background-color: #efefef !important;
 }
 
 #PreviousButton{
@@ -275,6 +278,7 @@
   border-right:1px solid #fff;
   border-bottom: 1px solid #fff;
   cursor:pointer;
+  background-color: #efefef !important;
 }
 
 .contextMenuItem[disabled=disabled] {
@@ -284,11 +288,15 @@
     text-decoration: line-through !important;
 }
 
-#PlayPauseButton.disabled:hover,
-#NextButton.disabled:hover,
-#PreviousButton.disabled:hover {
+#PlayPauseButton.disabled:hover {
   background-color: transparent;
   cursor: default;
+}
+
+#NextButton.disabled:hover,
+#PreviousButton.disabled:hover {
+    background-color: #efefef !important;
+    cursor: default;
 }
 
 #PlayPauseButton.disabled .path,
@@ -309,12 +317,15 @@
 }
 
 #PlayPauseButton:hover, 
-#NextButton:hover,
-#PreviousButton:hover,
 #HomeMenuButton:hover,
 #SettingsMenuButton:hover,
 #PlaylistsMenuButton:hover {
   background-color:rgba(255,255,255,0.3);
+}
+
+#NextButton:hover,
+#PreviousButton:hover {
+    background-color: #F3F3F3 !important;
 }
 
 #PlayPauseButton:active, 
@@ -395,7 +406,7 @@
   background: #fff;
 }
   
-#rowBottom {
+#timeDisplayWrapper {
   overflow: hidden;
   top:40px;
   left:70px;
@@ -417,16 +428,28 @@
   border-right:1px solid #666;
 }
 
+#head {
+    overflow: visible !important;
+}
+
+#VolumeControl {
+  right:0;
+  top: 40px;
+  width:40px;
+  height:135px;
+}
+
 #MuteButton {
   -webkit-box-shadow:inset 0 3px 5px #000;
-  right:40px;
-  top:0;
+  top: 0;
   width:40px;
   height:30px;
   border-left: 1px solid #000; 
   cursor: pointer; 
-  border-right:1px solid #444; 
-  background: rgba(0,0,0,.5)
+  border-right:1px solid #444;
+  background: rgba(0, 0, 0, .5);
+  right:0;
+  border-right:none;
 }
 
 #MuteButton svg {
@@ -436,11 +459,6 @@
   margin: -8px 0 0 -8px;
 }
 
-#MuteButton {
-  right:0;
-  border-right:none;
-}
-
 #VolumeSliderWrapper {
   -webkit-transition: top 0.5s;
   width:40px; 
@@ -448,10 +466,14 @@
   background: #333;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius:5px;
-  top:-35px;
+  top:-75px;
   right:0;
-  z-index:4;
+  z-index:-1;
   -webkit-box-shadow: 0 3px 5px rgba(0,0,0,0.3)
+}
+
+#VolumeSliderWrapper.expanded {
+    top: 30px;
 }
 
 #ShuffleButton:hover,

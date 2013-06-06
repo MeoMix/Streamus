@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Streamus Server Tests", "St
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Streamus Chrome Extension", "Streamus Chrome Extension\Streamus Chrome Extension.csproj", "{2EAC119F-E979-44B7-BCF6-0B477BE94B8F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Streamus Website", "Streamus Website\Streamus Website.csproj", "{F206E056-5C52-472C-B455-53A28089ECD1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{2EAC119F-E979-44B7-BCF6-0B477BE94B8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2EAC119F-E979-44B7-BCF6-0B477BE94B8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2EAC119F-E979-44B7-BCF6-0B477BE94B8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F206E056-5C52-472C-B455-53A28089ECD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F206E056-5C52-472C-B455-53A28089ECD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F206E056-5C52-472C-B455-53A28089ECD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F206E056-5C52-472C-B455-53A28089ECD1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -137,6 +137,7 @@
     <Content Include="js\background\user.js" />
     <Content Include="js\background\video.js" />
     <Content Include="js\background\videos.js" />
+    <Content Include="js\shareInject.js" />
     <Content Include="js\dataSources.js" />
     <Content Include="js\foreground\backgroundManager.js" />
     <Content Include="js\foreground\contentButtons.js" />
@@ -154,7 +155,7 @@
     <Content Include="js\foreground\playerControls\repeatButton.js" />
     <Content Include="js\foreground\playerControls\shuffleButton.js" />
     <Content Include="js\foreground\playerControls\nextButton.js" />
-    <Content Include="js\foreground\playerControls\volumeSlider.js" />
+    <Content Include="js\foreground\playerControls\volumeControl.js" />
     <Content Include="js\foreground\playlistItemsTab\playlistItemInput.js" />
     <Content Include="js\foreground\playlistItemsTab\playlistItemsContextMenu.js" />
     <Content Include="js\foreground\playlistItemsTab\playlistItemsDisplay.js" />
@@ -167,7 +168,7 @@
     <Content Include="js\foreground\spinnerManager.js" />
     <Content Include="js\foreground\videoTab\videoDisplay.js" />
     <Content Include="js\helpers.js" />
-    <Content Include="js\inject.js" />
+    <Content Include="js\youTubeInject.js" />
     <Content Include="js\playerStates.js" />
     <Content Include="js\programState.js" />
     <Content Include="js\repeatButtonStates.js" />

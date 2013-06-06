@@ -28,21 +28,22 @@
                         Welcome to Streamus
                     </span>
                 </div>
-                <div id="NextButton" class="disabled" title="Skip to the next video.">
+                <div id="NextButton" class="disabled halfGradient" title="Skip to the next video.">
                     <svg width="16px" height="16px">
                         <rect class="path" x="14" y="3" width="2" height="10" fill="gray" />
                         <path class="path" d="M0,3 L7,8 L0,13z" fill="gray" />
                         <path class="path" d="M7,3 L14,8, L7,13z" fill="gray" />
                     </svg> 
                 </div>
-                <div id="PreviousButton" class="disabled" title="Go back to the previous video.">
+                <div id="PreviousButton" class="disabled halfGradient" title="Go back to the previous video.">
                     <svg width="16px" height="16px">
                         <rect class="path" x="0" y="3" width="2" height="10" fill="gray" />
                         <path class="path" d="M9,3 L2,8 L9,13z" fill="gray" />
                         <path class="path" d="M16,3 L9,8, L16,13z" fill="gray" />
                     </svg>  
                 </div>
-                <div id="rowBottom">
+                
+                <div id="timeDisplayWrapper">
                     <input type="range" id="VideoTimeProgressBar" title="Click or drag to change the time." min="0" step="1" max="0" value="0" />
 
                     <div id="time">
@@ -50,6 +51,9 @@
                         / 
                         <label class="TimeDisplay" id="TotalTimeLabel" title="Video Duration">00:00</label>
                     </div>
+                </div>
+                
+                <div id="VolumeControl">
                     <div id="MuteButton" class="volumeControl" title="Toggle Volume">
                         <svg width="16" height="16">
                             <path d="M0,6 L3,6 L7,2 L7,14 L3,10 L0,10Z" fill="#fff" />
@@ -59,11 +63,12 @@
                             <rect class="MuteButtonBar" id="MuteButtonBar4" x="15" y="2" width="1" height="12" />
                         </svg>
                     </div>
+                
+                    <div id="VolumeSliderWrapper" class="volumeControl">
+                        <input type="range" id="VolumeSlider" class="volumeControl" title="Click or drag to change the volume." min="0" max="100" step="1" value="0" />
+                    </div>
                 </div>
-            </div>
 
-            <div id="VolumeSliderWrapper" class="volumeControl">
-                <input type="range" id="VolumeSlider" class="volumeControl" title="Click or drag to change the volume." min="0" max="100" step="1" value="0" />
             </div>
 
             <div id="menu">
