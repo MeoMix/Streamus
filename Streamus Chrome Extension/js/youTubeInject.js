@@ -273,7 +273,7 @@ $(function () {
                 playlistSelect.find('option[value="' + request.data.id + '"]').text(request.data.title);
                 break;
             default:
-                window && console.error("Unhandled request", request);
+                console.error("Unhandled request", request);
                 break;
         }
   });

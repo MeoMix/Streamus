@@ -65,7 +65,7 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
                 onUserLoaded.call(self, model, true);
             },
             error: function (error) {
-                window && console.error(error);
+                console.error(error);
             }
         });
     }
@@ -103,14 +103,14 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
         var self = this;
         this.fetch({
             success: function (model) {
-                console.log("user fetch success:", model);
+
                 onUserLoaded.call(self, model, shouldSetSyncStorage);
             },
             error: function (error) {
 
                 //  Failed to fetch the user. Recover by creating a new user for now. Should probably do some sort of notify.
                 createNewUser.call(self);
-                window && console.error(error);
+                console.error(error);
             }
         });
     }

@@ -1,11 +1,11 @@
-﻿using System;
-using NHibernate.Cfg;
+﻿using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
 using NUnit.Framework;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
+using System;
 
 namespace Streamus.Tests
 {
@@ -14,7 +14,7 @@ namespace Streamus.Tests
     {
         private Configuration Configuration { get; set; }
         private IUserDao UserDao { get; set; }
-        private static readonly UserManager UserManager = new UserManager();
+        private UserManager UserManager { get; set; }
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -22,6 +22,9 @@ namespace Streamus.Tests
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
+            AutofacRegistrations.RegisterDaoFactory();
+            UserManager = new UserManager();
+
             try
             {
                 UserDao = new UserDao();

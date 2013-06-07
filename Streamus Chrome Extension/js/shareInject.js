@@ -7,18 +7,29 @@ $(function () {
     
     //  The last section of the URL should be the sharecode and the second to last section should be the indicator of playlist or stream.
 
-    var shareCode = urlSections[urlSections.length - 1];
-    var indicator = urlSections[urlSections.length - 2];
+    var indicator = urlSections[urlSections.length - 3];
+    var shareCodeShortId = urlSections[urlSections.length - 2];
+    var urlFriendlyEntityTitle = urlSections[urlSections.length - 1];
 
-    console.log("Length:", shareCode.length);
 
-    if (indicator === 'playlist' && shareCode.length === 36) {
+    if (indicator === 'playlist' && shareCodeShortId.length === 12 && urlFriendlyEntityTitle.length > 0) {
         chrome.runtime.sendMessage({
-            method: "addPlaylistByShareCode",
-            shareCode: shareCode
+            method: "addPlaylistByShareData",
+            shareCodeShortId: shareCodeShortId,
+            urlFriendlyEntityTitle: urlFriendlyEntityTitle
         }, function (response) {
+            
+            var resultText;
 
-            console.log("response:", response);
+            if (response.result === 'success') {
+                resultText = 'Playlist ' + response.playlistTitle + ' added successfully.';
+            } else {
+                resultText = 'There was an issue adding your playlist. Check the URL?';
+            }
+            
+            $('<div>', {
+                text: resultText
+            }).appendTo('body');
 
         });
     }

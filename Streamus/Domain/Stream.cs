@@ -1,10 +1,9 @@
-﻿using System.Web.Script.Serialization;
-using FluentValidation;
+﻿using FluentValidation;
+using Streamus.Domain.Validators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Streamus.Domain.Validators;
 
 namespace Streamus.Domain
 {        

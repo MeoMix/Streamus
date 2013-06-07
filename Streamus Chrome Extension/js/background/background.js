@@ -47,7 +47,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
         }
         //  If the video stopped playing and there is another video to play (not the same one), do so.
         else if (state === PlayerStates.ENDED) {
-            window && console.log("ENDED DETECTED!!!!");
+
             var activePlaylistItem = backgroundManager.get('activePlaylistItem');
             //  NOTE: No guarantee that the activePlaylistItem's playlistId will be activePlaylist's ID.
             var playlistId = activePlaylistItem.get('playlistId');
@@ -156,19 +156,25 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
                 });
 
                 break;
-            case 'addPlaylistByShareCode':
+            case 'addPlaylistByShareData':
                 var activeStream = backgroundManager.get('activeStream');
                 
-                //  TODO: This is sloppy.
-                var dataSource = {
-                    id: request.shareCode,
-                    type: DataSources.SHARED_PLAYLIST
-                };
+                activeStream.addPlaylistByShareData(request.shareCodeShortId, request.urlFriendlyEntityTitle, function(playlist) {
 
-                activeStream.addPlaylistByDataSource('', dataSource, function() {
-                    sendResponse({
-                        result: 'success' 
-                    });
+                    if (playlist) {
+                        
+                        sendResponse({
+                            result: 'success',
+                            playlistTitle: playlist.get('title')
+                        });
+                        
+                    } else {
+                        
+                        sendResponse({
+                            result: 'error'
+                        });
+                        
+                    }
                 });
                 
                 break;

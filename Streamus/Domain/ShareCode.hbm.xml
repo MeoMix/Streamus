@@ -8,6 +8,9 @@
     
     <property name="EntityType" not-null="true" />
     <property name="EntityId" not-null="true" />
+    <property name="ShortId" not-null="true" />
+    <property name="UrlFriendlyEntityTitle" not-null="true" />
+    
   </class>
   
 </hibernate-mapping>

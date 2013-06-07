@@ -9,13 +9,15 @@ define(['contextMenu', 'backgroundManager'], function (contextMenu, backgroundMa
 
             this.empty();
             
-            this.addContextMenuItem('Get share code', false, function () {
+            this.addContextMenuItem('Copy URL', false, function () {
 
                 playlist.getShareCode(function (shareCode) {
+
                     chrome.extension.sendMessage({
                         method: 'copy',
-                        text: 'http://share.streamus.com/playlist/' + shareCode
+                        text: 'http://share.streamus.com/playlist/' + shareCode.get('shortId') + '/' + shareCode.get('urlFriendlyEntityTitle')
                     });
+                    
                 });
 
             });
@@ -30,7 +32,7 @@ define(['contextMenu', 'backgroundManager'], function (contextMenu, backgroundMa
                     success: function () {
                     },
                     error: function (error) {
-                        window && console.error(error);
+                        console.error(error);
                     }
                 });
 

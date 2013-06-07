@@ -294,9 +294,9 @@ namespace Streamus.Domain.Managers
             }
         }
 
-        public string GetShareCode(Guid playlistId)
+        public ShareCode GetShareCode(Guid playlistId)
         {
-            string shareCodeString;
+            ShareCode shareCode = null;
 
             try
             {
@@ -325,12 +325,11 @@ namespace Streamus.Domain.Managers
                 //  Gotta do this manually.
                 shareablePlaylistCopy.Items.ToList().ForEach(PlaylistItemDao.Save);
 
-                ShareCode shareCode = new ShareCode(ShareableEntityType.Playlist, shareablePlaylistCopy.Id);
+                shareCode = new ShareCode(shareablePlaylistCopy);
 
                 shareCode.ValidateAndThrow();
                 ShareCodeDao.Save(shareCode);
 
-                shareCodeString = shareCode.ToString();
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
             catch (Exception exception)
@@ -340,7 +339,7 @@ namespace Streamus.Domain.Managers
                 throw;
             }
 
-            return shareCodeString;
+            return shareCode;
         }
     }
 }

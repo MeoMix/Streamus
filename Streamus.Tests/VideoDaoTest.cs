@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
+using System;
+using System.Collections.Generic;
 
 namespace Streamus.Tests
 {
@@ -12,7 +12,7 @@ namespace Streamus.Tests
     public class VideoDaoTest
     {
         private IVideoDao VideoDao { get; set; }
-        private static readonly VideoManager VideoManager = new VideoManager();
+        private VideoManager VideoManager { get; set; }
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -20,6 +20,9 @@ namespace Streamus.Tests
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
+            AutofacRegistrations.RegisterDaoFactory();
+            VideoManager = new VideoManager();
+
             try
             {
                 VideoDao = new VideoDao();

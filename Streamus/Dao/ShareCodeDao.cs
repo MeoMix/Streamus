@@ -1,29 +1,20 @@
-﻿using log4net;
-using NHibernate;
+﻿using NHibernate;
+using NHibernate.Criterion;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using System;
-using System.Reflection;
 
 namespace Streamus.Dao
 {
     public class ShareCodeDao : AbstractNHibernateDao<ShareCode>, IShareCodeDao
     {
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-        public ShareCode Get(Guid id)
+        public ShareCode GetByShortIdAndEntityTitle(string shareCodeShortId, string urlFriendlyEntityTitle)
         {
-            ShareCode shareCode;
+            ICriteria criteria = NHibernateSession
+                .CreateCriteria(typeof(ShareCode), "ShareCode")
+                .Add(Restrictions.Eq("ShareCode.ShortId", shareCodeShortId))
+                .Add(Restrictions.Eq("ShareCode.UrlFriendlyEntityTitle", urlFriendlyEntityTitle));
 
-            try
-            {
-                shareCode = (ShareCode)NHibernateSession.Load(typeof(ShareCode), id);
-            }
-            catch (ObjectNotFoundException exception)
-            {
-                Logger.Error(exception);
-                throw;
-            }
+            ShareCode shareCode = criteria.UniqueResult<ShareCode>();
 
             return shareCode;
         }

@@ -58,7 +58,7 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
         ytHelper.getVideoInformation(videoId, '', function (videoInformation) {
             
             if (videoInformation == null) {
-                window && console.error("videoInformation was null for:", videoId);
+                console.error("videoInformation was null for:", videoId);
                 dialogs.showBannedVideoDialog();
             } else {
                 backgroundManager.get('activePlaylist').addItemByInformation(videoInformation);

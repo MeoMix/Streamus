@@ -44,7 +44,7 @@ define(['repeatButtonStates', 'localStorageManager'], function (repeatButtonStat
 
                     break;
                 default:
-                    window && console.error("Unhandled repeatButtonState:", state);
+                    console.error("Unhandled repeatButtonState:", state);
                     break;
             }
 
@@ -72,7 +72,7 @@ define(['repeatButtonStates', 'localStorageManager'], function (repeatButtonStat
                     nextState = repeatButtonStates.DISABLED;
                     break;
                 default:
-                    window && console.error("Unhandled repeatButtonState:", this.state);
+                    console.error("Unhandled repeatButtonState:", this.state);
                     break;
             }
 
