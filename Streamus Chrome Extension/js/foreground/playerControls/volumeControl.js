@@ -8,6 +8,8 @@ define(['player'], function (player) {
         events: {
             'change #VolumeSlider': 'setVolume',
             'click #MuteButton': 'toggleMute',
+            //  TODO: Can I combine these two?
+            'mousewheel': 'scrollVolume',
             'mousewheel .volumeControl': 'scrollVolume',
             'mouseenter .volumeControl': 'expand',
             'mouseleave': 'contract'

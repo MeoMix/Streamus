@@ -267,6 +267,7 @@
   border-bottom: 1px solid #fff;
   cursor:pointer;
   background-color: #efefef !important;
+  z-index: 2;
 }
 
 #PreviousButton{
@@ -416,6 +417,7 @@
   border-top:1px solid #000; 
   background-color: #666;
   background-image: -webkit-gradient(linear,left top, left bottom, from(rgba(0,0,0,.5)), to(rgba(0,0,0,0)));
+  z-index: 2;
 }
 
 #time {
@@ -450,6 +452,7 @@
   background: rgba(0, 0, 0, .5);
   right:0;
   border-right:none;
+  z-index: 2;
 }
 
 #MuteButton svg {
@@ -468,7 +471,7 @@
   border-bottom-right-radius:5px;
   top:-75px;
   right:0;
-  z-index:-1;
+  z-index:0;
   -webkit-box-shadow: 0 3px 5px rgba(0,0,0,0.3)
 }
 
