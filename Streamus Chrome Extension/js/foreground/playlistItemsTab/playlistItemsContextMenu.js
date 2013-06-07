@@ -22,7 +22,7 @@ define(['contextMenu', 'backgroundManager'], function (contextMenu) {
                     success: function() {
                     },
                     error: function (error) {
-                        window && console.error("Failed to destroy item", error);
+                        console.error("Failed to destroy item", error);
                     }
                 });
             });

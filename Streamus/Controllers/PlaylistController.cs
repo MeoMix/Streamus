@@ -95,15 +95,20 @@ namespace Streamus.Controllers
         [HttpGet]
         public JsonResult GetShareCode(Guid playlistId)
         {
-            string shareCode = PlaylistManager.GetShareCode(playlistId);
+            ShareCode shareCode = PlaylistManager.GetShareCode(playlistId);
 
-            return Json(shareCode, JsonRequestBehavior.AllowGet);
+            return new JsonDataContractActionResult(shareCode);
         }
 
         [HttpGet]
-        public JsonResult CreateAndGetCopyByShareCode(Guid shareCodeId, Guid streamId)
+        public JsonResult CreateAndGetCopyByShareCode(string shareCodeShortId, string urlFriendlyEntityTitle, Guid streamId)
         {
-            ShareCode shareCode = ShareCodeDao.Get(shareCodeId);
+            ShareCode shareCode = ShareCodeDao.GetByShortIdAndEntityTitle(shareCodeShortId, urlFriendlyEntityTitle);
+
+            if (shareCode == null)
+            {
+                throw new ApplicationException("Unable to locate shareCode in database.");
+            }
 
             if (shareCode.EntityType != ShareableEntityType.Playlist)
             {

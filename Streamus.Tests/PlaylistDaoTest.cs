@@ -13,10 +13,9 @@ namespace Streamus.Tests
     {
         private IPlaylistDao PlaylistDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
-        private IVideoDao VideoDao { get; set; }
         private User User { get; set; }
         private Video Video { get; set; }
-        private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
+        private PlaylistManager PlaylistManager { get; set; }
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -24,11 +23,13 @@ namespace Streamus.Tests
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
+            AutofacRegistrations.RegisterDaoFactory();
+            PlaylistManager = new PlaylistManager();
+
             try
             {
                 PlaylistDao = new PlaylistDao();
                 PlaylistItemDao = new PlaylistItemDao();
-                VideoDao = new VideoDao();
             }
             catch (TypeInitializationException exception)
             {

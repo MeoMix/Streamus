@@ -108,8 +108,7 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
 
             stream.get('playlists').on('add', function (playlist) {
                 self.get('allPlaylists').add(playlist);
-                console.log("Adding playlist to stream detected:", playlist);
-
+ 
                 var playlistItems = playlist.get('items');
 
                 playlistItems.each(function(playlistItem) {
@@ -246,8 +245,8 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                 
                 //  TODO: I was experiencing some client side errors where this was undefined, trying to track down.
                 if (activePlaylist !== null) {
-                    window && console.error("This really should've been null and not undefined.");
-                    window && console.trace();
+                    console.error("This really should've been null and not undefined.");
+                    console.trace();
                 }
 
                 localStorageManager.setActivePlaylistId(null);

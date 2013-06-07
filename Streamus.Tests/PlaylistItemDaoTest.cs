@@ -1,22 +1,21 @@
-﻿using System;
-using System.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
+using System;
+using System.Linq;
 
 namespace Streamus.Tests
 {
     [TestFixture]
     public class PlaylistItemDaoTest
     {
-        private IVideoDao VideoDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
         private User User { get; set; }
         private Playlist Playlist { get; set; }
         private Video Video { get; set; }
-        private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
+        private PlaylistManager PlaylistManager { get; set; }
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -24,10 +23,12 @@ namespace Streamus.Tests
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
+            AutofacRegistrations.RegisterDaoFactory();
+            PlaylistManager = new PlaylistManager();
+
             try
             {
                 PlaylistItemDao = new PlaylistItemDao();
-                VideoDao = new VideoDao();
             }
             catch (TypeInitializationException exception)
             {

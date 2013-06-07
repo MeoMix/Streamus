@@ -1,3 +1,4 @@
+//  The foreground can be destroyed, but with a log message still attempting to execute. This wrapper ensures logging doesn't throw errors.
 console = window && console;
 
 require(['jquery',

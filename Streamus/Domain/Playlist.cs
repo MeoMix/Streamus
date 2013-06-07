@@ -1,19 +1,16 @@
 ﻿using FluentValidation;
+using Streamus.Dao;
+using Streamus.Domain.Validators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Streamus.Dao;
-using Streamus.Domain.Validators;
 
 namespace Streamus.Domain
 {
     [DataContract]
-    public class Playlist
+    public class Playlist : AbstractShareableEntity
     {
-        [DataMember(Name = "id")]
-        public Guid Id { get; set; }
-
         //  TODO: This seems forced, but I can't get NHibernate to properly figure out the mapping without holding a reference.
         [DataMember(Name = "streamId")]
         public Guid StreamId
@@ -35,9 +32,6 @@ namespace Streamus.Domain
         }
 
         public Stream Stream { get; set; }
-
-        [DataMember(Name = "title")]
-        public string Title { get; set; }
 
         //  Use interfaces so NHibernate can inject with its own collection implementation.
         [DataMember(Name = "items")]

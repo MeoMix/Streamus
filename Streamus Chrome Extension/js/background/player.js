@@ -66,7 +66,6 @@ define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
             
             var youTubeVideo = $('#YouTubeVideo');
             youTubeVideo.on('play', function () {
-                console.log("setting myself to play");
                 self.set('state', PlayerStates.PLAYING);
             });
 
@@ -91,13 +90,11 @@ define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
             });
 
             youTubeVideo.on('ended', function () {
-                window && console.log("setting to ENDED!!");
                 self.set('state', PlayerStates.ENDED);
             });
 
             youTubeVideo.on('error', function (error) {
-
-                window && console.error("Error:", error);
+                console.error("Error:", error);
             });
 
             //  TODO: Would be nice to use this instead of a polling interval.
@@ -106,7 +103,6 @@ define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
             });
             
             youTubeVideo.on('loadedmetadata', function () {
-                console.log("loadedmetadata, setting my current time:", self.get('currentTime'));
                 this.currentTime = self.get('currentTime');
             });
             
@@ -123,7 +119,6 @@ define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
                 //  This ensure that youTube continues to update blob data.
                 if (videoStreamSrc.indexOf('blob') > -1) {
                     seekToInterval = setInterval(function () {
-                        console.log("Fetching data to keep blob going");
 
                         if (self.get('streamusPlayer') != null) {
                             var currentTime = self.get('streamusPlayer').currentTime;
@@ -162,7 +157,7 @@ define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
                         },
                         'onError': function (error) {
 
-                            window && console.error("An error was encountered.", error);
+                            console.error("An error was encountered.", error);
 
                             switch (error.data) {
                                 case 100:

@@ -23,10 +23,8 @@ define(['spin'], function (Spin) {
         getPlayPauseSpinner: function() {
 
             var playPauseSpinnerConfig = $.extend(defaultSpinnerConfig, {
-                radius: 10 // The radius of the inner circle
+                radius: 10 // The radius of the inner circle,
             });
-
-            console.log("playPauseSpinnerConfig:", playPauseSpinnerConfig);
 
             return new Spin(playPauseSpinnerConfig);
         },

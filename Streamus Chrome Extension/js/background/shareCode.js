@@ -7,7 +7,9 @@ define(['programState'], function (programState) {
             return {
                 id: null,
                 entityType: -1,
-                entityId: null
+                entityId: null,
+                shortId: null,
+                urlFriendlyEntityTitle: ''
             };
         },
         

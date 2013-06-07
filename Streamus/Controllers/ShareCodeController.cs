@@ -27,20 +27,10 @@ namespace Streamus.Controllers
             }
         }
 
-        [HttpGet]
-        public ActionResult Get(Guid id)
-        {
-            ShareCode shareCode = ShareCodeDao.Get(id);
-
-            return new JsonDataContractActionResult(shareCode);
-        }
-
         //  TODO: GetShareCode should probably be implemented here not in other controllers.
         //[HttpGet]
         //public JsonResult GetShareCode(ShareableEntityType entityType, Guid playlistId)
         //{
-
-
         //    //var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
         //    //string shareCode = playlistManager.GetShareCode(playlistId);
 

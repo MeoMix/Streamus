@@ -8,8 +8,9 @@ define(['ytHelper',
         'video',
         'videos',
         'helpers',
-        'repeatButtonStates'
-    ], function(ytHelper, PlaylistItems, PlaylistItem, programState, localStorageManager, Video, Videos, helpers, repeatButtonStates) {
+        'repeatButtonStates',
+        'shareCode'
+], function (ytHelper, PlaylistItems, PlaylistItem, programState, localStorageManager, Video, Videos, helpers, repeatButtonStates, ShareCode) {
         'use strict';
 
         var playlistModel = Backbone.Model.extend({
@@ -73,7 +74,7 @@ define(['ytHelper',
                         },
                         error: function (error) {
                             //  TODO: Rollback client-side transaction somehow?
-                            window && console.error("Error saving title", error);
+                            console.error("Error saving title", error);
                         }
                     });
                 }, 2000));
@@ -90,7 +91,7 @@ define(['ytHelper',
                         },
                         error: function (error) {
                             //  TODO: Rollback client-side transaction somehow?
-                            window && console.error("Error saving firstItemId", error, error.message);
+                            console.error("Error saving firstItemId", error, error.message);
                         }
                     });
                     
@@ -116,7 +117,7 @@ define(['ytHelper',
                             ytHelperDataFunction = null;
                             break;
                         default:
-                            window && console.error("Unhandled dataSource type:", dataSource.type);
+                            console.error("Unhandled dataSource type:", dataSource.type);
                     }
                     
                     if (ytHelperDataFunction != null) {
@@ -217,7 +218,7 @@ define(['ytHelper',
             
             gotoNextItem: function () {
 
-                var nextItem = null;
+                var nextItem;
 
                 var isRadioModeEnabled = localStorageManager.getIsRadioModeEnabled();
                 var isShuffleEnabled = localStorageManager.getIsShuffleEnabled();
@@ -225,10 +226,12 @@ define(['ytHelper',
                 
                 //  Radio mode overrides the other settings
                 if (isRadioModeEnabled) {
+                    
                     var relatedVideo = this.getRelatedVideo();
-                    console.log("Fetch related video:", relatedVideo);
                     nextItem = this.addItem(relatedVideo);
+                    
                 } else {
+                    
                     //  If repeat video is enabled then keep on the last item in history
                     if (repeatButtonState === repeatButtonStates.REPEAT_VIDEO_ENABLED) {
                         //  TODO: potentially need to be popping from history so gotoPrevious doesn't loop through same item a lot
@@ -251,7 +254,6 @@ define(['ytHelper',
                     } else {
 
                         var currentItem = this.get('history').at(0);
-
                         var nextItemId = currentItem.get('nextItemId');
 
                         nextItem = this.get('items').get(nextItemId);
@@ -408,7 +410,7 @@ define(['ytHelper',
                 itemsToSave.save({}, {
                     success: callback,
                     error: function (error) {
-                        window && console.error(error);
+                        console.error(error);
                     }
                 });
             },
@@ -456,7 +458,7 @@ define(['ytHelper',
                         
                     },
                     error: function (error) {
-                        window && console.error(error);
+                        console.error(error);
                     }
                 });
             },
@@ -471,17 +473,15 @@ define(['ytHelper',
                     data: {
                         playlistId: self.get('id')
                     },
-                    success: function (shareCode) {
-                        if (callback) {
-                            callback(shareCode);
-                        }
+                    success: function (shareCodeJson) {
+                        var shareCode = new ShareCode(shareCodeJson);
+
+                        callback(shareCode);
                     },
                     error: function (error) {
-                        //  TODO: Rollback client-side transaction somehow?
-                        window && console.error("Error saving firstItemId", error, error.message);
+                        console.error("Error retrieving share code", error, error.message);
                     }
                 });
-                
 
             }
         });

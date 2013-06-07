@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
+using Streamus.Domain.Interfaces;
 using Streamus.Domain.Validators;
+using System;
+using System.Runtime.Serialization;
 
 namespace Streamus.Domain
 {
@@ -24,29 +24,38 @@ namespace Streamus.Domain
         [DataMember(Name = "entityId")]
         public Guid EntityId { get; set; }
 
+        [DataMember(Name = "shortId")]
+        public string ShortId { get; set; }
+
+        [DataMember(Name = "urlFriendlyEntityTitle")]
+        public string UrlFriendlyEntityTitle { get; set; }
+
         public ShareCode()
         {
             Id = Guid.Empty;
             EntityId = Guid.Empty;
             EntityType = ShareableEntityType.None;
+            ShortId = string.Empty;
+            UrlFriendlyEntityTitle = string.Empty;
         }
 
-        public ShareCode(ShareableEntityType entityType, Guid entityId) 
-            : this ()
+        public ShareCode(IShareableEntity shareableEntity)
+            : this()
         {
-            EntityType = entityType;
-            EntityId = entityId;
+            if (shareableEntity is Playlist)
+            {
+                EntityType = ShareableEntityType.Playlist;
+            }
+
+            EntityId = shareableEntity.Id;
+            UrlFriendlyEntityTitle = shareableEntity.GetUrlFriendlyTitle();
+            ShortId = shareableEntity.GetShortId();
         }
 
         public void ValidateAndThrow()
         {
             var validator = new ShareCodeValidator();
             validator.ValidateAndThrow(this);
-        }
-
-        public new string ToString()
-        {
-            return Id.ToString();
         }
 
         private int? _oldHashCode;
