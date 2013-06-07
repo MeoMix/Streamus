@@ -8,6 +8,8 @@ define(['player'], function (player) {
         events: {
             'change #VolumeSlider': 'setVolume',
             'click #MuteButton': 'toggleMute',
+            //  TODO: Can I combine these two?
+            'mousewheel': 'scrollVolume',
             'mousewheel .volumeControl': 'scrollVolume',
             'mouseenter .volumeControl': 'expand',
             'mouseleave': 'contract'
@@ -59,7 +61,9 @@ define(['player'], function (player) {
         },
 
         //  Whenever the volume slider is interacted with by the user, change the volume to reflect.
-        setVolume: function () {
+        setVolume: function (a, e) {
+
+            console.log("a, e,", a, e);
 
             var newVolume = parseInt(this.volumeSlider.val(), 10);
             player.set('volume', newVolume);
