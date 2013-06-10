@@ -92,7 +92,7 @@
     <Content Include="css\aristo\images\ui-icons_454545_256x240.png" />
     <Content Include="css\desktopNotification.css" />
     <Content Include="css\foreground.css" />
-    <Content Include="css\inject.css" />
+    <Content Include="css\youTubeInject.css" />
     <Content Include="css\jasmine.css" />
     <Content Include="desktopNotification.htm" />
     <Content Include="foreground.htm" />
