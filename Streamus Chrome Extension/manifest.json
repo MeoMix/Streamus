@@ -13,15 +13,13 @@
     },
     "default_title": "Streamus: Rediscover YouTube.",
     "default_popup": "foreground.htm"
-  },"permissions": [
+  },
+  "permissions": [
     "pushMessaging",
-    "contextMenus",
-    "clipboardWrite",
 	"notifications",
     "storage",
     "webRequest",
     "webRequestBlocking",
-    "http://www.geoplugin.net/",
     "*://*.youtube.com/",
 	"http://localhost:61975/Streamus/",
 	"http://streamus.apphb.com/"
@@ -34,7 +32,7 @@
     },
     {
       "matches": ["*://*.youtube.com/watch?v*"],
-      "css": ["css/inject.css"],
+      "css": ["css/youTubeInject.css"],
 	  "all_frames": true,
       "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/youTubeInject.js"]
     },
@@ -69,8 +67,8 @@
     "128": "images/streamus_icon128.png"
   },
   "web_accessible_resources": [
-    "css/inject.css"
+    "css/youTubeInject.css"
   ],
   "content_security_policy": 
-    "script-src 'self' 'unsafe-eval' https://graph.facebook.com https://www.youtube.com https://ssl.google-analytics.com https://gdata.youtube.com https://suggestqueries.google.com https://s.ytimg.com; object-src 'self'"
+    "script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com https://s.ytimg.com; object-src 'self'"
 }

@@ -115,7 +115,6 @@ define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
 
                 var videoStreamSrc = youTubeVideo.attr('src');
 
-                //  TODO: Probably need to turn this polling on/off intelligently.
                 //  This ensure that youTube continues to update blob data.
                 if (videoStreamSrc.indexOf('blob') > -1) {
                     seekToInterval = setInterval(function () {

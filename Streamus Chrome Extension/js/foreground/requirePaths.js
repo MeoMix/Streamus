@@ -32,7 +32,6 @@ var require = {
         'helpers': 'helpers',
         'jquery': 'thirdParty/jquery',
         'jqueryUi': 'thirdParty/jqueryUi',
-        'geoplugin': 'thirdParty/geoplugin',
         'levenshtein': 'thirdParty/levenshtein',
         'underscore': 'thirdParty/underscore',
         'backbone': 'thirdParty/backbone',

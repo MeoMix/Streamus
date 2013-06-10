@@ -9,7 +9,6 @@ var require = {
         'underscore': 'js/thirdParty/underscore',
         'backbone': 'js/thirdParty/backbone',
         'youTubePlayerAPI': 'js/thirdParty/youTubePlayerAPI',
-        'geoplugin': 'js/thirdParty/geoplugin',
         'levenshtein': 'js/thirdParty/levenshtein',
         
         'programState': 'js/programState',

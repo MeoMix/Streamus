@@ -146,13 +146,20 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
             case 'addVideoByIdToPlaylist':
                 var playlist = backgroundManager.getPlaylistById(request.playlistId);
                 
-                ytHelper.getVideoInformation(request.videoId, '', function (videoInformation) {
-                    playlist.addItemByInformation(videoInformation);
+                ytHelper.getVideoInformation({
+                    videoId: request.videoId,
+                    success: function(videoInformation) {
+                        playlist.addItemByInformation(videoInformation);
 
-                    sendResponse({
-                        result: 'success'
-                    });
-
+                        sendResponse({
+                            result: 'success'
+                        });
+                    },
+                    error: function() {
+                        sendResponse({
+                            result: 'error'
+                        });
+                    }
                 });
 
                 break;

@@ -3,7 +3,7 @@ $(function () {
     var style = document.createElement('link');
     style.rel = 'stylesheet';
     style.type = 'text/css';
-    style.href = chrome.extension.getURL('css/inject.css');
+    style.href = chrome.extension.getURL('css/youTubeInject.css');
     document.head.appendChild(style);
 
     var addButtonWrapper = $('<span >');
@@ -242,7 +242,6 @@ $(function () {
                 }
             }
             
-
         }
 
         _.each(streams, function (stream) {
@@ -277,49 +276,6 @@ $(function () {
                 break;
         }
   });
-
-    //  TODO: Connect to YouTube pages and live-update the injected selects instead of the user needing to refresh the page.
-    //chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    //    switch (request.method) {
-
-    //        case 'streamAdded':
-                
-    //            //  TODO: Sort alphabetically
-    //            var streamOption = $('<option>', {
-    //                value: request.stream.id,
-    //                text: request.stream.title
-    //            });
-
-    //            streamOption.appendTo(streamSelect);
-                
-    //            break;
-    //        case 'streamRemoved':
-                
-    //            streamSelect.find('option[value="' + request.stream.id + '"]');
-                
-    //            break;
-    //        case 'playlistAdded':
-
-    //            //  TODO: Sort alphabetically
-    //            var playlistOption = $('<option>', {
-    //                value: request.playlist.id,
-    //                text: request.playlist.title
-    //            });
-
-    //            playlistOption.appendTo(playlistSelect);
-                
-    //            break;
-    //        case 'playlistRemoved':
-                
-    //            playlistSelect.find('option[value="' + request.playlist.id + '"]');
-                
-    //            break;
-    //        default:
-    //            break;
-
-    //    }
-
-    //});
 
 });
 

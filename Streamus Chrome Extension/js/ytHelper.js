@@ -1,15 +1,13 @@
 //  A global object which abstracts more difficult implementations of retrieving data from YouTube.
-define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
+define(['levenshtein'], function (levDist) {
     'use strict';
 
     var videoInformationFields = 'author,title,media:group(yt:videoid,yt:duration),yt:accessControl';
     var videosInformationFields = 'entry(' + videoInformationFields + ')';
-    //  TODO: Uhhh should this be in here?
     var developerKey = 'AI39si7voIBGFYe-bcndXXe8kex6-N_OSzM5iMuWCdPCSnZxLB_qIEnQ-HMijHrwN1Y9sFINBi_frhjzVVrYunHH8l77wfbLCA';
     
     //  Some videos aren't allowed to be played in Streamus, but we can respond by finding similiar.
     function validateEntry(entry) {
-        //  TODO: I might need to do syndication as well, but I do not believe so.
         var ytAccessControlList = entry.yt$accessControl;
 
         var embedAccessControl = _.find(ytAccessControlList, function (accessControl) {
@@ -61,7 +59,6 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                         format: 5,
                         v: 2,
                         alt: 'json',
-                        //restriction: geoplugin.countryCode,
                         q: text,
                         key: developerKey,
                         fields: videosInformationFields,
@@ -118,7 +115,6 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                     v: 2,
                     alt: 'json',
                     key: developerKey,
-                    //  TODO: Retrieve restricted youtube data and filter on that.
                     fields: videosInformationFields,
                     //  Don't really need that many suggested videos, take 5.
                     'max-results': 5,
@@ -247,13 +243,11 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
             });
         },
         
-        //  TODO: Change this to taking an object so its easier to specify the optionalVideoTitle
-        //  Returns NULL if the request throws a 403 error if videoId has been banned on copyright grounds.
-        getVideoInformation: function (videoId, optionalVideoTitle, callback) {
-
+        getVideoInformation: function (config) {
+            //videoId, optionalVideoTitle, callback
             $.ajax({
                 type: 'GET',
-                url: 'https://gdata.youtube.com/feeds/api/videos/' + videoId,
+                url: 'https://gdata.youtube.com/feeds/api/videos/' + config.videoId,
                 dataType: 'json',
                 data: {
                     v: 2,
@@ -267,16 +261,11 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
 
                     //  result will be null if it has been banned on copyright grounds
                     if (result == null) {
-                        console.error("video banned on copyright grounds, finding alternative.");
                         
-                        if (optionalVideoTitle && $.trim(optionalVideoTitle) != '') {
+                        if (config.videoTitle && $.trim(config.videoTitle) != '') {
 
-                            findPlayableByTitle(optionalVideoTitle, function (playableVideoInformation) {
-
-                                if (callback) {
-                                    callback(playableVideoInformation);
-                                }
-
+                            findPlayableByTitle(config.videoTitle, function (playableVideoInformation) {
+                                config.callback(playableVideoInformation);
                             });
                         }
 
@@ -285,10 +274,10 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                         var isValid = validateEntry(result.entry);
                         
                         if (isValid) {
-                            callback(result.entry);
+                            config.success(result.entry);
                         } else {
                             findPlayableByTitle(result.entry.title.$t, function (playableVideoInformation) {
-                                callback(playableVideoInformation);
+                                config.success(playableVideoInformation);
                             });
                         }
                         
@@ -298,9 +287,7 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                 //  This error is silently consumed and handled -- it is an OK scenario if we don't get a video... sometimes
                 //  they are banned on copyright grounds. No need to log this error.
                 error: function () {
-                    if (callback) {
-                        callback(null);
-                    }
+                    config.error();
                 }
             });
         },

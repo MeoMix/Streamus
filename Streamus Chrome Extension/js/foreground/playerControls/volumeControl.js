@@ -83,11 +83,11 @@ define(['player'], function (player) {
 
         //  Show the volume slider control by expanding its wrapper whenever any of the volume controls are hovered.
         expand: function () {
-            this.volumeSliderWrapper.addClass('expanded');
+            this.$el.addClass('expanded');
         },
 
         contract: function () {
-            this.volumeSliderWrapper.removeClass('expanded');
+            this.$el.removeClass('expanded');
         }
 
     });

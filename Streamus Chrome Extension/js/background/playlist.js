@@ -147,29 +147,36 @@ define(['ytHelper',
                             });
 
                             function addVideoByIdAtIndex(videoId, videoTitle, index, resultCount) {
-                                ytHelper.getVideoInformation(videoId, videoTitle, function (videoInformation) {
+                                ytHelper.getVideoInformation({
+                                    videoId: videoId,
+                                    videoTitle: videoTitle,
+                                    success: function(videoInformation) {
 
-                                    if (videoInformation != null) {
-                                        var video = getVideoFromInformation(videoInformation);
-                                        //  Insert at index to preserve order of videos retrieved from YouTube API
-                                        orderedVideosArray[index] = video;
+                                        if (videoInformation != null) {
+                                            var video = getVideoFromInformation(videoInformation);
+                                            //  Insert at index to preserve order of videos retrieved from YouTube API
+                                            orderedVideosArray[index] = video;
+                                        }
+
+                                        unsavedVideoCount++;
+
+                                        //  Periodicially send bursts of packets (up to 50 videos in length) to the server and trigger visual update.
+                                        if (unsavedVideoCount == resultCount) {
+
+                                            var videos = new Videos(orderedVideosArray);
+
+                                            //  orderedVideosArray may have some empty slots which get converted to empty Video objects; drop 'em.
+                                            var videosWithIds = videos.withIds();
+
+                                            self.addItems(videosWithIds);
+                                            orderedVideosArray = [];
+                                            unsavedVideoCount = 0;
+                                        }
+
+                                    },
+                                    error: function() {
+                                        console.error("Error getting video information for:", videoTitle);
                                     }
-
-                                    unsavedVideoCount++;
-
-                                    //  Periodicially send bursts of packets (up to 50 videos in length) to the server and trigger visual update.
-                                    if (unsavedVideoCount == resultCount) {
-
-                                        var videos = new Videos(orderedVideosArray);
-                                        
-                                        //  orderedVideosArray may have some empty slots which get converted to empty Video objects; drop 'em.
-                                        var videosWithIds = videos.withIds();
-                                        
-                                        self.addItems(videosWithIds);
-                                        orderedVideosArray = [];
-                                        unsavedVideoCount = 0;
-                                    }
-
                                 });
                             }
 

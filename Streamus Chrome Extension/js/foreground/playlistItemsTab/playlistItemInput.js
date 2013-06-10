@@ -55,13 +55,13 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
     function handleValidInput(videoId) {
         contentHeader.flashMessage('Thanks!', 2000);
 
-        ytHelper.getVideoInformation(videoId, '', function (videoInformation) {
-            
-            if (videoInformation == null) {
-                console.error("videoInformation was null for:", videoId);
-                dialogs.showBannedVideoDialog();
-            } else {
+        ytHelper.getVideoInformation({
+            videoId: videoId,
+            success: function (videoInformation) {
                 backgroundManager.get('activePlaylist').addItemByInformation(videoInformation);
+            },
+            error: function() {
+                dialogs.showBannedVideoDialog();
             }
         });
     }

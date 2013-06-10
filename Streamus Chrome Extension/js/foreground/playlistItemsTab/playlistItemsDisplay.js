@@ -222,7 +222,6 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
 
             } while (item && item.get('id') !== firstItemId)
 
-            //  TODO: Does not work when activePlaylist is not visible.
             var activeItem = backgroundManager.get('activePlaylistItem');
 
             //  Since we emptied our list we lost the selection, reselect.

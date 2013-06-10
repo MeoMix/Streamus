@@ -21,7 +21,6 @@ var require = {
         'ytHelper': 'ytHelper',
         'helpers': 'helpers',
         'jquery': 'thirdParty/jquery',
-        'geoplugin': 'thirdParty/geoplugin',
         'levenshtein': 'thirdParty/levenshtein',
         'underscore': 'thirdParty/underscore',
         'user': 'background/user',

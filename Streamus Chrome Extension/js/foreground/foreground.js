@@ -23,7 +23,7 @@ define(['backgroundManager',
     //  If the user has browser around to a different stream or playlist (but didn't make a playlistItem selection)
     //  it is unintuitive to stay on that stream/playlist upon re-opening the UI. As such, set the state back to the 
     //  active playlistItem during unload of the foreground.
-    addEventListener("unload", function (event) {
+    addEventListener("unload", function () {
         var activePlaylistItem = backgroundManager.get('activePlaylistItem');
 
         if (activePlaylistItem !== null) {

@@ -8,51 +8,39 @@ define(['backgroundManager'], function (backgroundManager) {
             'class': 'headerTitle'
         }).appendTo(contentHeader);
 
-        var activePlaylist = backgroundManager.get('activePlaylist');
-        var activePlaylistTitle = '';
-        
-        if (activePlaylist !== null) {
-            activePlaylistTitle = activePlaylist.get('title');
-            
-            activePlaylist.on('change:title', function (event, title) {
-                headerInput.val(title);
-            });
-        }
-
         var headerInput = $('<input/>', {
             'class': 'headerInput',
             type: 'text',
-            value: activePlaylistTitle,
-            mouseover: function(){
-                $(this).css('border-color', '#EEE');
-            },
-            input: function () {
-                backgroundManager.get('activePlaylist').set('title', $(this).val());
-            },
-            mouseout: function () {
-                //  Don't blur if they're trying to highlight some text to edit and go outside the bounds.
-                if (window.getSelection().toString() === '') {
-                    $(this).blur();
+            value: backgroundManager.get('activePlaylist').get('title'),
+            
+            on: {
+                
+                input: function () {
+                    backgroundManager.get('activePlaylist').set('title', $(this).val());
+                },
+                
+                mouseover: function () {
+                    $(this).css('border-color', '#EEE');
+                },
+                
+                mouseout: function () {
+                    //  Don't blur if they're trying to highlight some text to edit and go outside the bounds.
+                    if (window.getSelection().toString() === '') {
+                        $(this).blur();
+                    }
+                },
+                
+                blur: function () {
+                    $(this).css('border-color', 'transparent');
                 }
-            },
-            blur: function() {
-                $(this).css('border-color', 'transparent');
+                
             }
         });
 
-        headerInput.on('input', function() {
-            backgroundManager.get('activePlaylist').set('title', $(this).val());
-        });
-        
         headerInput.appendTo(headerTitle);
 
-        //  TODO: Unbinding events?
         backgroundManager.on('change:activePlaylist', function (model, activePlaylist) {
-
-            if (activePlaylist === null) {
-            } else {
-                headerInput.val(activePlaylist.get('title'));
-            }
+            headerInput.val(activePlaylist.get('title'));
         });
 
         var addButton = $('<div/>', {

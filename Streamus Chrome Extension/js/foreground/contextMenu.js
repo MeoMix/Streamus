@@ -1,47 +1,51 @@
 //  Responsible for showing options when interacting with a video list or play list
 define(function(){
 	'use strict';
-	var selector = $('#ContextMenu');
+    var contextMenu = $('<div>', {
+        id: 'ContextMenu'
+    });
 
 	//  Hide the context menu whenever any click occurs not just when selecting an item.
-	$(document).on('click contextmenu', function () {
-		selector.offset({top:0, left:0}).hide();
+    $(document).on('click contextmenu', function () {
+        contextMenu.empty().remove();
 	});
 
-	return {
-		empty: function(){
-			selector.empty();
-		},
-		addContextMenuItem: function(text, isDisabled, onClick){
-		    var contextMenuItem = $('<a/>', {
-		        href: '#',
-		        text: text,
-		        'class': 'contextMenuItem',
-		        click: onClick
-		    });
+    return {
+        remove: function() {
+            contextMenu.empty().remove();
+        },
+
+		addContextMenuItem: function (config) {
 		    
-		    contextMenuItem.appendTo(selector);
-		    contextMenuItem.attr('disabled', isDisabled);
-		    //  TODO: Fix name if I want to disable other things.. being lazy.
-		    contextMenuItem.attr('title', 'This is your last Playlist, so you can\'t delete it');
+		    var contextMenuItemConfig = $.extend({}, {
+		        href: '#',
+		        text: '',
+		        'class': 'contextMenuitem',
+		        disabled: false,
+		        title: ''
+		    }, config);
 
+		    $('<a/>', contextMenuItemConfig).appendTo(contextMenu);
 		},
-		show: function(top, left){
+		
+		show: function (top, left) {
+		    contextMenu.appendTo('body');
+
 			//  Don't allow the context menu to display off the document viewport.
-			var needsVerticalFlip = top + selector.height() > $(document).height();
+		    var needsVerticalFlip = top + contextMenu.height() > $(document).height();
 			if(needsVerticalFlip){
-				top = top - selector.height();
+			    top = top - contextMenu.height();
 			}
 
-			var needsHorizontalFlip = left + selector.width() > $(document).width();
+			var needsHorizontalFlip = left + contextMenu.width() > $(document).width();
 			if(needsHorizontalFlip){
-				left = left - selector.width();
+			    left = left - contextMenu.width();
 			}
-
-			selector.offset({
+		    
+			contextMenu.offset({
 				top: top,
 				left: left
-			}).show();
+			});
 		}
 	};
 });
