@@ -244,9 +244,9 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
         
         if (cookieRequestHeader) {
 
-            var flashCookieValue = 'f3=40000';
-            var html5CookieValue = 'f2=40000000';
-            
+            var flashCookieValue = 'f3=40008';
+            var html5CookieValue = 'f2=40001000';
+           
             //  Swap out the flash cookie variable with the HTML5 counterpart.
             if (cookieRequestHeader.value.indexOf(flashCookieValue) !== -1) {
                 cookieRequestHeader.value = cookieRequestHeader.value.replace(flashCookieValue, html5CookieValue);
@@ -274,7 +274,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
         var userAgentRequestHeader = _.find(info.requestHeaders, function(requestHeader) {
             return requestHeader.name === 'User-Agent';
         });
-        
+
         if (userAgentRequestHeader !== null) {
             userAgentRequestHeader.value = 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5';
         }

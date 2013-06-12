@@ -64,34 +64,34 @@ $(function () {
     });
     sharePanelMainButtons.appendTo(sharePanelButtons);
     
-    var selectStreamButton = $('<button>', {
-        type: 'button',
-        'class': 'share-panel-services yt-uix-button-toggled yt-uix-button yt-uix-button-text',
-        'data-button-toggle': true,
-        role: 'button',
-        onclick: function() {
-            return false;
-        }
-    });
-    selectStreamButton.appendTo(sharePanelMainButtons);
+    //var selectStreamButton = $('<button>', {
+    //    type: 'button',
+    //    'class': 'share-panel-services yt-uix-button-toggled yt-uix-button yt-uix-button-text',
+    //    'data-button-toggle': true,
+    //    role: 'button',
+    //    onclick: function() {
+    //        return false;
+    //    }
+    //});
+    //selectStreamButton.appendTo(sharePanelMainButtons);
     
-    var selectSteamContent = $('<span>', {
-        'class': 'yt-uix-button-content',
-        text: 'Select Stream'
-    });
+    //var selectSteamContent = $('<span>', {
+    //    'class': 'yt-uix-button-content',
+    //    text: 'Select Stream'
+    //});
     
-    selectSteamContent.appendTo(selectStreamButton);
+    //selectSteamContent.appendTo(selectStreamButton);
     
-    var sharePanelStreamSelect = $('<div>', {
-        'class': 'share-panel-streams-container'
-    });
-    sharePanelStreamSelect.appendTo(sharePanel);
+    //var sharePanelStreamSelect = $('<div>', {
+    //    'class': 'share-panel-streams-container'
+    //});
+    //sharePanelStreamSelect.appendTo(sharePanel);
 
-    var streamSelect = $('<select>', {
-        id: 'streamSelect',
-        'class': 'yt-uix-form-input-text share-panel-url'
-    });
-    streamSelect.appendTo(sharePanelStreamSelect);
+    //var streamSelect = $('<select>', {
+    //    id: 'streamSelect',
+    //    'class': 'yt-uix-form-input-text share-panel-url'
+    //});
+    //streamSelect.appendTo(sharePanelStreamSelect);
     
     var sharePanelPlaylistSelect = $('<div>', {
         'class': 'share-panel-playlists-container'
@@ -183,20 +183,20 @@ $(function () {
     });
     videoAddButton.appendTo(sharePanelPlaylistSelect);
 
-    selectStreamButton.click(function () {
-        sharePanelStreamSelect.removeClass('hid');
+    //selectStreamButton.click(function () {
+    //    sharePanelStreamSelect.removeClass('hid');
 
-        selectPlaylistButton.removeClass('yt-uix-button-toggled');
-        selectPlaylistButton.addClass('yt-uix-button');
-        sharePanelPlaylistSelect.addClass('hid');
-    });
+    //    selectPlaylistButton.removeClass('yt-uix-button-toggled');
+    //    selectPlaylistButton.addClass('yt-uix-button');
+    //    sharePanelPlaylistSelect.addClass('hid');
+    //});
     
     selectPlaylistButton.click(function () {
         sharePanelPlaylistSelect.removeClass('hid');
 
-        selectStreamButton.addClass('yt-uix-button');
-        selectStreamButton.removeClass('yt-uix-button-toggled');
-        sharePanelStreamSelect.addClass('hid');
+        //selectStreamButton.addClass('yt-uix-button');
+        //selectStreamButton.removeClass('yt-uix-button-toggled');
+        //sharePanelStreamSelect.addClass('hid');
     });
 
     chrome.runtime.sendMessage({ method: "getStreams" }, function (getStreamsResponse) {
@@ -205,54 +205,48 @@ $(function () {
 
         if (streams.length === 1) {
    
-            selectStreamButton.removeClass('yt-uix-button-toggled');
-            sharePanelStreamSelect.addClass('hid');
+            //selectStreamButton.removeClass('yt-uix-button-toggled');
+            //sharePanelStreamSelect.addClass('hid');
             
             selectPlaylistButton.addClass('yt-uix-button-toggled');
             sharePanelPlaylistSelect.removeClass('hid');
 
-            if (streams[0].playlists.length === 0) {
-
-                //  TODO: Render input element and create playlist.
-
-            } else {
-                var firstPlaylist = _.find(streams[0].playlists, function (playlist) {
-                    return playlist.id == streams[0].firstListId;
-                });
+            var firstPlaylist = _.find(streams[0].playlists, function (playlist) {
+                return playlist.id == streams[0].firstListId;
+            });
                 
+            $('<option>', {
+                value: firstPlaylist.id,
+                text: firstPlaylist.title
+            }).appendTo(playlistSelect);
+
+            var nextPlaylist = _.find(streams[0].playlists, function (playlist) {
+                return playlist.id == firstPlaylist.nextListId;
+            });
+                
+            while (nextPlaylist.id != firstPlaylist.id) {
+                    
                 $('<option>', {
-                    value: firstPlaylist.id,
-                    text: firstPlaylist.title
+                    value: nextPlaylist.id,
+                    text: nextPlaylist.title
                 }).appendTo(playlistSelect);
 
-                var nextPlaylist = _.find(streams[0].playlists, function (playlist) {
-                    return playlist.id == firstPlaylist.nextListId;
+                nextPlaylist = _.find(streams[0].playlists, function (playlist) {
+                    return playlist.id == nextPlaylist.nextListId;
                 });
-                
-                while (nextPlaylist.id != firstPlaylist.id) {
-                    
-                    $('<option>', {
-                        value: nextPlaylist.id,
-                        text: nextPlaylist.title
-                    }).appendTo(playlistSelect);
-
-                    nextPlaylist = _.find(streams[0].playlists, function (playlist) {
-                        return playlist.id == nextPlaylist.nextListId;
-                    });
-                }
             }
             
         }
 
-        _.each(streams, function (stream) {
+        //_.each(streams, function (stream) {
 
-            var streamOption = $('<option>', {
-                value: stream.id,
-                text: stream.title
-            });
+        //    var streamOption = $('<option>', {
+        //        value: stream.id,
+        //        text: stream.title
+        //    });
 
-            streamOption.appendTo(streamSelect);
-        });
+        //    streamOption.appendTo(streamSelect);
+        //});
     });
     
     chrome.runtime.onMessage.addListener(function (request) {
