@@ -69,7 +69,7 @@ define(['player'], function (player) {
         var barCount = Math.ceil((volume / 25));
 
         chrome.browserAction.setIcon({
-            path: '../../images/' + iconColor + ' ' + barCount + '.png'
+            path: '../../img/' + iconColor + ' ' + barCount + '.png'
         });
     }
 
