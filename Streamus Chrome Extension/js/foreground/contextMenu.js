@@ -20,11 +20,11 @@ define(function(){
 		    var contextMenuItemConfig = $.extend({}, {
 		        href: '#',
 		        text: '',
-		        'class': 'contextMenuitem',
+		        'class': 'contextMenuItem',
 		        disabled: false,
 		        title: ''
 		    }, config);
-
+	
 		    $('<a/>', contextMenuItemConfig).appendTo(contextMenu);
 		},
 		

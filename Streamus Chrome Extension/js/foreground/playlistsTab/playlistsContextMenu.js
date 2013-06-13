@@ -33,15 +33,19 @@ define(['contextMenu', 'backgroundManager'], function (contextMenu, backgroundMa
 
             this.addContextMenuItem({
                 text: 'Delete playlist',
-                isDisabled: isDeleteDisabled,
+                disabled: isDeleteDisabled,
                 title: isDeleteDisabled ? 'This is your last Playlist, so you can\'t delete it' : '',
-                click: function() {
-                    
-                    playlist.destroy({
-                        error: function (error) {
-                            console.error(error);
-                        }
-                    });
+                click: function () {
+
+                    var isDisabled = $(this).attr('disabled');
+
+                    if (!isDisabled) {
+                        playlist.destroy({
+                            error: function (error) {
+                                console.error(error);
+                            }
+                        });
+                    }
 
                 }
             });
