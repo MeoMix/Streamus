@@ -63,6 +63,7 @@
     <Content Include="favicon.ico" />
     <Content Include="img\glyphicons-halflings-white.png" />
     <Content Include="img\glyphicons-halflings.png" />
+    <Content Include="img\logo.png" />
     <Content Include="index.htm" />
     <Content Include="js\bootstrap.js" />
     <None Include="js\chrome-api-vsdoc.js" />

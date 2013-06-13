@@ -3,17 +3,22 @@
 
     var videoDisplayModel = Backbone.Model.extend({
         el: $('#VideoDisplay'),
-        
+
         render: function() {
             //  Stop drawing entirely when the player stops.
             if (window != null && player.isPlaying()) {
-                window.requestAnimationFrame(this.render);
-                this.context.drawImage(this.video, 0, 0, this.el.width, this.el.height);
+                var self = this;
+                window.requestAnimationFrame(function() {
+                    self.render();
+                });
+                this.context.drawImage(this.video, 0, 0, this.el[0].width, this.el[0].height);
             }
         },
         
         initialize: function () {
-            this.context = this.el.getContext('2d');
+
+            //  TODO: Shouldn't el not be a jquery element??
+            this.context = this.el[0].getContext('2d');
             this.video = $(chrome.extension.getBackgroundPage().document).find('#YouTubeVideo')[0];
             
             var initialImage = new Image();
@@ -21,7 +26,7 @@
             var self = this;
             //  TODO: Can I condense this code with what happens on the change activeplalyistitem bit? I think so
             initialImage.onload = function () {
-                self.drawImage(this, 0, 0, self.el.width, self.el.height);
+                self.context.drawImage(this, 0, 0, self.el[0].width, self.el[0].height);
             };
 
             if (backgroundManager.get('activePlaylistItem') == null) {
@@ -30,7 +35,7 @@
 
                 var playerState = player.get('state');
                 if (playerState == PlayerStates.PLAYING || playerState == PlayerStates.PAUSED) {
-                    this.context.drawImage(this.video, 0, 0, this.el.width, this.el.height);
+                    this.context.drawImage(this.video, 0, 0, this.el[0].width, this.el[0].height);
                 } else {
 
                     var loadedVideoId = player.get('loadedVideoId');
@@ -75,7 +80,7 @@
         //  TODO: Perhaps something more visually appealing / indicative than black fill?
         clear: function () {
             
-            this.context.rect(0, 0, this.el.width, this.el.height);
+            this.context.rect(0, 0, this.el[0].width, this.el[0].height);
             this.context.fillStyle = 'black';
             this.context.fill();
             

@@ -8,8 +8,8 @@
   },
   "browser_action": {
     "default_icon": {
-       "19": "images/streamus_icon19.png",
-       "38": "images/streamus_icon38.png"
+       "19": "img/streamus_icon19.png",
+       "38": "img/streamus_icon38.png"
     },
     "default_title": "Streamus: Rediscover YouTube.",
     "default_popup": "foreground.htm"
@@ -64,8 +64,8 @@
     }
   },
   "icons": {
-    "48": "images/streamus_icon48.png",
-    "128": "images/streamus_icon128.png"
+    "48": "img/streamus_icon48.png",
+    "128": "img/streamus_icon128.png"
   },
   "web_accessible_resources": [
     "css/youTubeInject.css"
