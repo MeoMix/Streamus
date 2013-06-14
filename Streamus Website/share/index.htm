@@ -1,13 +1,42 @@
 ﻿<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title></title>
-</head>
+
+<html>
+    <head>
+        <title>Streamus: YouTube music through a Google Chrome extension stream</title>
+        <link href="http://www.streamus.com/css/bootstrap.css" rel="stylesheet" />
+        <link href="http://www.streamus.com/css/index.css" rel="stylesheet" />
+        <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/jbnkffmindojffecdhbbmekbmkkfpmjd">
+        <link rel='shortcut icon' href='http://www.streamus.com/favicon.ico' />
+
+
+    </head>
     <body>
-        This is the Streamus Share website.
-        
-        <div id="streamusNotInstalled">You do not have Streamus installed. Go to: https://chrome.google.com/webstore/detail/streamus-beta/jbnkffmindojffecdhbbmekbmkkfpmjd and download it!
+        <div class="container-narrow">
+            
+            <div class="row-fluid">
+                <div id="logoWrapper" class="span12 text-center">
+                    <a href="javascript:void(0)" onclick="document.location.href = 'http://streamus.com'">
+                        <img src="http://www.streamus.com/img/logo_small.png" alt="Streamus" />
+                    </a>
+                </div>
+            </div>
+
+            <hr>
+            
+            <div class="jumbotron">
+                <h3>Looks like you're not experiencing Streamus yet.<br /> Try it out?</h3>
+                
+                <a id="installButton" class="btn btn-large btn-success" href="javascript:void(0)">Install extension now</a>
+            </div>
+
         </div>
+
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="http://www.streamus.com/js/jquery.js"></script>
+        <script src="http://www.streamus.com/js/underscore.js"></script>
+        <script src="http://www.streamus.com/js/backbone.js"></script>
+        <script src="http://www.streamus.com/js/bootstrap.js"></script>
+        <script src="http://www.streamus.com/js/index.js"></script>
 
     </body>
 </html>

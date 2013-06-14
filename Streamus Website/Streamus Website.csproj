@@ -64,11 +64,15 @@
     <Content Include="img\glyphicons-halflings-white.png" />
     <Content Include="img\glyphicons-halflings.png" />
     <Content Include="img\logo.png" />
+    <Content Include="img\logo_small.png" />
     <Content Include="index.htm" />
+    <Content Include="js\backbone.js" />
     <Content Include="js\bootstrap.js" />
     <None Include="js\chrome-api-vsdoc.js" />
     <Content Include="js\index.js" />
     <Content Include="js\jquery.js" />
+    <Content Include="js\main.js" />
+    <Content Include="js\underscore.js" />
     <Content Include="share\index.htm" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -84,7 +88,9 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="js\NewFolder1\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

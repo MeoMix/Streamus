@@ -1,7 +1,5 @@
 $(function () {
 
-    $('#streamusNotInstalled').hide();
-
     var currentUrl = document.URL;
     var urlSections = currentUrl.split('/');
     
@@ -10,7 +8,6 @@ $(function () {
     var indicator = urlSections[urlSections.length - 3];
     var shareCodeShortId = urlSections[urlSections.length - 2];
     var urlFriendlyEntityTitle = urlSections[urlSections.length - 1];
-
 
     if (indicator === 'playlist' && shareCodeShortId.length === 12 && urlFriendlyEntityTitle.length > 0) {
         chrome.runtime.sendMessage({
@@ -33,8 +30,6 @@ $(function () {
 
         });
     }
-
-
 
 });
 

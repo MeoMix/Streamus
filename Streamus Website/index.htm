@@ -2,7 +2,7 @@
 
 <html>
     <head>
-        <title>Streamus: Free, streaming YouTube music from a Google Chrome extension</title>
+        <title>Streamus: YouTube music through a Google Chrome extension stream</title>
         <link href="css/bootstrap.css" rel="stylesheet" />
         <link href="css/index.css" rel="stylesheet" />
         <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/jbnkffmindojffecdhbbmekbmkkfpmjd">
@@ -10,45 +10,51 @@
     </head>
     <body>
         <div class="container-narrow">
-
-          <div class="masthead">
-              <img width="230px" src="img/logo.png" />
-          </div>
-
-          <hr>
-
-          <div class="jumbotron">
-              <h1>Discover music.<br />Share everything.</h1>
-            <p class="lead">Streamus turns YouTube into the music player you always wanted. Built as a Google Chrome extension, Streamus is the perfect twist to a free service you already know and love.</p>
-              <a id="downloadButton" class="btn btn-large btn-success" href="javascript:void(0)">Install now</a>
-          </div>
-
-          <hr>
-
-          <div class="row-fluid marketing">
-            <div class="span6">
-              <h4>Stop bookmarking YouTube</h4>
-              <p>Add videos to Streamus and forget the bookmarks! Your collections will still tag along between PCs.</p>
-
-              <h4>Discover new music</h4>
-              <p>Streamus helps you discover new music. Radio Mode automatically provides new music by learning from your playlists!</p>
+            
+            <div class="row-fluid">
+                <div id="logoWrapper" class="span12 text-center">
+                    <a href="javascript:void(0)" onclick="document.location.href = 'http://streamus.com'">
+                        <img src="img/logo_small.png" alt="Streamus" />
+                    </a>
+                </div>
             </div>
 
-            <div class="span6">
-              <h4>One less tab</h4>
-              <p>Ever accidentally close the song you were listening to? Yeah, me too. Streamus runs behind the scenes so you can listen to your music without feeling crowded by a ton of tabs.</p>
+            <hr>
 
-              <h4>Share everything</h4>
-              <p>No limitations. Share videos and playlists with just a click, just like in Spotify, with the share.streamus.com URL!</p>
+            <div class="jumbotron">
+                <h1>Somethin'<br />Somethin'<br/>Business Speak!</h1>
+                <p class="lead">Streamus turns YouTube into the music player you always wanted. It's a simple Chrome extension that makes streaming YouTube refreshingly easy.</p>
+                <a id="installButton" class="btn btn-large btn-success" href="javascript:void(0)">Install extension now</a>
             </div>
-          </div>
 
-          <hr>
+            <hr>
+
+            <div class="row-fluid marketing">
+                <div class="span6">
+                    <h4>Stop bookmarking YouTube</h4>
+                    <p>Add videos to Streamus and forget the bookmarks! Your collections will still tag along between PCs.</p>
+
+                    <h4>Discover new music</h4>
+                    <p>Streamus helps you explore YouTube. Turn on 'radio mode' and find suggestions based on your playlists!</p>
+                </div>
+
+                <div class="span6">
+                    <h4>No need for tabs</h4>
+                    <p>Ever accidentally close a song you were listening to? Yeah, us too. Streamus runs behind the scenes so you can enjoy a seamless, tab-free experience.</p>
+
+                    <h4>Share everything</h4>
+                    <p>No limitations. Share videos and playlists with a simple click, just like in Spotify, through the share.streamus.com domain!</p>
+                </div>
+            </div>
+
+            <hr>
 
         </div>
 
         <!-- Placed at the end of the document so the pages load faster -->
         <script src="js/jquery.js"></script>
+        <script src="js/underscore.js"></script>
+        <script src="js/backbone.js"></script>
         <script src="js/bootstrap.js"></script>
         <script src="js/index.js"></script>
 
