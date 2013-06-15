@@ -1,297 +1,281 @@
 ﻿body {
-  min-width: 513px;
-  min-height:452px;
-  background:#fff;
-  -webkit-user-select: none;
-  font: 12px/1.3 sans-serif;
+    -webkit-user-select: none;
+    background: #fff;
+    font: 12px/1.3 sans-serif;
+    min-height: 452px;
+    min-width: 513px;
 }
 
 /*http://beautifulpixels.com/goodies/create-custom-webkit-scrollbar/*/
+
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+    height: 10px;
+    width: 10px;
 }
 
+/* Ensure no buttons are displayed */
 ::-webkit-scrollbar-button:start:decrement,
-::-webkit-scrollbar-button:end:increment  {
-  height: 0;
+::-webkit-scrollbar-button:end:increment {
+     height: 0;
 }
 
-::-webkit-scrollbar-track-piece  {
-  background-color: #efefef;
-  -webkit-border-radius: 6px;
+::-webkit-scrollbar-track-piece {
+    -webkit-border-radius: 6px;
+    background-color: #efefef;
 }
 
 ::-webkit-scrollbar-thumb:vertical {
-  height: 50px;
-  background-color: #666;
-  border: 1px solid #eee;
-  -webkit-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    background-color: #666;
+    border: 1px solid #eee;
+    height: 50px;
 }
 
 #content div {
-  position: absolute;
-  -webkit-box-sizing:border-box;
-  text-shadow: 0 1px 0 #fff;
-  overflow: hidden;
+    -webkit-box-sizing: border-box;
+    overflow: hidden;
+    position: absolute;
+    text-shadow: 0 1px 0 #fff;
 }
 
-.gradient {
-  background-image:-webkit-gradient(linear,left top, left bottom, from(rgba(255,255,255,.1)), to(rgba(0,0,0,.1)));
-}
+.gradient { background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, .1)), to(rgba(0, 0, 0, .1))); }
 
-.halfGradient {
-  background-image:-webkit-gradient(linear,left top, left bottom, from(rgba(255,255,255,.1)), to(rgba(103, 103, 103,.1)));
-}
+.halfGradient { background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, .1)), to(rgba(103, 103, 103, .1))); }
 
 #head {
-  top:0;
-  left:0;
-  width:100%;
-  padding:10px;
-  height:70px;
-  background-color:#efefef;
-  z-index:5;
-  -webkit-box-shadow: 0 5px 5px rgba(0,0,0,.15);
+    -webkit-box-shadow: 0 5px 5px rgba(0, 0, 0, .15);
+    background-color: #efefef;
+    height: 70px;
+    left: 0;
+    padding: 10px;
+    top: 0;
+    width: 100%;
+    z-index: 5;
 }
 
 #menu {
-  top:70px;
-  left:0;
-  bottom:0;
-  background: #eaeaea;
-  width:70px;
-  border-right:1px solid #fff;
-  z-index:2;
+    background: #eaeaea;
+    border-right: 1px solid #fff;
+    bottom: 0;
+    left: 0;
+    top: 70px;
+    width: 70px;
+    z-index: 2;
 }
 
 #menu a {
-  border-bottom: 1px solid rgba(0,0,0,0);
-  display:block;
-  position:relative;
-  -webkit-box-sizing:border-box;
-  height:60px;
-  margin:5px;
-  border-radius:5px;
-  color:#000; 
-  text-decoration: none
+    -webkit-box-sizing: border-box;
+    border-bottom: 1px solid rgba(0, 0, 0, 0);
+    border-radius: 5px;
+    color: #000;
+    display: block;
+    height: 60px;
+    margin: 5px;
+    position: relative;
+    text-decoration: none
 }
 
 #menu a span {
-  position:absolute;
-  left:0; 
-  bottom:3px; 
-  width:100%; 
-  text-align: center; 
-  font: bold 11px/16px sans-serif;
-} 
+    bottom: 3px;
+    font: bold 11px/16px sans-serif;
+    left: 0;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+}
 
 #menu a svg {
-  position: absolute; 
-  top:50%; 
-  left:50%; 
-  margin: -15px 0 0 -11px;
+    left: 50%;
+    margin: -15px 0 0 -11px;
+    position: absolute;
+    top: 50%;
 }
 
 #menu a.active {
-  background: #fff; 
-  border-bottom:1px solid #ccc;
+    background: #fff;
+    border-bottom: 1px solid #ccc;
 }
 
 #menu a:active {
-  background-image: -webkit-gradient(linear,left top, left bottom, from(rgba(0,0,0,.2)), to(rgba(0,0,0,.05))); 
-  border-bottom:1px solid #fff;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, .2)), to(rgba(0, 0, 0, .05)));
+    border-bottom: 1px solid #fff;
 }
 
-#menu a:active svg *{
-  fill:#0073bf;
-}
+#menu a:active svg * { fill: #0073bf; }
 
 .header {
-  top: 0; 
-  left: 0; 
-  right: 0; 
-  border-left:1px solid #ccc; 
-  height: 40px; 
-  -webkit-box-shadow: 0 2px 3px rgba(0,0,0,.2); 
-  z-index: 2;
+    -webkit-box-shadow: 0 2px 3px rgba(0, 0, 0, .2);
+    border-left: 1px solid #ccc;
+    height: 40px;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 2;
 }
 
 .header span {
-  position: absolute; 
-  top:0;
-  left:20px;
-  height:40px; 
-  font: normal 16px/40px sans-serif;
-  margin:0;
+    font: normal 16px/40px sans-serif;
+    height: 40px;
+    left: 20px;
+    margin: 0;
+    position: absolute;
+    top: 0;
 }
 
 .headerInput {
-  font: normal 16px/40px sans-serif;
-  margin: 0;
-  border: 1px solid transparent;
-  padding-left: 3px;
-  padding-right: 3px;
-  outline: none;
-  -webkit-transition: border-color .2s;
-  background-color: white;
-  color: rgb(0, 0, 0);
+    -webkit-transition: border-color .2s;
+    background-color: white;
+    border: 1px solid transparent;
+    color: rgb(0, 0, 0);
+    font: normal 16px/40px sans-serif;
+    margin: 0;
+    outline: none;
+    padding-left: 3px;
+    padding-right: 3px;
 }
 
 .addButton {
-  right: 6px; 
-  top:6px; 
-  bottom:6px; 
-  padding: 0 20px 0 40px; 
-  width: 120px; 
-  cursor: auto; 
-  -webkit-transition: all 0.5s; 
-  border: 1px solid #ccc; 
-  border-radius:5px; 
+    -webkit-transition: all 0.5s;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    bottom: 6px;
+    cursor: auto;
+    padding: 0 20px 0 40px;
+    right: 6px;
+    top: 6px;
+    width: 120px;
 }
 
 #addButtonSvg {
-  position: absolute; 
-  top:50%; 
-  left: 23px; 
-  margin: -6px 0 0 -6px;
-  width: 12px;
-  height: 12px;
+    height: 12px;
+    left: 23px;
+    margin: -6px 0 0 -6px;
+    position: absolute;
+    top: 50%;
+    width: 12px;
 }
 
 .addButton span {
-  position: absolute; 
-  top:0; 
-  left: 40px; 
-  font: bold 12px/27px sans-serif;
-  color: #666;
-  cursor: pointer;
+    color: #666;
+    cursor: pointer;
+    font: bold 12px/27px sans-serif;
+    left: 40px;
+    position: absolute;
+    top: 0;
 }
 
 .addButton input {
-  cursor: pointer; 
-  -webkit-transition: all 0.5s;
-  opacity:0; 
-  position: absolute; 
-  top:0;
-  left:0;
-  right:30px;
-  bottom:0; 
-  border:0; 
-  -webkit-box-sizing:border-box; 
-  background: #fff; 
-  border-radius:5px;
-  padding: 0 5px; 
+    -webkit-box-sizing: border-box;
+    -webkit-transition: all 0.5s;
+    background: #fff;
+    border: 0;
+    border-radius: 5px;
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    opacity: 0;
+    padding: 0 5px;
+    position: absolute;
+    right: 30px;
+    top: 0;
 }
 
-.addButton input:focus {
-  outline: none
-}
+.addButton input:focus { outline: none }
 
-.addCancelIcon { 
-  -webkit-transition: all 0.5s;
-  position: absolute; 
-  top:0; 
-  right: -30px; 
-  bottom: 0; 
-  width: 30px; 
-  background-color:#efefef; 
-  cursor: pointer;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
+.addCancelIcon {
+    -webkit-transition: all 0.5s;
+    background-color: #efefef;
+    border-bottom-right-radius: 5px;
+    border-top-right-radius: 5px;
+    bottom: 0;
+    cursor: pointer;
+    position: absolute;
+    right: -30px;
+    top: 0;
+    width: 30px;
 }
 
 .addCancelIcon svg {
-  position: absolute; 
-  top: 50%; 
-  left:50%; 
-  margin: -6px 0 0 -6px;
-  width: 12px;
-  height: 12px;
+    height: 12px;
+    left: 50%;
+    margin: -6px 0 0 -6px;
+    position: absolute;
+    top: 50%;
+    width: 12px;
 }
 
 .ui-autocomplete {
-  max-height: 346px;
-  max-width: 523px;
-  width: 523px !important;
-  overflow-y: auto;
-  left: 0 !important;
-  top: 110px !important;
+    left: 0 !important;
+    max-height: 346px;
+    max-width: 523px;
+    overflow-y: auto;
+    top: 110px !important;
+    width: 523px !important;
 }
 
 .content {
-  top:70px;
-  left:70px;
-  bottom:0;
-  right:0;
-  z-index:3;
+    bottom: 0;
+    left: 70px;
+    right: 0;
+    top: 70px;
+    z-index: 3;
 }
 
-#PlayIcon{
-  left: 54% !important;
-}
+#PlayIcon { left: 54% !important; }
 
-#PlaylistsContent, 
+#PlaylistsContent,
 #VideoContent,
-#SettingsContent {
-  display: none;
-}
+#SettingsContent { display: none; }
 
-#VideoContent {
-    background-color: black;
-}
+#VideoContent { background-color: black; }
 
-#VideoDisplay {
-    margin-top: 29px;
-}
+#VideoDisplay { margin-top: 29px; }
 
 #PlayPauseButton {
-  top:0;
-  left:0;
-  width:70px;
-  height:70px;
-  border-right:1px solid #fff;
-  cursor:pointer;
+    border-right: 1px solid #fff;
+    cursor: pointer;
+    height: 70px;
+    left: 0;
+    top: 0;
+    width: 70px;
 }
 
-#PlayPauseButton .path {
-    fill: black;
-}
+#PlayPauseButton .path { fill: black; }
 
 #NextButton {
-  top:0;
-  right:0;
-  width:40px;
-  height:40px;
-  border-left:1px solid #ccc; 
-  border-bottom: 1px solid #fff;
-  cursor:pointer;
-  background-color: #efefef !important;
-  z-index: 2;
+    background-color: #efefef !important;
+    border-bottom: 1px solid #fff;
+    border-left: 1px solid #ccc;
+    cursor: pointer;
+    height: 40px;
+    right: 0;
+    top: 0;
+    width: 40px;
+    z-index: 2;
 }
 
-#PreviousButton{
-  top:0;
-  right:40px;
-  width:40px;
-  height:40px;
-  border-left:1px solid #ccc; 
-  border-right:1px solid #fff;
-  border-bottom: 1px solid #fff;
-  cursor:pointer;
-  background-color: #efefef !important;
+#PreviousButton {
+    background-color: #efefef !important;
+    border-bottom: 1px solid #fff;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #fff;
+    cursor: pointer;
+    height: 40px;
+    right: 40px;
+    top: 0;
+    width: 40px;
 }
 
 .contextMenuItem[disabled=disabled] {
+    background-color: transparent !important;
     color: gray !important;
     cursor: default;
-    background-color: transparent !important;
     text-decoration: line-through !important;
 }
 
 #PlayPauseButton.disabled:hover {
-  background-color: transparent;
-  cursor: default;
+    background-color: transparent;
+    cursor: default;
 }
 
 #NextButton.disabled:hover,
@@ -302,409 +286,363 @@
 
 #PlayPauseButton.disabled .path,
 #PreviousButton.disabled > svg *,
-#NextButton.disabled > svg * {
-    fill: gray;
-}
+#NextButton.disabled > svg * { fill: gray; }
 
 #PreviousButton > svg *,
-#NextButton > svg * {
-    fill: black;
-}
+#NextButton > svg * { fill: black; }
 
 #PlayPauseButton.disabled:active,
-#NextButton.disabled:active, 
-#PreviousButton.disabled:active{
-  background-image: none;
-}
+#NextButton.disabled:active,
+#PreviousButton.disabled:active { background-image: none; }
 
-#PlayPauseButton:hover, 
+#PlayPauseButton:hover,
 #HomeMenuButton:hover,
 #SettingsMenuButton:hover,
-#PlaylistsMenuButton:hover {
-  background-color:rgba(255,255,255,0.3);
-}
+#PlaylistsMenuButton:hover { background-color: rgba(255, 255, 255, 0.3); }
 
 #NextButton:hover,
-#PreviousButton:hover {
-    background-color: #F3F3F3 !important;
-}
+#PreviousButton:hover { background-color: #F3F3F3 !important; }
 
-#PlayPauseButton:active, 
+#PlayPauseButton:active,
 #NextButton:active,
-#PreviousButton:active {
-  background-image: -webkit-gradient(linear,left top, left bottom, from(rgba(0,0,0,.1)), color-stop(0.5,rgba(0,0,0,0)));
-}
+#PreviousButton:active { background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, .1)), color-stop(0.5, rgba(0, 0, 0, 0))); }
 
 #PlayPauseButton svg {
-  position:absolute; 
-  top:50%;
-  left:50%;
-  margin:-11px 0 0 -11px;
+    left: 50%;
+    margin: -11px 0 0 -11px;
+    position: absolute;
+    top: 50%;
 }
 
 #NextButton svg {
-  position:absolute; 
-  top:50%;
-  left:50%;
-  margin:-8px 0 0 -8px;
+    left: 50%;
+    margin: -8px 0 0 -8px;
+    position: absolute;
+    top: 50%;
 }
 
 #PreviousButton svg {
-  position:absolute; 
-  top:50%;
-  left:50%;
-  margin:-8px 0 0 -8px;
+    left: 50%;
+    margin: -8px 0 0 -8px;
+    position: absolute;
+    top: 50%;
 }
 
 #Header {
-  top:0;
-  left:70px;
-  right:80px; 
-  padding:0 20px; 
-  height:40px; 
-  border-left: 1px solid #ccc; 
-  border-right:1px solid  #fff; 
-  border-bottom:1px solid #fff; 
-  font:bold 16px/42px sans-serif; 
-  white-space: nowrap; 
-  text-overflow: ellipsis;
-  overflow: hidden;
+    border-bottom: 1px solid #fff;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #fff;
+    font: bold 16px/42px sans-serif;
+    height: 40px;
+    left: 70px;
+    overflow: hidden;
+    padding: 0 20px;
+    right: 80px;
+    text-overflow: ellipsis;
+    top: 0;
+    white-space: nowrap;
 }
 
-#PauseIcon
-{
-  display: none;
-}
+#PauseIcon { display: none; }
 
 #VideoTimeProgressBar {
-  -webkit-appearance:none !important;  
-  position: absolute;
-  -webkit-box-sizing:border-box;
-  overflow:visible;
-  top:12px;
-  left:20px;
-  right:140px;
-  height:6px; 
-  margin:0; 
-  background-color:#222; 
-  border-top:1px solid #000; 
-  border-bottom: 1px solid #666; 
-  border-radius:3px
+    -webkit-appearance: none !important;
+    -webkit-box-sizing: border-box;
+    background-color: #222;
+    border-bottom: 1px solid #666;
+    border-radius: 3px;
+    border-top: 1px solid #000;
+    height: 6px;
+    left: 20px;
+    margin: 0;
+    overflow: visible;
+    position: absolute;
+    right: 140px;
+    top: 12px;
 }
 
 #VideoTimeProgressBar::-webkit-slider-thumb {
-  -webkit-appearance:none !important; 
-  width:12px; 
-  height:12px; 
-  margin-top:-2px; 
-  border-radius:6px; 
-  background: #eaeaea; 
-  -webkit-box-shadow: 0 0 5px #000; 
-  cursor: pointer;
+    -webkit-appearance: none !important;
+    -webkit-box-shadow: 0 0 5px #000;
+    background: #eaeaea;
+    border-radius: 6px;
+    cursor: pointer;
+    height: 12px;
+    margin-top: -2px;
+    width: 12px;
 }
 
-#VideoTimeProgressBar::-webkit-slider-thumb:active {
-  background: #fff;
-}
-  
+#VideoTimeProgressBar::-webkit-slider-thumb:active { background: #fff; }
+
 #timeDisplayWrapper {
-  overflow: hidden;
-  top:40px;
-  left:70px;
-  right:0;
-  height:30px; 
-  border-left: 1px solid #000; 
-  border-top:1px solid #000; 
-  background-color: #666;
-  background-image: -webkit-gradient(linear,left top, left bottom, from(rgba(0,0,0,.5)), to(rgba(0,0,0,0)));
-  z-index: 2;
+    background-color: #666;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, .5)), to(rgba(0, 0, 0, 0)));
+    border-left: 1px solid #000;
+    border-top: 1px solid #000;
+    height: 30px;
+    left: 70px;
+    overflow: hidden;
+    right: 0;
+    top: 40px;
+    z-index: 2;
 }
 
 #time {
-  right:40px;
-  width:100px;
-  font: bold 11px/30px sans-serif;
-  color: #fff; 
-  text-shadow: 0 1px 0 #000 !important;
-  text-align:center;
-  border-right:1px solid #666;
+    border-right: 1px solid #666;
+    color: #fff;
+    font: bold 11px/30px sans-serif;
+    right: 40px;
+    text-align: center;
+    text-shadow: 0 1px 0 #000 !important;
+    width: 100px;
 }
 
-#head {
-    overflow: visible !important;
-}
+#head { overflow: visible !important; }
 
 #VolumeControl {
-  -webkit-transition: height 0.5s;
-  right:0;
-  top: 40px;
-  width:40px;
-  height:30px;
+    -webkit-transition: height 0.5s;
+    height: 30px;
+    right: 0;
+    top: 40px;
+    width: 40px;
 }
 
 #MuteButton {
-  -webkit-box-shadow:inset 0 3px 5px #000;
-  top: 0;
-  width:40px;
-  height:30px;
-  border-left: 1px solid #000; 
-  cursor: pointer; 
-  border-right:1px solid #444;
-  background: rgba(0, 0, 0, .5);
-  right:0;
-  border-right:none;
-  z-index: 2;
+    -webkit-box-shadow: inset 0 3px 5px #000;
+    background: rgba(0, 0, 0, .5);
+    border-left: 1px solid #000;
+    border-right: 1px solid #444;
+    border-right: none;
+    cursor: pointer;
+    height: 30px;
+    right: 0;
+    top: 0;
+    width: 40px;
+    z-index: 2;
 }
 
 #MuteButton svg {
-  position:absolute;
-  top:50%;
-  left:50%;
-  margin: -8px 0 0 -8px;
+    left: 50%;
+    margin: -8px 0 0 -8px;
+    position: absolute;
+    top: 50%;
 }
 
 #VolumeSliderWrapper {
-  -webkit-transition: top 0.5s;
-  width:40px; 
-  height:100px; 
-  background: #333;
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius:5px;
-  top:-75px;
-  right:0;
-  z-index:0;
-  -webkit-box-shadow: 0 3px 5px rgba(0,0,0,0.3)
+    -webkit-box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+    -webkit-transition: top 0.5s;
+    background: #333;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    height: 100px;
+    right: 0;
+    top: -75px;
+    width: 40px;
+    z-index: 0;
 }
 
-#VolumeControl.expanded {
-    height: 135px !important;
-}
+#VolumeControl.expanded { height: 135px !important; }
 
-#VolumeControl.expanded #VolumeSliderWrapper {
-    top: 30px;
-}
+#VolumeControl.expanded #VolumeSliderWrapper { top: 30px; }
 
 #ShuffleButton:hover,
 #RadioModeButton:hover,
-#RepeatButton:hover {
-    cursor: pointer;
-}
+#RepeatButton:hover { cursor: pointer; }
 
 #ShuffleButton {
-    position:absolute;
-    left: 6px;
     bottom: 2px;
+    left: 6px;
+    position: absolute;
 }
 
 #RadioModeButton {
-    position: absolute;
-    left: 28px;
     bottom: 1px;
+    left: 28px;
+    position: absolute;
 }
 
 #RepeatButton {
+    bottom: 3px;
     position: absolute;
     right: 4px;
-    bottom: 3px;
 }
 
-#RepeatPlaylistSvg {
-    display: none;
-}
+#RepeatPlaylistSvg { display: none; }
 
 #VolumeSlider {
-    right: -20px;
-    width:80px; 
-    height:6px; 
-    -webkit-appearance:none !important; 
-   -webkit-box-sizing:border-box; 
-   -webkit-transform: rotate(270deg);
+    -webkit-appearance: none !important;
+    -webkit-box-sizing: border-box;
+    -webkit-transform: rotate(270deg);
+    background-color: #222;
+    border-bottom: 1px solid #000;
+    border-radius: 3px;
    
-  background-color:#222; 
-  border-bottom:1px solid #000; 
-  border-top: 1px solid #666;
-  border-radius: 3px;
-  position:absolute;
-  top:45px;
-  margin:0;
-  padding:0;
+    border-top: 1px solid #666;
+    height: 6px;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    right: -20px;
+    top: 45px;
+    width: 80px;
 }
 
 #VolumeSlider::-webkit-slider-thumb {
-  -webkit-appearance:none !important; 
-  width:12px; 
-  height:12px; 
-  margin-top:-2px; 
-  border-radius:6px; 
-  background: #eaeaea; 
-  -webkit-box-shadow: 0 0 5px #000; 
-  cursor: pointer;
+    -webkit-appearance: none !important;
+    -webkit-box-shadow: 0 0 5px #000;
+    background: #eaeaea;
+    border-radius: 6px;
+    cursor: pointer;
+    height: 12px;
+    margin-top: -2px;
+    width: 12px;
 }
 
-#VolumeSlider::-webkit-slider-thumb:active {
-  background: #fff;
-}
+#VolumeSlider::-webkit-slider-thumb:active { background: #fff; }
 
-.ui-slider-range {
-  border-radius: 2px;
-}
+.ui-slider-range { border-radius: 2px; }
 
 .ui-slider-handle {
-  width:12px !important;
-  height:12px !important;
-  background: #eaeaea !important;
-  background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0,rgba(0,0,0,0)), color-stop(1,rgba(0,0,0,0.1)));
-  border-radius:6px !important;
-  -webkit-box-sizing:border-box;
-  -webkit-box-shadow: 0 0 5px #000;
-  margin:-6px 0 0 -4px;
-  cursor: pointer;
-  border: 1px solid #fff;
-  z-index: 1;
+    -webkit-box-shadow: 0 0 5px #000;
+    -webkit-box-sizing: border-box;
+    background: #eaeaea !important;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, rgba(0, 0, 0, 0)), color-stop(1, rgba(0, 0, 0, 0.1)));
+    border: 1px solid #fff;
+    border-radius: 6px !important;
+    cursor: pointer;
+    height: 12px !important;
+    margin: -6px 0 0 -4px;
+    width: 12px !important;
+    z-index: 1;
 }
 
-.ui-menu .ui-menu-item a
-{
-  font-size: 12px !important;
-  white-space: nowrap;
+.ui-menu .ui-menu-item a {
+    font-size: 12px !important;
+    white-space: nowrap;
 }
 
 .list {
-  left: 0px;
-  bottom:0px;
-  right: 0px;
-  top: 40px;
-  border-left:1px solid #ccc; 
-  overflow-y:auto !important;
-  z-index:1;
+    border-left: 1px solid #ccc;
+    bottom: 0px;
+    left: 0px;
+    overflow-y: auto !important;
+    right: 0px;
+    top: 40px;
+    z-index: 1;
 }
 
 .list ul {
-  margin:2px 0;
-  padding:0;
-  list-style: none;
+    list-style: none;
+    margin: 2px 0;
+    padding: 0;
 }
 
 .list li {
-  display:block; 
-  position:relative; 
-  width:100%; 
-  height:44px;
-  cursor: pointer !important;
+    cursor: pointer !important;
+    display: block;
+    height: 44px;
+    position: relative;
+    width: 100%;
 }
 
-.list li:hover {
-  background-color: Gainsboro !important;
-}
+.list li:hover { background-color: Gainsboro !important; }
 
 .list li a {
-  text-decoration: none;
-  color: black;
+    color: black;
+    text-decoration: none;
 }
 
 .list li:nth-child(odd),
-.ui-autocomplete li:nth-child(odd) {
-  background-color: #eaeaea
-}
+.ui-autocomplete li:nth-child(odd) { background-color: #eaeaea }
 
 .list span {
-  overflow: hidden; 
-  height: 19px;
-  margin-top: 5px;
-  left: 0;
+    height: 19px;
+    left: 0;
+    margin-top: 5px;
+    overflow: hidden;
 }
 
 .list span:nth-of-type(1) {
-  font: 12px/18px sans-serif;
-  top: 5px;
-  z-index: 5;
+    font: 12px/18px sans-serif;
+    top: 5px;
+    z-index: 5;
 }
 
 .list span:nth-of-type(2) {
-  top: 20px;
-  color: #666;
-  position: absolute;
-}
-
-.loaded span {
-    font-weight: bold !important;
-}
-
-.muted > svg > path {
-    fill: Red !important;
-}
-
-.muted > svg > rect {
-    fill: Black !important;
-}
-
-#ContextMenu {     
+    color: #666;
     position: absolute;
+    top: 20px;
+}
+
+.loaded span { font-weight: bold !important; }
+
+.muted > svg > path { fill: Red !important; }
+
+.muted > svg > rect { fill: Black !important; }
+
+#ContextMenu {
+    -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, .3);
     background: #fff;
     border-radius: 5px;
     padding: 5px 0;
-    -webkit-box-shadow: 0 0 5px rgba(0,0,0,.3);
+    position: absolute;
     z-index: 100;
 }
+
 #ContextMenu a {
-    display: block;
-    padding: 4px 8px;
-    font: 12px/1 sans-serif;
     color: #000;
+    display: block;
+    font: 12px/1 sans-serif;
+    padding: 4px 8px;
     text-decoration: none;
 }
-#ContextMenu a:hover {
-    background: #efefef;
-}
+
+#ContextMenu a:hover { background: #efefef; }
+
 #ContextMenu a:active {
-    background: rgb(36,109,149);
+    background: rgb(36, 109, 149);
     color: #fff;
 }
 
 .pressed *,
-.pressed svg *{
-  fill: #6ABD45 !important;
-}
+.pressed svg * { fill: #6ABD45 !important; }
 
 .sidebar-button {
-	background: rgba(245,184,0,1);
-	border: none;
-	color: rgb(39, 39, 39);
-	text-transform: uppercase;
-	margin-left: 20px;
-	width: 200px;
-	height: 40px;
-	margin-top: 10px;
-	border-radius: 2px;
-	font-size: 1em;
-	opacity: 0.5;
-	-webkit-transition: 0.2s;
-}
-.sidebar-button:hover {
-	opacity: 1;
+    -webkit-transition: 0.2s;
+    background: rgba(245, 184, 0, 1);
+    border: none;
+    border-radius: 2px;
+    color: rgb(39, 39, 39);
+    font-size: 1em;
+    height: 40px;
+    margin-left: 20px;
+    margin-top: 10px;
+    opacity: 0.5;
+    text-transform: uppercase;
+    width: 200px;
 }
 
+.sidebar-button:hover { opacity: 1; }
+
 #LoadingSpinner {
-    width: 48px;
     height: 48px;
-    margin-top: 14px;
     margin-left: 10px;
+    margin-top: 14px;
+    width: 48px;
 }
 
 .spinner,
-.spinner * {
-    overflow: visible !important;
-}
+.spinner * { overflow: visible !important; }
 
 .textWrapper {
     height: 44px;
-    width: 384px;
     left: 60px;
-    right: 0;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     overflow: hidden;
     padding-top: 5px;
+    right: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 384px;
 }
 
 #PlaylistsContent .textWrapper {
@@ -713,77 +651,10 @@
 }
 
 .playlistItemVideoImage {
-    margin-top: 3px;
-    margin-left: 3px;
-    width: 50px;
-    height: 38px;
     background-size: 100% auto;
+    height: 38px;
+    margin-left: 3px;
+    margin-top: 3px;
+    width: 50px;
     z-index: 10;
 }
-
-@-webkit-keyframes "rotate" {
-    from {
-       -webkit-transform: rotate(0);
-       transform: rotate(0);
-    }
-    to {
-        -webkit-transform: rotate(360deg);
-        transform: rotate(360deg);
-    }
-}
-
-.ui-tooltip {
-    display: inline-block;
-    z-index:10;
-}
-
-.ui-tooltip, .arrow:after {
-    background: black;
-    border: 2px solid white;
-  }
-
-  .ui-tooltip {
-    padding: 10px 20px;
-    color: white;
-    border-radius: 20px;
-    font: bold 14px "Helvetica Neue", Sans-Serif;
-    text-transform: uppercase;
-    box-shadow: 0 0 7px black;
-      position: absolute;
-  }
-  .arrow {
-    width: 70px;
-    height: 16px;
-    overflow: hidden;
-    position: absolute;
-    left: 50%;
-    margin-left: -35px;
-    bottom: -16px;
-  }
-  .arrow.top {
-    top: -16px;
-    bottom: auto;
-  }
-  .arrow.left {
-    left: 20%;
-  }
-  .arrow.farleft {
-      left: 8%;
-  }
-
-  .arrow:after {
-    content: "";
-    position: absolute;
-    left: 20px;
-    top: -20px;
-    width: 25px;
-    height: 25px;
-    box-shadow: 6px 5px 9px -9px black;
-    -webkit-transform: rotate(45deg);
-    tranform: rotate(45deg);
-  }
-  
-  .arrow.top:after {
-    bottom: -20px;
-    top: auto;
-  }

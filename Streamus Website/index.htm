@@ -4,6 +4,7 @@
     <head>
         <title>Streamus: YouTube music through a Google Chrome extension stream</title>
         <link href="css/bootstrap.css" rel="stylesheet" />
+        <link href="css/bootstrap-responsive.css" rel="stylesheet" />
         <link href="css/index.css" rel="stylesheet" />
         <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/jbnkffmindojffecdhbbmekbmkkfpmjd">
         <link rel='shortcut icon' href='favicon.ico' />
@@ -12,9 +13,9 @@
         <div class="container-narrow">
             
             <div class="row-fluid">
-                <div id="logoWrapper" class="span12 text-center">
-                    <a href="javascript:void(0)" onclick="document.location.href = 'http://streamus.com'">
-                        <img src="img/logo_small.png" alt="Streamus" />
+                <div class="logoWrapper span12">
+                    <a href="javascript:void(0)" onclick = "document.location.href = location.protocol + '//' + location.host + '/index.htm'" >
+                        <img src="img/logo.png" alt="Streamus" />
                     </a>
                 </div>
             </div>
@@ -22,8 +23,8 @@
             <hr>
 
             <div class="jumbotron">
-                <h1>Somethin'<br />Somethin'<br/>Business Speak!</h1>
-                <p class="lead">Streamus turns YouTube into the music player you always wanted. It's a simple Chrome extension that makes streaming YouTube refreshingly easy.</p>
+                <h1>The convience of YouTube.<br />Built using Chrome technology.<br />Simple, streaming music.</h1>
+                <p class="lead">Streamus turns YouTube into the music player you always wanted. It's a Google Chrome extension that makes streaming YouTube refreshingly easy.</p>
                 <a id="installButton" class="btn btn-large btn-success" href="javascript:void(0)">Install extension now</a>
             </div>
 
@@ -31,8 +32,8 @@
 
             <div class="row-fluid marketing">
                 <div class="span6">
-                    <h4>Stop bookmarking YouTube</h4>
-                    <p>Add videos to Streamus and forget the bookmarks! Your collections will still tag along between PCs.</p>
+                    <h4>Forget the bookmarks</h4>
+                    <p>Adding videos to Streamus makes bookmarking YouTube obsolete! Your video collections are accessible from any PC.</p>
 
                     <h4>Discover new music</h4>
                     <p>Streamus helps you explore YouTube. Turn on 'radio mode' and find suggestions based on your playlists!</p>
@@ -43,12 +44,27 @@
                     <p>Ever accidentally close a song you were listening to? Yeah, us too. Streamus runs behind the scenes so you can enjoy a seamless, tab-free experience.</p>
 
                     <h4>Share everything</h4>
-                    <p>No limitations. Share videos and playlists with a simple click, just like in Spotify, through the share.streamus.com domain!</p>
+                    <p>Your playlists and videos are made portable with a simple click. Share music in confidence with <strong>share.streamus.com</strong></p>
                 </div>
             </div>
-
             <hr>
 
+            <div class="footer row-fluid">
+                <div class="span6">
+                    <p>
+                        © Streamus 2013
+                    </p>
+                    <p>
+                        <a href="/legal/terms-of-use.htm" title="Terms of Use of Streamus" rel="noindex, nofollow">Terms of Use</a>
+                        <a href="/legal/privacy.htm" title="Privacy Policy of Streamus" rel="noindex, nofollow">Privacy</a>
+                    </p>
+                </div>                                     
+                
+                <div class="badgeWrapper span6 text-right">
+                    <img src="img/youTubeBadge.png" alt="Powered by YouTube" />
+                    <img src="img/chromeWebStoreBadge.png" alt="Available in the Chrome Web Store" />  
+                </div>  
+            </div>
         </div>
 
         <!-- Placed at the end of the document so the pages load faster -->
@@ -57,6 +73,5 @@
         <script src="js/backbone.js"></script>
         <script src="js/bootstrap.js"></script>
         <script src="js/index.js"></script>
-
     </body>
 </html>

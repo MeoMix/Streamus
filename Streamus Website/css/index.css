@@ -1,45 +1,91 @@
-﻿body {
+﻿@font-face {
+    font-family: 'Helvetica Neue';
+    src: url('../font/helvetica neue/helveticaneue-webfont.eot');
+    src: url('../font/helvetica neue/helveticaneue-webfont.eot?#iefix') format('eot'),
+         url('../font/helvetica neue/helveticaneue-webfont.woff') format('woff'),
+         url('../font/helvetica neue/helveticaneue-webfont.ttf') format('truetype'),
+         url('../font/helvetica neue/helveticaneue-webfont.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    @font-face {
+        font-family: 'Helvetica Neue';
+        src: url('../font/helvetica neue/helveticaneue-webfont.svg') format('svg');
+        font-weight: normal;
+        font-style: normal;
+    }
+}
+
+@font-face {
+    font-family: 'Helvetica Neue';
+    src: url('../font/helvetica neue/helveticaneuebold-webfont.eot');
+    src: url('../font/helvetica neue/helveticaneuebold-webfont.eot?#iefix') format('eot'),
+         url('../font/helvetica neue/helveticaneuebold-webfont.woff') format('woff'),
+         url('../font/helvetica neue/helveticaneuebold-webfont.ttf') format('truetype'),
+         url('../font/helvetica neue/helveticaneuebold-webfont.svg') format('svg');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    @font-face {
+        font-family: 'Helvetica Neue';
+        src: url('../font/helvetica neue/helveticaneuebold-webfont.svg') format('svg');
+        font-weight: bold;
+        font-style: normal;
+    }
+}
+
+body {
     color: #1E1E1E !important;
     padding-bottom: 40px;
     padding-top: 20px;
 }
 
 /* Custom container */
+
 .container-narrow {
     margin: 0 auto;
     max-width: 1000px;
 }
 
 /* Main marketing message and sign up button */
+
 .jumbotron {
     margin: 60px 0;
     text-align: center;
 }
 
-.jumbotron h1 {
-    font-size: 72px;
-    line-height: 1;
-}
+.jumbotron.short { margin: inherit; }
 
-.jumbotron .btn {
-    font-size: 21px;
-    padding: 14px 24px;
+.jumbotron h1 { line-height: 1.2; }
+
+.footer { padding-top: 10px; }
+
+.footer * {
+    display: inline-block;
+    padding-right: 5px;
 }
 
 /* Supporting marketing content */
+
 .marketing { margin: 60px 0; }
+
 .marketing p + h4 { margin-top: 28px; }
 
-#logoWrapper {
-    text-align: left !important;
+.badgeWrapper {
+    margin-top: -10px;
+    white-space: nowrap;
 }
 
 @media (max-width: 1000px) {
-    .container-narrow {
-        padding: 20px;
-    }
+    .container-narrow { padding: 20px; }
 
-    #logoWrapper {
-        text-align: center !important;
-    }
+    .logoWrapper { text-align: center !important; }
+
+    .badgeWrapper { margin-top: inherit; }
+
+    .badgeWrapper.text-right { text-align: left !important; }
 }
