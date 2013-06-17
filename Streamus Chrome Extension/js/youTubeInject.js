@@ -1,3 +1,4 @@
+//  This code runs on YouTube pages.
 $(function () {
 
     var style = document.createElement('link');

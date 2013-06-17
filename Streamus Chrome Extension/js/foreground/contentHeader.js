@@ -38,8 +38,12 @@ define(['backgroundManager'], function (backgroundManager) {
         });
 
         headerInput.appendTo(headerTitle);
+        
+        backgroundManager.get('allPlaylists').on('change:title', function (model, title) {
+            headerInput.val(title);
+        });
 
-        backgroundManager.on('change:activePlaylist', function (model, activePlaylist) {
+        backgroundManager.on('change:activePlaylist ', function (model, activePlaylist) {
             headerInput.val(activePlaylist.get('title'));
         });
 

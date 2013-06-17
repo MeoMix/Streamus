@@ -10,19 +10,22 @@
 
         initialize: function () {
 
-            if (chrome.app.isInstalled) {
+            var browserIsNotChrome = navigator.userAgent.toLowerCase().indexOf('chrome') === -1;
+            
+            if (browserIsNotChrome) {
                 this.$el
                     .attr('disabled', true)
-                    .text('Already installed');
+                    .text('Google Chrome required');
             }
-            
-            if (typeof window.orientation !== 'undefined') {
+
+            //  http://stackoverflow.com/questions/17129261/detect-mobile-browser-with-javascript-detectmobilebrowsers-returns-false-for-m
+            if (window.mobileCheck || screen.width < 768) {
                 
                 this.$el
                     .attr('disabled', true)
-                    .text('PC required!');
+                    .text('PC required');
+                
             }
-            
         },
 
         install: function () {

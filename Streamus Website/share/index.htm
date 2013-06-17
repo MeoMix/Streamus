@@ -2,7 +2,7 @@
 
 <html>
     <head>
-        <title>Streamus: YouTube music through a Google Chrome extension stream</title>
+        <title>Streamus: YouTube music streamed through a Google Chrome extension</title>
         <link href="http://www.streamus.com/css/bootstrap.css" rel="stylesheet" />
         <link href="http://www.streamus.com/css/bootstrap-responsive.css" rel="stylesheet" />
         <link href="http://www.streamus.com/css/index.css" rel="stylesheet" />
@@ -14,7 +14,6 @@
             
             <div class="row-fluid">
                  <div class="logoWrapper span12">
-                    <!--TODO: Is it possible to declare these relatively?-->
                     <a href="javascript:void(0)" onclick=" document.location.href = 'http://streamus.com' ">
                         <img src="http://streamus.com/img/logo.png" alt="Streamus" />
                     </a>
@@ -23,7 +22,7 @@
 
             <hr>
             
-            <div class="jumbotron">
+            <div class="streamusNotInstalledWarning jumbotron">
                 <h3>Looks like you're not experiencing Streamus yet.<br /> Try it out?</h3>
                 
                 <a id="installButton" class="btn btn-large btn-success" href="javascript:void(0)">Install extension now</a>
@@ -36,6 +35,7 @@
         <script src="http://www.streamus.com/js/underscore.js"></script>
         <script src="http://www.streamus.com/js/backbone.js"></script>
         <script src="http://www.streamus.com/js/bootstrap.js"></script>
+        <script src="http://www.streamus.com/js/detectMobileBrowser.js"></script>
         <script src="http://www.streamus.com/js/index.js"></script>
 
     </body>

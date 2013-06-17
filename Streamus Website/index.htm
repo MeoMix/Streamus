@@ -2,7 +2,7 @@
 
 <html>
     <head>
-        <title>Streamus: YouTube music through a Google Chrome extension stream</title>
+        <title>Streamus: YouTube music streamed through a Google Chrome extension</title>
         <link href="css/bootstrap.css" rel="stylesheet" />
         <link href="css/bootstrap-responsive.css" rel="stylesheet" />
         <link href="css/index.css" rel="stylesheet" />
@@ -14,7 +14,7 @@
             
             <div class="row-fluid">
                 <div class="logoWrapper span12">
-                    <a href="javascript:void(0)" onclick = "document.location.href = location.protocol + '//' + location.host + '/index.htm'" >
+                    <a href="javascript:void(0)" onclick="document.location.href = location.protocol + '//' + location.host" >
                         <img src="img/logo.png" alt="Streamus" />
                     </a>
                 </div>
@@ -23,7 +23,9 @@
             <hr>
 
             <div class="jumbotron">
-                <h1>The convience of YouTube.<br />Built using Chrome technology.<br />Simple, streaming music.</h1>
+                <h1>Simple, streaming music.</h1>
+
+                <h2>The convenience of YouTube.<br />The beauty of Chrome technology.</h2>
                 <p class="lead">Streamus turns YouTube into the music player you always wanted. It's a Google Chrome extension that makes streaming YouTube refreshingly easy.</p>
                 <a id="installButton" class="btn btn-large btn-success" href="javascript:void(0)">Install extension now</a>
             </div>
@@ -50,9 +52,9 @@
             <hr>
 
             <div class="footer row-fluid">
-                <div class="span6">
+                <div class="span6 legalWrapper">
                     <p>
-                        © Streamus 2013
+                        © 2013 Streamus 
                     </p>
                     <p>
                         <a href="/legal/terms-of-use.htm" title="Terms of Use of Streamus" rel="noindex, nofollow">Terms of Use</a>
@@ -60,7 +62,7 @@
                     </p>
                 </div>                                     
                 
-                <div class="badgeWrapper span6 text-right">
+                <div class="span6 text-right badgeWrapper">
                     <img src="img/youTubeBadge.png" alt="Powered by YouTube" />
                     <img src="img/chromeWebStoreBadge.png" alt="Available in the Chrome Web Store" />  
                 </div>  
@@ -72,6 +74,7 @@
         <script src="js/underscore.js"></script>
         <script src="js/backbone.js"></script>
         <script src="js/bootstrap.js"></script>
+        <script src="js/detectMobileBrowser.js"></script>
         <script src="js/index.js"></script>
     </body>
 </html>

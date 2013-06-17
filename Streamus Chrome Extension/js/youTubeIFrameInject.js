@@ -1,4 +1,6 @@
-﻿$(function () {
+﻿//  This code runs instead of embedded YouTube iframes.
+//  TODO: Does this corrupt other videos... check if iframe / iframe parent?
+$(function () {
     
     //  Monitor the video for change of src so that background can mimic player.
     var videoStream = $('.video-stream');

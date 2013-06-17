@@ -220,6 +220,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
     });
         
     function sendEventToOpenYouTubeTabs(event, type, data) {
+        //  TODO: Support non-www.
         chrome.tabs.query({ url: '*://www.youtube.com/watch?v*' }, function (tabs) {
 
             _.each(tabs, function (tab) {
@@ -232,6 +233,30 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
 
         });
     }
+        
+    function sendEventToOpenStreamusTabs(event) {
+        //  TODO: Support www.
+        chrome.tabs.query({ url: '*://streamus.com/*' }, function (tabs) {
+
+            _.each(tabs, function (tab) {
+                chrome.tabs.sendMessage(tab.id, { event: event });
+            });
+
+        });
+    }
+
+        console.log("my id:", chrome.i18n.getMessage("@@extension_id"));
+
+    //  id is the id of an extension or app that has been uninstalled.
+        chrome.management.onUninstalled.addListener(function(id) {
+
+        if (id == chrome.i18n.getMessage("@@extension_id")) {
+
+            sendEventToOpenStreamusTabs('uninstall');
+            
+        }
+
+    });
         
     //  Modify the iFrame headers to force HTML5 player and to look like we're actually a YouTube page.
     //  The HTML5 player seems more reliable (doesn't crash when Flash goes down) and looking like YouTube

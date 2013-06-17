@@ -1,8 +1,8 @@
 ﻿{
   "name": "Streamus™ (Beta!)",
-  "version": "0.64",
+  "version": "0.68",
   "manifest_version": 2,
-  "description": "A YouTube music player built into your browser. Stream videos and songs; share playlists with friends!",
+  "description": "Streamus turns YouTube into the music player you always wanted. Streamus makes streaming YouTube refreshingly easy.",
   "background":{
     "page": "background.htm"
   },
@@ -11,11 +11,12 @@
        "19": "img/streamus_icon19.png",
        "38": "img/streamus_icon38.png"
     },
-    "default_title": "Streamus: Rediscover YouTube.",
+    "default_title": "Streamus: Simple, streaming music.",
     "default_popup": "foreground.htm"
   },
   "permissions": [
     "pushMessaging",
+	"management",
 	"notifications",
     "storage",
     "webRequest",
@@ -32,15 +33,19 @@
       "js": ["js/thirdParty/jquery.js", "js/youTubeIFrameInject.js"]
     },
     {
-      "matches": ["*://*.youtube.com/watch?v*"],
-      "css": ["css/youTubeInject.css"],
-	  "all_frames": true,
+      "matches": ["*://*.youtube.com/watch?*"],
+      "run_at": "document_start",
       "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/youTubeInject.js"]
     },
     {
       "matches": ["*://*.share.streamus.com/*"],
-	  "all_frames": true,
+	  "run_at": "document_start",
       "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/shareInject.js"]
+    },
+    {
+      "matches": ["*://*.streamus.com/*"],
+	  "run_at": "document_start",
+      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/streamusInject.js"]
     }
   ],
   "commands": {
@@ -57,10 +62,7 @@
       "description": "Tells the player to toggle the video state."
     },
     "_execute_browser_action": {
-      "suggested_key": {
-        "default": "Ctrl+B",
-		"windows": "Ctrl+B"
-      }
+      "suggested_key": { "default": "Ctrl+B" }
     }
   },
   "icons": {

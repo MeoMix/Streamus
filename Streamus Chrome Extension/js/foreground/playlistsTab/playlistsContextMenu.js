@@ -15,6 +15,7 @@ define(['contextMenu', 'backgroundManager'], function (contextMenu, backgroundMa
 
                         var shareCodeShortId = shareCode.get('shortId');
                         var urlFriendlyEntityTitle = shareCode.get('urlFriendlyEntityTitle');
+
                         var playlistShareUrl = 'http://share.streamus.com/playlist/' + shareCodeShortId + '/' + urlFriendlyEntityTitle;
 
                         chrome.extension.sendMessage({

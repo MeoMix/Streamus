@@ -168,6 +168,7 @@
     <Content Include="js\foreground\spinnerManager.js" />
     <Content Include="js\foreground\videoTab\videoDisplay.js" />
     <Content Include="js\helpers.js" />
+    <Content Include="js\streamusInject.js" />
     <Content Include="js\youTubeInject.js" />
     <Content Include="js\playerStates.js" />
     <Content Include="js\programState.js" />

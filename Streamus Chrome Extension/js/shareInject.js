@@ -1,4 +1,12 @@
+//  This code only runs on the share.streamus.com sub-domain.
 $(function () {
+    'use strict';
+    
+    var streamusNotInstalledWarning = $('.streamusNotInstalledWarning');
+
+    if (streamusNotInstalledWarning.length > 0) {
+        streamusNotInstalledWarning.remove();
+    }
 
     var currentUrl = document.URL;
     var urlSections = currentUrl.split('/');
@@ -24,9 +32,10 @@ $(function () {
                 resultText = 'There was an issue adding your playlist. Check the URL?';
             }
             
-            $('<div>', {
-                text: resultText
-            }).appendTo('body');
+            $('<h3>', {
+                text: resultText,
+                'class': 'jumbotron'
+            }).appendTo('.container-narrow');
 
         });
     }
