@@ -42,6 +42,11 @@ var require = {
         'scrollIntoView': 'thirdParty/jquery.scrollIntoView',
         'spin': 'thirdParty/jquery.spin',
         'repeatButtonStates': 'repeatButtonStates',
-        'spinnerManager': 'foreground/spinnerManager'
+        'spinnerManager': 'foreground/spinnerManager',
+        
+        'radioModeItems': 'foreground/collection/radioModeItems',
+        'radioModeItem': 'foreground/model/radioModeItem',
+        'radioModeView': 'foreground/view/radioModeView',
+        'radioModeItemView': 'foreground/view/radioModeItemView'
     }
 };

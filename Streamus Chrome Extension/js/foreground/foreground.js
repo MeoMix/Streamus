@@ -17,6 +17,7 @@ define(['backgroundManager',
         'playlistItemsDisplay',
         'playlistInput',
         'playlistsDisplay',
+        'radioModeView'
 ], function (backgroundManager) {
     'use strict';
    

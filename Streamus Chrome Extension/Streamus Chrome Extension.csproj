@@ -137,6 +137,10 @@
     <Content Include="js\background\user.js" />
     <Content Include="js\background\video.js" />
     <Content Include="js\background\videos.js" />
+    <Content Include="js\foreground\collection\radioModeItems.js" />
+    <Content Include="js\foreground\model\radioModeItem.js" />
+    <Content Include="js\foreground\view\radioModeItemView.js" />
+    <Content Include="js\foreground\view\radioModeView.js" />
     <Content Include="js\shareInject.js" />
     <Content Include="js\dataSources.js" />
     <Content Include="js\foreground\backgroundManager.js" />

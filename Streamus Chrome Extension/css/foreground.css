@@ -2,7 +2,7 @@
     -webkit-user-select: none;
     background: #fff;
     font: 12px/1.3 sans-serif;
-    min-height: 452px;
+    height: 502px;
     min-width: 513px;
 }
 
@@ -56,7 +56,7 @@
 #menu {
     background: #eaeaea;
     border-right: 1px solid #fff;
-    bottom: 0;
+    bottom: 100px;
     left: 0;
     top: 70px;
     width: 70px;
@@ -214,7 +214,7 @@
 }
 
 .content {
-    bottom: 0;
+    bottom: 100px;
     left: 70px;
     right: 0;
     top: 70px;
@@ -657,4 +657,15 @@
     margin-top: 3px;
     width: 50px;
     z-index: 10;
+}
+
+#RadioMode {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 420px;
+    z-index: 3;
+    position: absolute;
+    height: 100px;
+    background-color: black;
 }
