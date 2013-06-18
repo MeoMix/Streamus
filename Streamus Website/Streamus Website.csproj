@@ -63,6 +63,7 @@
     <Content Include=".htaccess" />
     <None Include="js\chrome-api-vsdoc.js" />
     <Content Include="js\detectMobileBrowser.js" />
+    <Content Include="js\googleAnalytics.js" />
     <Content Include="js\index.js" />
     <Content Include="js\jquery.js" />
     <Content Include="js\main.js" />
