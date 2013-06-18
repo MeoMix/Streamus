@@ -1,7 +1,7 @@
 //  TODO: Exposed globally so that Chrome Extension's foreground can access through chrome.extension.getBackgroundPage()
 var YouTubePlayer = null;
 
-define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
+define(['youTubePlayerAPI', 'localStorageManager'], function (youTubePlayerAPI, localStorageManager) {
     'use strict';
 
     //  This is the actual YouTube Player API object housed within the iframe.
@@ -31,7 +31,7 @@ define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
             var self = this;
    
             //  Update the volume whenever the UI modifies the volume property.
-            self.on('change:volume', function (model, volume) {
+            this.on('change:volume', function (model, volume) {
                 self.set('muted', false);
                 //  We want to update the youtube player's volume no matter what because it persists between browser sessions
                 //  thanks to YouTube saving it -- so should keep it always sync'ed.
@@ -44,7 +44,7 @@ define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
                 } 
             });
 
-            self.on('change:muted', function (model, isMuted) {
+            this.on('change:muted', function (model, isMuted) {
 
                 //  Same logic here as with the volume
                 if (isMuted) {
@@ -59,6 +59,7 @@ define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
                     streamusPlayer.muted = isMuted;
                 }
             });
+
 
             this.on('change:loadedVideoId', function() {
                 clearInterval(seekToInterval);
@@ -189,7 +190,7 @@ define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
             youTubePlayer.loadVideoById({
                 videoId: videoId,
                 startSeconds: 0,
-                suggestedQuality: 'default'
+                suggestedQuality: localStorageManager.getSuggestedQuality()
             });
         },
             
@@ -207,7 +208,7 @@ define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
             youTubePlayer.loadVideoById({
                 videoId: videoId,
                 startSeconds: 0,
-                suggestedQuality: 'default'
+                suggestedQuality: localStorageManager.getSuggestedQuality()
             });
         },
         
@@ -299,6 +300,12 @@ define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
             //  Seek even if streamusPlayer is defined because we probably need to update the blob if it is.
             //  The true paramater allows the youTubePlayer to seek ahead past its buffered video.
             youTubePlayer.seekTo(timeInSeconds, true);
+        },
+        
+        //  Attempt to set playback quality to suggestedQuality or highest possible.
+        setSuggestedQuality: function(suggestedQuality) {
+
+            youTubePlayer.setPlaybackQuality(suggestedQuality);
         }
     });
 

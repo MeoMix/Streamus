@@ -43,7 +43,8 @@ var require = {
         'spin': 'thirdParty/jquery.spin',
         'repeatButtonStates': 'repeatButtonStates',
         'spinnerManager': 'foreground/spinnerManager',
-        
+        'overscroll': 'thirdParty/jquery.overscroll',
+
         'radioModeItems': 'foreground/collection/radioModeItems',
         'radioModeItem': 'foreground/model/radioModeItem',
         'radioModeView': 'foreground/view/radioModeView',

@@ -6,7 +6,8 @@ define(function () {
         defaults: function () {
             return {
                 // TODO: Figure out all the properties this model needs.
-                title: 'Empty Radio Mode Item'
+                title: 'Empty Radio Mode Item',
+                videoImageUrl: ''
             };
         },
         

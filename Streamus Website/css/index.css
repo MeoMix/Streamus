@@ -39,8 +39,8 @@ body {
 .jumbotron.short { margin: inherit; }
 
 .jumbotron h1 {
-     font-size: 72px;
-     line-height: 1;
+    font-size: 72px;
+    line-height: 1;
 }
 
 .footer { padding-top: 10px; }
@@ -63,6 +63,20 @@ body {
 
 .legalWrapper {
     line-height: 1;
+    padding-top: 5px;
+}
+
+.fb-like {
+    height: 20px;
+    bottom: -40px;
+    left: 20px;
+    overflow: hidden;
+}
+
+#___plusone_0 {
+    display: none !important;
+    margin-left: -55px !important;
+    margin-bottom: 20px !important;
 }
 
 @media (max-width: 1000px) {
@@ -70,22 +84,22 @@ body {
 
     .logoWrapper { text-align: center; }
 
-    .badgeWrapper {
-         text-align: left;
-    }
+    .badgeWrapper { text-align: left; }
 }
 
 @media (max-width: 767px) {
     .badgeWrapper {
-         margin-top: inherit;
-         text-align: center;
+        margin-top: inherit;
+        text-align: center;
     }
+
     .legalWrapper { text-align: center; }
+
+    .fb-like { display: none !important; }
 }
 
 /* Hide the badges when we get really tiny because they don't look great. */
+
 @media (max-width: 352px) {
-    .badgeWrapper {
-        display: none !important;
-    }
+    .badgeWrapper { display: none !important; }
 }

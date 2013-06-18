@@ -6,6 +6,11 @@ define(['repeatButtonStates'], function (repeatButtonStates) {
     'use strict';
 
     var localStorageManagerModel = Backbone.Model.extend({
+        
+        defaults: {
+            suggestedQuality: 'default'
+        },
+
         getActiveStreamId: function() {
             var activeStreamId = getItem('activeStreamId');
             return activeStreamId;
@@ -79,6 +84,18 @@ define(['repeatButtonStates'], function (repeatButtonStates) {
         
         getActiveContentButtonId: function() {
             return localStorage.getItem('activeContentButtonId') || 'HomeMenuButton';
+        },
+        
+        getSuggestedQuality: function() {
+            return localStorage.getItem('suggestedQuality') || this.get('suggestedQuality');
+        },
+        
+        setSuggestedQuality: function (suggestedQuality) {
+            //  Whenever the suggestedQuality is changed -- player needs to know about it so it'll subscribe to this property changing.
+            localStorage.setItem('suggestedQuality', suggestedQuality);
+
+            console.log('Set suggested quality');
+            this.set('suggestedQuality', suggestedQuality);
         }
         
     });

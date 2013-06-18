@@ -1,5 +1,13 @@
-﻿$(function() {
+﻿window.onGooglePlusOneButtonReady = function () {
+
+    console.log("Calling");
+
+    $('#___plusone_0').css({ display: 'inherit' });
+};
+
+$(function () {
     'use strict';
+
 
     var installButtonView = Backbone.View.extend({
         el: $('#installButton'),
@@ -29,30 +37,35 @@
         },
 
         install: function () {
-
-            this.$el
-                .attr('disabled', true)
-                .text('Installing...');
-
-            var self = this;
-            chrome.webstore.install('https://chrome.google.com/webstore/detail/jbnkffmindojffecdhbbmekbmkkfpmjd', function () {
-
-                self.$el.text('Installed!');
-
-            }, function (error) {
+            
+            if (!this.$el.attr('disabled')) {
                 
-                if (error == 'User cancelled install') {
-                    self.$el
-                        .attr('disabled', false)
-                        .text('Install extension now');
-                } else {
+                this.$el
+                    .attr('disabled', true)
+                    .text('Installing...');
 
-                    self.$el.text('An error was encountered.');
-                    window && console.error(error);
-                    
-                }
+                var self = this;
+                chrome.webstore.install('https://chrome.google.com/webstore/detail/jbnkffmindojffecdhbbmekbmkkfpmjd', function () {
+
+                    self.$el.text('Installed!');
+
+                }, function (error) {
+
+                    if (error == 'User cancelled install') {
+                        self.$el
+                            .attr('disabled', false)
+                            .text('Install extension now');
+                    } else {
+
+                        self.$el.text('An error was encountered.');
+                        window && console.error(error);
+
+                    }
+
+                });
                 
-            });
+            }
+
         }
     });
 
