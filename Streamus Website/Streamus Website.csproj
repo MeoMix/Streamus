@@ -62,6 +62,7 @@
     <Content Include="font\helvetica neue\helveticaneuebold-webfont.woff" />
     <Content Include=".htaccess" />
     <None Include="js\chrome-api-vsdoc.js" />
+    <Content Include="js\googlePlusOneButton.js" />
     <Content Include="js\detectMobileBrowser.js" />
     <Content Include="js\facebookLikeButton.js" />
     <Content Include="js\googleAnalytics.js" />

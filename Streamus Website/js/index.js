@@ -1,14 +1,10 @@
-﻿window.onGooglePlusOneButtonReady = function () {
-
-    console.log("Calling");
-
-    $('#___plusone_0').css({ display: 'inherit' });
-};
-
+﻿function onGooglePlusOneButtonReady(jsonParam) {
+    console.log("hey");
+    alert('hi');
+}
 $(function () {
     'use strict';
-
-
+    
     var installButtonView = Backbone.View.extend({
         el: $('#installButton'),
 
