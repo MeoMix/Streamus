@@ -117,7 +117,6 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'h
                     callback(playlistCopy);
                 },
                 error: function (error) {
-                    //  TODO: Rollback client-side transaction somehow?
                     console.error("Error adding playlist by share data", error);
                     callback();
                 }

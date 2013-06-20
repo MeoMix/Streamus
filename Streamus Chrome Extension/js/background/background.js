@@ -1,25 +1,8 @@
 ﻿//  Background.js is a bit of a dumping ground for code which needs a permanent housing spot.
-define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManager', 'ytHelper', 'error', 'programState', 'repeatButtonStates', 'iconManager'],
-    function (player, backgroundManager, localStorageManager, pushMessageManager, ytHelper, Error, programState, repeatButtonStates) {
+define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManager', 'ytHelper', 'programState', 'repeatButtonStates'],
+    function (player, backgroundManager, localStorageManager, pushMessageManager, ytHelper, programState, repeatButtonStates) {
         'use strict';
-
-    //  TODO: This is the only place I really plan on referencing the error module,
-    //  maybe I should move this window.onerror into the Error module?
-    //  Send a log message whenever any client errors occur; for debugging purposes.
-    window.onerror = function (message, url, lineNumber) {
-        
-        //  Only log client errors to the database in a deploy environment, not when debugging locally.
-        if (!programState.get('isLocal')) {
-            var error = new Error({
-                message: message,
-                url: url,
-                lineNumber: lineNumber
-            });
-
-            error.save();
-        }
-    };
-        
+  
     player.on('change:state', function (model, state) {
 
         if (state === PlayerStates.PLAYING) {
@@ -74,42 +57,39 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
     });
     
     //  Receive keyboard shortcuts from users.
-    //  TODO: Doesn't seem to be working in production, but does work in dev? Double check.
     chrome.commands.onCommand.addListener(function (command) {
-        switch (command) {
-            //  TODO: Make this code DRY
-            case 'nextVideo':
-                var activePlaylistItem = backgroundManager.get('activePlaylistItem');
-                
-                if (activePlaylistItem !== null) {
-                    var playlistId = activePlaylistItem.get('playlistId');
-                    var playlist = backgroundManager.getPlaylistById(playlistId);
+        
+        if (command === 'nextVideo' || command === 'previousVideo') {
+            
+            //  Skip to the next or previous video based on the command given
+            var activePlaylistItem = backgroundManager.get('activePlaylistItem');
 
-                    var nextItem = playlist.gotoNextItem();
-                    backgroundManager.set('activePlaylistItem', nextItem);
-                }
+            if (activePlaylistItem !== null) {
+                var playlistId = activePlaylistItem.get('playlistId');
+                var playlist = backgroundManager.getPlaylistById(playlistId);
 
-                break;
-            case 'previousVideo':
-                var activePlaylistItem = backgroundManager.get('activePlaylistItem');
-
-                if (activePlaylistItem !== null) {
-                    var playlistId = activePlaylistItem.get('playlistId');
-                    var playlist = backgroundManager.getPlaylistById(playlistId);
-
-                    var previousItem = playlist.gotoPreviousItem();
-                    backgroundManager.set('activePlaylistItem', previousItem);
-                }
-                break;
-            case 'toggleVideo':
-                if (player.isPlaying()) {
-                    player.pause();
+                var item;
+                if (command == 'nextVideo') {
+                    item = playlist.gotoNextItem();
                 } else {
-                    player.play();
+                    item = playlist.gotoPreviousItem();
                 }
 
-                break;
+                backgroundManager.set('activePlaylistItem', item);
+            }
         }
+        else if (command === 'toggleVideo') {
+            
+            if (player.isPlaying()) {
+                player.pause();
+            } else {
+                player.play();
+            }
+            
+        } else {
+            console.error("Unhandled command:", command);
+        }
+
     });
 
     //  Listen for messages from YouTube video pages.
@@ -122,12 +102,13 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
 
                 var hiddenClipboard = document.getElementById("HiddenClipboard");
                 hiddenClipboard.value = request.text;
+                
                 //  Copy text from hidden field to clipboard.
                 hiddenClipboard.select();
                 document.execCommand("copy", false, null);
+                
                 //  Cleanup
                 sendResponse({});
-
                 break;
 
             case 'getStreams':
@@ -191,7 +172,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
         return true;
     });
 
-    //  TODO: How can I be more DRY with this?
+    //  Backbone doesn't provide a way to get the event name when binding like this and I don't want to override their code, so leaving this a little less DRY.
     backgroundManager.get('allPlaylists').on('add', function (playlist) {
 
         sendEventToOpenYouTubeTabs('add', 'playlist', {
@@ -220,8 +201,8 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
     });
         
     function sendEventToOpenYouTubeTabs(event, type, data) {
-        //  TODO: Support non-www.
-        chrome.tabs.query({ url: '*://www.youtube.com/watch?v*' }, function (tabs) {
+        
+        chrome.tabs.query({ url: '*://*.youtube.com/watch?v*' }, function (tabs) {
 
             _.each(tabs, function (tab) {
                 chrome.tabs.sendMessage(tab.id, {
@@ -232,31 +213,8 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
             });
 
         });
-    }
         
-    function sendEventToOpenStreamusTabs(event) {
-        //  TODO: Support www.
-        chrome.tabs.query({ url: '*://streamus.com/*' }, function (tabs) {
-
-            _.each(tabs, function (tab) {
-                chrome.tabs.sendMessage(tab.id, { event: event });
-            });
-
-        });
     }
-
-        console.log("my id:", chrome.i18n.getMessage("@@extension_id"));
-
-    //  id is the id of an extension or app that has been uninstalled.
-        chrome.management.onUninstalled.addListener(function(id) {
-
-        if (id == chrome.i18n.getMessage("@@extension_id")) {
-
-            sendEventToOpenStreamusTabs('uninstall');
-            
-        }
-
-    });
         
     //  Modify the iFrame headers to force HTML5 player and to look like we're actually a YouTube page.
     //  The HTML5 player seems more reliable (doesn't crash when Flash goes down) and looking like YouTube
@@ -269,15 +227,24 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
         
         if (cookieRequestHeader) {
 
+            //  I've seen both of these Flash cookies before and I'm not sure if there are more.
             var flashCookieValue = 'f3=40008';
+            var alternateFlashCookieValue = 'f3=40000';
             var html5CookieValue = 'f2=40001000';
            
             //  Swap out the flash cookie variable with the HTML5 counterpart.
             if (cookieRequestHeader.value.indexOf(flashCookieValue) !== -1) {
+                
                 cookieRequestHeader.value = cookieRequestHeader.value.replace(flashCookieValue, html5CookieValue);
+                
+            }
+            else if (cookieRequestHeader.value.indexOf(alternateFlashCookieValue) !== -1) {
+                
+                cookieRequestHeader.value = cookieRequestHeader.value.replace(alternateFlashCookieValue, html5CookieValue);
+
             } else {
                 cookieRequestHeader.value += '&' + html5CookieValue;
-			}
+            }
 
         }
         

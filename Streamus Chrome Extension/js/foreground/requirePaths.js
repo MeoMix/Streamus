@@ -14,7 +14,6 @@ var require = {
         'radioModeButton': 'foreground/playerControls/radioModeButton',
         'repeatButton': 'foreground/playerControls/repeatButton',
         'header': 'foreground/header',
-        'settings': 'foreground/settingsTab/settings',
         'playlistItemsContextMenu': 'foreground/playlistItemsTab/playlistItemsContextMenu',
         'playlistItemsDisplay': 'foreground/playlistItemsTab/playlistItemsDisplay',
         'playlistItemInput': 'foreground/playlistItemsTab/playlistItemInput',

@@ -1,4 +1,4 @@
-﻿//  TODO: Exposed globally for the foreground. Is there a better way?
+﻿//  Exposed globally so that foreground.js is able to access via chrome.getBackgroundPage
 var BackgroundManager = null;
 
 //  BackgroundManager is a denormalization point for the Background's selected models.
@@ -94,8 +94,7 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
 
         });
 
-        //  TODO: This isn't fully implemented yet. My intention is to send a message to any
-        //  listening YouTube pages to ensure that Streamus data loaded on the YouTube page stays up to date.
+        //  Message any YouTube pages to ensure that Streamus data loaded on the YouTube page stays up to date.
         this.get('allStreams').on('add', function (stream) {
             chrome.runtime.sendMessage({ method: "streamAdded", stream: stream });
         });

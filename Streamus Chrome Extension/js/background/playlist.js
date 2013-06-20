@@ -73,7 +73,6 @@ define(['ytHelper',
                             title: title
                         },
                         error: function (error) {
-                            //  TODO: Rollback client-side transaction somehow?
                             console.error("Error saving title", error);
                         }
                     });
@@ -90,7 +89,6 @@ define(['ytHelper',
                             firstItemId: firstItemId
                         },
                         error: function (error) {
-                            //  TODO: Rollback client-side transaction somehow?
                             console.error("Error saving firstItemId", error, error.message);
                         }
                     });

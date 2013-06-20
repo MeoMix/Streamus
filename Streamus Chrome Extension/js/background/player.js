@@ -1,4 +1,4 @@
-//  TODO: Exposed globally so that Chrome Extension's foreground can access through chrome.extension.getBackgroundPage()
+//  Exposed globally so that Chrome Extension's foreground can access through chrome.extension.getBackgroundPage()
 var YouTubePlayer = null;
 
 define(['youTubePlayerAPI', 'localStorageManager'], function (youTubePlayerAPI, localStorageManager) {

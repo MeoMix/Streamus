@@ -11,10 +11,22 @@ define(['programState'], function (programState) {
             timeOccurred: new Date()
         },
         urlRoot: programState.getBaseUrl() + 'Error/'
+       
     });
 
-    return function (config) {
-        var error = new errorModel(config);
-        return error;
+    //  Send a log message whenever any client errors occur; for debugging purposes.
+    window.onerror = function (message, url, lineNumber) {
+
+        //  Only log client errors to the database in a deploy environment, not when debugging locally.
+        if (!programState.get('isLocal')) {
+            var error = new errorModel({
+                message: message,
+                url: url,
+                lineNumber: lineNumber
+            });
+
+            error.save();
+        }
     };
+    
 });

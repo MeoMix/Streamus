@@ -1,4 +1,4 @@
-﻿//  TODO: Exposed globally for the foreground. Is there a better way?
+﻿//  Exposed globally so that Chrome Extension's foreground can access through chrome.extension.getBackgroundPage()
 var LocalStorageManager = null;
 
 //  Denormalization point for the Background's selected models.

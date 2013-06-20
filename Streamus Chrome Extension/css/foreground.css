@@ -2,8 +2,9 @@
     -webkit-user-select: none;
     background: #fff;
     font: 12px/1.3 sans-serif;
-    height: 502px;
+    height: 509px;
     min-width: 513px;
+    max-width: 513px;
 }
 
 /*http://beautifulpixels.com/goodies/create-custom-webkit-scrollbar/*/
@@ -224,8 +225,7 @@
 #PlayIcon { left: 54% !important; }
 
 #PlaylistsContent,
-#VideoContent,
-#SettingsContent { display: none; }
+#VideoContent { display: none; }
 
 #VideoContent { background-color: black; }
 
@@ -297,7 +297,6 @@
 
 #PlayPauseButton:hover,
 #HomeMenuButton:hover,
-#SettingsMenuButton:hover,
 #PlaylistsMenuButton:hover { background-color: rgba(255, 255, 255, 0.3); }
 
 #NextButton:hover,
@@ -659,30 +658,41 @@
     z-index: 10;
 }
 
-
 .streamItem {
     color: white;
-        width: 120px;
+    width: 120px;
     height: 90px;
     display: inline-block;
 }
 
-
 #RadioMode {
-    bottom: 0;
     left: 0;
-    right: 0;
     top: 427px;
     z-index: 3;
     position: absolute;
     height: 90px;
     background-color: black;
+    white-space: nowrap;
+    display: inline-block;
+    width: 513px;
 }
 
-#overflowWOW {
-    width: 2000px;
-    height: 90px;
+#RadioMode {
+    display: none !important;
 }
+
+#menu {
+    bottom: 0 !important;
+}
+
+.content {
+    bottom: 0 !important
+}
+
+body {
+    height: 452px !important;
+}
+
 
 .videoImage {
     width: 120px;

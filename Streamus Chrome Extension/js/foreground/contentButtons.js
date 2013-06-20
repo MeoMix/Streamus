@@ -1,6 +1,6 @@
 define(['localStorageManager'], function(localStorageManager){
     'use strict';
-    
+
     var menuButtons = $('.menubutton');
     
     //  User clicks on a different button on the LHS, possible change of content display.

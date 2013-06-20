@@ -7,7 +7,7 @@
         initialize: function () {
             console.log("initializing overscroll");
             //  His instructions say I should be able to achieve direction:horizontal via just css, but I'm unable to get it while drunk.
-            this.$el.overscroll({ direction: 'horizontal' });
+
 
             //  Initialize the collection we'll use to store items in.
             this.items = new RadioModeItems;
@@ -43,15 +43,18 @@
                 }
 
             }
-
-            //this.listenTo(backgroundManager, 'change:activePlaylistItem', function (model, activePlaylistItem) {
-            //});
+            
+            this.$el.overscroll({
+                //showThumbs: false,
+                direction: 'horizontal'
+            });
+            
         },
         
         addItem: function (radioModeItem) {
             var radioModeItemView = new RadioModeItemView({ model: radioModeItem });
-
-            this.$el.find('#overflowWOW').append(radioModeItemView.render().el);
+            //.find('#overflowWrapper')
+            this.$el.append(radioModeItemView.render().el);
         }
 
     });
