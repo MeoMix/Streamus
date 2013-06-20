@@ -66,16 +66,32 @@ body {
     padding-top: 5px;
 }
 
-.fb-like {
-    height: 20px;
-    bottom: -40px;
-    left: 20px;
+
+.social {
+    max-width: 250px;
     overflow: hidden;
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+    opacity: 0.5;
+}
+
+.social:hover {
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+    opacity: 1;
+}
+
+.social div {
+    display: block;
+}
+
+.gc-reset,.pls-dropBottom{
+    display: none !important;
 }
 
 #___plusone_0 {
-    margin-left: -55px !important;
-    margin-bottom: 20px !important;
+    margin-left: 4px !important;
 }
 
 @media (max-width: 1000px) {
