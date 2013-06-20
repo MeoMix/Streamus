@@ -175,7 +175,6 @@
     <Content Include="js\foreground\playlistsTab\playlistsDisplay.js" />
     <Content Include="js\foreground\progressBar.js" />
     <Content Include="js\foreground\requirePaths.js" />
-    <Content Include="js\foreground\settingsTab\settings.js" />
     <Content Include="js\foreground\spinnerManager.js" />
     <Content Include="js\foreground\videoTab\videoDisplay.js" />
     <Content Include="js\helpers.js" />
