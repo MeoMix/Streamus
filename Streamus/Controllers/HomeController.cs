@@ -16,7 +16,7 @@ namespace Streamus.Controllers
 
         public ActionResult Index()
         {
-            string googleOAuthUrl = GetGoogleOAuthUrl();
+            //string googleOAuthUrl = GetGoogleOAuthUrl();
 
             //return Redirect(googleOAuthUrl);
             return View();
@@ -102,39 +102,7 @@ namespace Streamus.Controllers
             var tokenData = jsonSerializer.Deserialize<GoogleTokenData>(result);
             Session["GoogleOAuth2AccessToken"] = tokenData.Access_Token;
 
-            SendPushMessage();
-
             return new EmptyResult();
-        }
-
-        private void SendPushMessage()
-        {
-
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://www.googleapis.com/gcm_for_chrome/v1/messages");
-            httpWebRequest.ContentType = "application/json; charset=utf-8";
-            httpWebRequest.Method = "POST";
-            httpWebRequest.Headers.Add("Authorization", "OAuth " + Session["GoogleOAuth2AccessToken"]);
-
-            using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
-            {
-                string json = new JavaScriptSerializer().Serialize(new
-                {
-                    channelId = "15312359557864779180/jbnkffmindojffecdhbbmekbmkkfpmjd",
-                    subchannelId = "0",
-                    payload = "Hello World!"
-                });
-
-                streamWriter.Write(json);
-                streamWriter.Flush();
-                streamWriter.Close();
-
-                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                {
-                    //  Success response from writing out push message -- empty is OK.
-                    var streamResult = streamReader.ReadToEnd();
-                }
-            }
         }
     }
 }

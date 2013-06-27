@@ -1,7 +1,7 @@
-﻿using Streamus.Domain;
-using Streamus.Domain.Managers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
+using Streamus.Domain;
+using Streamus.Domain.Managers;
 
 namespace Streamus.Controllers
 {

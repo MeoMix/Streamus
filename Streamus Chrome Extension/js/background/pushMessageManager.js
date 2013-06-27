@@ -1,4 +1,4 @@
-﻿define(function() {
+﻿define(['user', 'programState'], function(user, programState) {
     'use strict';
     
     var pushMessageManagerModel = Backbone.Model.extend({
@@ -16,26 +16,57 @@
             //Otherwise users will see the sign-in dialog with no context, even before they start your app or extension. If the first call fails because the user is not logged in, 
             //then getChannelId can be called again with the flag set to true. You should provide a context dialog before the second call is made.
             chrome.pushMessaging.getChannelId(true, function (response) {
-                self.channelId = response.channelId;
+                self.set('channelId', response.channelId);
+
+                console.log("channelId set");
+                
+                if (user.get('loaded')) {
+                    self.sendChannelIdToServer();
+                } else {
+                    user.once('change:loaded', function() {
+                        self.sendChannelIdToServer();
+                    });
+                }
+                
             });
 
             chrome.pushMessaging.onMessage.addListener(function (message) {
+
+                console.log("Message received:", message);
+
                 //if (message.event == null) {
                 //    throw "Expected message to contain an event.";
                 //}
-                
+
                 //switch (message.event) {
                 //    case '':
                 //        break;
-                        
+
                 //    default:
                 //        console.error("Unhandled message event:", message.event);
-                        
+
                 //}
 
-                
+
             });
 
+        },
+        
+        sendChannelIdToServer: function () {
+
+            $.ajax({
+                url: programState.getBaseUrl() + 'User/AddChannelId',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    userId: user.get('id'),
+                    channelId: this.get('channelId')
+                },
+                error: function(error) {
+                    console.error(error);
+                }
+            });
+            
         }
     });
 

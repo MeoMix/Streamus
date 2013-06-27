@@ -9,15 +9,27 @@
         //  I have to save up to 3 items.   
         save: function (attributes, options) {
             var self = this;
-            $.ajax({
-                url: programState.getBaseUrl() + 'PlaylistItem/UpdateMultiple',
-                type: 'PUT',
-                dataType: 'json',
-                contentType: 'application/json; charset=utf-8',
-                data: JSON.stringify(self),
-                success: options ? options.success : null,
-                error: options ? options.error : null
-            });
+            
+            if (this.length == 1) {
+                //  If there's only 1 item to save then might as well call the appropriate Controller method.
+                this.at(0).save({
+                    success: options ? options.success : null,
+                    error: options ? options.error : null
+                });
+            } else {
+                
+                $.ajax({
+                    url: programState.getBaseUrl() + 'PlaylistItem/UpdateMultiple',
+                    type: 'PUT',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(self),
+                    success: options ? options.success : null,
+                    error: options ? options.error : null
+                });
+                
+            }
+
         },
 
         getRelatedVideos: function() {

@@ -5,7 +5,7 @@ define(function () {
     var programStateModel = Backbone.Model.extend({
         
         defaults: {
-            isLocal: false
+            isLocal: true
         },
         
         //  Make sure to update the URL in manifest.json, too.

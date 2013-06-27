@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using System.Collections.Generic;
+using log4net;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
@@ -15,6 +16,8 @@ namespace Streamus.Controllers
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
         private static readonly UserManager UserManager = new UserManager();
+        //  TODO: Consider creating a class for this if it gets any more complicated.
+        private static Dictionary<Guid, List<string>> UsersChannelList = new Dictionary<Guid, List<string>>();  
 
         private readonly IUserDao UserDao;
 
@@ -23,6 +26,7 @@ namespace Streamus.Controllers
             try
             {
                 UserDao = new UserDao();
+                UsersChannelList = new Dictionary<Guid, List<string>>();
             }
             catch (TypeInitializationException exception)
             {
@@ -127,8 +131,36 @@ namespace Streamus.Controllers
                 }
             }
 
-
             return new JsonDataContractActionResult(user);
+        }
+
+        /// <summary>
+        /// Record a user's extension's channelId. This is for pushMessaging so that
+        /// the extension can receive updates from the user's other instances of the extension.
+        /// This will keep all the extensions in-sync if the user has more than 1 instance of Streamus running.
+        /// </summary>
+        [HttpPost]
+        public ActionResult AddChannelId(Guid userId, string channelId)
+        {
+            if (UsersChannelList.ContainsKey(userId))
+            {
+                List<string> userChannelList = UsersChannelList[userId];
+
+                if (!userChannelList.Contains(channelId))
+                {
+                    userChannelList.Add(channelId);
+                }
+
+            }
+            else
+            {
+                UsersChannelList.Add(userId, new List<string>{ channelId });
+            }
+
+            return Json(new
+            {
+                success = true
+            });
         }
     }
 }
