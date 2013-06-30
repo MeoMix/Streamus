@@ -5,8 +5,7 @@ define(['helpers', 'programState', 'video'], function(helpers, programState, Vid
     var playlistItemModel = Backbone.Model.extend({
         defaults: function() {
             return {
-                //  Backend saves as composite key with playlistId, so its OK to generate id client-side.
-                id: helpers.generateGuid(),
+                id: null,
                 playlistId: null,
                 nextItemId: null,
                 previousItemId: null,

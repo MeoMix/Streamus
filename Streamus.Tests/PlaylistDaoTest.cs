@@ -69,9 +69,7 @@ namespace Streamus.Tests
 
             PlaylistManager.Save(playlist);
 
-            //  Usually created client-side, but for testing it is OK to create server-side.
-            Guid firstItemId = Guid.NewGuid();
-            var playlistItem = new PlaylistItem(playlist.Id, firstItemId, Video.Title, Video);
+            var playlistItem = new PlaylistItem(Video.Title, Video);
 
             playlist.AddItem(playlistItem);
             PlaylistManager.UpdatePlaylistItem(playlistItem);
@@ -85,7 +83,7 @@ namespace Streamus.Tests
             //  Test that the product was successfully inserted
             Assert.IsNull(playlistFromDatabase);
 
-            PlaylistItem playlistItemFromDatabase = PlaylistItemDao.Get(playlistItem.PlaylistId, playlistItem.Id);
+            PlaylistItem playlistItemFromDatabase = PlaylistItemDao.Get(playlistItem.Id);
             Assert.IsNull(playlistItemFromDatabase);
         }
     }

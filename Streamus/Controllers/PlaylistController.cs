@@ -13,6 +13,7 @@ namespace Streamus.Controllers
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
+        private static readonly StreamManager StreamManager = new StreamManager();
 
         private readonly IPlaylistDao PlaylistDao;
         private readonly IStreamDao StreamDao;
@@ -37,9 +38,11 @@ namespace Streamus.Controllers
         public ActionResult Create(Playlist playlist)
         {
             playlist.Stream.AddPlaylist(playlist);
-            StreamDao.Save(playlist.Stream);
 
-            PlaylistManager.Save(playlist);
+            //  Make sure the playlist has been setup properly before it is cascade-saved through the Stream.
+            playlist.ValidateAndThrow();
+
+            StreamManager.Save(playlist.Stream);
 
             return new JsonDataContractActionResult(playlist);
         }
@@ -82,9 +85,9 @@ namespace Streamus.Controllers
         }
 
         [HttpPost]
-        public JsonResult UpdateFirstItemId(Guid playlistId, Guid firstItemId)
+        public JsonResult UpdateFirstItem(Guid playlistId, Guid firstItemId)
         {
-            PlaylistManager.UpdateFirstItemId(playlistId, firstItemId);
+            PlaylistManager.UpdateFirstItem(playlistId, firstItemId);
 
             return Json(new
             {

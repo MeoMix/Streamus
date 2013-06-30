@@ -81,7 +81,7 @@ define(['ytHelper',
                 this.on('change:firstItemId', function (model, firstItemId) {
 
                     $.ajax({
-                        url: programState.getBaseUrl() + 'Playlist/UpdateFirstItemId',
+                        url: programState.getBaseUrl() + 'Playlist/UpdateFirstItem',
                         type: 'POST',
                         dataType: 'json',
                         data: {
@@ -121,7 +121,7 @@ define(['ytHelper',
                     if (ytHelperDataFunction != null) {
 
                         var getVideosCallCount = 0;
-                        var unsavedVideoCount = 0;
+                        var videosHandled = 0;
                         var orderedVideosArray = [];
 
                         var getVideosInterval = setInterval(function () {
@@ -148,34 +148,38 @@ define(['ytHelper',
                                 ytHelper.getVideoInformation({
                                     videoId: videoId,
                                     videoTitle: videoTitle,
-                                    success: function(videoInformation) {
-
+                                    success: function (videoInformation) {
                                         if (videoInformation != null) {
                                             var video = getVideoFromInformation(videoInformation);
                                             //  Insert at index to preserve order of videos retrieved from YouTube API
                                             orderedVideosArray[index] = video;
                                         }
 
-                                        unsavedVideoCount++;
-
-                                        //  Periodicially send bursts of packets (up to 50 videos in length) to the server and trigger visual update.
-                                        if (unsavedVideoCount == resultCount) {
-
-                                            var videos = new Videos(orderedVideosArray);
-
-                                            //  orderedVideosArray may have some empty slots which get converted to empty Video objects; drop 'em.
-                                            var videosWithIds = videos.withIds();
-
-                                            self.addItems(videosWithIds);
-                                            orderedVideosArray = [];
-                                            unsavedVideoCount = 0;
-                                        }
-
+                                        handleVideo(resultCount);
                                     },
-                                    error: function() {
+                                    error: function () {
                                         console.error("Error getting video information for:", videoTitle);
+                                        handleVideo(resultCount);
                                     }
                                 });
+                            }
+                            
+                            //  Periodicially send bursts of packets (up to 50 videos in length) to the server and trigger visual update.
+                            function handleVideo(resultCount) {
+                                videosHandled++;
+                                
+                                console.log("Videos handled / result count:", videosHandled, resultCount);
+                                if (videosHandled == resultCount) {
+
+                                    var videos = new Videos(orderedVideosArray);
+
+                                    //  orderedVideosArray may have some empty slots which get converted to empty Video objects; drop 'em.
+                                    var videosWithIds = videos.withIds();
+
+                                    self.addItems(videosWithIds);
+                                    orderedVideosArray = [];
+                                    videosHandled = 0;
+                                }
                             }
 
                             //  TODO: Rewrite the Video constructor such that it can create a Video object from videoInformation
@@ -347,14 +351,21 @@ define(['ytHelper',
                     playlistItem.set('relatedVideoInformation', relatedVideoInformation);
                 });
 
-                this.get('items').push(playlistItem);
+                var self = this;
+                modifiedItems.save({}, {
+                    success: function () {
+                        self.get('items').push(playlistItem);
+                    },
+                    error: function (error) {
+                        console.error(error);
+                    }
+                });
 
-                modifiedItems.save();
                
                 return playlistItem;
             },
             
-            addItems: function (videos, callback) {
+            addItems: function (videos) {
                 var itemsToSave = new PlaylistItems();
                 var self = this;
 
@@ -391,31 +402,34 @@ define(['ytHelper',
                     }
 
                     itemsToSave.push(playlistItem);
-                    self.get('items').push(playlistItem);
-                });
-
-                //  TODO: Could probably be improved for very large playlists being added.
-                //  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
-                var sampleSize = videos.length > 30 ? 30 : videos.length;
-                var randomSampleIndices = helpers.getRandomNonOverlappingNumbers(sampleSize, videos.length);
-
-                _.each(randomSampleIndices, function (randomIndex) {
-                    var randomVideo = videos.at(randomIndex);
-                    
-                    ytHelper.getRelatedVideoInformation(randomVideo.get('id'), function (relatedVideoInformation) {
-
-                        var playlistItem = self.get('items').find(function (item) {
-                            return item.get('video').get('id') == randomVideo.get('id');
-                        });
-
-                        playlistItem.set('relatedVideoInformation', relatedVideoInformation);
-                    });
                 });
 
                 itemsToSave.save({}, {
-                    success: callback,
+                    success: function () {
+
+                        self.get('items').add(itemsToSave.models);
+
+                        //  TODO: Could probably be improved for very large playlists being added.
+                        //  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
+                        var sampleSize = videos.length > 30 ? 30 : videos.length;
+                        var randomSampleIndices = helpers.getRandomNonOverlappingNumbers(sampleSize, videos.length);
+
+                        _.each(randomSampleIndices, function (randomIndex) {
+                            var randomVideo = videos.at(randomIndex);
+
+                            ytHelper.getRelatedVideoInformation(randomVideo.get('id'), function (relatedVideoInformation) {
+
+                                var playlistItem = self.get('items').find(function (item) {
+                                    return item.get('video').get('id') == randomVideo.get('id');
+                                });
+
+                                playlistItem.set('relatedVideoInformation', relatedVideoInformation);
+                            });
+                        });
+
+                    },
                     error: function (error) {
-                        console.error(error);
+                        console.error("There was an issue saving" + self.get('title'), error);
                     }
                 });
             },

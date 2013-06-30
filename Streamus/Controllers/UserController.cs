@@ -53,83 +53,82 @@ namespace Streamus.Controllers
             User user = UserDao.Get(id);
 
             //  Sanity check to make sure the playlists aren't broken.
-            foreach (Stream stream in user.Streams.Where(s => s.Playlists.Any()))
-            {
-                foreach (Playlist playlist in stream.Playlists.Where(p => p.Items.Any()))
-                {
-                    PlaylistItem firstItem = playlist.Items.FirstOrDefault(i => i.Id == playlist.FirstItemId) ??
-                                             playlist.Items[0];
+            //foreach (Stream stream in user.Streams.Where(s => s.Playlists.Any()))
+            //{
+            //    foreach (Playlist playlist in stream.Playlists.Where(p => p.Items.Any()))
+            //    {
+            //        PlaylistItem firstItem = playlist.FirstItem ?? playlist.Items[0];
 
-                    //  Go through every item in the playlist and make sure they're connected.
-                    PlaylistItem forwardNextItem = playlist.Items.FirstOrDefault(i => i.Id == firstItem.NextItemId);
-                    PlaylistItem forwardPreviousItem = playlist.Items.FirstOrDefault(i => i.Id == firstItem.NextItemId);;
+            //        //  Go through every item in the playlist and make sure they're connected.
+            //        PlaylistItem forwardNextItem = playlist.Items.FirstOrDefault(i => i.Id == firstItem.NextItemId);
+            //        PlaylistItem forwardPreviousItem = playlist.Items.FirstOrDefault(i => i.Id == firstItem.NextItemId);;
 
-                    while (forwardNextItem != null && forwardNextItem.Id != firstItem.Id)
-                    {
-                        forwardPreviousItem = forwardNextItem;
-                        forwardNextItem = playlist.Items.FirstOrDefault(i => i.Id == forwardNextItem.NextItemId);
-                    }
+            //        while (forwardNextItem != null && forwardNextItem.Id != firstItem.Id)
+            //        {
+            //            forwardPreviousItem = forwardNextItem;
+            //            forwardNextItem = playlist.Items.FirstOrDefault(i => i.Id == forwardNextItem.NextItemId);
+            //        }
 
-                    if (forwardNextItem == null)
-                    {
-                        if(forwardPreviousItem == null)
-                        {
-                            Logger.ErrorFormat("Shouldn't be here. Forward is null in playlist {0}", playlist.Id);
-                            break;
-                        }
+            //        if (forwardNextItem == null)
+            //        {
+            //            if(forwardPreviousItem == null)
+            //            {
+            //                Logger.ErrorFormat("Shouldn't be here. Forward is null in playlist {0}", playlist.Id);
+            //                break;
+            //            }
 
-                        //  Go backwards from firstItem to find the other end of the broken chain and connect the two.
-                        //  TODO: Could be more robust.. assumes only 1 broken link in chain, all songs in between are ditched.
+            //            //  Go backwards from firstItem to find the other end of the broken chain and connect the two.
+            //            //  TODO: Could be more robust.. assumes only 1 broken link in chain, all songs in between are ditched.
 
-                        PlaylistItem backwardNextItem = playlist.Items.FirstOrDefault(i => i.Id == firstItem.PreviousItemId);
-                        PlaylistItem backwardPreviousItem = playlist.Items.FirstOrDefault(i => i.Id == firstItem.PreviousItemId); ;
+            //            PlaylistItem backwardNextItem = playlist.Items.FirstOrDefault(i => i.Id == firstItem.PreviousItemId);
+            //            PlaylistItem backwardPreviousItem = playlist.Items.FirstOrDefault(i => i.Id == firstItem.PreviousItemId); ;
 
-                        while (backwardNextItem != null && backwardNextItem.Id != firstItem.Id && backwardNextItem.Id != forwardPreviousItem.Id)
-                        {
-                            backwardPreviousItem = backwardNextItem;
-                            backwardNextItem = playlist.Items.FirstOrDefault(i => i.Id == backwardNextItem.PreviousItemId);
-                        }
+            //            while (backwardNextItem != null && backwardNextItem.Id != firstItem.Id && backwardNextItem.Id != forwardPreviousItem.Id)
+            //            {
+            //                backwardPreviousItem = backwardNextItem;
+            //                backwardNextItem = playlist.Items.FirstOrDefault(i => i.Id == backwardNextItem.PreviousItemId);
+            //            }
 
 
-                        if (backwardNextItem == null)
-                        {
-                            if (backwardPreviousItem == null)
-                            {
-                                Logger.ErrorFormat("Shouldn't be here. Backwards is null in playlist {0}", playlist.Id);
-                                break;
-                            }
+            //            if (backwardNextItem == null)
+            //            {
+            //                if (backwardPreviousItem == null)
+            //                {
+            //                    Logger.ErrorFormat("Shouldn't be here. Backwards is null in playlist {0}", playlist.Id);
+            //                    break;
+            //                }
 
-                            backwardPreviousItem.PreviousItemId = forwardPreviousItem.Id;
-                            forwardPreviousItem.NextItemId = backwardPreviousItem.Id;
-                            playlist.FirstItemId = firstItem.Id;
+            //                backwardPreviousItem.PreviousItemId = forwardPreviousItem.Id;
+            //                forwardPreviousItem.NextItemId = backwardPreviousItem.Id;
+            //                playlist.FirstItem = firstItem;
 
-                            PlaylistManager.Save(playlist);
-                            Logger.DebugFormat("Successfully recovered playlist title: {0} and id: {1}", playlist.Title, playlist.Id);
-                        }
-                        else if (backwardNextItem.Id == forwardPreviousItem.Id)
-                        {
-                            if (backwardPreviousItem == null)
-                            {
-                                Logger.ErrorFormat("Shouldn't be here. Backwards is null in playlist {0}", playlist.Id);
-                                break;
-                            }
+            //                PlaylistManager.Save(playlist);
+            //                Logger.DebugFormat("Successfully recovered playlist title: {0} and id: {1}", playlist.Title, playlist.Id);
+            //            }
+            //            else if (backwardNextItem.Id == forwardPreviousItem.Id)
+            //            {
+            //                if (backwardPreviousItem == null)
+            //                {
+            //                    Logger.ErrorFormat("Shouldn't be here. Backwards is null in playlist {0}", playlist.Id);
+            //                    break;
+            //                }
 
-                            //  Trust the backwards playlist.
-                            forwardPreviousItem.NextItemId = backwardPreviousItem.Id;
-                            playlist.FirstItemId = firstItem.Id;
-                            PlaylistManager.Save(playlist);
-                            Logger.DebugFormat("Successfully recovered playlist title: {0} and id: {1}", playlist.Title, playlist.Id);
-                        }
-                        else
-                        {
-                            // Da fuq? buhhh we just went forward and there was clearly a break.
-                            Logger.ErrorFormat("Recover method broken!");
-                        }
+            //                //  Trust the backwards playlist.
+            //                forwardPreviousItem.NextItemId = backwardPreviousItem.Id;
+            //                playlist.FirstItem = firstItem;
+            //                PlaylistManager.Save(playlist);
+            //                Logger.DebugFormat("Successfully recovered playlist title: {0} and id: {1}", playlist.Title, playlist.Id);
+            //            }
+            //            else
+            //            {
+            //                // Da fuq? buhhh we just went forward and there was clearly a break.
+            //                Logger.ErrorFormat("Recover method broken!");
+            //            }
 
-                    }
+            //        }
                     
-                }
-            }
+            //    }
+            //}
 
             return new JsonDataContractActionResult(user);
         }

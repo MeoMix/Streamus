@@ -217,9 +217,11 @@
     <Compile Include="Dao\StreamDao.cs" />
     <Compile Include="Dao\PlaylistItemDao.cs" />
     <Compile Include="Domain\AbstractShareableEntity.cs" />
+    <Compile Include="Domain\EqualityAndHashCodeProvider.cs" />
     <Compile Include="Domain\Interfaces\IDaoFactory.cs" />
     <Compile Include="Domain\Interfaces\IShareableEntity.cs" />
     <Compile Include="Domain\Interfaces\IShareCodeDao.cs" />
+    <Compile Include="Domain\Managers\StreamManager.cs" />
     <Compile Include="Domain\ShareCode.cs" />
     <Compile Include="Domain\Error.cs" />
     <Compile Include="Domain\Interfaces\IErrorDao.cs" />

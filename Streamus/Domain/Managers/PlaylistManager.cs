@@ -138,13 +138,13 @@ namespace Streamus.Domain.Managers
             }
         }
 
-        public void UpdateFirstItemId(Guid playlistId, Guid firstItemId)
+        public void UpdateFirstItem(Guid playlistId, Guid firstItemId)
         {
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
                 Playlist playlist = PlaylistDao.Get(playlistId);
-                playlist.FirstItemId = firstItemId;
+                playlist.FirstItem = PlaylistItemDao.Get(firstItemId);
                 PlaylistDao.Update(playlist);
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
@@ -197,21 +197,13 @@ namespace Streamus.Domain.Managers
                 {
                     playlistItem.ValidateAndThrow();
 
-                    PlaylistItem knownPlaylistItem = PlaylistItemDao.Get(playlistItem.PlaylistId, playlistItem.Id);
+                    PlaylistItem knownPlaylistItem = PlaylistItemDao.Get(playlistItem.Id);
 
                     //  TODO: Sometimes we're updating and sometimes we're creating because the client
                     //  sets PlaylistItem's ID so its difficult to tell server-side.
                     if (knownPlaylistItem == null)
                     {
                         playlistItem.Video.ValidateAndThrow();
-
-                        Video videoInSession = VideoDao.Get(playlistItem.Video.Id);
-
-                        if (videoInSession == null)
-                        {
-                            VideoDao.Save(playlistItem.Video);
-                        }
-
                         PlaylistItemDao.Save(playlistItem);
                     }
                     else
@@ -237,29 +229,38 @@ namespace Streamus.Domain.Managers
                 NHibernateSessionManager.Instance.BeginTransaction();
                 playlistItem.ValidateAndThrow();
 
-                PlaylistItem knownPlaylistItem = PlaylistItemDao.Get(playlistItem.PlaylistId, playlistItem.Id);
+                PlaylistItem knownPlaylistItem = PlaylistItemDao.Get(playlistItem.Id);
 
                 //  TODO: Sometimes we're updating and sometimes we're creating because the client
                 //  sets PlaylistItem's ID so its difficult to tell server-side.
                 if (knownPlaylistItem == null)
                 {
                     playlistItem.Video.ValidateAndThrow();
-                    //  TODO: Is this hitting the database? Surely it's not.
-                    Video videoInSession = VideoDao.Get(playlistItem.Video.Id);
-
-                    if (videoInSession == null)
-                    {
-                        VideoDao.Save(playlistItem.Video);
-                    }
-
                     PlaylistItemDao.Save(playlistItem);
                 }
                 else
                 {
-                    //  TODO: I don't think I should need both of these, double check at some point.
-                    //PlaylistItemDao.Update(playlistItem);
                     PlaylistItemDao.Merge(playlistItem);
                 }
+
+                NHibernateSessionManager.Instance.CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
+                throw;
+            }
+        }
+
+        public void CreatePlaylistItem(PlaylistItem playlistItem)
+        {
+            try
+            {
+                NHibernateSessionManager.Instance.BeginTransaction();
+
+                playlistItem.ValidateAndThrow();
+                PlaylistItemDao.Save(playlistItem);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }

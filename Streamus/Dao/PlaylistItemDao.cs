@@ -1,21 +1,29 @@
-﻿using NHibernate;
-using NHibernate.Criterion;
+﻿using System.Reflection;
+using NHibernate;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using System;
+using log4net;
 
 namespace Streamus.Dao
 {
     public class PlaylistItemDao : AbstractNHibernateDao<PlaylistItem>, IPlaylistItemDao
     {
-        public PlaylistItem Get(Guid playlistId, Guid id)
-        {
-            ICriteria criteria = NHibernateSession
-                .CreateCriteria(typeof (PlaylistItem), "PlaylistItem")
-                .Add(Restrictions.Eq("PlaylistItem.Id", id))
-                .Add(Restrictions.Eq("PlaylistItem.PlaylistId", playlistId));
+        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-            PlaylistItem playlistItem = criteria.UniqueResult<PlaylistItem>();
+        public PlaylistItem Get(Guid id)
+        {
+            PlaylistItem playlistItem = null;
+
+            try
+            {
+                playlistItem = (PlaylistItem)NHibernateSession.Load(typeof(PlaylistItem), id);
+            }
+            catch (ObjectNotFoundException exception)
+            {
+                //  Consume error and return null.
+                Logger.Error(exception);
+            }
 
             return playlistItem;
         }

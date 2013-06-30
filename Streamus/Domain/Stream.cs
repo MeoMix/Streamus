@@ -2,7 +2,6 @@
 using Streamus.Domain.Validators;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Streamus.Domain
@@ -60,10 +59,13 @@ namespace Streamus.Domain
         {
             string title = string.Format("New Playlist {0:D4}", Playlists.Count);
             var playlist = new Playlist(title);
-            return AddPlaylist(playlist);
+
+            AddPlaylist(playlist);
+
+            return playlist;
         }
 
-        public Playlist AddPlaylist(Playlist playlist)
+        public void AddPlaylist(Playlist playlist)
         {
             if (Playlists.Count == 0)
             {
@@ -73,9 +75,8 @@ namespace Streamus.Domain
             }
             else
             {
-                //Playlist firstList = Playlists.First(list => list.Id == FirstListId);
                 Playlist firstList = FirstPlaylist;
-                Playlist lastList = Playlists.First(list => list.Id == firstList.PreviousListId);
+                Playlist lastList = firstList.PreviousPlaylist;
 
                 //  Adjust our linked list and add the item.
                 lastList.NextPlaylist = playlist;
@@ -86,9 +87,7 @@ namespace Streamus.Domain
             }
 
             playlist.Stream = this;
-
             Playlists.Add(playlist);
-            return playlist;
         }
 
         public void RemovePlaylist(Playlist playlist)

@@ -7,10 +7,7 @@
     </id>
     
     <property name="Title" not-null="true" />
-    <!--<property name="NextListId" not-null="true" />
-    <property name="PreviousListId" not-null="true" />-->
-    <property name="FirstItemId" not-null="true" />
-
+    
     <bag name="Items" inverse="true" cascade="all-delete-orphan" >
       <key column="PlaylistId" />
       <one-to-many class="PlaylistItem" />
@@ -19,7 +16,7 @@
     <many-to-one name="Stream" column="StreamId" />
     <many-to-one name="NextPlaylist" column="NextListId" />
     <many-to-one name="PreviousPlaylist" column="PreviousListId" />
-
+    <many-to-one name="FirstItem" column="FirstItemId" />
   </class>
   
 </hibernate-mapping>

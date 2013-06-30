@@ -18,13 +18,19 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
 
     });
     
-    backgroundManager.get('allPlaylistItems').on('add remove', function (playlistItem) {
+    backgroundManager.get('allPlaylistItems').on('add remove', function (playlistItem, other) {
+        console.log("Playlist item added:", playlistItem, other);
         throttledUpdatePlaylistDescription(playlistItem);
     });
 
-    var throttledUpdatePlaylistDescription = _.throttle(function(playlistItem) {
+    //  Playlists keep track of how many videos they have. When adding a lot of items -- throttle.
+    var throttledUpdatePlaylistDescription = _.throttle(function (playlistItem) {
+        console.log("PlaylistItem:", playlistItem);
+
         var playlistId = playlistItem.get('playlistId');
         var playlistLink = playlistList.find('li[data-playlistid="' + playlistId + '"]');
+
+        console.log("Searching for playlist with ID:", playlistId);
 
         var playlist = backgroundManager.getPlaylistById(playlistId);
 

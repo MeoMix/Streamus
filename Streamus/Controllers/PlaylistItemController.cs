@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Net;
 using System.Web.Script.Serialization;
 using Streamus.Domain;
@@ -13,15 +14,44 @@ namespace Streamus.Controllers
     {
         private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
 
-        /// <summary>
-        /// There's only an Update for PlaylistItems because their ID is generated client-side
-        /// </summary>
+        [HttpPost]
+        public ActionResult Create(PlaylistItem playlistItem)
+        {
+            playlistItem.Playlist.AddItem(playlistItem);
+
+            //  Make sure the playlistItem has been setup properly before it is cascade-saved through the Playlist.
+            playlistItem.ValidateAndThrow();
+
+            PlaylistManager.Save(playlistItem.Playlist);
+
+            return new JsonDataContractActionResult(playlistItem);
+        }
+
+        [HttpPost]
+        public ActionResult CreateMultiple(List<PlaylistItem> playlistItems)
+        {
+            //  Split items into their respective playlists and then save on each.
+            foreach (var playlistGrouping in playlistItems.GroupBy(i => i.Playlist))
+            {
+                List<PlaylistItem> groupingItems = playlistGrouping.ToList();
+
+                Playlist playlist = groupingItems.First().Playlist;
+
+                playlist.AddItems(groupingItems);
+                groupingItems.ForEach(i => i.ValidateAndThrow());
+
+                PlaylistManager.Save(playlist);
+            }
+
+            return new JsonDataContractActionResult(playlistItems);
+        }
+
         [HttpPut]
         public ActionResult Update(PlaylistItem playlistItem)
         {
             PlaylistManager.UpdatePlaylistItem(playlistItem);
 
-            SendPushMessage("update playlistItem:" + playlistItem.Id);
+            //SendPushMessage("update playlistItem:" + playlistItem.Id);
 
             return new JsonDataContractActionResult(playlistItem);
         }

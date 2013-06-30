@@ -27,8 +27,8 @@ namespace Streamus.App_Start
             routes.MapRoute("delete-User", "User/{id}", new {controller = "User", action = "delete"},
                             new {httpMethod = new HttpMethodConstraint("DELETE")});
 
-            routes.MapRoute("updateFirstItemId", "Playlist/UpdateFirstItemId",
-                            new {controller = "Playlist", action = "UpdateFirstItemId"},
+            routes.MapRoute("updateFirstItem", "Playlist/UpdateFirstItem",
+                            new {controller = "Playlist", action = "UpdateFirstItem"},
                             new {httpMethod = new HttpMethodConstraint("POST")});
 
             routes.MapRoute("updateTitle", "Playlist/UpdateTitle",
@@ -52,6 +52,10 @@ namespace Streamus.App_Start
 
             routes.MapRoute("delete-Playlist", "Playlist/{id}", new {controller = "Playlist", action = "delete"},
                             new {httpMethod = new HttpMethodConstraint("DELETE")});
+
+            routes.MapRoute("createMultiple", "PlaylistItem/CreateMultiple",
+                new { controller = "PlaylistItem", action = "CreateMultiple" },
+                new { httpMethod = new HttpMethodConstraint("POST") });
 
             routes.MapRoute("post-PlaylistItem", "PlaylistItem", new {controller = "PlaylistItem", action = "create"},
                             new {httpMethod = new HttpMethodConstraint("POST")});
