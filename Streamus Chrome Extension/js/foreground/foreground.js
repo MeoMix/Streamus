@@ -15,10 +15,11 @@ define(['backgroundManager',
         'playlistItemInput',
         'playlistItemsDisplay',
         'playlistInput',
-        'playlistsDisplay',
-        'radioModeView'
+        'playlistsDisplay'
 ], function (backgroundManager) {
     'use strict';
+
+    console.log("Foreground loading");
    
     //  If the user has browser around to a different stream or playlist (but didn't make a playlistItem selection)
     //  it is unintuitive to stay on that stream/playlist upon re-opening the UI. As such, set the state back to the 

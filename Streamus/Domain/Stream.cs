@@ -46,7 +46,7 @@ namespace Streamus.Domain
             Playlists = new List<Playlist>();
 
             //  A stream should always have at least one Playlist.
-            CreatePlaylist();
+            CreateAndAddPlaylist();
         }
 
         public Stream(string title) 
@@ -55,7 +55,7 @@ namespace Streamus.Domain
             Title = title;
         }
 
-        public Playlist CreatePlaylist()
+        public Playlist CreateAndAddPlaylist()
         {
             string title = string.Format("New Playlist {0:D4}", Playlists.Count);
             var playlist = new Playlist(title);
@@ -67,6 +67,13 @@ namespace Streamus.Domain
 
         public void AddPlaylist(Playlist playlist)
         {
+            //  Playlist must be removed from other Stream before AddPlaylist affects it.
+            if (playlist.Stream != null && playlist.Stream != this)
+            {
+                string message = string.Format("Playlist {0} is already a child of Stream {1}", playlist.Title, playlist.Stream.Title);
+                throw new Exception(message);
+            }
+
             if (Playlists.Count == 0)
             {
                 FirstPlaylist = playlist;
@@ -75,15 +82,15 @@ namespace Streamus.Domain
             }
             else
             {
-                Playlist firstList = FirstPlaylist;
-                Playlist lastList = firstList.PreviousPlaylist;
+                Playlist firstPlayist = FirstPlaylist;
+                Playlist lastPlaylist = firstPlayist.PreviousPlaylist;
 
                 //  Adjust our linked list and add the item.
-                lastList.NextPlaylist = playlist;
-                playlist.PreviousPlaylist = lastList;
+                lastPlaylist.NextPlaylist = playlist;
+                playlist.PreviousPlaylist = lastPlaylist;
 
-                firstList.PreviousPlaylist = playlist;
-                playlist.NextPlaylist = firstList;
+                firstPlayist.PreviousPlaylist = playlist;
+                playlist.NextPlaylist = firstPlayist;
             }
 
             playlist.Stream = this;

@@ -134,7 +134,7 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'h
             });
 
             //  Save the playlist, but push after version from server because the ID will have changed.
-            playlist.save(new Array(), {
+            playlist.save({}, {
                 success: function () {
 
                     var playlistId = playlist.get('id');

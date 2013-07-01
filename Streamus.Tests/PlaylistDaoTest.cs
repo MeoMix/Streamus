@@ -14,6 +14,7 @@ namespace Streamus.Tests
         private IPlaylistDao PlaylistDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
         private User User { get; set; }
+        private Stream Stream { get; set; }
         private Video Video { get; set; }
         private PlaylistManager PlaylistManager { get; set; }
 
@@ -37,16 +38,35 @@ namespace Streamus.Tests
             }
 
             User = new UserManager().CreateUser();
+            Stream = User.Streams.First();
 
             Video = new Video("s91jgcmQoB0", "Tristam - Chairs", 219, "MeoMix");
             new VideoManager().Save(Video);
         }
 
+        /// <summary>
+        /// Make sure that when the first PlaylistItem is added to a Playlist that the 
+        /// Playlist's FirstItem field is appropriately set in the database.
+        /// </summary>
+        [Test]
+        public void AddItem_NoItemsInPlaylist_FirstItemIdSet()
+        {
+            Playlist playlist = Stream.CreateAndAddPlaylist();
+            PlaylistManager.Save(playlist);
+
+            PlaylistItem playlistItem = Helpers.CreateItemInPlaylist(playlist);
+
+            //  Remove entity from NHibernate cache to force DB query to ensure actually created.
+            NHibernateSessionManager.Instance.Clear();
+
+            Playlist playlistFromDatabase = PlaylistDao.Get(playlist.Id);
+            Assert.AreEqual(playlistFromDatabase.FirstItem, playlistItem);
+        }
+
         [Test]
         public void Updates()
         {
-            var stream = User.Streams.First();
-            var playlist = stream.CreatePlaylist();
+            var playlist = Stream.CreateAndAddPlaylist();
 
             PlaylistManager.Save(playlist);
 
@@ -61,30 +81,57 @@ namespace Streamus.Tests
             Assert.AreEqual(playlist.Title, playlistFromDatabase.Title);
         }
 
+        /// <summary>
+        /// Verifies that a Playlist can be deleted properly. The Playlist
+        /// has no items underneath it and the Stream is assumed to not have any additional Playlists.
+        /// </summary>
         [Test]
-        public void Deletes()
+        public void DeletePlaylist()
         {
-            var stream = User.Streams.First();
-            var playlist = stream.CreatePlaylist();
+            //  Create a new Playlist and write it to the database.
+            string title = string.Format("New Playlist {0:D4}", Stream.Playlists.Count);
+            Playlist playlist = new Playlist(title);
 
+            Stream.AddPlaylist(playlist);
             PlaylistManager.Save(playlist);
 
-            var playlistItem = new PlaylistItem(Video.Title, Video);
+            //  Now delete the created Playlist and ensure it is removed.
+            PlaylistManager.Delete(playlist.Id);
 
-            playlist.AddItem(playlistItem);
-            PlaylistManager.UpdatePlaylistItem(playlistItem);
-
-            stream.RemovePlaylist(playlist);
-            PlaylistManager.DeletePlaylistById(playlist.Id);
-
+            //  Remove entity from NHibernate cache to force DB query to ensure actually created.
             NHibernateSessionManager.Instance.Clear();
 
-            Playlist playlistFromDatabase = PlaylistDao.Get(playlist.Id);
-            //  Test that the product was successfully inserted
-            Assert.IsNull(playlistFromDatabase);
-
-            PlaylistItem playlistItemFromDatabase = PlaylistItemDao.Get(playlistItem.Id);
-            Assert.IsNull(playlistItemFromDatabase);
+            Playlist deletedPlaylist = PlaylistDao.Get(playlist.Id);
+            Assert.IsNull(deletedPlaylist);
         }
+
+
+        //[Test]
+        //public void Deletes()
+        //{
+        //    //  Create a new Playlist and write it to the database.
+        //    string title = string.Format("New Playlist {0:D4}", Stream.Playlists.Count);
+        //    Playlist playlist = new Playlist(title);
+
+        //    Stream.AddPlaylist(playlist);
+        //    PlaylistManager.Save(playlist);
+
+        //    var playlistItem = new PlaylistItem(Video.Title, Video);
+
+        //    playlist.AddItem(playlistItem);
+        //    PlaylistManager.UpdatePlaylistItem(playlistItem);
+
+        //    Stream.RemovePlaylist(playlist);
+        //    PlaylistManager.Delete(playlist.Id);
+
+        //    NHibernateSessionManager.Instance.Clear();
+
+        //    Playlist playlistFromDatabase = PlaylistDao.Get(playlist.Id);
+        //    //  Test that the product was successfully inserted
+        //    Assert.IsNull(playlistFromDatabase);
+
+        //    PlaylistItem playlistItemFromDatabase = PlaylistItemDao.Get(playlistItem.Id);
+        //    Assert.IsNull(playlistItemFromDatabase);
+        //}
     }
 }

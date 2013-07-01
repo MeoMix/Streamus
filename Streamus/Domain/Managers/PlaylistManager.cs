@@ -100,7 +100,7 @@ namespace Streamus.Domain.Managers
             }
         }
 
-        public void DeletePlaylistById(Guid id)
+        public void Delete(Guid id)
         {
             try
             {
@@ -196,15 +196,13 @@ namespace Streamus.Domain.Managers
                 foreach (PlaylistItem playlistItem in playlistItems)
                 {
                     playlistItem.ValidateAndThrow();
+                    playlistItem.Video.ValidateAndThrow();
 
                     PlaylistItem knownPlaylistItem = PlaylistItemDao.Get(playlistItem.Id);
 
-                    //  TODO: Sometimes we're updating and sometimes we're creating because the client
-                    //  sets PlaylistItem's ID so its difficult to tell server-side.
                     if (knownPlaylistItem == null)
                     {
-                        playlistItem.Video.ValidateAndThrow();
-                        PlaylistItemDao.Save(playlistItem);
+                        PlaylistItemDao.Update(playlistItem);
                     }
                     else
                     {
@@ -228,15 +226,13 @@ namespace Streamus.Domain.Managers
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
                 playlistItem.ValidateAndThrow();
+                playlistItem.Video.ValidateAndThrow();
 
                 PlaylistItem knownPlaylistItem = PlaylistItemDao.Get(playlistItem.Id);
 
-                //  TODO: Sometimes we're updating and sometimes we're creating because the client
-                //  sets PlaylistItem's ID so its difficult to tell server-side.
                 if (knownPlaylistItem == null)
                 {
-                    playlistItem.Video.ValidateAndThrow();
-                    PlaylistItemDao.Save(playlistItem);
+                    PlaylistItemDao.Update(playlistItem);
                 }
                 else
                 {
@@ -253,14 +249,13 @@ namespace Streamus.Domain.Managers
             }
         }
 
-        public void CreatePlaylistItem(PlaylistItem playlistItem)
+        public void SavePlaylistItem(PlaylistItem playlistItem)
         {
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
 
-                playlistItem.ValidateAndThrow();
-                PlaylistItemDao.Save(playlistItem);
+                DoSavePlaylistItem(playlistItem);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
@@ -272,18 +267,24 @@ namespace Streamus.Domain.Managers
             }
         }
 
+        /// <summary>
+        /// This is the work for saving a PlaylistItem without the Transaction wrapper.
+        /// </summary>
+        private void DoSavePlaylistItem(PlaylistItem playlistItem)
+        {
+            playlistItem.ValidateAndThrow();
+            playlistItem.Video.ValidateAndThrow();
+
+            PlaylistItemDao.Save(playlistItem);
+        }
+
         public void CreatePlaylistItems(IEnumerable<PlaylistItem> playlistItems)
         {
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
 
-                foreach (PlaylistItem item in playlistItems)
-                {
-                    item.ValidateAndThrow();
-                    //TODO: Optimize into one SQL query.
-                    PlaylistItemDao.Save(item);
-                }
+                playlistItems.ToList().ForEach(DoSavePlaylistItem);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
@@ -297,7 +298,7 @@ namespace Streamus.Domain.Managers
 
         public ShareCode GetShareCode(Guid playlistId)
         {
-            ShareCode shareCode = null;
+            ShareCode shareCode;
 
             try
             {

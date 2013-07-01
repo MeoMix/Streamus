@@ -37,11 +37,26 @@ namespace Streamus.Domain
         [DataMember(Name = "items")]
         public IList<PlaylistItem> Items { get; set; }
 
+        //  TODO: I think if I extract all of the ID properties into DTO classes I can get rid of this uglyness.
         [DataMember(Name = "firstItemId")]
         public Guid FirstItemId
         {
-            get { return FirstItem.Id; }
-            set { FirstItem.Id = value; }
+            get
+            {
+                return FirstItem != null ? FirstItem.Id : default(Guid);
+            }
+            set
+            {
+                if (value == default(Guid))
+                {
+                    FirstItem = null;
+                }
+                else
+                {
+                    FirstItem.Id = value;
+                }
+                
+            }
         }
 
         public PlaylistItem FirstItem { get; set; }
@@ -115,6 +130,13 @@ namespace Streamus.Domain
 
         public void AddItem(PlaylistItem playlistItem)
         {
+            //  Item must be removed from other Playlist before AddItem affects it.
+            if (playlistItem.Playlist != null && playlistItem.Playlist != this)
+            {
+                string message = string.Format("Item {0} is already a child of Playlist {1}", playlistItem.Title, playlistItem.Playlist.Title);
+                throw new Exception(message);
+            }
+
             if (Items.Count == 0)
             {
                 FirstItem = playlistItem;

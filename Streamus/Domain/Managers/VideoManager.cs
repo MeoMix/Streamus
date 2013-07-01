@@ -72,35 +72,5 @@ namespace Streamus.Domain.Managers
                 throw;
             }
         }
-
-        public Video Get(string id)
-        {
-            try
-            {
-                Video video = VideoDao.Get(id);
-                return video;
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
-                throw;
-            }
-        }
-
-        public IList<Video> Get(List<string> ids)
-        {
-            try
-            {
-                IList<Video> videos = VideoDao.Get(ids);
-                return videos;
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
-                throw;
-            }
-        }
     }
 }

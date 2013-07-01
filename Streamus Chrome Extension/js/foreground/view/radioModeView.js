@@ -1,6 +1,8 @@
 ﻿define(['backgroundManager', 'radioModeItems', 'radioModeItemView', 'overscroll'], function (backgroundManager, RadioModeItems, RadioModeItemView) {
     'use strict';
 
+    throw "This was causing an infinite loop... double check before re-including";
+
     var RadioModeView = Backbone.View.extend({
         el: $('#RadioMode'),
 

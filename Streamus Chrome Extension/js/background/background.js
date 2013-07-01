@@ -224,6 +224,8 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
         var cookieRequestHeader = _.find(info.requestHeaders, function(requestHeader) {
             return requestHeader.name === 'Cookie';
         });
+
+        console.log("Cookie request header:", cookieRequestHeader);
         
         if (cookieRequestHeader) {
 

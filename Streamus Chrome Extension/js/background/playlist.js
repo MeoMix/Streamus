@@ -80,6 +80,8 @@ define(['ytHelper',
                 
                 this.on('change:firstItemId', function (model, firstItemId) {
 
+                    console.log("First Item ID has changed to:", firstItemId);
+
                     $.ajax({
                         url: programState.getBaseUrl() + 'Playlist/UpdateFirstItem',
                         type: 'POST',
@@ -309,12 +311,10 @@ define(['ytHelper',
                     author: author
                 });
                 
-                return this.addItem(video);
+                this.addItem(video);
             },
 
             addItem: function (video) {
-
-                var modifiedItems = new PlaylistItems();
 
                 var playlistId = this.get('id');
 
@@ -325,43 +325,51 @@ define(['ytHelper',
                     relatedVideoInformation: []
                 });
                 
-                var playlistItems = this.get('items');
-                var playlistItemId = playlistItem.get('id');
-                if (playlistItems.length === 0) {
-
-                    this.set('firstItemId', playlistItemId);
-                    playlistItem.set('nextItemId', playlistItemId);
-                    playlistItem.set('previousItemId', playlistItemId);
-                } else {
-                    var firstItem = playlistItems.get(this.get('firstItemId'));
-                    var lastItem = playlistItems.get(firstItem.get('previousItemId'));
-
-                    lastItem.set('nextItemId', playlistItemId);
-                    playlistItem.set('previousItemId', lastItem.get('id'));
-
-                    firstItem.set('previousItemId', playlistItemId);
-                    playlistItem.set('nextItemId', firstItem.get('id'));
-                    modifiedItems.push(firstItem);
-                    modifiedItems.push(lastItem);
-                }
-                
-                modifiedItems.push(playlistItem);
-
-                ytHelper.getRelatedVideoInformation(video.get('id'), function (relatedVideoInformation) {
-                    playlistItem.set('relatedVideoInformation', relatedVideoInformation);
-                });
-
                 var self = this;
-                modifiedItems.save({}, {
+                //  TODO: Do I need to manually re-map the data for modifiedItems or can it happen implicitly? Seems really fragile as it is.
+                //  Save the playlistItem, but push after version from server because the ID will have changed.
+                playlistItem.save({}, {
+                    
                     success: function () {
+                        
+                        //  TODO: Maybe I can take the success response data and use it instead of manually writing this logic.
+                        var playlistItemId = playlistItem.get('id');
+                        var currentItems = self.get('items');
+                        
+                        if (currentItems.length === 0) {
+
+                            console.log("Self and playlistItem:", self, playlistItem);
+
+                            console.log("Setting firstItemId to: ", playlistItemId);
+
+                            self.set('firstItemId', playlistItemId);
+                            playlistItem.set('nextItemId', playlistItemId);
+                            playlistItem.set('previousItemId', playlistItemId);
+                            
+                        } else {
+                            var firstItem = currentItems.get(self.get('firstItemId'));
+                            var lastItem = currentItems.get(firstItem.get('previousItemId'));
+
+                            lastItem.set('nextItemId', playlistItemId);
+                            playlistItem.set('previousItemId', lastItem.get('id'));
+
+                            firstItem.set('previousItemId', playlistItemId);
+                            playlistItem.set('nextItemId', firstItem.get('id'));
+                        }
+                        
+                        ytHelper.getRelatedVideoInformation(video.get('id'), function (relatedVideoInformation) {
+                            playlistItem.set('relatedVideoInformation', relatedVideoInformation);
+                        });
+
                         self.get('items').push(playlistItem);
                     },
-                    error: function (error) {
+                    
+                    error: function(error) {
                         console.error(error);
                     }
+                    
                 });
-
-               
+                
                 return playlistItem;
             },
             

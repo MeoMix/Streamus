@@ -199,12 +199,17 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
 
         var activePlaylist = backgroundManager.get('activePlaylist');
 
+        console.log("Active playlist items:", activePlaylist.get('items'));
+
         if (activePlaylist == null || activePlaylist.get('items').length === 0) {
             showEmptyPlaylistNotification();
         } else {
             $('#' + emptyPlaylistNotificationId).remove();
 
             var firstItemId = activePlaylist.get('firstItemId');
+
+            console.log("First item ID of playlist:", firstItemId);
+
             var item = activePlaylist.get('items').get(firstItemId);
 
             //  Build up the ul of li's representing each playlistItem.

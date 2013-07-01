@@ -161,6 +161,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Helpers.cs" />
     <Compile Include="PlaylistDaoTest.cs" />
     <Compile Include="PlaylistItemDaoTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
