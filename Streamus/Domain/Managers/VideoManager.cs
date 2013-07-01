@@ -38,9 +38,6 @@ namespace Streamus.Domain.Managers
                     VideoDao.Save(video);
                 }
 
-                //  TODO: Currently no mechanism in place to UPDATE a saved Video object.
-                //  I think this is OK because Video objects should only be created or deleted.
-
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
             catch (Exception exception)

@@ -3,6 +3,7 @@
   
   <class name="Playlist" table="[Playlists]" lazy="false" >
     <id name="Id" unsaved-value="00000000-0000-0000-0000-000000000000">
+      <!--TODO: Consider guid.comb-->
       <generator class="guid" />
     </id>
     

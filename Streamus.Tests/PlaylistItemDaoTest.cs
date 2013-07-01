@@ -91,15 +91,12 @@ namespace Streamus.Tests
         ///     No update should happen to the Video as it is immutable.
         /// </summary>
         [Test]
-        public void CreateItem_VideoAlreadyExists_ItemCreated()
+        public void CreateItem_VideoAlreadyExists_ItemCreatedVideoNotUpdated()
         {
             //  Save this Video before continuining so that it exists before adding the PlaylistItem.
             string randomVideoId = Guid.NewGuid().ToString().Substring(0, 11);
             var videoNotInDatabase = new Video(randomVideoId, "Video", 999, "Author");
             VideoManager.Save(videoNotInDatabase);
-
-            //  Remove entity from NHibernate cache to ensure we've got a clean start.
-            NHibernateSessionManager.Instance.Clear();
 
             //  Change the title for videoInDatabase to check that cascade-update does not affect title. Videos are immutable.
             const string videoTitle = "A video title";
