@@ -10,7 +10,7 @@ using System;
 namespace Streamus.Tests
 {
     [TestFixture]
-    public class UserDaoTest
+    public class UserManagerTest : AbstractManagerTest
     {
         private Configuration Configuration { get; set; }
         private IUserDao UserDao { get; set; }
@@ -20,14 +20,13 @@ namespace Streamus.Tests
         ///     This code is only ran once for the given TestFixture.
         /// </summary>
         [TestFixtureSetUp]
-        public void TestFixtureSetUp()
+        public new void TestFixtureSetUp()
         {
-            AutofacRegistrations.RegisterDaoFactory();
             UserManager = new UserManager();
 
             try
             {
-                UserDao = new UserDao();
+                UserDao = DaoFactory.GetUserDao();
             }
             catch (TypeInitializationException exception)
             {

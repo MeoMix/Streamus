@@ -1,21 +1,17 @@
-﻿using System;
-using System.Linq;
-using Autofac;
-using FluentValidation;
+﻿using FluentValidation;
 using NUnit.Framework;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
+using System;
+using System.Linq;
 
 namespace Streamus.Tests
 {
     [TestFixture]
-    public class PlaylistItemDaoTest
+    public class PlaylistItemManagerTest : AbstractManagerTest
     {
-        private ILifetimeScope Scope { get; set; }
-        private IDaoFactory DaoFactory { get; set; }
-
         private IPlaylistItemDao PlaylistItemDao { get; set; }
         private IVideoDao VideoDao { get; set; }
         private User User { get; set; }
@@ -28,12 +24,8 @@ namespace Streamus.Tests
         ///     This code is only ran once for the given TestFixture.
         /// </summary>
         [TestFixtureSetUp]
-        public void TestFixtureSetUp()
+        public new void TestFixtureSetUp()
         {
-            AutofacRegistrations.RegisterDaoFactory();
-            Scope = AutofacRegistrations.Container.BeginLifetimeScope();
-            DaoFactory = Scope.Resolve<IDaoFactory>();
-
             PlaylistManager = new PlaylistManager();
             VideoManager = new VideoManager();
 

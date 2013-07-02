@@ -1,28 +1,18 @@
-﻿using System;
-using System.Reflection;
-using Autofac;
-using Streamus.Dao;
+﻿using Streamus.Dao;
 using Streamus.Domain.Interfaces;
-using log4net;
+using System;
 
 namespace Streamus.Domain.Managers
 {
     /// <summary>
     ///     Provides a common spot for methods against Users which require transactions (Creating, Updating, Deleting)
     /// </summary>
-    public class UserManager
+    public class UserManager : AbstractManager
     {
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly ILifetimeScope Scope;
-        private readonly IDaoFactory DaoFactory;
-
         private IUserDao UserDao { get; set; }
 
         public UserManager()
         {
-            Scope = AutofacRegistrations.Container.BeginLifetimeScope();
-            DaoFactory = Scope.Resolve<IDaoFactory>();
-
             UserDao = DaoFactory.GetUserDao();
         }
 

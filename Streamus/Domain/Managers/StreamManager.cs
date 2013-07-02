@@ -1,27 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Autofac;
-using Streamus.Dao;
+﻿using Streamus.Dao;
 using Streamus.Domain.Interfaces;
-using log4net;
+using System;
 
 namespace Streamus.Domain.Managers
 {
-    public class StreamManager
+    public class StreamManager : AbstractManager
     {
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly ILifetimeScope Scope;
-        private readonly IDaoFactory DaoFactory;
-
         private IStreamDao StreamDao { get; set; }
 
         public StreamManager()
         {
-            Scope = AutofacRegistrations.Container.BeginLifetimeScope();
-            DaoFactory = Scope.Resolve<IDaoFactory>();
-
             StreamDao = DaoFactory.GetStreamDao();
         }
 

@@ -221,6 +221,7 @@
     <Compile Include="Domain\Interfaces\IDaoFactory.cs" />
     <Compile Include="Domain\Interfaces\IShareableEntity.cs" />
     <Compile Include="Domain\Interfaces\IShareCodeDao.cs" />
+    <Compile Include="Domain\Managers\AbstractManager.cs" />
     <Compile Include="Domain\Managers\StreamManager.cs" />
     <Compile Include="Domain\ShareCode.cs" />
     <Compile Include="Domain\Error.cs" />

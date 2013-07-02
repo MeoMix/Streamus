@@ -1,25 +1,16 @@
-﻿using Autofac;
-using log4net;
-using Streamus.Dao;
+﻿using Streamus.Dao;
 using Streamus.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace Streamus.Domain.Managers
 {
-    public class VideoManager
+    public class VideoManager : AbstractManager
     {
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly ILifetimeScope Scope;
-        private readonly IDaoFactory DaoFactory;
         private IVideoDao VideoDao { get; set; }
 
         public VideoManager()
         {
-            Scope = AutofacRegistrations.Container.BeginLifetimeScope();
-            DaoFactory = Scope.Resolve<IDaoFactory>();
-
             VideoDao = DaoFactory.GetVideoDao();
         }
 

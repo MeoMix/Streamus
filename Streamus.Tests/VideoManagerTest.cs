@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace Streamus.Tests
 {
     [TestFixture]
-    public class VideoDaoTest
+    public class VideoManagerTest : AbstractManagerTest
     {
         private IVideoDao VideoDao { get; set; }
         private VideoManager VideoManager { get; set; }
@@ -18,14 +18,13 @@ namespace Streamus.Tests
         ///     This code is only ran once for the given TestFixture.
         /// </summary>
         [TestFixtureSetUp]
-        public void TestFixtureSetUp()
+        public new void TestFixtureSetUp()
         {
-            AutofacRegistrations.RegisterDaoFactory();
             VideoManager = new VideoManager();
 
             try
             {
-                VideoDao = new VideoDao();
+                VideoDao = DaoFactory.GetVideoDao();
             }
             catch (TypeInitializationException exception)
             {

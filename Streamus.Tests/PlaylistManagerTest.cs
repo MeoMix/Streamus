@@ -9,10 +9,9 @@ using System.Linq;
 namespace Streamus.Tests
 {
     [TestFixture]
-    public class PlaylistDaoTest
+    public class PlaylistManagerTest : AbstractManagerTest
     {
         private IPlaylistDao PlaylistDao { get; set; }
-        private IPlaylistItemDao PlaylistItemDao { get; set; }
         private User User { get; set; }
         private Stream Stream { get; set; }
         private Video Video { get; set; }
@@ -22,15 +21,13 @@ namespace Streamus.Tests
         ///     This code is only ran once for the given TestFixture.
         /// </summary>
         [TestFixtureSetUp]
-        public void TestFixtureSetUp()
+        public new void TestFixtureSetUp()
         {
-            AutofacRegistrations.RegisterDaoFactory();
             PlaylistManager = new PlaylistManager();
 
             try
             {
-                PlaylistDao = new PlaylistDao();
-                PlaylistItemDao = new PlaylistItemDao();
+                PlaylistDao = DaoFactory.GetPlaylistDao();
             }
             catch (TypeInitializationException exception)
             {

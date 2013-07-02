@@ -1,33 +1,22 @@
-﻿using System;
+﻿using Streamus.Dao;
+using Streamus.Domain.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using Autofac;
-using Streamus.Dao;
-using Streamus.Domain.Interfaces;
-using log4net;
 
 namespace Streamus.Domain.Managers
 {
-    public class PlaylistManager
+    public class PlaylistManager : AbstractManager
     {
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly ILifetimeScope Scope;
-        private readonly IDaoFactory DaoFactory;
-
         private IPlaylistDao PlaylistDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
-        private IVideoDao VideoDao { get; set; }
+
         private IShareCodeDao ShareCodeDao { get; set; }
 
         public PlaylistManager()
         {
-            Scope = AutofacRegistrations.Container.BeginLifetimeScope();
-            DaoFactory = Scope.Resolve<IDaoFactory>();
-
             PlaylistDao = DaoFactory.GetPlaylistDao();
             PlaylistItemDao = DaoFactory.GetPlaylistItemDao();
-            VideoDao = DaoFactory.GetVideoDao();
             ShareCodeDao = DaoFactory.GetShareCodeDao();
         }
 
@@ -271,8 +260,8 @@ namespace Streamus.Domain.Managers
         /// This is the work for saving a PlaylistItem without the Transaction wrapper.
         /// </summary>
         private void DoSavePlaylistItem(PlaylistItem playlistItem)
-        {
-            //  TODO: This is a bit of a hack, but NHibernate pays attention to the "dirtyness" of immutable entities.
+        {            
+		    //  TODO: This is a bit of a hack, but NHibernate pays attention to the "dirtyness" of immutable entities.
             //  As such, if two PlaylistItems reference the same Video object -- NonUniqueObjectException is thrown even though no changes
             //  can be persisted to the database.
             playlistItem.Video = VideoDao.Merge(playlistItem.Video);
