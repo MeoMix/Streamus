@@ -1,10 +1,10 @@
-﻿using log4net;
-using NHibernate;
-using NHibernate.Cfg;
-using System;
+﻿using System;
 using System.Reflection;
 using System.Runtime.Remoting.Messaging;
 using System.Web;
+using NHibernate;
+using NHibernate.Cfg;
+using log4net;
 
 namespace Streamus.Dao
 {
@@ -96,7 +96,7 @@ namespace Streamus.Dao
                 {
                     session.Flush();
                 }
-                
+
                 session.Close();
             }
 

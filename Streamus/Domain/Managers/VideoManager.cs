@@ -1,7 +1,8 @@
-﻿using Streamus.Dao;
-using Streamus.Domain.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Streamus.Dao;
+using Streamus.Domain.Interfaces;
 
 namespace Streamus.Domain.Managers
 {
@@ -19,12 +20,8 @@ namespace Streamus.Domain.Managers
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
-                video.ValidateAndThrow();
 
-                //  Merge instead of SaveOrUpdate because Video's ID is assigned, but the same Video
-                //  entity can be referenced by many different Playlists. As such, it is common to have the entity
-                //  loaded into the cache.
-                VideoDao.Merge(video);
+                DoSave(video);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
@@ -42,11 +39,7 @@ namespace Streamus.Domain.Managers
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
 
-                foreach (Video video in videos)
-                {
-                    video.ValidateAndThrow();
-                    VideoDao.SaveOrUpdate(video);
-                }
+                videos.ToList().ForEach(DoSave);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
@@ -56,6 +49,16 @@ namespace Streamus.Domain.Managers
                 NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
+        }
+
+        public void DoSave(Video video)
+        {
+            video.ValidateAndThrow();
+
+            //  Merge instead of SaveOrUpdate because Video's ID is assigned, but the same Video
+            //  entity can be referenced by many different Playlists. As such, it is common to have the entity
+            //  loaded into the cache.
+            VideoDao.Merge(video);
         }
     }
 }

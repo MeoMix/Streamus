@@ -1,9 +1,9 @@
-﻿using log4net;
+﻿using System;
+using System.Reflection;
 using NHibernate;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using System;
-using System.Reflection;
+using log4net;
 
 namespace Streamus.Dao
 {
@@ -15,14 +15,17 @@ namespace Streamus.Dao
         {
             Playlist playlist = null;
 
-            try
+            if (id != default(Guid))
             {
-                playlist = (Playlist)NHibernateSession.Load(typeof(Playlist), id);
-            }
-            catch (ObjectNotFoundException exception)
-            {
-                //  Consume error and return null.
-                Logger.Error(exception);
+                try
+                {
+                    playlist = (Playlist)NHibernateSession.Load(typeof(Playlist), id);
+                }
+                catch (ObjectNotFoundException exception)
+                {
+                    //  Consume error and return null.
+                    Logger.Error(exception);
+                }
             }
 
             return playlist;

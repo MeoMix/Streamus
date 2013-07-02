@@ -83,14 +83,12 @@ namespace Streamus.Tests
         [Test]
         public void CreateItem_VideoAlreadyExists_ItemCreatedVideoNotUpdated()
         {
-            //  Save this Video before continuining so that it exists before adding the PlaylistItem.
-            string randomVideoId = Guid.NewGuid().ToString().Substring(0, 11);
-            var videoNotInDatabase = new Video(randomVideoId, "Video", 999, "Author");
+            var videoNotInDatabase = Helpers.CreateUnsavedVideoWithId();
             VideoManager.Save(videoNotInDatabase);
 
             //  Change the title for videoInDatabase to check that cascade-update does not affect title. Videos are immutable.
             const string videoTitle = "A video title";
-            var videoInDatabase = new Video(randomVideoId, videoTitle, 999, "Author");
+            var videoInDatabase = Helpers.CreateUnsavedVideoWithId(titleOverride: videoTitle);
 
             //  Create a new PlaylistItem and write it to the database.
             string title = videoInDatabase.Title;
@@ -103,7 +101,7 @@ namespace Streamus.Tests
             NHibernateSessionManager.Instance.Clear();
 
             //  Ensure that the Video was NOT updated by comparing the new title to the old one.
-            Video videoFromDatabase = VideoDao.Get(randomVideoId);
+            Video videoFromDatabase = VideoDao.Get(videoNotInDatabase.Id);
             Assert.AreNotEqual(videoFromDatabase.Title, videoTitle);
 
             //  Ensure that the PlaylistItem was created.
@@ -118,9 +116,7 @@ namespace Streamus.Tests
         [Test]
         public void CreateItem_NotAddedToPlaylistBeforeSave_ItemNotAdded()
         {
-            //  Create a random video ID to ensure the Video doesn't exist in the database currently.
-            string randomVideoId = Guid.NewGuid().ToString().Substring(0, 11);
-            var videoNotInDatabase = new Video(randomVideoId, "Video", 999, "Author");
+            var videoNotInDatabase = Helpers.CreateUnsavedVideoWithId();
 
             //  Create a new PlaylistItem and write it to the database.
             string title = videoNotInDatabase.Title;

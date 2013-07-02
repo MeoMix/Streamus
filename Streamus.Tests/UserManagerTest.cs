@@ -1,11 +1,11 @@
-﻿using NHibernate.Cfg;
+﻿using System;
+using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
 using NUnit.Framework;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
-using System;
 
 namespace Streamus.Tests
 {
@@ -45,7 +45,7 @@ namespace Streamus.Tests
         }
 
         [Test]
-        public void Creates()
+        public void CreateUser_UserDoesntExist_UserCreated()
         {
             User user = UserManager.CreateUser();
 

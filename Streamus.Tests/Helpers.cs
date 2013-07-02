@@ -17,9 +17,7 @@ namespace Streamus.Tests
         /// </summary>
         public static PlaylistItem CreateItemInPlaylist(Playlist playlist)
         {
-            //  Create a random video ID to ensure the Video doesn't exist in the database currently.
-            string randomVideoId = Guid.NewGuid().ToString().Substring(0, 11);
-            var videoNotInDatabase = new Video(randomVideoId, "Video", 999, "Author");
+            Video videoNotInDatabase = CreateUnsavedVideoWithId();
 
             //  Create a new PlaylistItem and write it to the database.
             string title = videoNotInDatabase.Title;
@@ -29,6 +27,19 @@ namespace Streamus.Tests
             PlaylistItemManager.Save(playlistItem);
 
             return playlistItem;
+        }
+
+        /// <summary>
+        ///     Creates a new Video with a random Id, or a given Id if specified, saves it to the database and returns it.
+        /// </summary>
+        public static Video CreateUnsavedVideoWithId(string idOverride = "", string titleOverride = "")
+        {
+            //  Create a random video ID to ensure the Video doesn't exist in the database currently.
+            string randomVideoId = idOverride == string.Empty ? Guid.NewGuid().ToString().Substring(0, 11) : idOverride;
+            string title = titleOverride == string.Empty ? string.Format("Video {0}", randomVideoId) : titleOverride;
+            var video = new Video(randomVideoId, title, 999, "Author");
+
+            return video;
         }
     }
 }

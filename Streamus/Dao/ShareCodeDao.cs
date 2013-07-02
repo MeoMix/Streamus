@@ -10,11 +10,11 @@ namespace Streamus.Dao
         public ShareCode GetByShortIdAndEntityTitle(string shareCodeShortId, string urlFriendlyEntityTitle)
         {
             ICriteria criteria = NHibernateSession
-                .CreateCriteria(typeof(ShareCode), "ShareCode")
+                .CreateCriteria(typeof (ShareCode), "ShareCode")
                 .Add(Restrictions.Eq("ShareCode.ShortId", shareCodeShortId))
                 .Add(Restrictions.Eq("ShareCode.UrlFriendlyEntityTitle", urlFriendlyEntityTitle));
 
-            ShareCode shareCode = criteria.UniqueResult<ShareCode>();
+            var shareCode = criteria.UniqueResult<ShareCode>();
 
             return shareCode;
         }

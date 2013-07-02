@@ -1,9 +1,9 @@
-﻿using log4net;
+﻿using System;
+using System.Reflection;
 using NHibernate;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using System;
-using System.Reflection;
+using log4net;
 
 namespace Streamus.Dao
 {
@@ -13,16 +13,19 @@ namespace Streamus.Dao
 
         public User Get(Guid id)
         {
-            User user;
+            User user = null;
 
-            try
+            if (id != default(Guid))
             {
-                user = (User)NHibernateSession.Load(typeof(User), id);
-            }
-            catch (ObjectNotFoundException exception)
-            {
-                Logger.Error(exception);
-                throw;
+                try
+                {
+                    user = (User) NHibernateSession.Load(typeof (User), id);
+                }
+                catch (ObjectNotFoundException exception)
+                {
+                    Logger.Error(exception);
+                    throw;
+                }
             }
 
             return user;

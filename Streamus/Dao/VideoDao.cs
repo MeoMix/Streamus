@@ -1,10 +1,10 @@
-﻿using log4net;
+﻿using System.Collections.Generic;
+using System.Reflection;
 using NHibernate;
 using NHibernate.Criterion;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using System.Collections.Generic;
-using System.Reflection;
+using log4net;
 
 namespace Streamus.Dao
 {
@@ -15,18 +15,22 @@ namespace Streamus.Dao
         public Video Get(string id)
         {
             Video video = null;
-            try
+
+            if (id != default(string))
             {
-                video = (Video)NHibernateSession.Load(typeof(Video), id);
-            }
-            catch (ObjectNotFoundException exception)
-            {
-                //  Consume error and return null.
-                Logger.Error(exception);
+                try
+                {
+                    video = (Video) NHibernateSession.Load(typeof (Video), id);
+                }
+                catch (ObjectNotFoundException exception)
+                {
+                    //  Consume error and return null.
+                    Logger.Error(exception);
+                }
             }
 
             return video;
-        } 
+        }
 
         public IList<Video> Get(List<string> ids)
         {

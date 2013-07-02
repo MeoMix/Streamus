@@ -11,7 +11,6 @@ namespace Streamus.Domain
     [DataContract]
     public class Playlist : AbstractShareableEntity
     {
-        //  TODO: This seems forced, but I can't get NHibernate to properly figure out the mapping without holding a reference.
         [DataMember(Name = "streamId")]
         public Guid StreamId
         {
@@ -27,6 +26,7 @@ namespace Streamus.Domain
             }
             set
             {
+                //  TODO: This seems forced, but I can't get NHibernate to properly figure out the mapping without holding a reference.
                 Stream = new StreamDao().Get(value);
             }
         }

@@ -24,6 +24,7 @@ namespace Streamus.Domain
             }
             set
             {
+                //  TODO: This seems forced, but I can't get NHibernate to properly figure out the mapping without holding a reference.
                 Playlist = new PlaylistDao().Get(value);
             }
         }

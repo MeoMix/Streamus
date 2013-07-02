@@ -24,6 +24,7 @@ namespace Streamus.Domain.Managers
         public User CreateUser()
         {
             User user;
+
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
@@ -31,14 +32,6 @@ namespace Streamus.Domain.Managers
                 user = new User();
                 user.ValidateAndThrow();
                 UserDao.Save(user);
-
-                //  TODO: Can this happen automatically with NHibernate?
-                //Stream stream = user.Streams[0];
-
-                //stream.Playlists[0].NextListId = stream.Playlists[0].Id;
-
-                //stream.Playlists[0].PreviousListId = stream.Playlists[0].Id;
-                //StreamDao.Update(stream);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }

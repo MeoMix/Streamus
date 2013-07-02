@@ -35,7 +35,7 @@ namespace Streamus.Tests
             User = new UserManager().CreateUser();
             Stream = User.Streams.First();
 
-            Video = new Video("s91jgcmQoB0", "Tristam - Chairs", 219, "MeoMix");
+            Video = Helpers.CreateUnsavedVideoWithId();
             new VideoManager().Save(Video);
         }
 
@@ -99,34 +99,5 @@ namespace Streamus.Tests
             Playlist deletedPlaylist = PlaylistDao.Get(playlist.Id);
             Assert.IsNull(deletedPlaylist);
         }
-
-
-        //[Test]
-        //public void Deletes()
-        //{
-        //    //  Create a new Playlist and write it to the database.
-        //    string title = string.Format("New Playlist {0:D4}", Stream.Playlists.Count);
-        //    Playlist playlist = new Playlist(title);
-
-        //    Stream.AddPlaylist(playlist);
-        //    PlaylistManager.Save(playlist);
-
-        //    var playlistItem = new PlaylistItem(Video.Title, Video);
-
-        //    playlist.AddItem(playlistItem);
-        //    PlaylistManager.UpdatePlaylistItem(playlistItem);
-
-        //    Stream.RemovePlaylist(playlist);
-        //    PlaylistManager.Delete(playlist.Id);
-
-        //    NHibernateSessionManager.Instance.Clear();
-
-        //    Playlist playlistFromDatabase = PlaylistDao.Get(playlist.Id);
-        //    //  Test that the product was successfully inserted
-        //    Assert.IsNull(playlistFromDatabase);
-
-        //    PlaylistItem playlistItemFromDatabase = PlaylistItemDao.Get(playlistItem.Id);
-        //    Assert.IsNull(playlistItemFromDatabase);
-        //}
     }
 }
