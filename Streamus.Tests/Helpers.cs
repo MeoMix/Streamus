@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Streamus.Domain;
+﻿using Streamus.Domain;
 using Streamus.Domain.Managers;
+using System;
 
 namespace Streamus.Tests
 {
     /// <summary>
-    /// Stores common methods used by tests. Just useful for keeping things DRY between test cases.
+    ///     Stores common methods used by tests. Just useful for keeping things DRY between test cases.
     /// </summary>
     public static class Helpers
     {
-        static readonly PlaylistManager PlaylistManager = new PlaylistManager();
+        private static readonly PlaylistItemManager PlaylistItemManager = new PlaylistItemManager();
 
         /// <summary>
         ///     Creates a new Video and PlaylistItem, puts item in the database and then returns
@@ -29,7 +26,7 @@ namespace Streamus.Tests
             var playlistItem = new PlaylistItem(title, videoNotInDatabase);
 
             playlist.AddItem(playlistItem);
-            PlaylistManager.SavePlaylistItem(playlistItem);
+            PlaylistItemManager.Save(playlistItem);
 
             return playlistItem;
         }

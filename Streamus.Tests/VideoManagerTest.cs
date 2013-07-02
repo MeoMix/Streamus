@@ -12,7 +12,7 @@ namespace Streamus.Tests
     public class VideoManagerTest : AbstractManagerTest
     {
         private IVideoDao VideoDao { get; set; }
-        private VideoManager VideoManager { get; set; }
+        private static readonly VideoManager VideoManager = new VideoManager();
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -20,8 +20,6 @@ namespace Streamus.Tests
         [TestFixtureSetUp]
         public new void TestFixtureSetUp()
         {
-            VideoManager = new VideoManager();
-
             try
             {
                 VideoDao = DaoFactory.GetVideoDao();

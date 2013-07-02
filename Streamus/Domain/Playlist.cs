@@ -170,7 +170,7 @@ namespace Streamus.Domain
             if (FirstItem == playlistItem)
             {
                 //  Move the firstItemId to the next item if playlist still has other items in it.
-                FirstItem = playlistItem.NextItem;
+                FirstItem = Items.Count > 1 ? playlistItem.NextItem : null;
             }
 
             PlaylistItem previousItem = playlistItem.PreviousItem;

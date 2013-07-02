@@ -1,10 +1,10 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Linq;
+using NUnit.Framework;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
-using System;
-using System.Linq;
 
 namespace Streamus.Tests
 {
@@ -15,7 +15,7 @@ namespace Streamus.Tests
         private User User { get; set; }
         private Stream Stream { get; set; }
         private Video Video { get; set; }
-        private PlaylistManager PlaylistManager { get; set; }
+        private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -23,8 +23,6 @@ namespace Streamus.Tests
         [TestFixtureSetUp]
         public new void TestFixtureSetUp()
         {
-            PlaylistManager = new PlaylistManager();
-
             try
             {
                 PlaylistDao = DaoFactory.GetPlaylistDao();
@@ -42,8 +40,8 @@ namespace Streamus.Tests
         }
 
         /// <summary>
-        /// Make sure that when the first PlaylistItem is added to a Playlist that the 
-        /// Playlist's FirstItem field is appropriately set in the database.
+        ///     Make sure that when the first PlaylistItem is added to a Playlist that the
+        ///     Playlist's FirstItem field is appropriately set in the database.
         /// </summary>
         [Test]
         public void AddItem_NoItemsInPlaylist_FirstItemIdSet()
@@ -63,7 +61,7 @@ namespace Streamus.Tests
         [Test]
         public void Updates()
         {
-            var playlist = Stream.CreateAndAddPlaylist();
+            Playlist playlist = Stream.CreateAndAddPlaylist();
 
             PlaylistManager.Save(playlist);
 
@@ -79,15 +77,15 @@ namespace Streamus.Tests
         }
 
         /// <summary>
-        /// Verifies that a Playlist can be deleted properly. The Playlist
-        /// has no items underneath it and the Stream is assumed to not have any additional Playlists.
+        ///     Verifies that a Playlist can be deleted properly. The Playlist
+        ///     has no items underneath it and the Stream is assumed to not have any additional Playlists.
         /// </summary>
         [Test]
         public void DeletePlaylist()
         {
             //  Create a new Playlist and write it to the database.
             string title = string.Format("New Playlist {0:D4}", Stream.Playlists.Count);
-            Playlist playlist = new Playlist(title);
+            var playlist = new Playlist(title);
 
             Stream.AddPlaylist(playlist);
             PlaylistManager.Save(playlist);

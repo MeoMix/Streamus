@@ -12,6 +12,7 @@ namespace Streamus.Controllers
 {
     public class PlaylistItemController : Controller
     {
+        private static readonly PlaylistItemManager PlaylistItemManager = new PlaylistItemManager();
         private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
 
         [HttpPost]
@@ -49,7 +50,7 @@ namespace Streamus.Controllers
         [HttpPut]
         public ActionResult Update(PlaylistItem playlistItem)
         {
-            PlaylistManager.UpdatePlaylistItem(playlistItem);
+            PlaylistItemManager.Update(playlistItem);
 
             //SendPushMessage("update playlistItem:" + playlistItem.Id);
 
@@ -59,7 +60,7 @@ namespace Streamus.Controllers
         [HttpPut]
         public ActionResult UpdateMultiple(IEnumerable<PlaylistItem> playlistItems)
         {
-            PlaylistManager.UpdatePlaylistItems(playlistItems);
+            PlaylistItemManager.Update(playlistItems);
 
             return new JsonDataContractActionResult(playlistItems);
         }
@@ -67,7 +68,7 @@ namespace Streamus.Controllers
         [HttpDelete]
         public JsonResult Delete(Guid id, Guid playlistId)
         {
-            PlaylistManager.DeleteItem(id, playlistId);
+            PlaylistItemManager.Delete(id, playlistId);
 
             return Json(new
             {

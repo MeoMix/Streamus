@@ -14,7 +14,7 @@ namespace Streamus.Tests
     {
         private Configuration Configuration { get; set; }
         private IUserDao UserDao { get; set; }
-        private UserManager UserManager { get; set; }
+        private static readonly UserManager UserManager = new UserManager();
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -22,8 +22,6 @@ namespace Streamus.Tests
         [TestFixtureSetUp]
         public new void TestFixtureSetUp()
         {
-            UserManager = new UserManager();
-
             try
             {
                 UserDao = DaoFactory.GetUserDao();

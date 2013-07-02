@@ -1,11 +1,11 @@
-﻿using FluentValidation;
+﻿using System;
+using System.Linq;
+using FluentValidation;
 using NUnit.Framework;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
-using System;
-using System.Linq;
 
 namespace Streamus.Tests
 {
@@ -17,8 +17,9 @@ namespace Streamus.Tests
         private User User { get; set; }
         private Playlist Playlist { get; set; }
 
-        private PlaylistManager PlaylistManager { get; set; }
-        private VideoManager VideoManager { get; set; }
+        private static readonly PlaylistItemManager PlaylistItemManager = new PlaylistItemManager();
+        private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
+        private static readonly VideoManager VideoManager = new VideoManager();
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -26,9 +27,6 @@ namespace Streamus.Tests
         [TestFixtureSetUp]
         public new void TestFixtureSetUp()
         {
-            PlaylistManager = new PlaylistManager();
-            VideoManager = new VideoManager();
-
             try
             {
                 PlaylistItemDao = DaoFactory.GetPlaylistItemDao();
@@ -99,7 +97,7 @@ namespace Streamus.Tests
             var playlistItem = new PlaylistItem(title, videoInDatabase);
 
             Playlist.AddItem(playlistItem);
-            PlaylistManager.SavePlaylistItem(playlistItem);
+            PlaylistItemManager.Save(playlistItem);
 
             //  Remove entity from NHibernate cache to force DB query to ensure actually created.
             NHibernateSessionManager.Instance.Clear();
@@ -133,7 +131,7 @@ namespace Streamus.Tests
             try
             {
                 //  Try to save the item without adding to Playlist. This should fail.
-                PlaylistManager.SavePlaylistItem(playlistItem);
+                PlaylistItemManager.Save(playlistItem);
             }
             catch (ValidationException)
             {
@@ -156,7 +154,7 @@ namespace Streamus.Tests
             const string updatedItemTitle = "Updated PlaylistItem title";
             playlistItem.Title = updatedItemTitle;
 
-            PlaylistManager.UpdatePlaylistItem(playlistItem);
+            PlaylistItemManager.Update(playlistItem);
 
             //  Check the title of the item from the database -- make sure it updated.
             PlaylistItem itemFromDatabase = PlaylistItemDao.Get(playlistItem.Id);
@@ -172,7 +170,7 @@ namespace Streamus.Tests
             PlaylistItem playlistItem = Helpers.CreateItemInPlaylist(Playlist);
 
             //  Now delete the created PlaylistItem and ensure it is removed.
-            PlaylistManager.DeleteItem(playlistItem.Id, playlistItem.Playlist.Id);
+            PlaylistItemManager.Delete(playlistItem.Id, playlistItem.Playlist.Id);
 
             PlaylistItem deletedPlaylistItem = PlaylistItemDao.Get(playlistItem.Id);
             Assert.IsNull(deletedPlaylistItem);
@@ -192,7 +190,7 @@ namespace Streamus.Tests
             PlaylistItem secondItem = Helpers.CreateItemInPlaylist(Playlist);
 
             //  Now delete the first PlaylistItem and ensure it is removed.
-            PlaylistManager.DeleteItem(firstItem.Id, firstItem.Playlist.Id);
+            PlaylistItemManager.Delete(firstItem.Id, firstItem.Playlist.Id);
 
             //  Remove entity from NHibernate cache to force DB query to ensure actually created.
             NHibernateSessionManager.Instance.Clear();

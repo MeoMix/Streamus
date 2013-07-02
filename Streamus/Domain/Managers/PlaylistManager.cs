@@ -1,8 +1,8 @@
-﻿using Streamus.Dao;
-using Streamus.Domain.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Streamus.Dao;
+using Streamus.Domain.Interfaces;
 
 namespace Streamus.Domain.Managers
 {
@@ -10,13 +10,14 @@ namespace Streamus.Domain.Managers
     {
         private IPlaylistDao PlaylistDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
-
+        private IVideoDao VideoDao { get; set; }
         private IShareCodeDao ShareCodeDao { get; set; }
 
         public PlaylistManager()
         {
             PlaylistDao = DaoFactory.GetPlaylistDao();
             PlaylistItemDao = DaoFactory.GetPlaylistItemDao();
+            VideoDao = DaoFactory.GetVideoDao();
             ShareCodeDao = DaoFactory.GetShareCodeDao();
         }
 
@@ -25,9 +26,8 @@ namespace Streamus.Domain.Managers
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
-                
-                playlist.ValidateAndThrow();
-                PlaylistDao.Save(playlist);
+
+                DoSave(playlist);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
@@ -45,11 +45,7 @@ namespace Streamus.Domain.Managers
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
 
-                foreach (Playlist playlist in playlists)
-                {
-                    playlist.ValidateAndThrow();
-                    PlaylistDao.SaveOrUpdate(playlist);
-                }
+                playlists.ToList().ForEach(DoSave);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
@@ -59,6 +55,26 @@ namespace Streamus.Domain.Managers
                 NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
+        }
+
+        /// <summary>
+        ///     This is the work for saving a PlaylistItem without the Transaction wrapper.
+        /// </summary>
+        private void DoSave(Playlist playlist)
+        {
+            foreach (PlaylistItem playlistItem in playlist.Items)
+            {
+                //  TODO: This is a bit of a hack, but NHibernate pays attention to the "dirtyness" of immutable entities.
+                //  As such, if two PlaylistItems reference the same Video object -- NonUniqueObjectException is thrown even though no changes
+                //  can be persisted to the database.
+                playlistItem.Video = VideoDao.Merge(playlistItem.Video);
+
+                playlistItem.ValidateAndThrow();
+                playlistItem.Video.ValidateAndThrow();
+            }
+
+            playlist.ValidateAndThrow();
+            PlaylistDao.Save(playlist);
         }
 
         public void Update(Playlist playlist)
@@ -145,151 +161,6 @@ namespace Streamus.Domain.Managers
             }
         }
 
-        public void DeleteItem(Guid itemId, Guid playlistId)
-        {
-            try
-            {
-                NHibernateSessionManager.Instance.BeginTransaction();
-                Playlist playlist = PlaylistDao.Get(playlistId);
-
-                if (playlist == null)
-                {
-                    string errorMessage = string.Format("No playlist found with id: {0}", playlistId);
-                    throw new ApplicationException(errorMessage);
-                }
-
-                PlaylistItem playlistItem = playlist.Items.First(item => item.Id == itemId);
-
-                //  Be sure to remove from Playlist first so that cascade doesn't re-save.
-                playlist.RemoveItem(playlistItem);
-                PlaylistItemDao.Delete(playlistItem);
-
-                PlaylistDao.Update(playlist);
-
-                NHibernateSessionManager.Instance.CommitTransaction();
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
-                throw;
-            }
-        }
-
-        public void UpdatePlaylistItems(IEnumerable<PlaylistItem> playlistItems)
-        {
-            try
-            {
-                NHibernateSessionManager.Instance.BeginTransaction();
-
-                foreach (PlaylistItem playlistItem in playlistItems)
-                {
-                    playlistItem.ValidateAndThrow();
-                    playlistItem.Video.ValidateAndThrow();
-
-                    PlaylistItem knownPlaylistItem = PlaylistItemDao.Get(playlistItem.Id);
-
-                    if (knownPlaylistItem == null)
-                    {
-                        PlaylistItemDao.Update(playlistItem);
-                    }
-                    else
-                    {
-                        PlaylistItemDao.Merge(playlistItem);
-                    }
-                }
-
-                NHibernateSessionManager.Instance.CommitTransaction();
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
-                throw;
-            }
-        }
-
-        public void UpdatePlaylistItem(PlaylistItem playlistItem)
-        {
-            try
-            {
-                NHibernateSessionManager.Instance.BeginTransaction();
-                playlistItem.ValidateAndThrow();
-                playlistItem.Video.ValidateAndThrow();
-
-                PlaylistItem knownPlaylistItem = PlaylistItemDao.Get(playlistItem.Id);
-
-                if (knownPlaylistItem == null)
-                {
-                    PlaylistItemDao.Update(playlistItem);
-                }
-                else
-                {
-                    PlaylistItemDao.Merge(playlistItem);
-                }
-
-                NHibernateSessionManager.Instance.CommitTransaction();
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
-                throw;
-            }
-        }
-
-        public void SavePlaylistItem(PlaylistItem playlistItem)
-        {
-            try
-            {
-                NHibernateSessionManager.Instance.BeginTransaction();
-
-                DoSavePlaylistItem(playlistItem);
-
-                NHibernateSessionManager.Instance.CommitTransaction();
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// This is the work for saving a PlaylistItem without the Transaction wrapper.
-        /// </summary>
-        private void DoSavePlaylistItem(PlaylistItem playlistItem)
-        {            
-		    //  TODO: This is a bit of a hack, but NHibernate pays attention to the "dirtyness" of immutable entities.
-            //  As such, if two PlaylistItems reference the same Video object -- NonUniqueObjectException is thrown even though no changes
-            //  can be persisted to the database.
-            playlistItem.Video = VideoDao.Merge(playlistItem.Video);
-
-            playlistItem.ValidateAndThrow();
-            playlistItem.Video.ValidateAndThrow();
-
-            PlaylistItemDao.Save(playlistItem);
-        }
-
-        public void CreatePlaylistItems(IEnumerable<PlaylistItem> playlistItems)
-        {
-            try
-            {
-                NHibernateSessionManager.Instance.BeginTransaction();
-
-                playlistItems.ToList().ForEach(DoSavePlaylistItem);
-
-                NHibernateSessionManager.Instance.CommitTransaction();
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
-                throw;
-            }
-        }
-
         public ShareCode GetShareCode(Guid playlistId)
         {
             ShareCode shareCode;
@@ -306,7 +177,7 @@ namespace Streamus.Domain.Managers
                     throw new ApplicationException(errorMessage);
                 }
 
-                Playlist shareablePlaylistCopy = new Playlist();
+                var shareablePlaylistCopy = new Playlist();
 
                 //  TODO: Reconsider this.
                 shareablePlaylistCopy.NextPlaylist = shareablePlaylistCopy;

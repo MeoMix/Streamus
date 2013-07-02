@@ -222,6 +222,7 @@
     <Compile Include="Domain\Interfaces\IShareableEntity.cs" />
     <Compile Include="Domain\Interfaces\IShareCodeDao.cs" />
     <Compile Include="Domain\Managers\AbstractManager.cs" />
+    <Compile Include="Domain\Managers\PlaylistItemManager.cs" />
     <Compile Include="Domain\Managers\StreamManager.cs" />
     <Compile Include="Domain\ShareCode.cs" />
     <Compile Include="Domain\Error.cs" />
@@ -276,7 +277,9 @@
     <EmbeddedResource Include="Domain\User.hbm.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Domain\Playlist.hbm.xml" />
+    <EmbeddedResource Include="Domain\Playlist.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Domain\Stream.hbm.xml" />
     <EmbeddedResource Include="Domain\Error.hbm.xml">
       <SubType>Designer</SubType>
