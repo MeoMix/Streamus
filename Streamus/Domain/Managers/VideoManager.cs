@@ -30,13 +30,10 @@ namespace Streamus.Domain.Managers
                 NHibernateSessionManager.Instance.BeginTransaction();
                 video.ValidateAndThrow();
 
-                //  TODO: Is this hitting the database? Surely it's not.
-                Video videoInSession = VideoDao.Get(video.Id);
-
-                if (videoInSession == null)
-                {
-                    VideoDao.Save(video);
-                }
+                //  Merge instead of SaveOrUpdate because Video's ID is assigned, but the same Video
+                //  entity can be referenced by many different Playlists. As such, it is common to have the entity
+                //  loaded into the cache.
+                VideoDao.Merge(video);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
