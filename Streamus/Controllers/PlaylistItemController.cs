@@ -2,11 +2,13 @@
 using System.Linq;
 using System.Net;
 using System.Web.Script.Serialization;
+using AutoMapper;
 using Streamus.Domain;
 using Streamus.Domain.Managers;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using Streamus.Dto;
 
 namespace Streamus.Controllers
 {
@@ -16,21 +18,28 @@ namespace Streamus.Controllers
         private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
 
         [HttpPost]
-        public ActionResult Create(PlaylistItem playlistItem)
+        public ActionResult Create(PlaylistItemDto playlistItemDto)
         {
+            PlaylistItem playlistItem = Mapper.Map<PlaylistItemDto, PlaylistItem>(playlistItemDto);
+
             playlistItem.Playlist.AddItem(playlistItem);
 
             //  Make sure the playlistItem has been setup properly before it is cascade-saved through the Playlist.
             playlistItem.ValidateAndThrow();
 
+            //  TODO: Why am I saving playlist here and not playlistItem???
             PlaylistManager.Save(playlistItem.Playlist);
 
-            return new JsonDataContractActionResult(playlistItem);
+            PlaylistItemDto savedPlaylistItemDto = Mapper.Map<PlaylistItem, PlaylistItemDto>(playlistItem);
+
+            return new JsonDataContractActionResult(savedPlaylistItemDto);
         }
 
         [HttpPost]
-        public ActionResult CreateMultiple(List<PlaylistItem> playlistItems)
+        public ActionResult CreateMultiple(List<PlaylistItemDto> playlistItemDtos)
         {
+            List<PlaylistItem> playlistItems = Mapper.Map<List<PlaylistItemDto>, List<PlaylistItem>>(playlistItemDtos);
+
             //  Split items into their respective playlists and then save on each.
             foreach (var playlistGrouping in playlistItems.GroupBy(i => i.Playlist))
             {
@@ -44,25 +53,34 @@ namespace Streamus.Controllers
                 PlaylistManager.Save(playlist);
             }
 
-            return new JsonDataContractActionResult(playlistItems);
+            List<PlaylistItemDto> savedPlaylistItemDtos = Mapper.Map<List<PlaylistItem>, List<PlaylistItemDto>>(playlistItems);
+
+            return new JsonDataContractActionResult(savedPlaylistItemDtos);
         }
 
         [HttpPut]
-        public ActionResult Update(PlaylistItem playlistItem)
+        public ActionResult Update(PlaylistItemDto playlistItemDto)
         {
+            PlaylistItem playlistItem = Mapper.Map<PlaylistItemDto, PlaylistItem>(playlistItemDto);
             PlaylistItemManager.Update(playlistItem);
 
             //SendPushMessage("update playlistItem:" + playlistItem.Id);
 
-            return new JsonDataContractActionResult(playlistItem);
+            PlaylistItemDto updatedPlaylistItemDto = Mapper.Map<PlaylistItem, PlaylistItemDto>(playlistItem);
+
+            return new JsonDataContractActionResult(updatedPlaylistItemDto);
         }
 
         [HttpPut]
-        public ActionResult UpdateMultiple(IEnumerable<PlaylistItem> playlistItems)
+        public ActionResult UpdateMultiple(List<PlaylistItemDto> playlistItemDtos)
         {
+            List<PlaylistItem> playlistItems = Mapper.Map<List<PlaylistItemDto>, List<PlaylistItem>>(playlistItemDtos);
+
             PlaylistItemManager.Update(playlistItems);
 
-            return new JsonDataContractActionResult(playlistItems);
+            List<PlaylistItemDto> savedPlaylistItemDtos = Mapper.Map<List<PlaylistItem>, List<PlaylistItemDto>>(playlistItems);
+
+            return new JsonDataContractActionResult(savedPlaylistItemDtos);
         }
 
         [HttpDelete]

@@ -15,8 +15,8 @@
     </bag>
 
     <many-to-one name="Stream" column="StreamId" />
-    <many-to-one name="NextPlaylist" column="NextListId" />
-    <many-to-one name="PreviousPlaylist" column="PreviousListId" />
+    <many-to-one name="NextPlaylist" column="NextPlaylistId" />
+    <many-to-one name="PreviousPlaylist" column="PreviousPlaylistId" />
     <many-to-one name="FirstItem" column="FirstItemId" />
     
   </class>

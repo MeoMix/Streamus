@@ -5,7 +5,7 @@ using Streamus.Domain.Interfaces;
 
 namespace Streamus.Tests
 {
-    public abstract class AbstractManagerTest
+    public abstract class AbstractTest
     {
         protected ILifetimeScope Scope { get; set; }
         protected IDaoFactory DaoFactory { get; set; }

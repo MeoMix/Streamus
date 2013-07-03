@@ -1,22 +1,15 @@
 ﻿using FluentValidation;
+using Streamus.Domain.Validators;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using Streamus.Domain.Validators;
 
 namespace Streamus.Domain
 {
-    [DataContract]
     public class User
     {
-        [DataMember(Name = "id")]
         public Guid Id { get; set; }
-
-        [DataMember(Name = "name")]
         public string Name { get; set; }
-
         //  Use interfaces so NHibernate can inject with its own collection implementation.
-        [DataMember(Name = "streams")]
         public IList<Stream> Streams { get; set; }
 
         public User()

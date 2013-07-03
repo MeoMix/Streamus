@@ -10,7 +10,7 @@ using Streamus.Domain.Managers;
 namespace Streamus.Tests
 {
     [TestFixture]
-    public class PlaylistItemManagerTest : AbstractManagerTest
+    public class PlaylistItemTest : AbstractTest
     {
         private IPlaylistItemDao PlaylistItemDao { get; set; }
         private IVideoDao VideoDao { get; set; }

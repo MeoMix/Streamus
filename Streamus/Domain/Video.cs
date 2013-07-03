@@ -1,23 +1,14 @@
 ﻿using FluentValidation;
-using System;
-using System.Runtime.Serialization;
 using Streamus.Domain.Validators;
+using System;
 
 namespace Streamus.Domain
 {
-    [DataContract]
     public class Video
     {
-        [DataMember(Name = "id")]
         public string Id { get; set; }
-
-        [DataMember(Name = "title")]
         public string Title { get; set; }
-
-        [DataMember(Name = "duration")]
         public int Duration { get; set; }
-
-        [DataMember(Name = "author")]
         public string Author { get; set; }
 
         public Video()

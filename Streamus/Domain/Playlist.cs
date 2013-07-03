@@ -1,100 +1,18 @@
 ﻿using FluentValidation;
-using Streamus.Dao;
 using Streamus.Domain.Validators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 
 namespace Streamus.Domain
 {
-    [DataContract]
     public class Playlist : AbstractShareableEntity
     {
-        [DataMember(Name = "streamId")]
-        public Guid StreamId
-        {
-            get
-            {
-                Guid streamId = Guid.Empty;
-                if (Stream != null)
-                {
-                    streamId = Stream.Id;
-                }
-
-                return streamId;
-            }
-            set
-            {
-                //  TODO: This seems forced, but I can't get NHibernate to properly figure out the mapping without holding a reference.
-                Stream = new StreamDao().Get(value);
-            }
-        }
-
         public Stream Stream { get; set; }
-
         //  Use interfaces so NHibernate can inject with its own collection implementation.
-        [DataMember(Name = "items")]
         public IList<PlaylistItem> Items { get; set; }
-
-        //  TODO: I think if I extract all of the ID properties into DTO classes I can get rid of this uglyness.
-        [DataMember(Name = "firstItemId")]
-        public Guid FirstItemId
-        {
-            get
-            {
-                return FirstItem != null ? FirstItem.Id : default(Guid);
-            }
-            set
-            {
-                if (value == default(Guid))
-                {
-                    FirstItem = null;
-                }
-                else
-                {
-                    FirstItem.Id = value;
-                }
-                
-            }
-        }
-
         public PlaylistItem FirstItem { get; set; }
-
-        [DataMember(Name = "nextListId")]
-        public Guid NextListId
-        {
-            get
-            {
-                Guid nextListId = Guid.Empty;
-                if (NextPlaylist != null)
-                {
-                    nextListId = NextPlaylist.Id;
-                }
-
-                return nextListId;
-            }
-            set { NextPlaylist.Id = value; }
-        }
-
         public Playlist NextPlaylist { get; set; }
-
-        [DataMember(Name = "previousListId")]
-        public Guid PreviousListId
-        {
-            get
-            {
-                Guid previousListId = Guid.Empty;
-                if (PreviousPlaylist != null)
-                {
-                    previousListId = PreviousPlaylist.Id;
-                }
-
-                return previousListId;
-            }
-            set { PreviousPlaylist.Id = value; }
-        }
-
         public Playlist PreviousPlaylist { get; set; }
 
         public Playlist()

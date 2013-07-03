@@ -1,31 +1,36 @@
-﻿using FluentValidation;
-using Streamus.Domain.Validators;
-using System;
+﻿using System;
+using System.Runtime.Serialization;
 
-namespace Streamus.Domain
+namespace Streamus.Dto
 {
-    public class Error
+    [DataContract]
+    public class ErrorDto
     {
+        [DataMember(Name = "id")]
         public Guid Id { get; set; }
+
+        [DataMember(Name = "message")]
         public string Message { get; set; }
+
+        [DataMember(Name = "lineNumber")]
         public int LineNumber { get; set; }
+
+        [DataMember(Name = "url")]
         public string Url { get; set; }
+
+        [DataMember(Name = "clientVersion")]
         public string ClientVersion { get; set; }
+
+        [DataMember(Name = "timeOccurred")]
         public DateTime TimeOccurred { get; set; }
 
-        public Error()
+        public ErrorDto()
         {
             Message = string.Empty;
             LineNumber = -1;
             Url = string.Empty;
             ClientVersion = string.Empty;
             TimeOccurred = DateTime.Now;
-        }
-
-        public void ValidateAndThrow()
-        {
-            var validator = new ErrorValidator();
-            validator.ValidateAndThrow(this);
         }
     }
 }

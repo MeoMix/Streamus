@@ -2,7 +2,6 @@
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Validators;
 using System;
-using System.Runtime.Serialization;
 
 namespace Streamus.Domain
 {
@@ -12,22 +11,12 @@ namespace Streamus.Domain
         Playlist = 0
     }
 
-    [DataContract]
     public class ShareCode
     {
-        [DataMember(Name = "id")]
         public Guid Id { get; set; }
-
-        [DataMember(Name = "entity")]
         public ShareableEntityType EntityType { get; set; }
-
-        [DataMember(Name = "entityId")]
         public Guid EntityId { get; set; }
-
-        [DataMember(Name = "shortId")]
         public string ShortId { get; set; }
-
-        [DataMember(Name = "urlFriendlyEntityTitle")]
         public string UrlFriendlyEntityTitle { get; set; }
 
         public ShareCode()

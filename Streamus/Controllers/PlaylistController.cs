@@ -1,11 +1,13 @@
-﻿using log4net;
+﻿using System;
+using System.Reflection;
+using System.Web.Mvc;
+using AutoMapper;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
-using System;
-using System.Reflection;
-using System.Web.Mvc;
+using Streamus.Dto;
+using log4net;
 
 namespace Streamus.Controllers
 {
@@ -35,32 +37,39 @@ namespace Streamus.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(Playlist playlist)
+        public ActionResult Create(PlaylistDto playlistDto)
         {
+            Playlist playlist = Mapper.Map<PlaylistDto, Playlist>(playlistDto);
             playlist.Stream.AddPlaylist(playlist);
 
             //  Make sure the playlist has been setup properly before it is cascade-saved through the Stream.
             playlist.ValidateAndThrow();
 
+            //  TODO: Why am I saving Stream and not playlist?!
             StreamManager.Save(playlist.Stream);
 
-            return new JsonDataContractActionResult(playlist);
+            PlaylistDto savedPlaylistDto = Mapper.Map<Playlist, PlaylistDto>(playlist);
+
+            return new JsonDataContractActionResult(savedPlaylistDto);
         }
 
         [HttpPut]
-        public ActionResult Update(Playlist playlist)
+        public ActionResult Update(PlaylistDto playlistDto)
         {
+            Playlist playlist = Mapper.Map<PlaylistDto, Playlist>(playlistDto);
             PlaylistManager.Update(playlist);
 
-            return new JsonDataContractActionResult(playlist);
+            PlaylistDto updatedPlaylistDto = Mapper.Map<Playlist, PlaylistDto>(playlist);
+            return new JsonDataContractActionResult(updatedPlaylistDto);
         }
 
         [HttpGet]
         public ActionResult Get(Guid id)
         {
             Playlist playlist = PlaylistDao.Get(id);
+            PlaylistDto playlistDto = Mapper.Map<Playlist, PlaylistDto>(playlist);
 
-            return new JsonDataContractActionResult(playlist);
+            return new JsonDataContractActionResult(playlistDto);
         }
 
         [HttpDelete]
@@ -69,9 +78,9 @@ namespace Streamus.Controllers
             PlaylistManager.Delete(id);
 
             return Json(new
-            {
-                success = true
-            });
+                {
+                    success = true
+                });
         }
 
         [HttpPost]
@@ -79,9 +88,10 @@ namespace Streamus.Controllers
         {
             PlaylistManager.UpdateTitle(playlistId, title);
 
-            return Json(new{
-                success = true
-            });
+            return Json(new
+                {
+                    success = true
+                });
         }
 
         [HttpPost]
@@ -90,17 +100,19 @@ namespace Streamus.Controllers
             PlaylistManager.UpdateFirstItem(playlistId, firstItemId);
 
             return Json(new
-            {
-                success = true
-            });
+                {
+                    success = true
+                });
         }
 
+        //  TODO: Move this to ShareCodeController
         [HttpGet]
         public JsonResult GetShareCode(Guid playlistId)
         {
             ShareCode shareCode = PlaylistManager.GetShareCode(playlistId);
+            ShareCodeDto shareCodeDto = Mapper.Map<ShareCode, ShareCodeDto>(shareCode);
 
-            return new JsonDataContractActionResult(shareCode);
+            return new JsonDataContractActionResult(shareCodeDto);
         }
 
         [HttpGet]
@@ -123,7 +135,7 @@ namespace Streamus.Controllers
 
             Stream stream = StreamDao.Get(streamId);
 
-            Playlist playlist = new Playlist();
+            var playlist = new Playlist();
             stream.AddPlaylist(playlist);
             StreamDao.Save(stream);
 
@@ -134,7 +146,9 @@ namespace Streamus.Controllers
 
             PlaylistManager.Save(playlist);
 
-            return new JsonDataContractActionResult(playlist);
+            PlaylistDto playlistDto = Mapper.Map<Playlist, PlaylistDto>(playlist);
+
+            return new JsonDataContractActionResult(playlistDto);
         }
     }
 }

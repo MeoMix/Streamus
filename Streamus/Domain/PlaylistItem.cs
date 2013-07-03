@@ -1,80 +1,18 @@
 ﻿using FluentValidation;
-using System;
-using System.Runtime.Serialization;
-using Streamus.Dao;
 using Streamus.Domain.Validators;
+using System;
 
 namespace Streamus.Domain
 {
-    [DataContract]
     public class PlaylistItem
     {
-        [DataMember(Name = "playlistId")]
-        public Guid PlaylistId
-        {
-            get
-            {
-                Guid playlistId = Guid.Empty;
-                if (Playlist != null)
-                {
-                    playlistId = Playlist.Id;
-                }
-
-                return playlistId;
-            }
-            set
-            {
-                //  TODO: This seems forced, but I can't get NHibernate to properly figure out the mapping without holding a reference.
-                Playlist = new PlaylistDao().Get(value);
-            }
-        }
-
         public Playlist Playlist { get; set; }
-
-        [DataMember(Name = "id")]
         public Guid Id { get; set; }
-
-        [DataMember(Name = "nextItemId")]
-        public Guid NextItemId
-        {
-            get
-            {
-                Guid nextItemId = Guid.Empty;
-                if (NextItem != null)
-                {
-                    nextItemId = NextItem.Id;
-                }
-
-                return nextItemId;
-            }
-            set { NextItem.Id = value; }
-        }
-
         public PlaylistItem NextItem { get; set; }
-
-        [DataMember(Name = "previousItemId")]
-        public Guid PreviousItemId
-        {
-            get
-            {
-                Guid previousItemId = Guid.Empty;
-                if (PreviousItem != null)
-                {
-                    previousItemId = PreviousItem.Id;
-                }
-
-                return previousItemId;
-            }
-            set { PreviousItem.Id = value; }
-        }
-
         public PlaylistItem PreviousItem { get; set; }
 
         //  Store Title on PlaylistItem as well as on Video because user might want to rename PlaylistItem.
-        [DataMember(Name = "title")]
         public string Title { get; set; }
-
-        [DataMember(Name = "video")]
         public Video Video { get; set; }
 
         public PlaylistItem()

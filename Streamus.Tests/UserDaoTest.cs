@@ -1,14 +1,19 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using NUnit.Framework;
+using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using System;
 
 namespace Streamus.Tests
 {
-    [TestFixture]
-    public class StreamManagerTest : AbstractManagerTest
-    {
-        private IStreamDao StreamDao { get; set; }
 
+    [TestFixture]
+    public class UserDaoTest : AbstractTest
+    {
+        private IUserDao UserDao { get; set; }
+ 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
         /// </summary>
@@ -17,7 +22,7 @@ namespace Streamus.Tests
         {
             try
             {
-                StreamDao = DaoFactory.GetStreamDao();
+                UserDao = DaoFactory.GetUserDao();
             }
             catch (TypeInitializationException exception)
             {
@@ -25,13 +30,10 @@ namespace Streamus.Tests
             }
         }
 
-        /// <summary>
-        ///     This code runs before every test.
-        /// </summary>
-        [SetUp]
-        public void SetupContext()
+        [Test]
+        public void GetUser_UserExists_UserRetrieved()
         {
-                    
+            //  Test getting a user, observe fails, fix.
         }
     }
 }

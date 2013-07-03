@@ -10,7 +10,7 @@ using Streamus.Domain.Managers;
 namespace Streamus.Tests
 {
     [TestFixture]
-    public class UserManagerTest : AbstractManagerTest
+    public class UserTest : AbstractTest
     {
         private Configuration Configuration { get; set; }
         private IUserDao UserDao { get; set; }
@@ -31,6 +31,7 @@ namespace Streamus.Tests
                 throw exception.InnerException;
             }
 
+            //  TODO: Move this code to its own class so it can be run separately.
             //  Run this bit of code to have the UserDaoTest create the StreamusTest tables.
             //  Disable this again immediately after. It'll mess up tests and makes everything run slower.
             const bool needSetupDatabase = true;

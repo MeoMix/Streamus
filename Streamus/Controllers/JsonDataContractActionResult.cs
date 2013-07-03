@@ -4,6 +4,7 @@ using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
+    //  TODO: Enforce only returning DTO objects through this, potentially.
     public class JsonDataContractActionResult : JsonResult
     {
         /// <summary>

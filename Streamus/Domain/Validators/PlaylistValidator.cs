@@ -12,11 +12,11 @@ namespace Streamus.Domain.Validators
             RuleFor(playlist => playlist.NextPlaylist).NotNull();
             RuleFor(playlist => playlist.PreviousPlaylist).NotNull();
 
-            //RuleFor(playlist => playlist.NextListId)
+            //RuleFor(playlist => playlist.NextPlaylistId)
             //    .NotEqual(Guid.Empty)
             //    .When(playlist => playlist.Id != Guid.Empty);
 
-            //RuleFor(playlist => playlist.PreviousListId)
+            //RuleFor(playlist => playlist.PreviousPlaylistId)
             //    .NotEqual(Guid.Empty)
             //    .When(playlist => playlist.Id != Guid.Empty);
         }

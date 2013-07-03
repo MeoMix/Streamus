@@ -71,6 +71,9 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
     }
     
     function onUserLoaded(model, shouldSetSyncStorage) {
+
+        console.log("onUserLoaded:", model);
+
         //  Have to manually convert the JSON array into a Backbone.Collection
         var streams = new Streams(model.get('streams'));
 

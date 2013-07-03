@@ -1,21 +1,23 @@
-﻿using Streamus.App_Start;
+﻿using System.Net.Http.Formatting;
+using AutoMapper;
+using Newtonsoft.Json;
+using Streamus.App_Start;
 using Streamus.Dao;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Streamus.Domain;
+using Streamus.Dto;
 
 namespace Streamus
 {
-    // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
-    // visit http://go.microsoft.com/?LinkId=9394801
-
     public class WebApiApplication : HttpApplication
     {
         protected void Application_Start()
         {
-            var json = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
-            json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.All;
+            JsonMediaTypeFormatter json = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
+            json.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.All;
 
             AreaRegistration.RegisterAllAreas();
 
@@ -27,6 +29,23 @@ namespace Streamus
             ModelBinders.Binders.DefaultBinder = new JsonEmptyStringNotNullModelBinder();
 
             AutofacRegistrations.RegisterDaoFactory();
+
+            CreateAutoMapperMaps();
+        }
+
+        /// <summary>
+        ///     Initialize the AutoMapper mappings for the solution.
+        ///     http://automapper.codeplex.com/
+        /// </summary>
+        private static void CreateAutoMapperMaps()
+        {
+            Mapper.CreateMap<Error, ErrorDto>().ReverseMap();
+            Mapper.CreateMap<Playlist, PlaylistDto>().ReverseMap();
+            Mapper.CreateMap<PlaylistItem, PlaylistItemDto>().ReverseMap();
+            Mapper.CreateMap<ShareCode, ShareCodeDto>().ReverseMap();
+            Mapper.CreateMap<Stream, StreamDto>().ReverseMap();
+            Mapper.CreateMap<User, UserDto>().ReverseMap();
+            Mapper.CreateMap<Video, VideoDto>().ReverseMap();
         }
     }
 
@@ -36,7 +55,12 @@ namespace Streamus
         public override object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext)
         {
             bindingContext.ModelMetadata.ConvertEmptyStringToNull = false;
-            Binders = new ModelBinderDictionary() { DefaultBinder = this };
+
+            Binders = new ModelBinderDictionary
+                {
+                    DefaultBinder = this
+                };
+
             return base.BindModel(controllerContext, bindingContext);
         }
     }

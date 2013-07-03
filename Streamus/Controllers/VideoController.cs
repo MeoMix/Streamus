@@ -1,13 +1,14 @@
-﻿using log4net;
-using log4net.Repository.Hierarchy;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Web.Mvc;
+using AutoMapper;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Web.Mvc;
+using Streamus.Dto;
+using log4net;
 
 namespace Streamus.Controllers
 {
@@ -37,8 +38,10 @@ namespace Streamus.Controllers
         ///     the item should be saved or updated, though.
         /// </summary>
         [HttpPut]
-        public ActionResult Update(Video video)
+        public ActionResult Update(VideoDto videoDto)
         {
+            Video video = Mapper.Map<VideoDto, Video>(videoDto);
+
             VideoManager.Save(video);
             return new JsonDataContractActionResult(video);
         }
@@ -47,12 +50,16 @@ namespace Streamus.Controllers
         public ActionResult Get(string id)
         {
             Video video = VideoDao.Get(id);
-            return new JsonDataContractActionResult(video);
+            VideoDto videoDto = Mapper.Map<Video, VideoDto>(video);
+
+            return new JsonDataContractActionResult(videoDto);
         }
 
         [HttpPost]
-        public ActionResult SaveVideos(List<Video> videos)
+        public ActionResult SaveVideos(List<VideoDto> videoDtos)
         {
+            List<Video> videos = Mapper.Map<List<VideoDto>, List<Video>>(videoDtos);
+
             VideoManager.Save(videos);
             return new JsonDataContractActionResult(videos);
         }
@@ -60,15 +67,16 @@ namespace Streamus.Controllers
         [HttpGet]
         public ActionResult GetByIds(List<string> ids)
         {
-            IList<Video> videos = new List<Video>();
+            var videoDtos = new List<VideoDto>();
 
             //  The default model binder doesn't support passing an empty array as JSON to MVC controller, so check null.
             if (ids != null)
             {
-                videos = VideoDao.Get(ids);
+                IList<Video> videos = VideoDao.Get(ids);
+                videoDtos = Mapper.Map<IList<Video>, List<VideoDto>>(videos);
             }
 
-            return new JsonDataContractActionResult(videos);
+            return new JsonDataContractActionResult(videoDtos);
         }
     }
 }

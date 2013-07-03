@@ -2,41 +2,18 @@
 using Streamus.Domain.Validators;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 namespace Streamus.Domain
 {        
     //  TODO: Currently there is only the ability to have a single Stream.
     //  Should create Strean objects as a LinkedList so that adding and removing is possible.
-    [DataContract]
     public class Stream
     {
-        [DataMember(Name = "id")]
         public Guid Id { get; set; }
-
-        [DataMember(Name = "userId")]
-        public Guid UserId
-        {
-            get { return User.Id; }
-            set { User.Id = value; }
-        }
-
         public User User { get; set; }
-
-        [DataMember(Name = "title")]
         public string Title { get; set; }
-
         //  Use interfaces so NHibernate can inject with its own collection implementation.
-        [DataMember(Name = "playlists")]
         public IList<Playlist> Playlists { get; set; }
-
-        [DataMember(Name = "firstListId")]
-        public Guid FirstListId
-        {
-            get { return FirstPlaylist.Id; }
-            set { FirstPlaylist.Id = value; }
-        }
-
         public Playlist FirstPlaylist { get; set; }
 
         public Stream()

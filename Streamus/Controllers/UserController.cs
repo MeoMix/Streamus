@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using AutoMapper;
+using Streamus.Dto;
 using log4net;
 using Streamus.Dao;
 using Streamus.Domain;
@@ -43,8 +45,9 @@ namespace Streamus.Controllers
         public ActionResult Create()
         {
             User user = UserManager.CreateUser();
+            UserDto userDto = Mapper.Map<User, UserDto>(user);
 
-            return new JsonDataContractActionResult(user);
+            return new JsonDataContractActionResult(userDto);
         }
 
         [HttpGet]
@@ -130,7 +133,9 @@ namespace Streamus.Controllers
             //    }
             //}
 
-            return new JsonDataContractActionResult(user);
+            UserDto userDto = Mapper.Map<User, UserDto>(user);
+
+            return new JsonDataContractActionResult(userDto);
         }
 
         /// <summary>

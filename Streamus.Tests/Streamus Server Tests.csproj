@@ -161,14 +161,15 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="AbstractManagerTest.cs" />
+    <Compile Include="AbstractTest.cs" />
     <Compile Include="Helpers.cs" />
-    <Compile Include="PlaylistManagerTest.cs" />
-    <Compile Include="PlaylistItemManagerTest.cs" />
+    <Compile Include="PlaylistTest.cs" />
+    <Compile Include="PlaylistItemTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StreamManagerTest.cs" />
-    <Compile Include="UserManagerTest.cs" />
-    <Compile Include="VideoManagerTest.cs" />
+    <Compile Include="StreamTest.cs" />
+    <Compile Include="UserDaoTest.cs" />
+    <Compile Include="UserTest.cs" />
+    <Compile Include="VideoTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Streamus\Streamus Server.csproj">
