@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Runtime.Serialization.Json;
 using System.Web.Mvc;
+using Streamus.Domain.Interfaces;
 
 namespace Streamus.Controllers
 {
-    //  TODO: Enforce only returning DTO objects through this, potentially.
     public class JsonDataContractActionResult : JsonResult
     {
         /// <summary>
@@ -14,6 +14,12 @@ namespace Streamus.Controllers
         /// <param name="data">The object to be serialized under data contract. </param>
         public JsonDataContractActionResult(Object data)
         {
+            //  Ensure that programmers are returning the proper entities.
+            if (data is IAbstractDomainEntity)
+            {
+                throw new Exception("Attempted serialization of domain entity detected. Only DTOs should be serialized.");
+            }
+
             Data = data;
         }
 

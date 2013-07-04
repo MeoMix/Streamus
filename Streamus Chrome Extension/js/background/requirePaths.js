@@ -30,6 +30,7 @@ var require = {
         'pushMessageManager': 'background/pushMessageManager',
         'iconManager': 'background/iconManager',
         'spin': 'thirdParty/jquery.spin',
-        'shareCode': 'background/shareCode'
+        'shareCode': 'background/shareCode',
+        'shareableEntityType': 'shareableEntityType'
     }
 };

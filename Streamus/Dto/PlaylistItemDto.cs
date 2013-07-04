@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
+using AutoMapper;
+using Streamus.Domain;
 
 namespace Streamus.Dto
 {
@@ -31,18 +34,16 @@ namespace Streamus.Dto
             Title = string.Empty;
         }
 
-        public PlaylistItemDto(string title, VideoDto video)
-            : this()
+        public static PlaylistItemDto Create(PlaylistItem playlistItem)
         {
-            Title = title;
-            Video = video;
+            PlaylistItemDto playlistItemDto = Mapper.Map<PlaylistItem, PlaylistItemDto>(playlistItem);
+            return playlistItemDto;
         }
 
-        public PlaylistItemDto(PlaylistItemDto playlistItem)
-            : this()
+        public static List<PlaylistItemDto> Create(IEnumerable<PlaylistItem> playlistItems)
         {
-            Title = playlistItem.Title;
-            Video = playlistItem.Video;
+            List<PlaylistItemDto> playlistItemDtos = Mapper.Map<IEnumerable<PlaylistItem>, List<PlaylistItemDto>>(playlistItems);
+            return playlistItemDtos;
         }
     }
 }

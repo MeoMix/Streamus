@@ -1,4 +1,5 @@
-﻿using Streamus.Domain;
+﻿using AutoMapper;
+using Streamus.Domain;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -30,14 +31,16 @@ namespace Streamus.Dto
         {
             Id = Guid.Empty;
             Title = string.Empty;
+            FirstItemId = Guid.Empty;
+            NextPlaylistId = Guid.Empty;
+            PreviousPlaylistId = Guid.Empty;
             Items = new List<PlaylistItemDto>();
         }
 
-        public PlaylistDto(string title)
-            : this()
+        public static PlaylistDto Create(Playlist playlist)
         {
-            Title = title;
+            PlaylistDto playlistDto = Mapper.Map<Playlist, PlaylistDto>(playlist);
+            return playlistDto;
         }
-
     }
 }

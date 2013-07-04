@@ -1,11 +1,14 @@
-﻿using FluentValidation;
-using Streamus.Domain.Validators;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using AutoMapper;
+using FluentValidation;
+using Streamus.Domain.Interfaces;
+using Streamus.Domain.Validators;
+using Streamus.Dto;
 
 namespace Streamus.Domain
 {
-    public class User
+    public class User : IAbstractDomainEntity
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -21,10 +24,16 @@ namespace Streamus.Domain
             CreateStream();
         }
 
+        public static User Create(UserDto userDto)
+        {
+            User user = Mapper.Map<UserDto, User>(userDto);
+            return user;
+        }
+
         public Stream CreateStream()
         {
             string title = string.Format("New Stream {0:D4}", Streams.Count);
-            Stream stream = new Stream(title);
+            var stream = new Stream(title);
             return AddStream(stream);
         }
 
@@ -48,6 +57,7 @@ namespace Streamus.Domain
         }
 
         private int? _oldHashCode;
+
         public override int GetHashCode()
         {
             // Once we have a hash code we'll never change it
@@ -68,7 +78,7 @@ namespace Streamus.Domain
 
         public override bool Equals(object obj)
         {
-            User other = obj as User;
+            var other = obj as User;
             if (other == null)
                 return false;
 

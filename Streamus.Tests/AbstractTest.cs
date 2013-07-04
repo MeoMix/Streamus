@@ -13,9 +13,13 @@ namespace Streamus.Tests
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
+            //  Initialize Autofac for dependency injection.
             AutofacRegistrations.RegisterDaoFactory();
             Scope = AutofacRegistrations.Container.BeginLifetimeScope();
             DaoFactory = Scope.Resolve<IDaoFactory>();
+
+            //  Initialize AutoMapper with Streamus' server mappings.
+            WebApiApplication.CreateAutoMapperMaps();
         }
     }
 }

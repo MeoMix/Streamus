@@ -3,6 +3,7 @@ using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
+using Streamus.Dto;
 using System;
 using System.Reflection;
 using System.Web.Mvc;
@@ -12,6 +13,8 @@ namespace Streamus.Controllers
     public class ShareCodeController : Controller
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ShareCodeManager ShareCodeManager = new ShareCodeManager();
+
         private readonly IShareCodeDao ShareCodeDao;
 
         public ShareCodeController()
@@ -27,14 +30,13 @@ namespace Streamus.Controllers
             }
         }
 
-        //  TODO: GetShareCode should probably be implemented here not in other controllers.
-        //[HttpGet]
-        //public JsonResult GetShareCode(ShareableEntityType entityType, Guid playlistId)
-        //{
-        //    //var playlistManager = new PlaylistManager(PlaylistDao, PlaylistItemDao, VideoDao, ShareCodeDao);
-        //    //string shareCode = playlistManager.GetShareCode(playlistId);
+        [HttpGet]
+        public JsonResult GetShareCode(ShareableEntityType entityType, Guid entityId)
+        {
+            ShareCode shareCode = ShareCodeManager.GetShareCode(entityType, entityId);
+            ShareCodeDto shareCodeDto = ShareCodeDto.Create(shareCode);
 
-        //    //return Json(shareCode, JsonRequestBehavior.AllowGet);
-        //}
+            return new JsonDataContractActionResult(shareCodeDto);
+        }
     }
 }

@@ -9,8 +9,9 @@ define(['ytHelper',
         'videos',
         'helpers',
         'repeatButtonStates',
-        'shareCode'
-], function (ytHelper, PlaylistItems, PlaylistItem, programState, localStorageManager, Video, Videos, helpers, repeatButtonStates, ShareCode) {
+        'shareCode',
+        'shareableEntityType'
+], function (ytHelper, PlaylistItems, PlaylistItem, programState, localStorageManager, Video, Videos, helpers, repeatButtonStates, ShareCode, ShareableEntityType) {
         'use strict';
 
         var playlistModel = Backbone.Model.extend({
@@ -494,11 +495,12 @@ define(['ytHelper',
 
                 var self = this;
                 $.ajax({
-                    url: programState.getBaseUrl() + 'Playlist/GetShareCode',
+                    url: programState.getBaseUrl() + 'ShareCode/GetShareCode',
                     type: 'GET',
                     dataType: 'json',
                     data: {
-                        playlistId: self.get('id')
+                        entityType: ShareableEntityType.PLAYLIST,
+                        entityId: self.get('id')
                     },
                     success: function (shareCodeJson) {
                         var shareCode = new ShareCode(shareCodeJson);

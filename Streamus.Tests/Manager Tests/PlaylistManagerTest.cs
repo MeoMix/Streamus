@@ -6,10 +6,10 @@ using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
 
-namespace Streamus.Tests
+namespace Streamus.Tests.Manager_Tests
 {
     [TestFixture]
-    public class PlaylistTest : AbstractTest
+    public class PlaylistManagerTest : AbstractTest
     {
         private IPlaylistDao PlaylistDao { get; set; }
         private User User { get; set; }

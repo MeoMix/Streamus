@@ -1,10 +1,13 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
+using Streamus.Domain.Interfaces;
 using Streamus.Domain.Validators;
 using System;
+using Streamus.Dto;
 
 namespace Streamus.Domain
 {
-    public class Error
+    public class Error : IAbstractDomainEntity
     {
         public Guid Id { get; set; }
         public string Message { get; set; }
@@ -20,6 +23,12 @@ namespace Streamus.Domain
             Url = string.Empty;
             ClientVersion = string.Empty;
             TimeOccurred = DateTime.Now;
+        }
+
+        public static Error Create(ErrorDto errorDto)
+        {
+            Error error = Mapper.Map<ErrorDto, Error>(errorDto);
+            return error;
         }
 
         public void ValidateAndThrow()

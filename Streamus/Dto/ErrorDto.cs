@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using AutoMapper;
+using Streamus.Domain;
 
 namespace Streamus.Dto
 {
@@ -31,6 +33,12 @@ namespace Streamus.Dto
             Url = string.Empty;
             ClientVersion = string.Empty;
             TimeOccurred = DateTime.Now;
+        }
+
+        public static ErrorDto Create(Error error)
+        {
+            ErrorDto errorDto = Mapper.Map<Error, ErrorDto>(error);
+            return errorDto;
         }
     }
 }

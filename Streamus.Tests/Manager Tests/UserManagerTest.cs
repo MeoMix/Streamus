@@ -1,18 +1,15 @@
-﻿using System;
-using NHibernate.Cfg;
-using NHibernate.Tool.hbm2ddl;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
+using System;
 
-namespace Streamus.Tests
+namespace Streamus.Tests.Manager_Tests
 {
     [TestFixture]
-    public class UserTest : AbstractTest
+    public class UserManagerTest : AbstractTest
     {
-        private Configuration Configuration { get; set; }
         private IUserDao UserDao { get; set; }
         private static readonly UserManager UserManager = new UserManager();
 
@@ -29,19 +26,6 @@ namespace Streamus.Tests
             catch (TypeInitializationException exception)
             {
                 throw exception.InnerException;
-            }
-
-            //  TODO: Move this code to its own class so it can be run separately.
-            //  Run this bit of code to have the UserDaoTest create the StreamusTest tables.
-            //  Disable this again immediately after. It'll mess up tests and makes everything run slower.
-            const bool needSetupDatabase = true;
-
-            if (needSetupDatabase)
-            {
-                Configuration = new Configuration();
-                Configuration.Configure();
-
-                new SchemaExport(Configuration).Execute(false, true, false);
             }
         }
 

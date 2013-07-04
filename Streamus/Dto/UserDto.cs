@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using AutoMapper;
+using Streamus.Domain;
 
 namespace Streamus.Dto
 {
@@ -21,5 +23,12 @@ namespace Streamus.Dto
             Name = string.Empty;
             Streams = new List<StreamDto>();
         }
+
+        public static UserDto Create(User user)
+        {
+            UserDto userDto = Mapper.Map<User, UserDto>(user);
+            return userDto;
+        }
+
     }
 }

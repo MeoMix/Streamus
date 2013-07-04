@@ -1,4 +1,5 @@
-﻿define(function () {
+﻿//  TODO: Make singular instead of plural
+define(function () {
     'use strict';
 
     return Object.freeze({

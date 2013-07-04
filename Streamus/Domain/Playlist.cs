@@ -1,12 +1,15 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
+using Streamus.Domain.Interfaces;
 using Streamus.Domain.Validators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Streamus.Dto;
 
 namespace Streamus.Domain
 {
-    public class Playlist : AbstractShareableEntity
+    public class Playlist : AbstractShareableEntity, IAbstractDomainEntity
     {
         public Stream Stream { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
@@ -26,6 +29,12 @@ namespace Streamus.Domain
             : this()
         {
             Title = title;
+        }
+
+        public static Playlist Create(PlaylistDto playlistDto)
+        {
+            Playlist playlist = Mapper.Map<PlaylistDto, Playlist>(playlistDto);
+            return playlist;
         }
 
         public void Copy(Playlist playlist)

@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
-using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 
-namespace Streamus.Tests
+namespace Streamus.Tests.Dao_Tests
 {
-
     [TestFixture]
     public class UserDaoTest : AbstractTest
     {
         private IUserDao UserDao { get; set; }
- 
+
+
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
         /// </summary>
@@ -33,7 +29,6 @@ namespace Streamus.Tests
         [Test]
         public void GetUser_UserExists_UserRetrieved()
         {
-            //  Test getting a user, observe fails, fix.
         }
     }
 }

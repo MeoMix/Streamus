@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using AutoMapper;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 
@@ -44,6 +45,12 @@ namespace Streamus.Dto
             EntityId = shareableEntity.Id;
             UrlFriendlyEntityTitle = shareableEntity.GetUrlFriendlyTitle();
             ShortId = shareableEntity.GetShortId();
+        }
+
+        public static ShareCodeDto Create(ShareCode shareCode)
+        {
+            ShareCodeDto shareCodeDto = Mapper.Map<ShareCode, ShareCodeDto>(shareCode);
+            return shareCodeDto;
         }
     }
 }

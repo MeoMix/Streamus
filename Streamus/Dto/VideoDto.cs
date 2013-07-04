@@ -1,4 +1,7 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
+using AutoMapper;
+using Streamus.Domain;
 
 namespace Streamus.Dto
 {
@@ -24,12 +27,19 @@ namespace Streamus.Dto
             Author = string.Empty;
         }
 
-        public VideoDto(string id, string title, int duration, string author)
+        /// <summary>
+        /// Converts a Domain object to a DTO
+        /// </summary>
+        public static VideoDto Create(Video video)
         {
-            Id = id;
-            Title = title;
-            Duration = duration;
-            Author = author;
+            VideoDto videoDto = Mapper.Map<Video, VideoDto>(video);
+            return videoDto;
+        }
+
+        public static List<VideoDto> Create(IEnumerable<Video> videos)
+        {
+            List<VideoDto> videoDtos = Mapper.Map<IEnumerable<Video>, List<VideoDto>>(videos);
+            return videoDtos;
         }
     }
 }

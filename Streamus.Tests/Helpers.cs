@@ -1,6 +1,7 @@
-﻿using Streamus.Domain;
+﻿using System;
+using Streamus.Domain;
 using Streamus.Domain.Managers;
-using System;
+using Streamus.Dto;
 
 namespace Streamus.Tests
 {
@@ -10,6 +11,7 @@ namespace Streamus.Tests
     public static class Helpers
     {
         private static readonly PlaylistItemManager PlaylistItemManager = new PlaylistItemManager();
+        private static readonly StreamManager StreamManager = new StreamManager();
 
         /// <summary>
         ///     Creates a new Video and PlaylistItem, puts item in the database and then returns
@@ -40,6 +42,47 @@ namespace Streamus.Tests
             var video = new Video(randomVideoId, title, 999, "Author");
 
             return video;
+        }
+
+        /// <summary>
+        ///     Create a new Stream, save it to the DB, then generate a PlaylistDto which has the
+        ///     Stream as its parent.
+        /// </summary>
+        /// <returns></returns>
+        public static PlaylistDto CreatePlaylistDto()
+        {
+            var stream = new Stream();
+            StreamManager.Save(stream);
+
+            var playlistDto = new PlaylistDto
+                {
+                    StreamId = stream.Id
+                };
+
+            return playlistDto;
+        }
+
+        /// <summary>
+        ///     Create a new Stream and Playlist, save them to the DB, then generate a PlaylistItemDto
+        ///     which has those entities as its parents.
+        /// </summary>
+        public static PlaylistItemDto CreatePlaylistItemDto()
+        {
+            var stream = new Stream();
+            Playlist playlist = stream.CreateAndAddPlaylist();
+
+            StreamManager.Save(stream);
+
+            Video video = CreateUnsavedVideoWithId();
+            VideoDto videoDto = VideoDto.Create(video);
+
+            var playlistItemDto = new PlaylistItemDto
+                {
+                    PlaylistId = playlist.Id,
+                    Video = videoDto
+                };
+
+            return playlistItemDto;
         }
     }
 }

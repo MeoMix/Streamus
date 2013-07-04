@@ -144,6 +144,8 @@
     <Reference Include="System.Net.Http.WebRequest, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Web.Optimization">
       <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.0.0\lib\net40\System.Web.Optimization.dll</HintPath>
       <Private>True</Private>
@@ -162,14 +164,18 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AbstractTest.cs" />
+    <Compile Include="Controller Tests\PlaylistControllerTest.cs" />
+    <Compile Include="Controller Tests\PlaylistItemControllerTest.cs" />
     <Compile Include="Helpers.cs" />
-    <Compile Include="PlaylistTest.cs" />
-    <Compile Include="PlaylistItemTest.cs" />
+    <Compile Include="Manager Tests\PlaylistManagerTest.cs" />
+    <Compile Include="Manager Tests\PlaylistItemManagerTest.cs" />
+    <Compile Include="Manager Tests\ShareCodeManagerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StreamTest.cs" />
-    <Compile Include="UserDaoTest.cs" />
-    <Compile Include="UserTest.cs" />
-    <Compile Include="VideoTest.cs" />
+    <Compile Include="ResetDatabase.cs" />
+    <Compile Include="Manager Tests\StreamManagerTest.cs" />
+    <Compile Include="Dao Tests\UserDaoTest.cs" />
+    <Compile Include="Manager Tests\UserManagerTest.cs" />
+    <Compile Include="Manager Tests\VideoManagerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Streamus\Streamus Server.csproj">

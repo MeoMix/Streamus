@@ -160,53 +160,5 @@ namespace Streamus.Domain.Managers
                 throw;
             }
         }
-
-        public ShareCode GetShareCode(Guid playlistId)
-        {
-            ShareCode shareCode;
-
-            try
-            {
-                NHibernateSessionManager.Instance.BeginTransaction();
-
-                Playlist playlist = PlaylistDao.Get(playlistId);
-
-                if (playlist == null)
-                {
-                    string errorMessage = string.Format("No playlist found with id: {0}", playlistId);
-                    throw new ApplicationException(errorMessage);
-                }
-
-                var shareablePlaylistCopy = new Playlist();
-
-                //  TODO: Reconsider this.
-                shareablePlaylistCopy.NextPlaylist = shareablePlaylistCopy;
-                shareablePlaylistCopy.PreviousPlaylist = shareablePlaylistCopy;
-
-                shareablePlaylistCopy.ValidateAndThrow();
-                PlaylistDao.Save(shareablePlaylistCopy);
-
-                shareablePlaylistCopy.Copy(playlist);
-                PlaylistDao.Update(shareablePlaylistCopy);
-
-                //  Gotta do this manually.
-                shareablePlaylistCopy.Items.ToList().ForEach(PlaylistItemDao.Save);
-
-                shareCode = new ShareCode(shareablePlaylistCopy);
-
-                shareCode.ValidateAndThrow();
-                ShareCodeDao.Save(shareCode);
-
-                NHibernateSessionManager.Instance.CommitTransaction();
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
-                throw;
-            }
-
-            return shareCode;
-        }
     }
 }

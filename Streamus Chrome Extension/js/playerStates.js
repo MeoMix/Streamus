@@ -1,5 +1,6 @@
 ﻿//  A list of states the YouTube player may broadcast.
 //  https://developers.google.com/youtube/js_api_reference#Playback_status
+//  TODO: Make singular instead of plural
 var PlayerStates = Object.freeze({
     UNSTARTED: -1,
     ENDED: 0,

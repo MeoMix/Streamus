@@ -1,10 +1,14 @@
-﻿using FluentValidation;
+﻿using System.Collections.Generic;
+using AutoMapper;
+using FluentValidation;
+using Streamus.Domain.Interfaces;
 using Streamus.Domain.Validators;
 using System;
+using Streamus.Dto;
 
 namespace Streamus.Domain
 {
-    public class Video
+    public class Video : IAbstractDomainEntity
     {
         public string Id { get; set; }
         public string Title { get; set; }
@@ -24,6 +28,18 @@ namespace Streamus.Domain
             Title = title;
             Duration = duration;
             Author = author;
+        }
+
+        public static Video Create(VideoDto videoDto)
+        {
+            Video video = Mapper.Map<VideoDto, Video>(videoDto);
+            return video;
+        }
+
+        public static List<Video> Create(IEnumerable<VideoDto> videoDtos)
+        {
+            List<Video> videos = Mapper.Map<IEnumerable<VideoDto>, List<Video>>(videoDtos);
+            return videos;
         }
 
         public void ValidateAndThrow()

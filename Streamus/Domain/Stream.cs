@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Streamus.Domain.Interfaces;
 using Streamus.Domain.Validators;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ namespace Streamus.Domain
 {        
     //  TODO: Currently there is only the ability to have a single Stream.
     //  Should create Strean objects as a LinkedList so that adding and removing is possible.
-    public class Stream
+    public class Stream : IAbstractDomainEntity
     {
         public Guid Id { get; set; }
         public User User { get; set; }
@@ -32,6 +33,7 @@ namespace Streamus.Domain
             Title = title;
         }
 
+        //  TODO: Not sure how I feel about this method.
         public Playlist CreateAndAddPlaylist()
         {
             string title = string.Format("New Playlist {0:D4}", Playlists.Count);

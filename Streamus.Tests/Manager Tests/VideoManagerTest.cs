@@ -7,10 +7,10 @@ using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
 
-namespace Streamus.Tests
+namespace Streamus.Tests.Manager_Tests
 {
     [TestFixture]
-    public class VideoTest : AbstractTest
+    public class VideoManagerTest : AbstractTest
     {
         private IVideoDao VideoDao { get; set; }
         private static readonly VideoManager VideoManager = new VideoManager();

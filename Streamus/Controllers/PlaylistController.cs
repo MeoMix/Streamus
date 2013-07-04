@@ -1,13 +1,12 @@
-﻿using System;
-using System.Reflection;
-using System.Web.Mvc;
-using AutoMapper;
+﻿using log4net;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
 using Streamus.Dto;
-using log4net;
+using System;
+using System.Reflection;
+using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
@@ -15,7 +14,6 @@ namespace Streamus.Controllers
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
-        private static readonly StreamManager StreamManager = new StreamManager();
 
         private readonly IPlaylistDao PlaylistDao;
         private readonly IStreamDao StreamDao;
@@ -39,16 +37,15 @@ namespace Streamus.Controllers
         [HttpPost]
         public ActionResult Create(PlaylistDto playlistDto)
         {
-            Playlist playlist = Mapper.Map<PlaylistDto, Playlist>(playlistDto);
+            Playlist playlist = Playlist.Create(playlistDto);
             playlist.Stream.AddPlaylist(playlist);
 
             //  Make sure the playlist has been setup properly before it is cascade-saved through the Stream.
             playlist.ValidateAndThrow();
 
-            //  TODO: Why am I saving Stream and not playlist?!
-            StreamManager.Save(playlist.Stream);
+            PlaylistManager.Save(playlist);
 
-            PlaylistDto savedPlaylistDto = Mapper.Map<Playlist, PlaylistDto>(playlist);
+            PlaylistDto savedPlaylistDto = PlaylistDto.Create(playlist);
 
             return new JsonDataContractActionResult(savedPlaylistDto);
         }
@@ -56,10 +53,10 @@ namespace Streamus.Controllers
         [HttpPut]
         public ActionResult Update(PlaylistDto playlistDto)
         {
-            Playlist playlist = Mapper.Map<PlaylistDto, Playlist>(playlistDto);
+            Playlist playlist = Playlist.Create(playlistDto);
             PlaylistManager.Update(playlist);
 
-            PlaylistDto updatedPlaylistDto = Mapper.Map<Playlist, PlaylistDto>(playlist);
+            PlaylistDto updatedPlaylistDto = PlaylistDto.Create(playlist);
             return new JsonDataContractActionResult(updatedPlaylistDto);
         }
 
@@ -67,7 +64,7 @@ namespace Streamus.Controllers
         public ActionResult Get(Guid id)
         {
             Playlist playlist = PlaylistDao.Get(id);
-            PlaylistDto playlistDto = Mapper.Map<Playlist, PlaylistDto>(playlist);
+            PlaylistDto playlistDto = PlaylistDto.Create(playlist);
 
             return new JsonDataContractActionResult(playlistDto);
         }
@@ -105,16 +102,6 @@ namespace Streamus.Controllers
                 });
         }
 
-        //  TODO: Move this to ShareCodeController
-        [HttpGet]
-        public JsonResult GetShareCode(Guid playlistId)
-        {
-            ShareCode shareCode = PlaylistManager.GetShareCode(playlistId);
-            ShareCodeDto shareCodeDto = Mapper.Map<ShareCode, ShareCodeDto>(shareCode);
-
-            return new JsonDataContractActionResult(shareCodeDto);
-        }
-
         [HttpGet]
         public JsonResult CreateAndGetCopyByShareCode(string shareCodeShortId, string urlFriendlyEntityTitle, Guid streamId)
         {
@@ -146,7 +133,7 @@ namespace Streamus.Controllers
 
             PlaylistManager.Save(playlist);
 
-            PlaylistDto playlistDto = Mapper.Map<Playlist, PlaylistDto>(playlist);
+            PlaylistDto playlistDto = PlaylistDto.Create(playlist);
 
             return new JsonDataContractActionResult(playlistDto);
         }

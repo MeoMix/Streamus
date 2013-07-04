@@ -12,7 +12,7 @@ namespace Streamus.App_Start
             routes.MapRoute("post-Error", "Error", new {controller = "Error", action = "create"},
                             new {httpMethod = new HttpMethodConstraint("POST")});
 
-            routes.MapRoute("aAddChannelId", "User/AddChannelId", new { controller = "User", action = "AddChannelId" },
+            routes.MapRoute("addChannelId", "User/AddChannelId", new { controller = "User", action = "AddChannelId" },
                 new { httpMethod = new HttpMethodConstraint("POST") });
 
             routes.MapRoute("post-User", "User", new {controller = "User", action = "create"},
@@ -37,9 +37,6 @@ namespace Streamus.App_Start
 
             routes.MapRoute("post-Playlist", "Playlist", new {controller = "Playlist", action = "create"},
                             new {httpMethod = new HttpMethodConstraint("POST")});
-
-            routes.MapRoute("getShareCode", "Playlist/GetShareCode", new { controller = "Playlist", action = "GetShareCode" },
-                new { httpMethod = new HttpMethodConstraint("GET") });
 
             routes.MapRoute("createAndGetCopyByShareCode", "Playlist/CreateAndGetCopyByShareCode", new { controller = "Playlist", action = "CreateAndGetCopyByShareCode" },
                 new { httpMethod = new HttpMethodConstraint("GET") });
@@ -81,6 +78,9 @@ namespace Streamus.App_Start
 
             routes.MapRoute("get-Video", "Video/{id}", new {controller = "Video", action = "get"},
                             new {httpMethod = new HttpMethodConstraint("GET")});
+
+            routes.MapRoute("getShareCode", "ShareCode/GetShareCode", new { controller = "ShareCode", action = "GetShareCode" },
+                new { httpMethod = new HttpMethodConstraint("GET") });
 
             routes.MapRoute("get-ShareCode", "ShareCode/{id}", new { controller = "ShareCode", action = "get" },
                 new { httpMethod = new HttpMethodConstraint("GET") });

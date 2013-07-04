@@ -1,4 +1,5 @@
 ﻿//  A list of supported data sources when parsing YouTube URLs
+//  TODO: Make singular instead of plural
 var DataSources = Object.freeze({
     YOUTUBE_PLAYLIST: 0,
     YOUTUBE_CHANNEL: 1,

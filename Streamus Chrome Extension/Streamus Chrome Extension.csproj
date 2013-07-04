@@ -88,6 +88,7 @@
     <Content Include="js\options\options.js" />
     <Content Include="js\options\player.js" />
     <Content Include="js\options\requirePaths.js" />
+    <Content Include="js\shareableEntityType.js" />
     <Content Include="js\thirdParty\jquery.overscroll.js" />
     <Content Include="options.htm" />
     <Content Include="css\aristo\aristo.css" />

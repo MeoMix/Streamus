@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Web.Mvc;
-using AutoMapper;
+﻿using log4net;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
 using Streamus.Dto;
-using log4net;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
@@ -40,17 +39,20 @@ namespace Streamus.Controllers
         [HttpPut]
         public ActionResult Update(VideoDto videoDto)
         {
-            Video video = Mapper.Map<VideoDto, Video>(videoDto);
+            Video video = Video.Create(videoDto);
 
             VideoManager.Save(video);
-            return new JsonDataContractActionResult(video);
+
+            VideoDto savedVideoDto = VideoDto.Create(video);
+
+            return new JsonDataContractActionResult(savedVideoDto);
         }
 
         [HttpGet]
         public ActionResult Get(string id)
         {
             Video video = VideoDao.Get(id);
-            VideoDto videoDto = Mapper.Map<Video, VideoDto>(video);
+            VideoDto videoDto = VideoDto.Create(video);
 
             return new JsonDataContractActionResult(videoDto);
         }
@@ -58,7 +60,7 @@ namespace Streamus.Controllers
         [HttpPost]
         public ActionResult SaveVideos(List<VideoDto> videoDtos)
         {
-            List<Video> videos = Mapper.Map<List<VideoDto>, List<Video>>(videoDtos);
+            List<Video> videos = Video.Create(videoDtos);
 
             VideoManager.Save(videos);
             return new JsonDataContractActionResult(videos);
@@ -73,7 +75,7 @@ namespace Streamus.Controllers
             if (ids != null)
             {
                 IList<Video> videos = VideoDao.Get(ids);
-                videoDtos = Mapper.Map<IList<Video>, List<VideoDto>>(videos);
+                videoDtos = VideoDto.Create(videos);
             }
 
             return new JsonDataContractActionResult(videoDtos);
