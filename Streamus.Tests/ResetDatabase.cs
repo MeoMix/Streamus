@@ -9,6 +9,7 @@ namespace Streamus.Tests
     ///     Running this 'test' will analyze the hbm.xml NHibernate files, determine a database schema
     ///     derived from those files and reset the test database such that it reflects the current NHibernate schema.
     ///     You can then use a DbDiff tool to propagate the changes to a production database.
+    ///     Inconclusive means it was ran successfully. If it errors out, try running again.
     /// </summary>
     [TestFixture]
     public class ResetDatabase

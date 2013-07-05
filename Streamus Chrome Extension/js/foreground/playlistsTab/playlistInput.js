@@ -31,36 +31,32 @@
                 var dataSource = ytHelper.parseUrlForDataSource(userInput);
                 var activeStream = backgroundManager.get('activeStream');
 
-                //  If unable to parse userInput then create playlist with userInput as title and no data.
-                if (dataSource == null) {
-                    activeStream.addPlaylistByDataSource(userInput, null, function(playlist) {
-                        backgroundManager.set('activePlaylist', playlist);
-                    });
-                } else {
-                   
-                    switch(dataSource.type) {
-                        case DataSource.YOUTUBE_PLAYLIST:
-                            ytHelper.getPlaylistTitle(dataSource.id, function (youTubePlaylistTitle) {
-                                activeStream.addPlaylistByDataSource(youTubePlaylistTitle, dataSource, function (playlist) {
-                                    backgroundManager.set('activePlaylist', playlist);
-                                });
-                            });
-                            break;
-                        case DataSource.YOUTUBE_CHANNEL:
-                            var playlistTitle = dataSource.id + '\'s Feed';
-                            activeStream.addPlaylistByDataSource(playlistTitle, dataSource, function (playlist) {
+                switch (dataSource.type) {
+                    case DataSource.USER_INPUT:
+                        activeStream.addPlaylistByDataSource(userInput, dataSource, function (playlist) {
+                            backgroundManager.set('activePlaylist', playlist);
+                        });
+                        break;
+                    case DataSource.YOUTUBE_PLAYLIST:
+                        ytHelper.getPlaylistTitle(dataSource.id, function (youTubePlaylistTitle) {
+                            activeStream.addPlaylistByDataSource(youTubePlaylistTitle, dataSource, function (playlist) {
                                 backgroundManager.set('activePlaylist', playlist);
                             });
-                            break;
-                        case DataSource.SHARED_PLAYLIST:
-                            activeStream.addPlaylistByDataSource('', dataSource, function (playlist) {
-                                backgroundManager.set('activePlaylist', playlist);
-                            });
-                            break;
-                        default:
-                            console && console.error("Unhandled dataSource type:", dataSource.type);
-                    }
-
+                        });
+                        break;
+                    case DataSource.YOUTUBE_CHANNEL:
+                        var playlistTitle = dataSource.id + '\'s Feed';
+                        activeStream.addPlaylistByDataSource(playlistTitle, dataSource, function (playlist) {
+                            backgroundManager.set('activePlaylist', playlist);
+                        });
+                        break;
+                    case DataSource.SHARED_PLAYLIST:
+                        activeStream.addPlaylistByDataSource('', dataSource, function (playlist) {
+                            backgroundManager.set('activePlaylist', playlist);
+                        });
+                        break;
+                    default:
+                        console && console.error("Unhandled dataSource type:", dataSource.type);
                 }
                 
             }

@@ -182,7 +182,10 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
         
         parseUrlForDataSource: function (url) {
 
-            var dataSource = null;
+            var dataSource = {
+                id: null,
+                type: DataSource.USER_INPUT
+            };
             
             //  Try for PlaylistId:
             var dataSourceId = tryGetIdFromUrl(url, 'list=PL');

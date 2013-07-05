@@ -135,6 +135,8 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
 
             var ytHelperDataFunction = null;
 
+            console.log("DataSource:", dataSource);
+
             switch (dataSource.type) {
                 case DataSource.YOUTUBE_PLAYLIST:
                     ytHelperDataFunction = ytHelper.getPlaylistResults;
@@ -142,7 +144,8 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
                 case DataSource.YOUTUBE_CHANNEL:
                     ytHelperDataFunction = ytHelper.getFeedResults;
                     break;
-                    //  This datasource works differently.
+                //  These dataSources work differently.
+                case DataSource.USER_INPUT:
                 case DataSource.SHARED_PLAYLIST:
                     ytHelperDataFunction = null;
                     break;

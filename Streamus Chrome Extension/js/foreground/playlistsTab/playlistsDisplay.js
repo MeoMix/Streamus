@@ -54,13 +54,20 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
     backgroundManager.get('allPlaylists').on('add', function (playlist) {
         reload();
 
-        if (playlist.has('dataSource') && playlist.get('dataSource').type !== DataSource.SHARED_PLAYLIST) {
-            var playlistLink = playlistList.find('li[data-playlistid="' + playlist.get('id') + '"]');
-            spinner.spin(playlistLink[0]);
+        if (playlist.has('dataSource')) {
 
-            playlist.once('change:dataSourceLoaded', function () {
-                spinner.stop();
-            });
+            var dataSourceType = playlist.get('dataSource').type;
+
+            if (dataSourceType === DataSource.YOUTUBE_PLAYLIST || dataSourceType === DataSource.YOUTUBE_CHANNEL) {
+
+                var playlistLink = playlistList.find('li[data-playlistid="' + playlist.get('id') + '"]');
+                spinner.spin(playlistLink[0]);
+
+                playlist.once('change:dataSourceLoaded', function() {
+                    spinner.stop();
+                });
+
+            }
         }
         
         scrollIntoView(playlist, true);
@@ -103,6 +110,8 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
 
         var firstPlaylistId = activeStream.get('firstPlaylistId');
         var currentPlaylist = activeStream.get('playlists').get(firstPlaylistId);
+
+        console.log("Active Stream:", activeStream);
         
         //  Build up each row.
         do {
@@ -166,7 +175,7 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
             
             helpers.scrollElementInsideParent(currentPlaylistTitle, textWrapper);
             
-            currentPlaylist = activeStream.get('playlists').get(currentPlaylist.get('nextListId'));
+            currentPlaylist = activeStream.get('playlists').get(currentPlaylist.get('nextPlaylistId'));
 
         } while (currentPlaylist.get('id') !== firstPlaylistId)
 
