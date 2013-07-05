@@ -3,8 +3,7 @@
   
   <class name="Stream" table="[Streams]" lazy="false" >
     <id name="Id" unsaved-value="00000000-0000-0000-0000-000000000000">
-      <!--TODO: Consider guid.comb-->
-      <generator class="guid" />
+      <generator class="guid.comb" />
     </id>
 
     <property name="Title" not-null="true" />

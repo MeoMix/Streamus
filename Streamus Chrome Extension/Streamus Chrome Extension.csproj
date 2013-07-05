@@ -183,7 +183,7 @@
     <Content Include="js\youTubeInject.js" />
     <Content Include="js\playerState.js" />
     <Content Include="js\programState.js" />
-    <Content Include="js\repeatButtonStates.js" />
+    <Content Include="js\repeatButtonState.js" />
     <Content Include="js\tests\background\playerSpec.js" />
     <Content Include="js\tests\background\playlistItemSpec.js" />
     <Content Include="js\tests\background\playlistSpec.js" />

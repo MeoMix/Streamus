@@ -292,7 +292,9 @@
     <EmbeddedResource Include="Domain\Playlist.hbm.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Domain\Stream.hbm.xml" />
+    <EmbeddedResource Include="Domain\Stream.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Domain\Error.hbm.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
