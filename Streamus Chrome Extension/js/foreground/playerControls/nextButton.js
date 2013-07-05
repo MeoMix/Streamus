@@ -34,14 +34,17 @@ define(['backgroundManager'], function (backgroundManager) {
                 var playlistId = activePlaylistItem.get('playlistId');
                 var playlist = backgroundManager.getPlaylistById(playlistId);
 
-                var nextItem = playlist.gotoNextItem();
+                playlist.gotoNextItem(function(nextItem) {
+                    backgroundManager.set('activePlaylistItem', nextItem);
 
-                backgroundManager.set('activePlaylistItem', nextItem);
+                    console.log("nextItem:", nextItem);
 
-                //  Manually triggering the change so that player can realize it needs to set its time back to 0:00.
-                if (activePlaylistItem === nextItem) {
-                    backgroundManager.trigger('change:activePlaylistItem', backgroundManager, nextItem);
-                }
+                    //  Manually triggering the change so that player can realize it needs to set its time back to 0:00.
+                    if (activePlaylistItem === nextItem) {
+                        backgroundManager.trigger('change:activePlaylistItem', backgroundManager, nextItem);
+                    }
+                });
+
             }
 
         }, 100, true),

@@ -36,21 +36,23 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
             var playlistId = activePlaylistItem.get('playlistId');
             var playlist = backgroundManager.getPlaylistById(playlistId);
             
-            var nextItem = playlist.gotoNextItem();
+            playlist.gotoNextItem(function (nextItem) {
+                
+                backgroundManager.set('activePlaylistItem', nextItem);
 
-            backgroundManager.set('activePlaylistItem', nextItem);
+                var nextVideoId = nextItem.get('video').get('id');
 
-            var nextVideoId = nextItem.get('video').get('id');
-            
-            var repeatButtonState = localStorageManager.getRepeatButtonState();
-            var shouldRepeatPlaylist = repeatButtonState === repeatButtonStates.REPEAT_PLAYLIST_ENABLED;
+                var repeatButtonState = localStorageManager.getRepeatButtonState();
+                var shouldRepeatPlaylist = repeatButtonState === repeatButtonStates.REPEAT_PLAYLIST_ENABLED;
 
-            //  Cue the next video if looping around to the top of the playlist and we're not supposed to repeat playlists.
-            if (nextItem.get('id') === playlist.get('firstItemId') && !shouldRepeatPlaylist) {
-                player.cueVideoById(nextVideoId);
-            } else {
-                player.loadVideoById(nextVideoId);
-            }
+                //  Cue the next video if looping around to the top of the playlist and we're not supposed to repeat playlists.
+                if (nextItem.get('id') === playlist.get('firstItemId') && !shouldRepeatPlaylist) {
+                    player.cueVideoById(nextVideoId);
+                } else {
+                    player.loadVideoById(nextVideoId);
+                }
+                
+            });
 
         }
 
@@ -68,14 +70,16 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
                 var playlistId = activePlaylistItem.get('playlistId');
                 var playlist = backgroundManager.getPlaylistById(playlistId);
 
-                var item;
                 if (command == 'nextVideo') {
-                    item = playlist.gotoNextItem();
+                    playlist.gotoNextItem(function(nextItem) {
+                        backgroundManager.set('activePlaylistItem', nextItem);
+                    });
                 } else {
-                    item = playlist.gotoPreviousItem();
+                    var previousItem = playlist.gotoPreviousItem();
+                    backgroundManager.set('activePlaylistItem', previousItem);
                 }
 
-                backgroundManager.set('activePlaylistItem', item);
+                
             }
         }
         else if (command === 'toggleVideo') {

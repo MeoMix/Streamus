@@ -98,112 +98,6 @@ define(['ytHelper',
                     
                 });
 
-                var self = this;
-                
-                //  Load videos from datasource if provided.
-                var dataSource = this.get('dataSource');
-
-                if (dataSource != null) {
-                    var ytHelperDataFunction = null;
-
-                    switch (dataSource.type) {
-                        case DataSources.YOUTUBE_PLAYLIST:
-                            ytHelperDataFunction = ytHelper.getPlaylistResults;
-                            break;
-                        case DataSources.YOUTUBE_CHANNEL:
-                            ytHelperDataFunction = ytHelper.getFeedResults;
-                            break;
-                        //  This datasource works differently.
-                        case DataSources.SHARED_PLAYLIST:
-                            ytHelperDataFunction = null;
-                            break;
-                        default:
-                            console.error("Unhandled dataSource type:", dataSource.type);
-                    }
-                    
-                    if (ytHelperDataFunction != null) {
-
-                        var getVideosCallCount = 0;
-                        var videosHandled = 0;
-                        var orderedVideosArray = [];
-
-                        var getVideosInterval = setInterval(function () {
-
-                            ytHelperDataFunction(dataSource.id, getVideosCallCount, function (results) {
-
-                                //  Results will be null if an error occurs while fetching data.
-                                if (results == null || results.length === 0) {
-                                    clearInterval(getVideosInterval);
-                                    self.set('dataSourceLoaded', true);
-                                } else {
-
-                                    _.each(results, function (entry, index) {
-                                        var videoId = entry.media$group.yt$videoid.$t;
-                                        addVideoByIdAtIndex(videoId, entry.title.$t, index, results.length);
-                                    });
-
-                                    getVideosCallCount++;
-                                }
-
-                            });
-
-                            function addVideoByIdAtIndex(videoId, videoTitle, index, resultCount) {
-                                ytHelper.getVideoInformation({
-                                    videoId: videoId,
-                                    videoTitle: videoTitle,
-                                    success: function (videoInformation) {
-                                        if (videoInformation != null) {
-                                            var video = getVideoFromInformation(videoInformation);
-                                            //  Insert at index to preserve order of videos retrieved from YouTube API
-                                            orderedVideosArray[index] = video;
-                                        }
-
-                                        handleVideo(resultCount);
-                                    },
-                                    error: function () {
-                                        console.error("Error getting video information for:", videoTitle);
-                                        handleVideo(resultCount);
-                                    }
-                                });
-                            }
-                            
-                            //  Periodicially send bursts of packets (up to 50 videos in length) to the server and trigger visual update.
-                            function handleVideo(resultCount) {
-                                videosHandled++;
-                                
-                                console.log("Videos handled / result count:", videosHandled, resultCount);
-                                if (videosHandled == resultCount) {
-
-                                    var videos = new Videos(orderedVideosArray);
-
-                                    //  orderedVideosArray may have some empty slots which get converted to empty Video objects; drop 'em.
-                                    var videosWithIds = videos.withIds();
-
-                                    self.addItems(videosWithIds);
-                                    orderedVideosArray = [];
-                                    videosHandled = 0;
-                                }
-                            }
-
-                            //  TODO: Rewrite the Video constructor such that it can create a Video object from videoInformation
-                            function getVideoFromInformation(videoInformation) {
-                                var id = videoInformation.media$group.yt$videoid.$t;
-                                var durationInSeconds = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
-                                var author = videoInformation.author[0].name.$t;
-
-                                return new Video({
-                                    id: id,
-                                    title: videoInformation.title.$t,
-                                    duration: durationInSeconds,
-                                    author: author
-                                });
-                            }
-
-
-                        }, 4000);
-                    }
-                }
-
             },
             
             selectItem: function (playlistItem) {
@@ -228,26 +122,41 @@ define(['ytHelper',
                 return randomRelatedVideo;
             },
             
-            gotoNextItem: function () {
-
-                var nextItem;
+            //  TODO: I don't like this needing a callback, but it is necessary due to getRelatedVideo requiring a callback to save.
+            //  In the future, I think that relatedVideo should be moved out into its own thing, but there are a few dependencies on this right now.
+            gotoNextItem: function (callback) {
 
                 var isRadioModeEnabled = localStorageManager.getIsRadioModeEnabled();
                 var isShuffleEnabled = localStorageManager.getIsShuffleEnabled();
                 var repeatButtonState = localStorageManager.getRepeatButtonState();
+
+                var self = this;
+
+                var setNextItem = function (nextItem) {
+
+                    console.log("nextItem:", nextItem);
+
+                    if (nextItem !== null) {
+                        self.selectItem(nextItem);
+                    }
+                    
+                    if (callback) {
+                        callback(nextItem);
+                    }
+                };
                 
                 //  Radio mode overrides the other settings
                 if (isRadioModeEnabled) {
                     
                     var relatedVideo = this.getRelatedVideo();
-                    nextItem = this.addItem(relatedVideo);
-                    
+                    this.addItem(relatedVideo, setNextItem);
+
                 } else {
                     
                     //  If repeat video is enabled then keep on the last item in history
                     if (repeatButtonState === repeatButtonStates.REPEAT_VIDEO_ENABLED) {
                         //  TODO: potentially need to be popping from history so gotoPrevious doesn't loop through same item a lot
-                        nextItem = this.get('history').at(0);
+                        setNextItem(this.get('history').at(0));
                     }
                     else if (isShuffleEnabled) {
 
@@ -261,24 +170,19 @@ define(['ytHelper',
                             });
                         }
 
-                        nextItem = _.shuffle(itemsNotPlayedRecently)[0];
+                        setNextItem(_.shuffle(itemsNotPlayedRecently)[0]);
 
                     } else {
 
                         var currentItem = this.get('history').at(0);
                         var nextItemId = currentItem.get('nextItemId');
 
-                        nextItem = this.get('items').get(nextItemId);
+                        setNextItem(this.get('items').get(nextItemId));
 
                     }
 
                 }
-                
-                if (nextItem !== null) {
-                    this.selectItem(nextItem);
-                }
 
-                return nextItem;
             },
             
             gotoPreviousItem: function () {
@@ -315,7 +219,7 @@ define(['ytHelper',
                 this.addItem(video);
             },
 
-            addItem: function (video) {
+            addItem: function (video, callback) {
 
                 var playlistId = this.get('id');
 
@@ -363,6 +267,11 @@ define(['ytHelper',
                         });
 
                         self.get('items').push(playlistItem);
+  
+                        if (callback) {
+                            callback(playlistItem);
+                        }
+
                     },
                     
                     error: function(error) {
@@ -370,8 +279,6 @@ define(['ytHelper',
                     }
                     
                 });
-                
-                return playlistItem;
             },
             
             addItems: function (videos) {

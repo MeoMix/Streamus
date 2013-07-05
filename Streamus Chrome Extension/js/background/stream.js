@@ -133,12 +133,119 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'h
                 dataSource: dataSource
             });
 
+            console.log("Data source:", dataSource);
+            var ytHelperDataFunction = null;
+
+            switch (dataSource.type) {
+                case DataSources.YOUTUBE_PLAYLIST:
+                    ytHelperDataFunction = ytHelper.getPlaylistResults;
+                    break;
+                case DataSources.YOUTUBE_CHANNEL:
+                    ytHelperDataFunction = ytHelper.getFeedResults;
+                    break;
+                    //  This datasource works differently.
+                case DataSources.SHARED_PLAYLIST:
+                    ytHelperDataFunction = null;
+                    break;
+                default:
+                    console.error("Unhandled dataSource type:", dataSource.type);
+            }
+
+            if (ytHelperDataFunction != null) {
+
+                var getVideosCallCount = 0;
+                var videosHandled = 0;
+                var orderedVideosArray = [];
+
+                var getVideosInterval = setInterval(function () {
+
+                    ytHelperDataFunction(dataSource.id, getVideosCallCount, function (results) {
+
+                        console.log("Feed results:", results);
+
+                        //  Results will be null if an error occurs while fetching data.
+                        if (results == null || results.length === 0) {
+                            clearInterval(getVideosInterval);
+                            self.set('dataSourceLoaded', true);
+                        } else {
+
+                            _.each(results, function (entry, index) {
+                                var videoId = entry.media$group.yt$videoid.$t;
+                                addVideoByIdAtIndex(videoId, entry.title.$t, index, results.length);
+                            });
+
+                            getVideosCallCount++;
+                        }
+
+                    });
+
+                    function addVideoByIdAtIndex(videoId, videoTitle, index, resultCount) {
+                        ytHelper.getVideoInformation({
+                            videoId: videoId,
+                            videoTitle: videoTitle,
+                            success: function (videoInformation) {
+                                if (videoInformation != null) {
+                                    var video = getVideoFromInformation(videoInformation);
+                                    //  Insert at index to preserve order of videos retrieved from YouTube API
+                                    orderedVideosArray[index] = video;
+                                }
+
+                                handleVideo(resultCount);
+                            },
+                            error: function () {
+                                console.error("Error getting video information for:", videoTitle);
+                                handleVideo(resultCount);
+                            }
+                        });
+                    }
+
+                    //  Periodicially send bursts of packets (up to 50 videos in length) to the server and trigger visual update.
+                    function handleVideo(resultCount) {
+                        videosHandled++;
+
+                        console.log("Videos handled / result count:", videosHandled, resultCount);
+                        if (videosHandled == resultCount) {
+
+                            var videos = new Videos(orderedVideosArray);
+
+                            //  orderedVideosArray may have some empty slots which get converted to empty Video objects; drop 'em.
+                            var videosWithIds = videos.withIds();
+
+                            self.addItems(videosWithIds);
+                            orderedVideosArray = [];
+                            videosHandled = 0;
+                        }
+                    }
+
+                    //  TODO: Rewrite the Video constructor such that it can create a Video object from videoInformation
+                    function getVideoFromInformation(videoInformation) {
+                        var id = videoInformation.media$group.yt$videoid.$t;
+                        var durationInSeconds = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
+                        var author = videoInformation.author[0].name.$t;
+
+                        return new Video({
+                            id: id,
+                            title: videoInformation.title.$t,
+                            duration: durationInSeconds,
+                            author: author
+                        });
+                    }
+
+
+                }, 4000);
+
+            }
+
             //  Save the playlist, but push after version from server because the ID will have changed.
             playlist.save({}, {
                 success: function () {
 
+                    console.log("Playlist saved:", playlist);
+
                     var playlistId = playlist.get('id');
                     var currentPlaylists = self.get('playlists');
+
+                    console.log('playlistId:', playlistId);
 
                     if (currentPlaylists.length === 0) {
                         self.set('firstListId', playlistId);

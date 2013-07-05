@@ -202,9 +202,11 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
             if (self.get('activePlaylistItem') === playlistItem) {
 
                 if (playlistItems.length > 0) {
-                    var newlyActiveItem = playlist.gotoNextItem();
+                    playlist.gotoNextItem(function(nextItem) {
+                        self.set('activePlaylistItem', nextItem);
+                    });
 
-                    self.set('activePlaylistItem', newlyActiveItem);
+                    
                 } else {
 
                     self.set('activePlaylistItem', null);
