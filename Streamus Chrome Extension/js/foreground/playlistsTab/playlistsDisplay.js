@@ -101,8 +101,8 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
 
         if (activeStream.get('playlists').length === 0) return;
 
-        var firstListId = activeStream.get('firstListId');
-        var currentPlaylist = activeStream.get('playlists').get(firstListId);
+        var firstPlaylistId = activeStream.get('firstPlaylistId');
+        var currentPlaylist = activeStream.get('playlists').get(firstPlaylistId);
         
         //  Build up each row.
         do {
@@ -168,7 +168,7 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
             
             currentPlaylist = activeStream.get('playlists').get(currentPlaylist.get('nextListId'));
 
-        } while (currentPlaylist.get('id') !== firstListId)
+        } while (currentPlaylist.get('id') !== firstPlaylistId)
 
         var activePlaylist = backgroundManager.get('activePlaylist');
         if (activePlaylist !== null) {

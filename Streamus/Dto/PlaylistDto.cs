@@ -19,12 +19,10 @@ namespace Streamus.Dto
         [DataMember(Name = "firstItemId")]
         public Guid FirstItemId { get; set; }
 
-        //  TODO: Rename to nextPlaylistId when I have time.
-        [DataMember(Name = "nextListId")]
+        [DataMember(Name = "nextPlaylistId")]
         public Guid NextPlaylistId { get; set; }
 
-        //  TODO: Rename to previousPlaylistId when I have time.
-        [DataMember(Name = "previousListId")]
+        [DataMember(Name = "previousPlaylistId")]
         public Guid PreviousPlaylistId { get; set; }
 
         public PlaylistDto()

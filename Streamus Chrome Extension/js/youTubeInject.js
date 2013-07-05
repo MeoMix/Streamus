@@ -213,7 +213,7 @@ $(function () {
             sharePanelPlaylistSelect.removeClass('hid');
 
             var firstPlaylist = _.find(streams[0].playlists, function (playlist) {
-                return playlist.id == streams[0].firstListId;
+                return playlist.id == streams[0].firstPlaylistId;
             });
                 
             $('<option>', {
@@ -222,7 +222,7 @@ $(function () {
             }).appendTo(playlistSelect);
 
             var nextPlaylist = _.find(streams[0].playlists, function (playlist) {
-                return playlist.id == firstPlaylist.nextListId;
+                return playlist.id == firstPlaylist.nextPlaylistId;
             });
                 
             while (nextPlaylist.id != firstPlaylist.id) {
@@ -233,7 +233,7 @@ $(function () {
                 }).appendTo(playlistSelect);
 
                 nextPlaylist = _.find(streams[0].playlists, function (playlist) {
-                    return playlist.id == nextPlaylist.nextListId;
+                    return playlist.id == nextPlaylist.nextPlaylistId;
                 });
             }
             

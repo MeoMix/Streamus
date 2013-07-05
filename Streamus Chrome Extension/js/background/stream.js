@@ -9,7 +9,7 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
                 userId: null,
                 title: '',
                 playlists: new Playlists(),
-                firstListId: null,
+                firstPlaylistId: null,
             };
         },
         urlRoot: programState.getBaseUrl() + 'Video/',
@@ -58,21 +58,21 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
 
                 if (playlists.length > 0) {
 
-                    //  Update firstList if it was removed
-                    if (self.get('firstListId') === removedPlaylist.get('id')) {
-                        self.set('firstListId', removedPlaylist.get('nextListId'));
+                    //  Update firstPlaylistId if it was removed
+                    if (self.get('firstPlaylistId') === removedPlaylist.get('id')) {
+                        self.set('firstPlaylistId', removedPlaylist.get('nextPlaylistId'));
                     }
 
                     //  Update linked list pointers
-                    var previousList = playlists.get(removedPlaylist.get('previousListId'));
-                    var nextList = playlists.get(removedPlaylist.get('nextListId'));
+                    var previousPlaylist = playlists.get(removedPlaylist.get('previousPlaylistId'));
+                    var nextPlaylist = playlists.get(removedPlaylist.get('nextPlaylistId'));
 
                     //  Remove the playlist from linked list.
-                    previousList.set('nextListId', nextList.get('id'));
-                    nextList.set('previousListId', previousList.get('id'));
+                    previousPlaylist.set('nextPlaylistId', nextPlaylist.get('id'));
+                    nextPlaylist.set('previousPlaylistId', previousPlaylist.get('id'));
 
                 } else {
-                    self.set('firstListId', '00000000-0000-0000-0000-000000000000');
+                    self.set('firstPlaylistId', '00000000-0000-0000-0000-000000000000');
                 }
 
             });
@@ -103,13 +103,13 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
                     
                     var currentPlaylists = self.get('playlists');
                     if (currentPlaylists.length === 0) {
-                        self.set('firstListId', playlistId);;
+                        self.set('firstPlaylistId', playlistId);;
                     } else {
-                        var firstList = currentPlaylists.get(self.get('firstListId'));
-                        var lastList = currentPlaylists.get(firstList.get('previousListId'));
+                        var firstPlaylist = currentPlaylists.get(self.get('firstPlaylistId'));
+                        var lastPlaylist = currentPlaylists.get(firstPlaylist.get('previousPlaylistId'));
 
-                        lastList.set('nextListId', playlistId);
-                        firstList.set('previousListId', playlistId);
+                        lastPlaylist.set('nextPlaylistId', playlistId);
+                        firstPlaylist.set('previousPlaylistId', playlistId);
                     }
 
                     currentPlaylists.push(playlistCopy);
@@ -239,26 +239,22 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
             playlist.save({}, {
                 success: function () {
 
-                    console.log("Playlist saved:", playlist);
-
                     var playlistId = playlist.get('id');
                     var currentPlaylists = self.get('playlists');
 
-                    console.log('playlistId:', playlistId);
-
                     if (currentPlaylists.length === 0) {
-                        self.set('firstListId', playlistId);
-                        playlist.set('nextListId', playlistId);
-                        playlist.set('previousListId', playlistId);
+                        self.set('firstPlaylistId', playlistId);
+                        playlist.set('nextPlaylistId', playlistId);
+                        playlist.set('previousPlaylistId', playlistId);
                     } else {
-                        var firstList = currentPlaylists.get(self.get('firstListId'));
-                        var lastList = currentPlaylists.get(firstList.get('previousListId'));
+                        var firstPlaylist = currentPlaylists.get(self.get('firstPlaylistId'));
+                        var lastPlaylist = currentPlaylists.get(firstPlaylist.get('previousPlaylistId'));
 
-                        lastList.set('nextListId', playlistId);
-                        playlist.set('previousListId', lastList.get('id'));
+                        lastPlaylist.set('nextPlaylistId', playlistId);
+                        playlist.set('previousPlaylistId', lastPlaylist.get('id'));
 
-                        firstList.set('previousListId', playlistId);
-                        playlist.set('nextListId', firstList.get('id'));
+                        firstPlaylist.set('previousPlaylistId', playlistId);
+                        playlist.set('nextPlaylistId', firstPlaylist.get('id'));
                     }
 
                     currentPlaylists.push(playlist);
@@ -281,17 +277,17 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
 
             var playlist = playlists.get(playlistId);
                     
-            if (this.get('firstListId') === playlistId) {
-                var newFirstListId = playlist.get('nextListId');
-                this.set('firstListId', newFirstListId);
+            if (this.get('firstPlaylistId') === playlistId) {
+                var newFirstPlaylistId = playlist.get('nextPlaylistId');
+                this.set('firstPlaylistId', newFirstPlaylistId);
             }
 
-            var previousList = playlists.get(playlist.get('previousListId'));
-            var nextList = playlists.get(playlist.get('nextListId'));
+            var previousPlaylist = playlists.get(playlist.get('previousPlaylistId'));
+            var nextPlaylist = playlists.get(playlist.get('nextPlaylistId'));
 
             //  Remove the list from our linked list.
-            previousList.set('nextListId', nextList.get('id'));
-            nextList.set('previousListId', previousList.get('id'));
+            previousPlaylist.set('nextPlaylistId', nextPlaylist.get('id'));
+            nextPlaylist.set('previousPlaylistId', previousPlaylist.get('id'));
 
             playlist.destroy({
                 success: function () {

@@ -137,7 +137,7 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                     
                     //  Update activePlaylist to the next playlist if there is another.
                     if (stream.get('playlists').length > 0) {
-                        var newlyActivePlaylist = stream.getPlaylistById(playlist.get('nextListId'));
+                        var newlyActivePlaylist = stream.getPlaylistById(playlist.get('nextPlaylistId'));
                         self.set('activePlaylist', newlyActivePlaylist);
                     }
                 }

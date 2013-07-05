@@ -80,16 +80,15 @@ namespace Streamus.Domain
         {
             if (FirstPlaylist == playlist)
             {
-                //  Move the firstListId to the next playlist
                 FirstPlaylist = playlist.NextPlaylist;
             }
 
-            Playlist previousList = playlist.PreviousPlaylist;
-            Playlist nextList = playlist.NextPlaylist;
+            Playlist previousPlaylist = playlist.PreviousPlaylist;
+            Playlist nextPlaylist = playlist.NextPlaylist;
 
             //  Remove the list from our linked list.
-            previousList.NextPlaylist = nextList;
-            nextList.PreviousPlaylist = previousList;
+            previousPlaylist.NextPlaylist = nextPlaylist;
+            nextPlaylist.PreviousPlaylist = previousPlaylist;
 
             Playlists.Remove(playlist);
         }
