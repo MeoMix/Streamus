@@ -17,15 +17,6 @@ define(['helpers', 'programState', 'video'], function(helpers, programState, Vid
             };
         },
         urlRoot: programState.getBaseUrl() + 'PlaylistItem/',
-        destroy: function (options) {
-            //  Override URL
-            options || (options = {});
-            options.url = this.url() + '/' + this.get('playlistId');
-
-            //  Call Model.destroy().
-            //  We are reusing the existing functionality from Backbone.Model.destroy().
-            Backbone.Model.prototype.destroy.apply(this, arguments);
-        },
         parse: function (data) {
             // Take json of video and set into model. Delete to prevent overriding on return of data object.
             

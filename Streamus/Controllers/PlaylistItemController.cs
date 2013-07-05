@@ -82,9 +82,9 @@ namespace Streamus.Controllers
         }
 
         [HttpDelete]
-        public JsonResult Delete(Guid id, Guid playlistId)
+        public JsonResult Delete(Guid id)
         {
-            PlaylistItemManager.Delete(id, playlistId);
+            PlaylistItemManager.Delete(id);
 
             return Json(new
                 {

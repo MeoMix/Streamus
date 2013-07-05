@@ -166,7 +166,7 @@ namespace Streamus.Tests.Manager_Tests
             PlaylistItem playlistItem = Helpers.CreateItemInPlaylist(Playlist);
 
             //  Now delete the created PlaylistItem and ensure it is removed.
-            PlaylistItemManager.Delete(playlistItem.Id, playlistItem.Playlist.Id);
+            PlaylistItemManager.Delete(playlistItem.Id);
 
             PlaylistItem deletedPlaylistItem = PlaylistItemDao.Get(playlistItem.Id);
             Assert.IsNull(deletedPlaylistItem);
@@ -186,7 +186,7 @@ namespace Streamus.Tests.Manager_Tests
             PlaylistItem secondItem = Helpers.CreateItemInPlaylist(Playlist);
 
             //  Now delete the first PlaylistItem and ensure it is removed.
-            PlaylistItemManager.Delete(firstItem.Id, firstItem.Playlist.Id);
+            PlaylistItemManager.Delete(firstItem.Id);
 
             //  Remove entity from NHibernate cache to force DB query to ensure actually created.
             NHibernateSessionManager.Instance.Clear();

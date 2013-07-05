@@ -8,41 +8,26 @@ namespace Streamus.Domain.Managers
 {
     public class PlaylistItemManager : AbstractManager
     {
-        private IPlaylistDao PlaylistDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
         private IVideoDao VideoDao { get; set; }
 
-        private IShareCodeDao ShareCodeDao { get; set; }
-
         public PlaylistItemManager()
         {
-            PlaylistDao = DaoFactory.GetPlaylistDao();
             PlaylistItemDao = DaoFactory.GetPlaylistItemDao();
-            ShareCodeDao = DaoFactory.GetShareCodeDao();
             VideoDao = DaoFactory.GetVideoDao();
         }
 
-        //  TODO: Consider removing the playlistId paramater.
-        public void Delete(Guid itemId, Guid playlistId)
+        public void Delete(Guid itemId)
         {
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
-                Playlist playlist = PlaylistDao.Get(playlistId);
 
-                if (playlist == null)
-                {
-                    string errorMessage = string.Format("No playlist found with id: {0}", playlistId);
-                    throw new ApplicationException(errorMessage);
-                }
-
-                PlaylistItem playlistItem = playlist.Items.First(item => item.Id == itemId);
+                PlaylistItem playlistItem = PlaylistItemDao.Get(itemId);
 
                 //  Be sure to remove from Playlist first so that cascade doesn't re-save.
-                playlist.RemoveItem(playlistItem);
+                playlistItem.Playlist.RemoveItem(playlistItem);
                 PlaylistItemDao.Delete(playlistItem);
-
-                PlaylistDao.Update(playlist);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
