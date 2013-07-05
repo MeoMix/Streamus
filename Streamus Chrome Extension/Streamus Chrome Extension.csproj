@@ -150,7 +150,7 @@
     <Content Include="js\foreground\view\radioModeItemView.js" />
     <Content Include="js\foreground\view\radioModeView.js" />
     <Content Include="js\shareInject.js" />
-    <Content Include="js\dataSources.js" />
+    <Content Include="js\dataSource.js" />
     <Content Include="js\foreground\backgroundManager.js" />
     <Content Include="js\foreground\contentButtons.js" />
     <Content Include="js\foreground\contentHeader.js" />
@@ -181,7 +181,7 @@
     <Content Include="js\helpers.js" />
     <Content Include="js\streamusInject.js" />
     <Content Include="js\youTubeInject.js" />
-    <Content Include="js\playerStates.js" />
+    <Content Include="js\playerState.js" />
     <Content Include="js\programState.js" />
     <Content Include="js\repeatButtonStates.js" />
     <Content Include="js\tests\background\playerSpec.js" />

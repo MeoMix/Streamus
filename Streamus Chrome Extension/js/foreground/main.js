@@ -6,8 +6,8 @@ require(['jquery',
         'backbone',
         'jqueryMousewheel',
         'scrollIntoView',
-        'playerStates',
-        'dataSources',
+        'playerState',
+        'dataSource',
         'helpers',
         'underscore'
     ], function () {

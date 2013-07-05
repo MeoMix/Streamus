@@ -1,7 +1,7 @@
 //  Exposed globally so that Chrome Extension's foreground can access through chrome.extension.getBackgroundPage()
 var YouTubePlayer = null;
 
-define(['youTubePlayerAPI', 'localStorageManager'], function (youTubePlayerAPI, localStorageManager) {
+define(['youTubePlayerAPI', 'localStorageManager', 'playerState'], function (youTubePlayerAPI, localStorageManager, PlayerState) {
     'use strict';
 
     //  This is the actual YouTube Player API object housed within the iframe.
@@ -14,7 +14,7 @@ define(['youTubePlayerAPI', 'localStorageManager'], function (youTubePlayerAPI, 
             currentTime: 0,
             //  API will fire a 'ready' event after initialization which indicates the player can now respond accept commands
             ready: false,
-            state: PlayerStates.UNSTARTED,
+            state: PlayerState.UNSTARTED,
             videoStreamSrc: null,
             //  This will be set after the player is ready and can communicate its true value.
             //  Default to 50 because having the music on and audible, but not blasting, seems like the best default if we fail for some reason.
@@ -67,31 +67,31 @@ define(['youTubePlayerAPI', 'localStorageManager'], function (youTubePlayerAPI, 
             
             var youTubeVideo = $('#YouTubeVideo');
             youTubeVideo.on('play', function () {
-                self.set('state', PlayerStates.PLAYING);
+                self.set('state', PlayerState.PLAYING);
             });
 
             youTubeVideo.on('pause', function () {
-                self.set('state', PlayerStates.PAUSED);
+                self.set('state', PlayerState.PAUSED);
             });
 
             youTubeVideo.on('waiting', function () {
-                self.set('state', PlayerStates.BUFFERING);
+                self.set('state', PlayerState.BUFFERING);
             });
 
             youTubeVideo.on('seeking', function () {
-                if (self.get('state') === PlayerStates.PLAYING) {
-                    self.set('state', PlayerStates.BUFFERING);
+                if (self.get('state') === PlayerState.PLAYING) {
+                    self.set('state', PlayerState.BUFFERING);
                 }
             });
 
             youTubeVideo.on('seeked', function () {
-                if (self.get('state') === PlayerStates.BUFFERING) {
-                    self.set('state', PlayerStates.PLAYING);
+                if (self.get('state') === PlayerState.BUFFERING) {
+                    self.set('state', PlayerState.PLAYING);
                 }
             });
 
             youTubeVideo.on('ended', function () {
-                self.set('state', PlayerStates.ENDED);
+                self.set('state', PlayerState.ENDED);
             });
 
             youTubeVideo.on('error', function (error) {
@@ -202,7 +202,7 @@ define(['youTubePlayerAPI', 'localStorageManager'], function (youTubePlayerAPI, 
                 $(streamusPlayer).attr('autoplay', true);
             }
             
-            this.set('state', PlayerStates.BUFFERING);
+            this.set('state', PlayerState.BUFFERING);
             this.set('loadedVideoId', videoId);
 
             youTubePlayer.loadVideoById({
@@ -213,7 +213,7 @@ define(['youTubePlayerAPI', 'localStorageManager'], function (youTubePlayerAPI, 
         },
         
         isPlaying: function () {
-            return this.get('state') === PlayerStates.PLAYING;
+            return this.get('state') === PlayerState.PLAYING;
         },
         
         mute: function () {
@@ -242,7 +242,7 @@ define(['youTubePlayerAPI', 'localStorageManager'], function (youTubePlayerAPI, 
         
         stop: function () {
 
-            this.set('state', PlayerStates.UNSTARTED);
+            this.set('state', PlayerState.UNSTARTED);
 
             //$('#YouTubeVideo').attr('src', '');
             
@@ -274,7 +274,7 @@ define(['youTubePlayerAPI', 'localStorageManager'], function (youTubePlayerAPI, 
   
             if (!this.isPlaying()) {
 
-                this.set('state', PlayerStates.BUFFERING);
+                this.set('state', PlayerState.BUFFERING);
                 var streamusPlayer = this.get('streamusPlayer');
 
                 if (streamusPlayer) {

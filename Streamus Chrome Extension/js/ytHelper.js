@@ -1,5 +1,5 @@
 //  A global object which abstracts more difficult implementations of retrieving data from YouTube.
-define(['levenshtein'], function (levDist) {
+define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
     'use strict';
 
     var videoInformationFields = 'author,title,media:group(yt:videoid,yt:duration),yt:accessControl';
@@ -23,7 +23,7 @@ define(['levenshtein'], function (levDist) {
         search(title, function (videoInformationList) {
 
             videoInformationList.sort(function (a, b) {
-                return levDist(a.title.$t, title) - levDist(b.title.$t, title);
+                return levenshtein(a.title.$t, title) - levenshtein(b.title.$t, title);
             });
 
             var videoInformation = videoInformationList.length > 0 ? videoInformationList[0] : null;
@@ -190,7 +190,7 @@ define(['levenshtein'], function (levDist) {
             if (dataSourceId !== '') {
                 dataSource = {
                     id: dataSourceId,
-                    type: DataSources.YOUTUBE_PLAYLIST
+                    type: DataSource.YOUTUBE_PLAYLIST
                 };
             } else {
                 
@@ -200,7 +200,7 @@ define(['levenshtein'], function (levDist) {
                 if (dataSourceId !== '') {
                     dataSource = {
                         id: dataSourceId,
-                        type: DataSources.YOUTUBE_CHANNEL
+                        type: DataSource.YOUTUBE_CHANNEL
                     };
                 } else {
 
@@ -209,7 +209,7 @@ define(['levenshtein'], function (levDist) {
                     if (dataSourceId !== '') {
                         dataSource = {
                             id: dataSourceId,
-                            type: DataSources.SHARED_PLAYLIST
+                            type: DataSource.SHARED_PLAYLIST
                         };
                     }
 

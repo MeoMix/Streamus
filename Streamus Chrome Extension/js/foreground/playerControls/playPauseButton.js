@@ -1,5 +1,5 @@
 //  The play/pause icon.
-define(['backgroundManager', 'player', 'spinnerManager'], function (backgroundManager, player, spinnerManager) {
+define(['backgroundManager', 'player', 'spinnerManager', 'playerState'], function (backgroundManager, player, spinnerManager, PlayerState) {
     'use strict';
     
     var playPauseButtonView = Backbone.View.extend({
@@ -23,7 +23,7 @@ define(['backgroundManager', 'player', 'spinnerManager'], function (backgroundMa
             //  Whenever the YouTube player changes playing state -- update whether icon shows play or pause.
             var playerState = player.get('state');
 
-            if (playerState === PlayerStates.BUFFERING) {
+            if (playerState === PlayerState.BUFFERING) {
                 //  Show buffering icon and hide the others.
                 this.spinner.spin($('#LoadingSpinner')[0]);
 
@@ -33,7 +33,7 @@ define(['backgroundManager', 'player', 'spinnerManager'], function (backgroundMa
                 // Not buffering, so hide the spinner.
                 this.spinner.stop();
 
-                if (playerState === PlayerStates.PLAYING) {
+                if (playerState === PlayerState.PLAYING) {
                     //  Change the music button to the 'Pause' image
                     pauseIcon.show();
                     playIcon.hide();

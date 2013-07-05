@@ -1,4 +1,4 @@
-﻿define(['contentHeader', 'ytHelper', 'backgroundManager'], function (ContentHeader, ytHelper, backgroundManager) {
+﻿define(['contentHeader', 'ytHelper', 'backgroundManager', 'dataSource'], function (ContentHeader, ytHelper, backgroundManager, DataSource) {
     'use strict';
     
     var contentHeader = new ContentHeader({
@@ -39,20 +39,20 @@
                 } else {
                    
                     switch(dataSource.type) {
-                        case DataSources.YOUTUBE_PLAYLIST:
+                        case DataSource.YOUTUBE_PLAYLIST:
                             ytHelper.getPlaylistTitle(dataSource.id, function (youTubePlaylistTitle) {
                                 activeStream.addPlaylistByDataSource(youTubePlaylistTitle, dataSource, function (playlist) {
                                     backgroundManager.set('activePlaylist', playlist);
                                 });
                             });
                             break;
-                        case DataSources.YOUTUBE_CHANNEL:
+                        case DataSource.YOUTUBE_CHANNEL:
                             var playlistTitle = dataSource.id + '\'s Feed';
                             activeStream.addPlaylistByDataSource(playlistTitle, dataSource, function (playlist) {
                                 backgroundManager.set('activePlaylist', playlist);
                             });
                             break;
-                        case DataSources.SHARED_PLAYLIST:
+                        case DataSource.SHARED_PLAYLIST:
                             activeStream.addPlaylistByDataSource('', dataSource, function (playlist) {
                                 backgroundManager.set('activePlaylist', playlist);
                             });

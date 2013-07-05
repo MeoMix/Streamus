@@ -2,9 +2,9 @@ var require = {
     baseUrl: '../js/',
     paths: {
         'main': 'foreground/main',
-        'playerStates': 'playerStates',
+        'playerState': 'playerState',
         'programState': 'programState',
-        'dataSources': 'dataSources',
+        'dataSource': 'dataSource',
         'foreground': 'foreground/foreground',
         'volumeControl': 'foreground/playerControls/volumeControl',
         'playPauseButton': 'foreground/playerControls/playPauseButton',
@@ -40,7 +40,7 @@ var require = {
         'videoDisplay': 'foreground/videoTab/videoDisplay',
         'scrollIntoView': 'thirdParty/jquery.scrollIntoView',
         'spin': 'thirdParty/jquery.spin',
-        'repeatButtonStates': 'repeatButtonStates',
+        'repeatButtonState': 'repeatButtonState',
         'spinnerManager': 'foreground/spinnerManager',
         'overscroll': 'thirdParty/jquery.overscroll',
 

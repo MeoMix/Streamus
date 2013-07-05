@@ -1,5 +1,5 @@
 ﻿//  A stream is a collection of playlists
-define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'helpers', 'shareCode', 'playlistItems'], function (Playlists, Playlist, Videos, Video, player, programState, helpers, ShareCode, PlaylistItems) {
+define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'dataSource'], function (Playlists, Playlist, Videos, Video, player, programState, DataSource) {
     'use strict';
     
     var streamModel = Backbone.Model.extend({
@@ -133,18 +133,17 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'h
                 dataSource: dataSource
             });
 
-            console.log("Data source:", dataSource);
             var ytHelperDataFunction = null;
 
             switch (dataSource.type) {
-                case DataSources.YOUTUBE_PLAYLIST:
+                case DataSource.YOUTUBE_PLAYLIST:
                     ytHelperDataFunction = ytHelper.getPlaylistResults;
                     break;
-                case DataSources.YOUTUBE_CHANNEL:
+                case DataSource.YOUTUBE_CHANNEL:
                     ytHelperDataFunction = ytHelper.getFeedResults;
                     break;
                     //  This datasource works differently.
-                case DataSources.SHARED_PLAYLIST:
+                case DataSource.SHARED_PLAYLIST:
                     ytHelperDataFunction = null;
                     break;
                 default:

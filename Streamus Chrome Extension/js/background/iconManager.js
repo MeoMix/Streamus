@@ -1,5 +1,5 @@
 ﻿//  Handles setting and managing the Streamus icon state.
-define(['player'], function (player) {
+define(['player', 'playerState'], function (player, PlayerState) {
     'use strict';
 
     var iconManagerModel = Backbone.Model.extend({
@@ -59,7 +59,7 @@ define(['player'], function (player) {
         if (isMuted) {
             iconColor = 'Red';
         }
-        else if (playerState === PlayerStates.PLAYING || playerState === PlayerStates.BUFFERING) {
+        else if (playerState === PlayerState.PLAYING || playerState === PlayerState.BUFFERING) {
             iconColor = 'Green';
         } else {
             iconColor = 'Yellow';

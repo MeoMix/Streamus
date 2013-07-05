@@ -2,8 +2,10 @@
 define(function () {
     'use strict';
 
-    return Object.freeze({
+    var ShareableEntityType = Object.freeze({
         NONE: -1,
         PLAYLIST: 0
     });
+
+    return ShareableEntityType;
 });

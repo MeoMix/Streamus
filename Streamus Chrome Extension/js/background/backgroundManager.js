@@ -5,8 +5,8 @@ var BackgroundManager = null;
 //  NOTE: It is important to understand that the activePlaylistItem is NOT guaranteed to be in the activePlaylist.
 //  The same applies for activePlaylist being under the activeStream. The user can click around, but this shouldn't affect state
 //  until they make a decision.
-define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', 'streams', 'repeatButtonStates'],
-    function (user, player, localStorageManager, PlaylistItems, Playlists, Streams, repeatButtonStates) {
+define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', 'streams', 'repeatButtonState'],
+    function (user, player, localStorageManager, PlaylistItems, Playlists, Streams, RepeatButtonState) {
     'use strict';
 
     var backgroundManagerModel = Backbone.Model.extend({
@@ -301,7 +301,7 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
 
                         //  If skipping around to the front of the list and don't have repeat playlist enabled - pause.
                         //  Check to make sure that the last active was the last item in the list (first item's previous) -- could be coming back from the 2nd item in which case don't pause
-                        if (isFirstItem && previousActiveItem.get('id') === activePlaylistItem.get('previousItemId') && repeatButtonState !== repeatButtonStates.REPEAT_PLAYLIST_ENABLED) {
+                        if (isFirstItem && previousActiveItem.get('id') === activePlaylistItem.get('previousItemId') && repeatButtonState !== RepeatButtonState.REPEAT_PLAYLIST_ENABLED) {
                             player.cueVideoById(videoId);
                         } else {
                             player.loadVideoById(videoId);

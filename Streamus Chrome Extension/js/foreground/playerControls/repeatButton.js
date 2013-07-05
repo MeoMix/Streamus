@@ -1,5 +1,5 @@
 ﻿//  The repeat icon.
-define(['repeatButtonStates', 'localStorageManager'], function (repeatButtonStates, localStorageManager) {
+define(['repeatButtonState', 'localStorageManager'], function (RepeatButtonState, localStorageManager) {
     'use strict';
 
     var repeatButtonView = Backbone.View.extend({
@@ -20,7 +20,7 @@ define(['repeatButtonStates', 'localStorageManager'], function (repeatButtonStat
             var repeatPlaylistSvg = $('#RepeatPlaylistSvg');
 
             switch(this.state) {
-                case repeatButtonStates.DISABLED:
+                case RepeatButtonState.DISABLED:
                     //  Can't use .removeClass() on svg elements.
                     repeatVideoSvg
                         .show()
@@ -30,13 +30,13 @@ define(['repeatButtonStates', 'localStorageManager'], function (repeatButtonStat
                     this.$el.attr('title', this.disabledTitle);
 
                     break;
-                case repeatButtonStates.REPEAT_VIDEO_ENABLED:                    
+                case RepeatButtonState.REPEAT_VIDEO_ENABLED:
                     //  Can't use .addClass() on svg elements.
                     repeatVideoSvg.attr('class', 'pressed');
                     this.$el.attr('title', this.repeatVideoEnabledTitle);
 
                     break;
-                case repeatButtonStates.REPEAT_PLAYLIST_ENABLED:
+                case RepeatButtonState.REPEAT_PLAYLIST_ENABLED:
 
                     repeatPlaylistSvg.show();
                     repeatVideoSvg.hide();
@@ -62,14 +62,14 @@ define(['repeatButtonStates', 'localStorageManager'], function (repeatButtonStat
             var nextState = null;
 
             switch (this.state) {
-                case repeatButtonStates.DISABLED:
-                    nextState = repeatButtonStates.REPEAT_VIDEO_ENABLED;
+                case RepeatButtonState.DISABLED:
+                    nextState = RepeatButtonState.REPEAT_VIDEO_ENABLED;
                     break;
-                case repeatButtonStates.REPEAT_VIDEO_ENABLED:
-                    nextState = repeatButtonStates.REPEAT_PLAYLIST_ENABLED;
+                case RepeatButtonState.REPEAT_VIDEO_ENABLED:
+                    nextState = RepeatButtonState.REPEAT_PLAYLIST_ENABLED;
                     break;
-                case repeatButtonStates.REPEAT_PLAYLIST_ENABLED:
-                    nextState = repeatButtonStates.DISABLED;
+                case RepeatButtonState.REPEAT_PLAYLIST_ENABLED:
+                    nextState = RepeatButtonState.DISABLED;
                     break;
                 default:
                     console.error("Unhandled repeatButtonState:", this.state);

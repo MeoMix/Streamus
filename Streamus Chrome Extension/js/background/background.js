@@ -1,11 +1,11 @@
 ﻿//  Background.js is a bit of a dumping ground for code which needs a permanent housing spot.
-define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManager', 'ytHelper', 'programState', 'repeatButtonStates'],
-    function (player, backgroundManager, localStorageManager, pushMessageManager, ytHelper, programState, repeatButtonStates) {
+define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManager', 'ytHelper', 'repeatButtonState', 'playerState'],
+    function (player, backgroundManager, localStorageManager, pushMessageManager, ytHelper, RepeatButtonState, PlayerState) {
         'use strict';
   
     player.on('change:state', function (model, state) {
 
-        if (state === PlayerStates.PLAYING) {
+        if (state === PlayerState.PLAYING) {
             //  Check if the foreground UI is open.
             var foreground = chrome.extension.getViews({ type: "popup" });
   
@@ -29,7 +29,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
             }
         }
         //  If the video stopped playing and there is another video to play (not the same one), do so.
-        else if (state === PlayerStates.ENDED) {
+        else if (state === PlayerState.ENDED) {
 
             var activePlaylistItem = backgroundManager.get('activePlaylistItem');
             //  NOTE: No guarantee that the activePlaylistItem's playlistId will be activePlaylist's ID.
@@ -43,7 +43,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
                 var nextVideoId = nextItem.get('video').get('id');
 
                 var repeatButtonState = localStorageManager.getRepeatButtonState();
-                var shouldRepeatPlaylist = repeatButtonState === repeatButtonStates.REPEAT_PLAYLIST_ENABLED;
+                var shouldRepeatPlaylist = repeatButtonState === RepeatButtonState.REPEAT_PLAYLIST_ENABLED;
 
                 //  Cue the next video if looping around to the top of the playlist and we're not supposed to repeat playlists.
                 if (nextItem.get('id') === playlist.get('firstItemId') && !shouldRepeatPlaylist) {

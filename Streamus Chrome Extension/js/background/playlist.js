@@ -8,10 +8,10 @@ define(['ytHelper',
         'video',
         'videos',
         'helpers',
-        'repeatButtonStates',
+        'repeatButtonState',
         'shareCode',
         'shareableEntityType'
-], function (ytHelper, PlaylistItems, PlaylistItem, programState, localStorageManager, Video, Videos, helpers, repeatButtonStates, ShareCode, ShareableEntityType) {
+], function (ytHelper, PlaylistItems, PlaylistItem, programState, localStorageManager, Video, Videos, helpers, RepeatButtonState, ShareCode, ShareableEntityType) {
         'use strict';
 
         var playlistModel = Backbone.Model.extend({
@@ -154,7 +154,7 @@ define(['ytHelper',
                 } else {
                     
                     //  If repeat video is enabled then keep on the last item in history
-                    if (repeatButtonState === repeatButtonStates.REPEAT_VIDEO_ENABLED) {
+                    if (repeatButtonState === RepeatButtonState.REPEAT_VIDEO_ENABLED) {
                         //  TODO: potentially need to be popping from history so gotoPrevious doesn't loop through same item a lot
                         setNextItem(this.get('history').at(0));
                     }

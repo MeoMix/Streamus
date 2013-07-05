@@ -1,4 +1,4 @@
-﻿define(['backgroundManager', 'player'], function (backgroundManager, player) {
+﻿define(['backgroundManager', 'player', 'playerState'], function (backgroundManager, player, PlayerState) {
     'use strict';
 
     var videoDisplayModel = Backbone.Model.extend({
@@ -34,7 +34,7 @@
             } else {
 
                 var playerState = player.get('state');
-                if (playerState == PlayerStates.PLAYING || playerState == PlayerStates.PAUSED) {
+                if (playerState == PlayerState.PLAYING || playerState == PlayerState.PAUSED) {
                     this.context.drawImage(this.video, 0, 0, this.el[0].width, this.el[0].height);
                 } else {
 
@@ -62,7 +62,7 @@
             //  Start drawing again when the player is playing.
             this.listenTo(player, 'change:state', function (model, playerState) {
 
-                if (playerState === PlayerStates.PLAYING) {
+                if (playerState === PlayerState.PLAYING) {
 
                     //  Lagging for a little to avoid this black blip on the video when clicking next on a playing song.
                     //  If you can figure it out -- go for it.

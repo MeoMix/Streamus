@@ -1,5 +1,5 @@
 //  This is the list of playlists on the playlists tab.
-define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerManager'], function (contextMenu, ytHelper, backgroundManager, helpers, spinnerManager) {
+define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerManager', 'dataSource'], function (contextMenu, ytHelper, backgroundManager, helpers, spinnerManager, DataSource) {
     //  TODO: Make this sortable and should inherit from a common List object. 
     var playlistList = $('#PlaylistList ul');
 
@@ -54,7 +54,7 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
     backgroundManager.get('allPlaylists').on('add', function (playlist) {
         reload();
 
-        if (playlist.has('dataSource') && playlist.get('dataSource').type !== DataSources.SHARED_PLAYLIST) {
+        if (playlist.has('dataSource') && playlist.get('dataSource').type !== DataSource.SHARED_PLAYLIST) {
             var playlistLink = playlistList.find('li[data-playlistid="' + playlist.get('id') + '"]');
             spinner.spin(playlistLink[0]);
 
