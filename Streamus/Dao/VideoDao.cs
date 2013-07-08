@@ -1,32 +1,20 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using NHibernate;
+﻿using NHibernate;
 using NHibernate.Criterion;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using log4net;
+using System.Collections.Generic;
 
 namespace Streamus.Dao
 {
     public class VideoDao : AbstractNHibernateDao<Video>, IVideoDao
     {
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
         public Video Get(string id)
         {
             Video video = null;
 
             if (id != default(string))
             {
-                try
-                {
-                    video = (Video) NHibernateSession.Load(typeof (Video), id);
-                }
-                catch (ObjectNotFoundException exception)
-                {
-                    //  Consume error and return null.
-                    Logger.Error(exception);
-                }
+                video = NHibernateSession.Get<Video>(id);
             }
 
             return video;

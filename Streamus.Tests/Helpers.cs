@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Streamus.Domain;
 using Streamus.Domain.Managers;
 using Streamus.Dto;
@@ -83,6 +84,40 @@ namespace Streamus.Tests
                 };
 
             return playlistItemDto;
+        }
+
+        /// <summary>
+        ///     Create a new Stream and Playlist, save them to the DB, then generate N PlaylistItemDtos
+        ///     which have those entities as their parents.
+        /// </summary>
+        public static List<PlaylistItemDto> CreatePlaylistItemsDto(int itemsToCreate, Guid playlistId = default(Guid))
+        {
+            if (playlistId == default(Guid))
+            {
+                var stream = new Stream();
+                Playlist playlist = stream.CreateAndAddPlaylist();
+
+                StreamManager.Save(stream);
+                playlistId = playlist.Id;
+            }
+
+            Video video = CreateUnsavedVideoWithId();
+            VideoDto videoDto = VideoDto.Create(video);
+
+            List<PlaylistItemDto> playlistItemDtos = new List<PlaylistItemDto>(itemsToCreate);
+
+            for (int i = 0; i < itemsToCreate; i++)
+            {
+                var playlistItemDto = new PlaylistItemDto
+                {
+                    PlaylistId = playlistId,
+                    Video = videoDto
+                };
+
+                playlistItemDtos.Add(playlistItemDto);
+            }
+
+            return playlistItemDtos;
         }
     }
 }

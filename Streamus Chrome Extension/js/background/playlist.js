@@ -281,7 +281,7 @@ define(['ytHelper',
                 });
             },
             
-            addItems: function (videos) {
+            addItems: function (videos, callback) {
                 var itemsToSave = new PlaylistItems();
                 var self = this;
 
@@ -296,22 +296,10 @@ define(['ytHelper',
                     });
 
                     var playlistItems = self.get('items');
-                    var playlistItemId = playlistItem.get('id');
 
-                    if (playlistItems.length === 0) {
-                        //  This triggers an event which saves the firstItemId
-                        self.set('firstItemId', playlistItemId);
-                        playlistItem.set('nextItemId', playlistItemId);
-                        playlistItem.set('previousItemId', playlistItemId);
-                    } else {
+                    if (playlistItems.length > 0) {
                         var firstItem = playlistItems.get(self.get('firstItemId'));
                         var lastItem = playlistItems.get(firstItem.get('previousItemId'));
-
-                        lastItem.set('nextItemId', playlistItemId);
-                        playlistItem.set('previousItemId', lastItem.get('id'));
-
-                        firstItem.set('previousItemId', playlistItemId);
-                        playlistItem.set('nextItemId', firstItem.get('id'));
 
                         itemsToSave.add(firstItem, { merge: true });
                         itemsToSave.add(lastItem, { merge: true });
@@ -323,24 +311,35 @@ define(['ytHelper',
                 itemsToSave.save({}, {
                     success: function () {
 
-                        self.get('items').add(itemsToSave.models);
+                        //  OOF TERRIBLE.
+                        self.fetch({
+                            success: function () {
+                                //  TODO: For some reason when I call self.trigger then allPlaylists triggers fine, but if I go through fetch it doesnt trigger?
+                                self.trigger('reset', self);
+                                
+                                //  TODO: Could probably be improved for very large playlists being added.
+                                //  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
+                                var sampleSize = videos.length > 30 ? 30 : videos.length;
+                                var randomSampleIndices = helpers.getRandomNonOverlappingNumbers(sampleSize, videos.length);
 
-                        //  TODO: Could probably be improved for very large playlists being added.
-                        //  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
-                        var sampleSize = videos.length > 30 ? 30 : videos.length;
-                        var randomSampleIndices = helpers.getRandomNonOverlappingNumbers(sampleSize, videos.length);
+                                _.each(randomSampleIndices, function (randomIndex) {
+                                    var randomVideo = videos.at(randomIndex);
 
-                        _.each(randomSampleIndices, function (randomIndex) {
-                            var randomVideo = videos.at(randomIndex);
+                                    ytHelper.getRelatedVideoInformation(randomVideo.get('id'), function (relatedVideoInformation) {
 
-                            ytHelper.getRelatedVideoInformation(randomVideo.get('id'), function (relatedVideoInformation) {
+                                        var playlistItem = self.get('items').find(function (item) {
+                                            return item.get('video').get('id') == randomVideo.get('id');
+                                        });
 
-                                var playlistItem = self.get('items').find(function (item) {
-                                    return item.get('video').get('id') == randomVideo.get('id');
+                                        playlistItem.set('relatedVideoInformation', relatedVideoInformation);
+                                    });
                                 });
+                                
+                                if (callback) {
+                                    callback();
+                                }
 
-                                playlistItem.set('relatedVideoInformation', relatedVideoInformation);
-                            });
+                            }
                         });
 
                     },

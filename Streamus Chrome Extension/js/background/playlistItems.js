@@ -25,16 +25,20 @@
                     return !item.isNew();
                 });
 
-                var updateMultipleJqXhr = oldItems.length > 0 ? updateMultiple(oldItems) : null;
+                console.log("oldItems:", oldItems);
+
+                //var updateMultipleJqXhr = oldItems.length > 0 ? updateMultiple(oldItems) : null;
                 
                 var newItems = self.filter(function (item) {
                     return item.isNew();
                 });
+                
+                console.log("newItems:", newItems);
 
                 var createMultipleJqXhr = newItems.length > 0 ? createMultiple(newItems) : null;
 
                 //  TODO: Consider passing back more data to success if it becomes necessary. Not needed currently.
-                $.when(updateMultipleJqXhr, createMultipleJqXhr).done(function () {
+                $.when(createMultipleJqXhr).done(function () {
                     
                     if (options.success) {
                         options.success();

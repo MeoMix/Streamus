@@ -17,7 +17,7 @@ namespace Streamus.Controllers
         private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
 
         [HttpPost]
-        public ActionResult Create(PlaylistItemDto playlistItemDto)
+        public JsonDataContractActionResult Create(PlaylistItemDto playlistItemDto)
         {
             PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto);
 
@@ -33,8 +33,9 @@ namespace Streamus.Controllers
             return new JsonDataContractActionResult(savedPlaylistItemDto);
         }
 
+
         [HttpPost]
-        public ActionResult CreateMultiple(List<PlaylistItemDto> playlistItemDtos)
+        public JsonDataContractActionResult CreateMultiple(List<PlaylistItemDto> playlistItemDtos)
         {
             List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos);
 

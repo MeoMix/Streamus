@@ -826,6 +826,7 @@
                 options.previousModels = this.models;
                 this._reset();
                 if (models) this.add(models, _.extend({ silent: true }, options));
+
                 if (!options.silent) this.trigger('reset', this, options);
                 return this;
             },

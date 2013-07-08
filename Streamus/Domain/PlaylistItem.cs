@@ -14,8 +14,6 @@ namespace Streamus.Domain
         public Guid Id { get; set; }
         public PlaylistItem NextItem { get; set; }
         public PlaylistItem PreviousItem { get; set; }
-
-        //  Store Title on PlaylistItem as well as on Video because user might want to rename PlaylistItem.
         public string Title { get; set; }
         public Video Video { get; set; }
 

@@ -371,6 +371,7 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
                     }
                 }
             });
+            
         }
     };
 });

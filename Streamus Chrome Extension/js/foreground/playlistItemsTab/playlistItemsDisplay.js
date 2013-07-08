@@ -56,12 +56,22 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
             backgroundManager.set('activePlaylistItem', playlistItem);
         }
     }
-    
 
-    backgroundManager.on('change:activePlaylist', function() {
-        reload();
+    //  TODO: Would be nice to just listen to activePlaylist? Not sure why I can't, but I'm not seeing the reset event fire.
+    backgroundManager.get('allPlaylists').on('reset', function (playlist) {
+
+        if (playlist == backgroundManager.get('activePlaylist')) {
+            reload();
+        }
+        
     });
-    
+
+    backgroundManager.on('change:activePlaylist', function () {
+
+        reload();
+        
+    });
+
     var emptyPlaylistNotificationId = 'EmptyPlaylistNotification';
     backgroundManager.get('allPlaylistItems').on('add', function(item) {
 
@@ -106,17 +116,23 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
     scrollIntoView(backgroundManager.get('activePlaylistItem'), false);
     
     function showEmptyPlaylistNotification() {
-        var emptyPlaylistNotification = $('<div>', {
-            id: emptyPlaylistNotificationId,
-            text: 'Your Playlist is empty. Try adding some videos by clicking above.',
-            css: {
-                fontSize: '14px',
-                top: '154px',
-                left: '23px'
-            }
-        });
+        
+        if ($('#' + emptyPlaylistNotificationId).length == 0) {
+            
+            var emptyPlaylistNotification = $('<div>', {
+                id: emptyPlaylistNotificationId,
+                text: 'Your Playlist is empty. Try adding some videos by clicking above.',
+                css: {
+                    fontSize: '14px',
+                    top: '154px',
+                    left: '23px'
+                }
+            });
 
-        emptyPlaylistNotification.insertBefore(playlistItemList);
+            emptyPlaylistNotification.insertBefore(playlistItemList);
+            
+        }
+
     }
     
     function buildListItem(item) {
@@ -195,13 +211,14 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
 
     //  Refresh all the videos displayed to ensure they GUI matches background's data.
     function reload() {
+        console.log("emptied");
         playlistItemList.empty();
 
         var activePlaylist = backgroundManager.get('activePlaylist');
 
-        console.log("Active playlist items:", activePlaylist.get('items'));
+        console.log("Reloading PlaylistItemsDisplay Active playlist items:", activePlaylist, activePlaylist.get('items'));
 
-        if (activePlaylist == null || activePlaylist.get('items').length === 0) {
+        if (activePlaylist.get('items').length === 0) {
             showEmptyPlaylistNotification();
         } else {
             $('#' + emptyPlaylistNotificationId).remove();

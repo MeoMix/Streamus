@@ -1,5 +1,5 @@
 ﻿//  A stream is a collection of playlists
-define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'dataSource'], function (Playlists, Playlist, Videos, Video, player, programState, DataSource) {
+define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'dataSource', 'ytHelper'], function (Playlists, Playlist, Videos, Video, player, programState, DataSource, ytHelper) {
     'use strict';
     
     var streamModel = Backbone.Model.extend({
@@ -126,121 +126,87 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
 
         addPlaylistByDataSource: function (playlistTitle, dataSource, callback) {
             var self = this;
+
+            console.log("Self at start:", self);
             
             var playlist = new Playlist({
                 title: playlistTitle,
                 streamId: this.get('id'),
                 dataSource: dataSource
             });
+            
+            var getVideosCallCount = 0;
+            var videosHandled = 0;
+            var orderedVideosArray = [];
+            var getDataFromYouTubeFunc = null;
 
-            var ytHelperDataFunction = null;
+            var onGetResults = function(results) {
+                console.log("Feed results:", results);
 
-            console.log("DataSource:", dataSource);
+                //  Results will be null if an error occurs while fetching data.
+                if (results == null || results.length === 0) {
+                    console.log("DATA SOURCE LOADED");
+                    self.set('dataSourceLoaded', true);
+                } else {
 
-            switch (dataSource.type) {
-                case DataSource.YOUTUBE_PLAYLIST:
-                    ytHelperDataFunction = ytHelper.getPlaylistResults;
-                    break;
-                case DataSource.YOUTUBE_CHANNEL:
-                    ytHelperDataFunction = ytHelper.getFeedResults;
-                    break;
-                //  These dataSources work differently.
-                case DataSource.USER_INPUT:
-                case DataSource.SHARED_PLAYLIST:
-                    ytHelperDataFunction = null;
-                    break;
-                default:
-                    console.error("Unhandled dataSource type:", dataSource.type);
-            }
-
-            if (ytHelperDataFunction != null) {
-
-                var getVideosCallCount = 0;
-                var videosHandled = 0;
-                var orderedVideosArray = [];
-
-                var getVideosInterval = setInterval(function () {
-
-                    ytHelperDataFunction(dataSource.id, getVideosCallCount, function (results) {
-
-                        console.log("Feed results:", results);
-
-                        //  Results will be null if an error occurs while fetching data.
-                        if (results == null || results.length === 0) {
-                            clearInterval(getVideosInterval);
-                            self.set('dataSourceLoaded', true);
-                        } else {
-
-                            _.each(results, function (entry, index) {
-                                var videoId = entry.media$group.yt$videoid.$t;
-                                addVideoByIdAtIndex(videoId, entry.title.$t, index, results.length);
+                    //  Receive up to 50 videos. Save to the server, then add to playlist in the order they came in.
+                    _.each(results, function (videoInformation, index) {
+                            
+                        if (videoInformation != null) {
+                            
+                            //  Insert at index to preserve order of videos retrieved from YouTube API
+                            orderedVideosArray[index] = new Video({
+                                 videoInformation: videoInformation
                             });
-
-                            getVideosCallCount++;
+                            
                         }
-
-                    });
-
-                    function addVideoByIdAtIndex(videoId, videoTitle, index, resultCount) {
-                        ytHelper.getVideoInformation({
-                            videoId: videoId,
-                            videoTitle: videoTitle,
-                            success: function (videoInformation) {
-                                if (videoInformation != null) {
-                                    var video = getVideoFromInformation(videoInformation);
-                                    //  Insert at index to preserve order of videos retrieved from YouTube API
-                                    orderedVideosArray[index] = video;
-                                }
-
-                                handleVideo(resultCount);
-                            },
-                            error: function () {
-                                console.error("Error getting video information for:", videoTitle);
-                                handleVideo(resultCount);
-                            }
-                        });
-                    }
-
-                    //  Periodicially send bursts of packets (up to 50 videos in length) to the server and trigger visual update.
-                    function handleVideo(resultCount) {
+                            
+                        //  Periodicially send bursts of packets (up to 50 videos in length) to the server and trigger visual update.
                         videosHandled++;
 
-                        console.log("Videos handled / result count:", videosHandled, resultCount);
-                        if (videosHandled == resultCount) {
+                        console.log("Videos handled / result count:", videosHandled, results.length);
+                        if (videosHandled == results.length) {
 
                             var videos = new Videos(orderedVideosArray);
+
+                            console.log("VIDEOS:", videos, videos.length);
 
                             //  orderedVideosArray may have some empty slots which get converted to empty Video objects; drop 'em.
                             var videosWithIds = videos.withIds();
 
-                            self.addItems(videosWithIds);
+                            console.log("With IDs:", videosWithIds.length);
+
+                            playlist.addItems(videosWithIds, function () {
+                                getVideosCallCount++;
+
+                                //console.log("Added items at:" + new DateTime);
+                                getDataFromYouTubeFunc(dataSource.id, getVideosCallCount, onGetResults);
+                                //setTimeout(function () {
+                                    
+                                //    if (getVideosCallCount < 2) {
+                                //        //  Recursively call until all data retrieved.
+                                        
+                                //    }
+
+                                //}, 4000);
+
+
+
+                                
+                            });
+                            
                             orderedVideosArray = [];
                             videosHandled = 0;
                         }
-                    }
-
-                    //  TODO: Rewrite the Video constructor such that it can create a Video object from videoInformation
-                    function getVideoFromInformation(videoInformation) {
-                        var id = videoInformation.media$group.yt$videoid.$t;
-                        var durationInSeconds = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
-                        var author = videoInformation.author[0].name.$t;
-
-                        return new Video({
-                            id: id,
-                            title: videoInformation.title.$t,
-                            duration: durationInSeconds,
-                            author: author
-                        });
-                    }
-
-
-                }, 4000);
-
-            }
+                    });
+                }
+            };
 
             //  Save the playlist, but push after version from server because the ID will have changed.
             playlist.save({}, {
                 success: function () {
+
+                    console.log("Playlist saved.");
 
                     var playlistId = playlist.get('id');
                     var currentPlaylists = self.get('playlists');
@@ -262,10 +228,23 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
 
                     currentPlaylists.push(playlist);
 
+                    //  Load any potential bulk data from YouTube after the Playlist has saved successfully.
+                    if (dataSource.type === DataSource.YOUTUBE_PLAYLIST) {
+                        getDataFromYouTubeFunc = ytHelper.getPlaylistResults;
+                    }
+                    else if (dataSource.type === DataSource.YOUTUBE_CHANNEL) {
+                        getDataFromYouTubeFunc = ytHelper.getFeedResults;
+                    }
+                    
+                    if (getDataFromYouTubeFunc) {
+                        getDataFromYouTubeFunc(dataSource.id, getVideosCallCount, onGetResults);
+                    }
+                    
+                    //  Data might still be loading, but feel free to callback now as it could take a while.
                     if (callback) {
                         callback(playlist);
                     }
-
+                    
                 },
                 error: function (error) {
                     console.error(error);

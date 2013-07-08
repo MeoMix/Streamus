@@ -6,14 +6,16 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
     var spinner = spinnerManager.getPlaylistSpinner();
 
     backgroundManager.on('change:activeStream', reload);
-    backgroundManager.get('allPlaylists').on('remove change:title', reload);
+    backgroundManager.get('allPlaylists').on('remove change:title reset', reload);
 
     backgroundManager.on('change:activePlaylist', function (collection, playlist) {
-        
+
         if (playlist !== null) {
             visuallySelectPlaylist(playlist);
+
         } else {
             playlistList.find('li').removeClass('loaded');
+            
         }
 
     });
