@@ -8,9 +8,8 @@ namespace Streamus.Domain
 {        
     //  TODO: Currently there is only the ability to have a single Stream.
     //  Should create Strean objects as a LinkedList so that adding and removing is possible.
-    public class Stream : IAbstractDomainEntity
+    public class Stream : AbstractDomainEntity<Guid>
     {
-        public Guid Id { get; set; }
         public User User { get; set; }
         public string Title { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
@@ -97,40 +96,6 @@ namespace Streamus.Domain
         {
             var validator = new StreamValidator();
             validator.ValidateAndThrow(this);
-        }
-
-        private int? _oldHashCode;
-        public override int GetHashCode()
-        {
-            // Once we have a hash code we'll never change it
-            if (_oldHashCode.HasValue)
-                return _oldHashCode.Value;
-
-            bool thisIsTransient = Equals(Id, Guid.Empty);
-
-            // When this instance is transient, we use the base GetHashCode()
-            // and remember it, so an instance can NEVER change its hash code.
-            if (thisIsTransient)
-            {
-                _oldHashCode = base.GetHashCode();
-                return _oldHashCode.Value;
-            }
-            return Id.GetHashCode();
-        }
-
-        public override bool Equals(object obj)
-        {
-            Stream other = obj as Stream;
-            if (other == null)
-                return false;
-
-            // handle the case of comparing two NEW objects
-            bool otherIsTransient = Equals(other.Id, Guid.Empty);
-            bool thisIsTransient = Equals(Id, Guid.Empty);
-            if (otherIsTransient && thisIsTransient)
-                return ReferenceEquals(other, this);
-
-            return other.Id.Equals(Id);
         }
 
     }

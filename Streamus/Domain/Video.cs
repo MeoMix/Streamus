@@ -8,7 +8,7 @@ using Streamus.Dto;
 
 namespace Streamus.Domain
 {
-    public class Video : IAbstractDomainEntity
+    public class Video : IAbstractDomainEntity<string>
     {
         public string Id { get; set; }
         public string Title { get; set; }

@@ -1,15 +1,20 @@
-﻿using AutoMapper;
-using Streamus.Domain;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using AutoMapper;
+using Streamus.Domain;
 
 namespace Streamus.Dto
-{    
-    //  TODO: Not sure about AbstractShareableEntity
+{
     [DataContract]
-    public class PlaylistDto : AbstractShareableEntity 
-    {        
+    public class PlaylistDto
+    {
+        [DataMember(Name = "id")]
+        public Guid Id { get; set; }
+
+        [DataMember(Name = "title")]
+        public string Title { get; set; }
+
         [DataMember(Name = "streamId")]
         public Guid StreamId { get; set; }
 

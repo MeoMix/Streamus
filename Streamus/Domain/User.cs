@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using AutoMapper;
+﻿using AutoMapper;
 using FluentValidation;
-using Streamus.Domain.Interfaces;
 using Streamus.Domain.Validators;
 using Streamus.Dto;
+using System;
+using System.Collections.Generic;
 
 namespace Streamus.Domain
 {
-    public class User : IAbstractDomainEntity
+    public class User : AbstractDomainEntity<Guid>
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
         public IList<Stream> Streams { get; set; }
@@ -56,39 +54,5 @@ namespace Streamus.Domain
             validator.ValidateAndThrow(this);
         }
 
-        private int? _oldHashCode;
-
-        public override int GetHashCode()
-        {
-            // Once we have a hash code we'll never change it
-            if (_oldHashCode.HasValue)
-                return _oldHashCode.Value;
-
-            bool thisIsTransient = Equals(Id, Guid.Empty);
-
-            // When this instance is transient, we use the base GetHashCode()
-            // and remember it, so an instance can NEVER change its hash code.
-            if (thisIsTransient)
-            {
-                _oldHashCode = base.GetHashCode();
-                return _oldHashCode.Value;
-            }
-            return Id.GetHashCode();
-        }
-
-        public override bool Equals(object obj)
-        {
-            var other = obj as User;
-            if (other == null)
-                return false;
-
-            // handle the case of comparing two NEW objects
-            bool otherIsTransient = Equals(other.Id, Guid.Empty);
-            bool thisIsTransient = Equals(Id, Guid.Empty);
-            if (otherIsTransient && thisIsTransient)
-                return ReferenceEquals(other, this);
-
-            return other.Id.Equals(Id);
-        }
     }
 }

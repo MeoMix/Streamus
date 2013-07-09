@@ -15,7 +15,7 @@ namespace Streamus.Controllers
         public JsonDataContractActionResult(Object data)
         {
             //  Ensure that programmers are returning the proper entities.
-            if (data is IAbstractDomainEntity)
+            if (data is IAbstractDomainEntity<Guid> || data is IAbstractDomainEntity<string>)
             {
                 throw new Exception("Attempted serialization of domain entity detected. Only DTOs should be serialized.");
             }

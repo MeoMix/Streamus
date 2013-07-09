@@ -130,16 +130,12 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                 self.get('allPlaylists').remove(playlist);
 
                 if (self.get('activePlaylist') === playlist) {
-                    self.set('activePlaylist', null);
 
                     var streamId = playlist.get('streamId');
-                    var stream = self.getStreamById(streamId);
-                    
-                    //  Update activePlaylist to the next playlist if there is another.
-                    if (stream.get('playlists').length > 0) {
-                        var newlyActivePlaylist = stream.getPlaylistById(playlist.get('nextPlaylistId'));
-                        self.set('activePlaylist', newlyActivePlaylist);
-                    }
+                    var playlistStream = self.getStreamById(streamId);
+
+                    var activePlaylist = playlistStream.getPlaylistById(playlist.get('nextPlaylistId'));
+                    self.set('activePlaylist', activePlaylist);
                 }
 
                 //  If the currently playing item was in the playlist that has been removed - stop the music / refresh the UI.

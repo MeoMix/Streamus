@@ -8,7 +8,7 @@
 
     <property name="Title" not-null="true" />
 
-    <bag name="Playlists" inverse="true" cascade="all-delete-orphan" >
+    <bag name="Playlists" inverse="true" fetch="join" cascade="all-delete-orphan" >
       <key column="StreamId" />
       <one-to-many class="Playlist" />
     </bag>

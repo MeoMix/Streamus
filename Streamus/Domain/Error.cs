@@ -1,15 +1,13 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using Streamus.Domain.Interfaces;
 using Streamus.Domain.Validators;
-using System;
 using Streamus.Dto;
+using System;
 
 namespace Streamus.Domain
 {
-    public class Error : IAbstractDomainEntity
+    public class Error : AbstractDomainEntity<Guid>
     {
-        public Guid Id { get; set; }
         public string Message { get; set; }
         public int LineNumber { get; set; }
         public string Url { get; set; }

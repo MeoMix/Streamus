@@ -1,23 +1,19 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 using Streamus.Domain.Interfaces;
-using System;
 
 namespace Streamus.Domain
 {
     [DataContract]
-    public abstract class AbstractShareableEntity : IShareableEntity
+    public abstract class AbstractShareableDomainEntity : AbstractDomainEntity<Guid>, IShareableEntity
     {
-        [DataMember(Name = "id")]
-        public Guid Id { get; set; }
-
-        [DataMember(Name = "title")]
         public string Title { get; set; }
 
         /// <summary>
-        /// Grab the first 40 characters of the title and then trim back to the last whole word.
-        /// Replace spaces with underscores.
+        ///     Grab the first 40 characters of the title and then trim back to the last whole word.
+        ///     Replace spaces with underscores.
         /// </summary>
         /// <returns>A URL friendly title (e.g.): as_one_of_the_few_members_of_congress_who_have </returns>
         public string GetUrlFriendlyTitle()
@@ -40,8 +36,8 @@ namespace Streamus.Domain
         }
 
         /// <summary>
-        /// Just trim off some of the Guid to make it pretty for the URL. 
-        /// Essentially guaranteed unique when performing lookup with shortId + UrlFriendlyTitle
+        ///     Just trim off some of the Guid to make it pretty for the URL.
+        ///     Essentially guaranteed unique when performing lookup with shortId + UrlFriendlyTitle
         /// </summary>
         /// <returns>6 digits of Guid without hyphen</returns>
         public string GetShortId()
@@ -62,17 +58,15 @@ namespace Streamus.Domain
             text = RemoveAccent(text).ToLower();
 
             //  Remove all invalid characters.  
-            text = Regex.Replace(text, @"[^a-z0-9\s-]", ""); 
+            text = Regex.Replace(text, @"[^a-z0-9\s-]", "");
 
             //  Convert multiple spaces into one space
-            text = Regex.Replace(text, @"\s+", " ").Trim(); 
+            text = Regex.Replace(text, @"\s+", " ").Trim();
 
             //  Replace spaces by underscores.
-            text = Regex.Replace(text, @"\s", "_"); 
+            text = Regex.Replace(text, @"\s", "_");
 
             return text;
         }
-
-
     }
 }

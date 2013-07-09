@@ -1,15 +1,14 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using Streamus.Domain.Interfaces;
 using Streamus.Domain.Validators;
+using Streamus.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Streamus.Dto;
 
 namespace Streamus.Domain
 {
-    public class Playlist : AbstractShareableEntity, IAbstractDomainEntity
+    public class Playlist : AbstractShareableDomainEntity
     {
         public Stream Stream { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
@@ -97,7 +96,7 @@ namespace Streamus.Domain
             if (FirstItem == playlistItem)
             {
                 //  Move the firstItemId to the next item if playlist still has other items in it.
-                FirstItem = playlistItem.NextItem;
+                FirstItem = Items.Count == 1 ? null : playlistItem.NextItem;
             }
 
             PlaylistItem previousItem = playlistItem.PreviousItem;
@@ -116,38 +115,5 @@ namespace Streamus.Domain
             validator.ValidateAndThrow(this);
         }
 
-        private int? _oldHashCode;
-        public override int GetHashCode()
-        {
-            // Once we have a hash code we'll never change it
-            if (_oldHashCode.HasValue)
-                return _oldHashCode.Value;
-
-            bool thisIsTransient = Equals(Id, Guid.Empty);
-
-            // When this instance is transient, we use the base GetHashCode()
-            // and remember it, so an instance can NEVER change its hash code.
-            if (thisIsTransient)
-            {
-                _oldHashCode = base.GetHashCode();
-                return _oldHashCode.Value;
-            }
-            return Id.GetHashCode();
-        }
-
-        public override bool Equals(object obj)
-        {
-            Playlist other = obj as Playlist;
-            if (other == null)
-                return false;
-
-            // handle the case of comparing two NEW objects
-            bool otherIsTransient = Equals(other.Id, Guid.Empty);
-            bool thisIsTransient = Equals(Id, Guid.Empty);
-            if (otherIsTransient && thisIsTransient)
-                return ReferenceEquals(other, this);
-
-            return other.Id.Equals(Id);
-        }
     }
 }
