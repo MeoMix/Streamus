@@ -1,7 +1,7 @@
 ﻿require(['jquery', 'backbone'], function() {
     'use strict';
     //Load up all the specs we're testing.
-    require(['playlistSpec', 'playlistItemSpec', 'userSpec'], function() {
+    require([], function() {
         var jasmineEnv = jasmine.getEnv();
         jasmineEnv.updateInterval = 1000;
 
