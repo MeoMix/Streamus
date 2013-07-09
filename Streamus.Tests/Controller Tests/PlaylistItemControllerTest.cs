@@ -78,12 +78,14 @@ namespace Streamus.Tests.Controller_Tests
             Assert.That(playlist.Items.Count == numItemsToCreate);
         }
 
-        // Illicit a StackOverflowException which occurrs when I try and work with a playlist containing a large amount of items
+        /// <summary>
+        /// A StackOverflowException will occur if mappings don't contain fetch="join." Ensure this rule is in place.
+        /// </summary>
         [Test]
-        public void CreatePlaylistItemsRepeatedly_PlaylistEmpty_StackOverflowException()
+        public void CreatePlaylistItemsRepeatedly_PlaylistEmpty_NoStackOverflowException()
         {
-            const int iterations = 1;
-            const int numItemsToCreate = 142;
+            const int iterations = 2;
+            const int numItemsToCreate = 2142;
             Guid playlistId = default(Guid);
 
             //  Starting at 1 because I want to use currentIteration to be used in math and makes more sense as 1.

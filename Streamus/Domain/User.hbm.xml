@@ -8,7 +8,7 @@
     
     <property name="Name" not-null="true" />
 
-    <bag name="Streams" inverse="true" cascade="all-delete-orphan" >
+    <bag name="Streams" fetch="join" cascade="all-delete-orphan" >
       <key column="UserId" />
       <one-to-many class="Stream" />
     </bag>

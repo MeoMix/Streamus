@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Streamus.Domain.Interfaces;
 using Streamus.Domain.Validators;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,6 @@ namespace Streamus.Domain
     //  Should create Strean objects as a LinkedList so that adding and removing is possible.
     public class Stream : AbstractDomainEntity<Guid>
     {
-        public User User { get; set; }
         public string Title { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
         public IList<Playlist> Playlists { get; set; }
@@ -32,7 +30,6 @@ namespace Streamus.Domain
             Title = title;
         }
 
-        //  TODO: Not sure how I feel about this method.
         public Playlist CreateAndAddPlaylist()
         {
             string title = string.Format("New Playlist {0:D4}", Playlists.Count);

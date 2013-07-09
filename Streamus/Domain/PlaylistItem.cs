@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using AutoMapper;
+﻿using AutoMapper;
 using FluentValidation;
-using Streamus.Domain.Interfaces;
 using Streamus.Domain.Validators;
-using System;
 using Streamus.Dto;
+using System;
+using System.Collections.Generic;
 
 namespace Streamus.Domain
 {

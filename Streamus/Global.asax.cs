@@ -77,8 +77,6 @@ namespace Streamus
 
             Mapper.CreateMap<Stream, StreamDto>()
                   .ReverseMap()
-                  .ForMember(stream => stream.User,
-                             opt => opt.MapFrom(streamDto => userDao.Get(streamDto.UserId)))
                   .ForMember(stream => stream.FirstPlaylist,
                              opt => opt.MapFrom(streamDto => playlistDao.Get(streamDto.FirstPlaylistId)));
 

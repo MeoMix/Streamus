@@ -6,7 +6,6 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
         defaults: function () {
             return {
                 id: null,
-                userId: null,
                 title: '',
                 playlists: new Playlists(),
                 firstPlaylistId: null,

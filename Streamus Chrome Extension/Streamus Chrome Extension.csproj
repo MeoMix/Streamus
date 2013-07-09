@@ -184,10 +184,6 @@
     <Content Include="js\playerState.js" />
     <Content Include="js\programState.js" />
     <Content Include="js\repeatButtonState.js" />
-    <Content Include="js\tests\background\playerSpec.js" />
-    <Content Include="js\tests\background\playlistItemSpec.js" />
-    <Content Include="js\tests\background\playlistSpec.js" />
-    <Content Include="js\tests\background\userSpec.js" />
     <Content Include="js\tests\main.js" />
     <Content Include="js\tests\requirePaths.js" />
     <Content Include="js\thirdParty\backbone.js" />

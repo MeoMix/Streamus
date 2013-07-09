@@ -19,7 +19,7 @@ namespace Streamus.Domain
             Streams = new List<Stream>();
 
             //  A user should always have at least one Stream.
-            CreateStream();
+            CreateAndAddStream();
         }
 
         public static User Create(UserDto userDto)
@@ -28,16 +28,10 @@ namespace Streamus.Domain
             return user;
         }
 
-        public Stream CreateStream()
+        public Stream CreateAndAddStream()
         {
             string title = string.Format("New Stream {0:D4}", Streams.Count);
             var stream = new Stream(title);
-            return AddStream(stream);
-        }
-
-        public Stream AddStream(Stream stream)
-        {
-            stream.User = this;
             Streams.Add(stream);
 
             return stream;

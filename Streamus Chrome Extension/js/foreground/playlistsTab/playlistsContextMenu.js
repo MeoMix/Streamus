@@ -28,9 +28,8 @@ define(['contextMenu', 'backgroundManager'], function (contextMenu, backgroundMa
                 }
             });
 
-            var stream = backgroundManager.getStreamById(playlist.get('streamId'));
             //  Don't allow deleting of the last playlist in a stream ( at least for now )
-            var isDeleteDisabled = stream.get('playlists').length === 1;
+            var isDeleteDisabled = playlist.get('nextPlaylistId') === playlist.get('id');
 
             this.addContextMenuItem({
                 text: 'Delete playlist',

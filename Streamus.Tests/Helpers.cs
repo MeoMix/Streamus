@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Streamus.Domain;
 using Streamus.Domain.Managers;
 using Streamus.Dto;
@@ -11,6 +12,7 @@ namespace Streamus.Tests
     /// </summary>
     public static class Helpers
     {
+        private static readonly UserManager UserManager = new UserManager();
         private static readonly PlaylistItemManager PlaylistItemManager = new PlaylistItemManager();
         private static readonly StreamManager StreamManager = new StreamManager();
 
@@ -63,23 +65,32 @@ namespace Streamus.Tests
             return playlistDto;
         }
 
+        public static Stream CreateSavedStreamWithPlaylist()
+        {
+            User user = UserManager.CreateUser();
+            Stream stream = user.Streams.First();
+
+            stream.CreateAndAddPlaylist();
+            StreamManager.Save(stream);
+
+            return stream;
+        }
+
         /// <summary>
         ///     Create a new Stream and Playlist, save them to the DB, then generate a PlaylistItemDto
         ///     which has those entities as its parents.
         /// </summary>
         public static PlaylistItemDto CreatePlaylistItemDto()
         {
-            var stream = new Stream();
-            Playlist playlist = stream.CreateAndAddPlaylist();
-
-            StreamManager.Save(stream);
+            Stream stream = CreateSavedStreamWithPlaylist();
+            Guid playlistId = stream.Playlists.First().Id;
 
             Video video = CreateUnsavedVideoWithId();
             VideoDto videoDto = VideoDto.Create(video);
 
             var playlistItemDto = new PlaylistItemDto
                 {
-                    PlaylistId = playlist.Id,
+                    PlaylistId = playlistId,
                     Video = videoDto
                 };
 
@@ -94,11 +105,8 @@ namespace Streamus.Tests
         {
             if (playlistId == default(Guid))
             {
-                var stream = new Stream();
-                Playlist playlist = stream.CreateAndAddPlaylist();
-
-                StreamManager.Save(stream);
-                playlistId = playlist.Id;
+                Stream stream = CreateSavedStreamWithPlaylist();
+                playlistId = stream.Playlists.First().Id;
             }
 
             Video video = CreateUnsavedVideoWithId();

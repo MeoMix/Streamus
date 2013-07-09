@@ -10,9 +10,6 @@ namespace Streamus.Dto
         [DataMember(Name = "id")]
         public Guid Id { get; set; }
 
-        [DataMember(Name = "userId")]
-        public Guid UserId { get; set; }
-
         [DataMember(Name = "title")]
         public string Title { get; set; }
 
