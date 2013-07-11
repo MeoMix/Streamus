@@ -44,5 +44,24 @@ namespace Streamus.Domain.Managers
 
             return user;
         }
+
+        public void Save(User user)
+        {
+            try
+            {
+                NHibernateSessionManager.Instance.BeginTransaction();
+
+                user.ValidateAndThrow();
+                UserDao.Save(user);
+
+                NHibernateSessionManager.Instance.CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
+                throw;
+            }
+        }
     }
 }

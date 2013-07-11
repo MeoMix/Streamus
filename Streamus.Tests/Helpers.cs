@@ -65,8 +65,17 @@ namespace Streamus.Tests
             return playlistDto;
         }
 
+        public static User CreateSavedUserWithPlaylist()
+        {
+            User user = UserManager.CreateUser();
+            UserManager.Save(user);
+
+            return user;
+        }
+
         public static Stream CreateSavedStreamWithPlaylist()
         {
+            //  TODO: Should I be saving user here instead of stream?
             User user = UserManager.CreateUser();
             Stream stream = user.Streams.First();
 
@@ -112,7 +121,7 @@ namespace Streamus.Tests
             Video video = CreateUnsavedVideoWithId();
             VideoDto videoDto = VideoDto.Create(video);
 
-            List<PlaylistItemDto> playlistItemDtos = new List<PlaylistItemDto>(itemsToCreate);
+            List<PlaylistItemDto> playlistItemDtos = new List<PlaylistItemDto>();
 
             for (int i = 0; i < itemsToCreate; i++)
             {

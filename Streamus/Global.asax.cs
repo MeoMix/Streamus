@@ -51,7 +51,6 @@ namespace Streamus
             IPlaylistItemDao playlistItemDao = daoFactory.GetPlaylistItemDao();
             IPlaylistDao playlistDao = daoFactory.GetPlaylistDao();
             IStreamDao streamDao = daoFactory.GetStreamDao();
-            IUserDao userDao = daoFactory.GetUserDao();
 
             Mapper.CreateMap<Playlist, PlaylistDto>()
                   .ReverseMap()

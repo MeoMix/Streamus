@@ -49,6 +49,7 @@ namespace Streamus.Controllers
                 playlist.AddItems(groupingItems);
                 groupingItems.ForEach(i => i.ValidateAndThrow());
 
+                //  TODO: Should I be called PlaylistItemmanager save here?
                 PlaylistManager.Save(playlist);
             }
 

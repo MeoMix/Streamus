@@ -5,6 +5,13 @@
     var playlistItemsCollection = Backbone.Collection.extend({
         model: PlaylistItem,
         
+        parse: function(data) {
+
+            console.log("PARSE CALLED");
+
+            return data;
+        },
+        
         //  I've given this Collection its own Save implementation because when I add/delete from a Playlist
         //  I have to save up to 3 items.   
         save: function (attributes, options) {

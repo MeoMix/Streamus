@@ -8,10 +8,10 @@
     
     <property name="Title" not-null="true" />
     
-    <bag name="Items" inverse="true" fetch="join" cascade="all-delete-orphan" >
+    <set name="Items" inverse="true" fetch="join" cascade="all-delete-orphan" >
       <key column="PlaylistId" />
       <one-to-many class="PlaylistItem" />
-    </bag>
+    </set>
 
     <many-to-one name="Stream" column="StreamId" />
     <many-to-one name="NextPlaylist" column="NextPlaylistId" />

@@ -76,7 +76,7 @@ namespace Streamus.Controllers
             }
             else
             {
-                UsersChannelList.Add(userId, new List<string>{ channelId });
+                UsersChannelList.Add(userId, new List<string> { channelId });
             }
 
             return Json(new

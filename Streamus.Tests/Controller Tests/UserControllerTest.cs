@@ -3,47 +3,54 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using Streamus.Controllers;
+using Streamus.Dao;
 using Streamus.Domain;
+using Streamus.Domain.Interfaces;
+using Streamus.Dto;
 
 namespace Streamus.Tests.Controller_Tests
 {
     [TestFixture]
-    public class UserControllerTest
+    public class UserControllerTest : AbstractTest
     {
+        private static readonly PlaylistItemController PlaylistItemController = new PlaylistItemController();
+        private IUserDao UserDao { get; set; }
+
         /// <summary>
-        /// A StackOverflowException will occur if mappings don't contain fetch="join." Ensure this rule is in place.
+        ///     This code is only ran once for the given TestFixture.
         /// </summary>
+        [TestFixtureSetUp]
+        public new void TestFixtureSetUp()
+        {
+            try
+            {
+                UserDao = DaoFactory.GetUserDao();
+            }
+            catch (TypeInitializationException exception)
+            {
+                throw exception.InnerException;
+            }
+        }
+
         [Test]
         public void GetUserWithBulkPlaylistItemsInStream_UserCreatedWithLotsOfItems_UserHasOneStreamOnePlaylist()
         {
-            User user = new User();
-            Stream stream = Helpers.CreateSavedStreamWithPlaylist();
+            User user = Helpers.CreateSavedUserWithPlaylist();
 
-            //const int iterations = 2;
-            //const int numItemsToCreate = 2142;
-            //Guid playlistId = default(Guid);
+            const int numItemsToCreate = 2000;
 
-            ////  Starting at 1 because I want to use currentIteration to be used in math and makes more sense as 1.
-            //for (int currentIteration = 1; currentIteration <= iterations; currentIteration++)
-            //{
-            //    List<PlaylistItemDto> playlistItemDtos = Helpers.CreatePlaylistItemsDto(numItemsToCreate, playlistId);
+            List<PlaylistItemDto> playlistItemDtos = Helpers.CreatePlaylistItemsDto(numItemsToCreate, user.Streams.First().Playlists.First().Id);
+            PlaylistItemController.CreateMultiple(playlistItemDtos);
 
-            //    var result = PlaylistItemController.CreateMultiple(playlistItemDtos);
+            NHibernateSessionManager.Instance.Clear();
 
-            //    var createdPlaylistItemDtos = (List<PlaylistItemDto>)result.Data;
+            User userFromDatabase = UserDao.Get(user.Id);
 
-            //    //  Make sure we actually get the list back from the Controller.
-            //    Assert.NotNull(createdPlaylistItemDtos);
-            //    Assert.That(createdPlaylistItemDtos.Count == numItemsToCreate);
-
-            //    NHibernateSessionManager.Instance.Clear();
-
-            //    Playlist playlist = PlaylistDao.Get(playlistItemDtos.First().PlaylistId);
-            //    playlistId = playlist.Id;
-
-            //    //  Make sure that the created playlistItem was cascade added to the Playlist
-            //    Assert.That(playlist.Items.Count == numItemsToCreate * currentIteration);
-            //}
+            Assert.That(userFromDatabase.Streams.Count == user.Streams.Count);
+            Assert.That(userFromDatabase.Streams.First().Playlists.Count == user.Streams.First().Playlists.Count);
+            Assert.That(userFromDatabase.Streams.First().Playlists.First().Items.Count() == numItemsToCreate); 
+            Assert.That(userFromDatabase.Streams.First().Playlists.First().Items.Count() == user.Streams.First().Playlists.First().Items.Count());
         }
     }
 }

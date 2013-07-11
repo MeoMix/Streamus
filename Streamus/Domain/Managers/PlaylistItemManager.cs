@@ -119,6 +119,24 @@ namespace Streamus.Domain.Managers
             }
         }
 
+        public void Save(IEnumerable<PlaylistItem> playlistItems)
+        {
+            try
+            {
+                NHibernateSessionManager.Instance.BeginTransaction();
+
+                playlistItems.ToList().ForEach(DoSave);
+
+                NHibernateSessionManager.Instance.CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
+                throw;
+            }
+        }
+
         /// <summary>
         /// This is the work for saving a PlaylistItem without the Transaction wrapper.
         /// </summary>

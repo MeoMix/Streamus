@@ -12,7 +12,7 @@ namespace Streamus.Domain
     {
         public Stream Stream { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
-        public IList<PlaylistItem> Items { get; set; }
+        public ICollection<PlaylistItem> Items { get; set; }
         public PlaylistItem FirstItem { get; set; }
         public Playlist NextPlaylist { get; set; }
         public Playlist PreviousPlaylist { get; set; }
