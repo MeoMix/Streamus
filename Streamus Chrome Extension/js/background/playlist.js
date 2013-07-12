@@ -34,20 +34,27 @@ define(['ytHelper',
             
             //  Convert data which is sent from the server back to a proper Backbone.Model.
             //  Need to recreate submodels as Backbone.Models else they will just be regular Objects.
-            parse: function (data) {
+            parse: function (playlistDto) {
 
-                if (data.items.length > 0) {
+                //  Convert C# Guid.Empty into BackboneJS null
+                for (var key in playlistDto) {
+                    if (playlistDto.hasOwnProperty(key) && playlistDto[key] == '00000000-0000-0000-0000-000000000000') {
+                        playlistDto[key] = null;
+                    }
+                }
+
+                if (playlistDto.items.length > 0) {
                     //  Reset will load the server's response into items as a Backbone.Collection
-                    this.get('items').reset(data.items);
+                    this.get('items').reset(playlistDto.items);
 
                 } else {
                     this.set('items', new PlaylistItems());
                 }
                 
                 // Remove so parse doesn't set and overwrite instance after parse returns.
-                delete data.items;
+                delete playlistDto.items;
                 
-                return data;
+                return playlistDto;
             },
             initialize: function () {
                 var items = this.get('items');
@@ -203,63 +210,39 @@ define(['ytHelper',
             //  This is generally called from the foreground to not couple the Video object with the foreground.
             addItemByInformation: function (videoInformation) {
 
-                //  Strip out the id. An example of $t's contents: tag:youtube.com,2008:video:UwHQp8WWMlg
-                var id = videoInformation.media$group.yt$videoid.$t;
-                var durationInSeconds = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
-                var author = videoInformation.author[0].name.$t;
-
                 var video = new Video({
-                    type: 'youTubeApi',
-                    id: id,
-                    title: videoInformation.title.$t,
-                    duration: durationInSeconds,
-                    author: author
+                    videoInformation: videoInformation
                 });
-                
+
                 this.addItem(video);
             },
 
             addItem: function (video, callback) {
 
-                var playlistId = this.get('id');
-
                 var playlistItem = new PlaylistItem({
-                    playlistId: playlistId,
-                    video: video,
-                    title: video.get('title'),
-                    relatedVideoInformation: []
+                    playlistId: this.get('id'),
+                    video: video
                 });
                 
                 var self = this;
-                //  TODO: Do I need to manually re-map the data for modifiedItems or can it happen implicitly? Seems really fragile as it is.
+
                 //  Save the playlistItem, but push after version from server because the ID will have changed.
                 playlistItem.save({}, {
                     
                     success: function () {
-                        
-                        //  TODO: Maybe I can take the success response data and use it instead of manually writing this logic.
+
+                        //  Update client-side pointers for other items which are affected. The saved playlistItem updates implicitly.
                         var playlistItemId = playlistItem.get('id');
                         var currentItems = self.get('items');
                         
                         if (currentItems.length === 0) {
-
-                            console.log("Self and playlistItem:", self, playlistItem);
-
-                            console.log("Setting firstItemId to: ", playlistItemId);
-
                             self.set('firstItemId', playlistItemId);
-                            playlistItem.set('nextItemId', playlistItemId);
-                            playlistItem.set('previousItemId', playlistItemId);
-                            
                         } else {
                             var firstItem = currentItems.get(self.get('firstItemId'));
                             var lastItem = currentItems.get(firstItem.get('previousItemId'));
-
+                            
                             lastItem.set('nextItemId', playlistItemId);
-                            playlistItem.set('previousItemId', lastItem.get('id'));
-
                             firstItem.set('previousItemId', playlistItemId);
-                            playlistItem.set('nextItemId', firstItem.get('id'));
                         }
                         
                         ytHelper.getRelatedVideoInformation(video.get('id'), function (relatedVideoInformation) {
@@ -289,58 +272,57 @@ define(['ytHelper',
 
                     var playlistItem = new PlaylistItem({
                         playlistId: self.get('id'),
-                        video: video,
-                        //  PlaylistItem title is mutable, video title is immutable.
-                        title: video.get('title'),
-                        relatedVideoInformation: []
+                        video: video
                     });
-
-                    var playlistItems = self.get('items');
-
-                    if (playlistItems.length > 0) {
-                        var firstItem = playlistItems.get(self.get('firstItemId'));
-                        var lastItem = playlistItems.get(firstItem.get('previousItemId'));
-
-                        itemsToSave.add(firstItem, { merge: true });
-                        itemsToSave.add(lastItem, { merge: true });
-                    }
 
                     itemsToSave.push(playlistItem);
                 });
 
                 itemsToSave.save({}, {
                     success: function () {
+                        
+                        var currentItems = self.get('items');
 
-                        //  OOF TERRIBLE.
-                        self.fetch({
-                            success: function () {
-                                //  TODO: For some reason when I call self.trigger then allPlaylists triggers fine, but if I go through fetch it doesnt trigger?
-                                self.trigger('reset', self);
-                                
-                                //  TODO: Could probably be improved for very large playlists being added.
-                                //  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
-                                var sampleSize = videos.length > 30 ? 30 : videos.length;
-                                var randomSampleIndices = helpers.getRandomNonOverlappingNumbers(sampleSize, videos.length);
+                        //  After a bulk save the following properties are still out of date on the playlist:
+                        //  -  firstItemId will have changed if playlist items was empty before.
+                        //  -  firstItem's lastItemId will have changed if playlist was not empty before.
+                        //  -  lastItem's nextItemId will have changed if playlist was not empty before.
+                        if (currentItems.length === 0) {
+                            self.set('firstItemId', itemsToSave.at(0).get('id'));
+                        } else {
+                            var firstItem = currentItems.get(self.get('firstItemId'));
+                            var lastItem = currentItems.get(firstItem.get('previousItemId'));
 
-                                _.each(randomSampleIndices, function (randomIndex) {
-                                    var randomVideo = videos.at(randomIndex);
+                            lastItem.set('nextItemId', itemsToSave.at(0).get('id'));
+                            firstItem.set('previousItemId', itemsToSave.at(itemsToSave.length - 1).get('id'));
+                        }
 
-                                    ytHelper.getRelatedVideoInformation(randomVideo.get('id'), function (relatedVideoInformation) {
-
-                                        var playlistItem = self.get('items').find(function (item) {
-                                            return item.get('video').get('id') == randomVideo.get('id');
-                                        });
-
-                                        playlistItem.set('relatedVideoInformation', relatedVideoInformation);
-                                    });
-                                });
-                                
-                                if (callback) {
-                                    callback();
-                                }
-
-                            }
+                        //  TODO: I think I should be able to just go through .add but it fires the playlistItem constructor oddly.
+                        itemsToSave.each(function (itemToSave) {
+                            self.get('items').push(itemToSave);
                         });
+
+                        //  TODO: Could probably be improved for very large playlists being added.
+                        //  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
+                        var sampleSize = videos.length > 30 ? 30 : videos.length;
+                        var randomSampleIndices = helpers.getRandomNonOverlappingNumbers(sampleSize, videos.length);
+
+                        _.each(randomSampleIndices, function (randomIndex) {
+                            var randomVideo = videos.at(randomIndex);
+
+                            ytHelper.getRelatedVideoInformation(randomVideo.get('id'), function (relatedVideoInformation) {
+
+                                var playlistItem = self.get('items').find(function (item) {
+                                    return item.get('video').get('id') == randomVideo.get('id');
+                                });
+
+                                playlistItem.set('relatedVideoInformation', relatedVideoInformation);
+                            });
+                        });
+
+                        if (callback) {
+                            callback();
+                        }
 
                     },
                     error: function (error) {

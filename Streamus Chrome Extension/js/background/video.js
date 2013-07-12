@@ -14,6 +14,8 @@ define(['programState'], function(programState){
     });
 
     return function (config) {
+
+        console.log("Config.videoInformation:", config.videoInformation);
         
         //  Support passing raw YouTube videoInformation instead of a precise config object.
         if (config.videoInformation !== undefined) {

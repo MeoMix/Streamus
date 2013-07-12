@@ -295,54 +295,28 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
             });
         },
         
-        getFeedResults: function (youTubeUser, getVideosCallCount, callback) {
+        getDataSourceResults: function(dataSource, currentIteration, callback) {
 
-            var maxResultsPerSearch = 50;
-            var startIndex = 1 + (maxResultsPerSearch * getVideosCallCount);
+            //  Only get data from bulky dataSources.
+            if (dataSource.type !== DataSource.YOUTUBE_CHANNEL && dataSource.type !== DataSource.YOUTUBE_PLAYLIST) return;
 
-            $.ajax({
-                type: 'GET',
-                url: 'https://gdata.youtube.com/feeds/api/users/' + youTubeUser + '/uploads',
-                dataType: 'json',
-                data: {
-                    v: 2,
-                    alt: 'json',
-                    key: 'AI39si7voIBGFYe-bcndXXe8kex6-N_OSzM5iMuWCdPCSnZxLB_qIEnQ-HMijHrwN1Y9sFINBi_frhjzVVrYunHH8l77wfbLCA',
-                    'max-results': maxResultsPerSearch,
-                    'start-index': startIndex,
-                },
-                success: function (result) {
-                    
-                    var feedResults = result.feed.entry;
-
-                    //  If the title is blank the video has been deleted from the playlist, no data to fetch.
-                    var validfeedResults = _.filter(feedResults, function (feedResult) {
-                        return $.trim(feedResult.title.$t) !== '';
-                    });
-
-                    if (callback) {
-                        callback(validfeedResults);
-                    }
-                },
-                error: function(error) {
-                    console.error(error);
-                    
-                    if (callback) {
-                        callback(null);
-                    }
-                }
-            });
-        },
-        
-        getPlaylistResults: function (youTubePlaylistId, getVideosCallCount, callback) {
+            var url;
             
+            if (dataSource.type == DataSource.YOUTUBE_CHANNEL) {
+                url = 'https://gdata.youtube.com/feeds/api/users/' + dataSource.id + '/uploads';
+            }
+            else if (dataSource.type == DataSource.YOUTUBE_PLAYLIST) {
+                url = 'https://gdata.youtube.com/feeds/api/playlists/' + dataSource.id;
+            }
+
             var maxResultsPerSearch = 50;
-            var startIndex = 1 + (maxResultsPerSearch * getVideosCallCount);
+            var startIndex = 1 + (maxResultsPerSearch * currentIteration);
 
             $.ajax({
                 type: 'GET',
-                url: 'https://gdata.youtube.com/feeds/api/playlists/' + youTubePlaylistId,
+                url: url,
                 dataType: 'json',
+                
                 data: {
                     v: 2,
                     alt: 'json',
@@ -352,26 +326,30 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
                 },
                 success: function (result) {
 
-                    var playlistResults = result.feed.entry;
-                    
-                    //  If the title is blank the video has been deleted from the playlist, no data to fetch.
-                    var validPlaylistResults = _.filter(playlistResults, function(playlistResult) {
-                        return $.trim(playlistResult.title.$t) !== '';
+                    //  If the video duration has not been provided, video was deleted - skip.
+                    var validResults = _.filter(result.feed.entry, function (resultEntry) {
+                        return resultEntry.media$group.yt$duration !== undefined;
                     });
 
                     if (callback) {
-                        callback(validPlaylistResults);
+                        callback({
+                            iteration: currentIteration,
+                            results: validResults
+                        });
                     }
                 },
                 error: function (error) {
                     console.error(error);
-                    
+
                     if (callback) {
-                        callback(null);
+                        callback({
+                            iteration: currentIteration,
+                            results: []
+                        });
                     }
                 }
             });
-            
+
         }
     };
 });

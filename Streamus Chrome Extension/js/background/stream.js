@@ -12,6 +12,19 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
             };
         },
         urlRoot: programState.getBaseUrl() + 'Video/',
+        
+        parse: function (streamDto) {
+            
+            //  Convert C# Guid.Empty into BackboneJS null
+            for (var key in streamDto) {
+                if (streamDto.hasOwnProperty(key) && streamDto[key] == '00000000-0000-0000-0000-000000000000') {
+                    streamDto[key] = null;
+                }
+            }
+
+            return streamDto;
+        },
+
         initialize: function () {
             var playlists = this.get('playlists');
 
@@ -126,118 +139,57 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
         addPlaylistByDataSource: function (playlistTitle, dataSource, callback) {
             var self = this;
 
-            console.log("Self at start:", self);
-            
             var playlist = new Playlist({
                 title: playlistTitle,
                 streamId: this.get('id'),
                 dataSource: dataSource
             });
-            
-            var getVideosCallCount = 0;
-            var videosHandled = 0;
-            var orderedVideosArray = [];
-            var getDataFromYouTubeFunc = null;
-
-            var onGetResults = function(results) {
-                console.log("Feed results:", results);
-
-                //  Results will be null if an error occurs while fetching data.
-                if (results == null || results.length === 0) {
-                    console.log("DATA SOURCE LOADED");
-                    self.set('dataSourceLoaded', true);
-                } else {
-
-                    //  Receive up to 50 videos. Save to the server, then add to playlist in the order they came in.
-                    _.each(results, function (videoInformation, index) {
-                            
-                        if (videoInformation != null) {
-                            
-                            //  Insert at index to preserve order of videos retrieved from YouTube API
-                            orderedVideosArray[index] = new Video({
-                                 videoInformation: videoInformation
-                            });
-                            
-                        }
-                            
-                        //  Periodicially send bursts of packets (up to 50 videos in length) to the server and trigger visual update.
-                        videosHandled++;
-
-                        console.log("Videos handled / result count:", videosHandled, results.length);
-                        if (videosHandled == results.length) {
-
-                            var videos = new Videos(orderedVideosArray);
-
-                            console.log("VIDEOS:", videos, videos.length);
-
-                            //  orderedVideosArray may have some empty slots which get converted to empty Video objects; drop 'em.
-                            var videosWithIds = videos.withIds();
-
-                            console.log("With IDs:", videosWithIds.length);
-
-                            playlist.addItems(videosWithIds, function () {
-                                getVideosCallCount++;
-
-                                //console.log("Added items at:" + new DateTime);
-                                getDataFromYouTubeFunc(dataSource.id, getVideosCallCount, onGetResults);
-                                //setTimeout(function () {
-                                    
-                                //    if (getVideosCallCount < 2) {
-                                //        //  Recursively call until all data retrieved.
-                                        
-                                //    }
-
-                                //}, 4000);
-
-
-
-                                
-                            });
-                            
-                            orderedVideosArray = [];
-                            videosHandled = 0;
-                        }
-                    });
-                }
-            };
 
             //  Save the playlist, but push after version from server because the ID will have changed.
             playlist.save({}, {
                 success: function () {
 
-                    console.log("Playlist saved.");
-
-                    var playlistId = playlist.get('id');
+                    //  Update other affected Playlist pointers. DB is already correct, but backbone doesn't update automatically.
                     var currentPlaylists = self.get('playlists');
 
                     if (currentPlaylists.length === 0) {
-                        self.set('firstPlaylistId', playlistId);
-                        playlist.set('nextPlaylistId', playlistId);
-                        playlist.set('previousPlaylistId', playlistId);
+                        self.set('firstPlaylistId', playlist.get('id'));
                     } else {
                         var firstPlaylist = currentPlaylists.get(self.get('firstPlaylistId'));
                         var lastPlaylist = currentPlaylists.get(firstPlaylist.get('previousPlaylistId'));
 
-                        lastPlaylist.set('nextPlaylistId', playlistId);
-                        playlist.set('previousPlaylistId', lastPlaylist.get('id'));
-
-                        firstPlaylist.set('previousPlaylistId', playlistId);
-                        playlist.set('nextPlaylistId', firstPlaylist.get('id'));
+                        lastPlaylist.set('nextPlaylistId', playlist.get('id'));
+                        firstPlaylist.set('previousPlaylistId', playlist.get('id'));
                     }
 
                     currentPlaylists.push(playlist);
-
-                    //  Load any potential bulk data from YouTube after the Playlist has saved successfully.
-                    if (dataSource.type === DataSource.YOUTUBE_PLAYLIST) {
-                        getDataFromYouTubeFunc = ytHelper.getPlaylistResults;
-                    }
-                    else if (dataSource.type === DataSource.YOUTUBE_CHANNEL) {
-                        getDataFromYouTubeFunc = ytHelper.getFeedResults;
-                    }
                     
-                    if (getDataFromYouTubeFunc) {
-                        getDataFromYouTubeFunc(dataSource.id, getVideosCallCount, onGetResults);
-                    }
+                    //  Recursively load any potential bulk data from YouTube after the Playlist has saved successfully.
+                    ytHelper.getDataSourceResults(dataSource, 0, function onGetDataSourceData(response) {
+
+                        if (response.results.length === 0) {
+                            playlist.set('dataSourceLoaded', true);
+                        } else {
+                    
+                            //  Turn videoInformation responses into a Video collection.
+                            var videos = new Videos(_.map(response.results, function(videoInformation) {
+
+                                return new Video({
+                                    videoInformation: videoInformation
+                                });
+
+                            }));
+
+                            //  Periodicially send bursts of packets to the server and trigger visual update.
+                            playlist.addItems(videos, function () {
+
+                                //  Request next batch of data by iteration once addItems has succeeded.
+                                ytHelper.getDataSourceResults(dataSource, ++response.iteration, onGetDataSourceData);
+
+                            });
+                    
+                        }
+                    });
                     
                     //  Data might still be loading, but feel free to callback now as it could take a while.
                     if (callback) {
@@ -253,7 +205,7 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
         },
         
         removePlaylistById: function(playlistId) {
-            //  TODO: When deleting the active playlist - set active playlist to the next playlist.
+
             var playlists = this.get('playlists');
 
             var playlist = playlists.get(playlistId);
@@ -279,12 +231,6 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
                     console.error(error);
                 }
             });
-        },
-        
-        getPlaylistById: function(playlistId) {
-            var playlist = this.get('playlists').get(playlistId) || null;
-           
-            return playlist;
         }
     });
     

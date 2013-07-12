@@ -5,81 +5,88 @@
     var playlistItemsCollection = Backbone.Collection.extend({
         model: PlaylistItem,
         
-        parse: function(data) {
-
-            console.log("PARSE CALLED");
-
-            return data;
-        },
-        
-        //  I've given this Collection its own Save implementation because when I add/delete from a Playlist
-        //  I have to save up to 3 items.   
         save: function (attributes, options) {
             
-            var self = this;
-            
-            if (this.length == 1) {
-                
-                //  If there's only 1 item to save then might as well call the appropriate Controller method.
-                this.at(0).save({}, {
+            //  TODO: This doesn't support saving old items yet -- only a bunch of brand new ones.
+            if (this.filter(function(item) {
+                return !item.isNew();
+            }).length > 0) {
+                throw "Not Supported Yet";
+            }
+
+            var newItems = this.filter(function (item) {
+                return item.isNew();
+            });
+
+            var newItemsJqXhr = false;
+            if (newItems.length === 1) {
+                //  Default to Backbone if Collection is creating only 1 item.
+                newItems[0].save({}, {
                     success: options ? options.success : null,
                     error: options ? options.error : null
                 });
-                
-            } else {
-                //  TODO: If I only get 1 old or 1 new item then it'll call updateMultiple with only 1 item which works but isn't intuitive.
-                var oldItems = self.filter(function (item) {
-                    return !item.isNew();
-                });
-
-                console.log("oldItems:", oldItems);
-
-                //var updateMultipleJqXhr = oldItems.length > 0 ? updateMultiple(oldItems) : null;
-                
-                var newItems = self.filter(function (item) {
-                    return item.isNew();
-                });
-                
-                console.log("newItems:", newItems);
-
-                var createMultipleJqXhr = newItems.length > 0 ? createMultiple(newItems) : null;
-
-                //  TODO: Consider passing back more data to success if it becomes necessary. Not needed currently.
-                $.when(createMultipleJqXhr).done(function () {
-                    
-                    if (options.success) {
-                        options.success();
-                    }
-                    
-                });
-
             }
-            
-            function updateMultiple() {
-
-                return $.ajax({
-                    url: programState.getBaseUrl() + 'PlaylistItem/UpdateMultiple',
-                    type: 'PUT',
-                    dataType: 'json',
-                    contentType: 'application/json; charset=utf-8',
-                    data: JSON.stringify(oldItems),
-                    error: options ? options.error : null
-                });
+            else if (newItems.length > 1) {
                 
-            }
-            
-            function createMultiple() {
-
-                return $.ajax({
+                //  Otherwise revert to a CreateMultiple
+                newItemsJqXhr = $.ajax({
                     url: programState.getBaseUrl() + 'PlaylistItem/CreateMultiple',
                     type: 'POST',
                     dataType: 'json',
-                    contentType: 'application/json; charset=utf-8',
                     data: JSON.stringify(newItems),
                     error: options ? options.error : null
                 });
                 
             }
+
+            $.when(newItemsJqXhr).done(function (createdItems) {
+   
+                if (createdItems) {
+
+                    //var getCharCodes = function (s) {
+
+                    //    var cc = [];
+
+                    //    for (var i = 0; i < s.length; ++i)
+                    //        cc[i] = s.charCodeAt(i);
+
+                    //    return cc;
+                    //};
+                    
+                    //  For each of the createdItems, remap properties back to the old items.
+                    _.each(createdItems, function (createdItem) {
+
+                        var matchingItemToCreate = _.find(newItems, function (newItem) {
+
+                            //console.log("new item:", newItem.get('title'), getCharCodes(newItem.get('title')));
+                            //console.log("Created item:", createdItem.title, getCharCodes(createdItem.title));
+
+                            //  If two items have the same title then they're equal -- skip ones already set to a savedItem by checking isNew
+                            return newItem.get('title') == createdItem.title && newItem.isNew();
+                        });
+
+                        //console.log("Created Item:", createdItem);
+                        //console.log("newItems:", newItems);
+                        //console.log("MatchingItemToCreate:", matchingItemToCreate);
+                        
+
+
+                        //  Call parse to emulate going through the Model's save logic.
+                        var parsedCreatedItem = matchingItemToCreate.parse(createdItem);
+
+                        //  Call set to move attributes from parsedCreatedItem to matchingItemToCreate.
+                        matchingItemToCreate.set(parsedCreatedItem);
+
+                    });
+
+                    //  TODO: Pass intelligent paramaters back to options.success
+                    if (options.success) {
+                        options.success();
+                    }
+                    
+                }
+
+            });
 
         },
 
@@ -88,23 +95,13 @@
             //  then flatten the arrays into a collection of videos.
 
             var relatedVideos = _.flatten(this.map(function (item) {
-                var videoInformationList = item.get('relatedVideoInformation');
 
-                return _.map(videoInformationList, function(videoInformation) {
-                    //  Strip out the id. An example of $t's contents: tag:youtube.com,2008:video:UwHQp8WWMlg
-                    var id = videoInformation.media$group.yt$videoid.$t;
-                    var durationInSeconds = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
-                    var author = videoInformation.author[0].name.$t;
+                return _.map(item.get('relatedVideoInformation'), function(videoInformation) {
 
-                    //  Don't forget to set the playlistId after adding a related video to a playlist later.
-                    var video = new Video({
-                        id: id,
-                        title: videoInformation.title.$t,
-                        duration: durationInSeconds,
-                        author: author
+                    return new Video({
+                        videoInformation: videoInformation
                     });
-
-                    return video;
+                    
                 });
 
             }));

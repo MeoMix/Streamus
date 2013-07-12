@@ -237,6 +237,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
             var flashCookieValue = 'f3=40008';
             var alternateFlashCookieValue = 'f3=40000';
             var html5CookieValue = 'f2=40001000';
+            //var html5CookieValue = 'f2=40000000';
            
             //  Swap out the flash cookie variable with the HTML5 counterpart.
             if (cookieRequestHeader.value.indexOf(flashCookieValue) !== -1) {
