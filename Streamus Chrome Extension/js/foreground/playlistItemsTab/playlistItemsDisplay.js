@@ -57,15 +57,6 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
         }
     }
 
-    //  TODO: Would be nice to just listen to activePlaylist? Not sure why I can't, but I'm not seeing the reset event fire.
-    backgroundManager.get('allPlaylists').on('reset', function (playlist) {
-
-        if (playlist == backgroundManager.get('activePlaylist')) {
-            reload();
-        }
-        
-    });
-
     backgroundManager.on('change:activePlaylist', function () {
 
         reload();
@@ -75,11 +66,14 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
     var emptyPlaylistNotificationId = 'EmptyPlaylistNotification';
     backgroundManager.get('allPlaylistItems').on('add', function(item) {
 
+        console.log("add item firing");
+
         var listItem = buildListItem(item);
 
         if (playlistItemList.find('li').length > 0) {
             
             var previousItemId = item.get('previousItemId');
+            
             var previousItemLi = playlistItemList.find('li[data-itemid="' + previousItemId + '"]');
             listItem.insertAfter(previousItemLi);
             

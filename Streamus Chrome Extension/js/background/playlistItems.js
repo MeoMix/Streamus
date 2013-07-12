@@ -74,6 +74,8 @@
                         //  Call parse to emulate going through the Model's save logic.
                         var parsedCreatedItem = matchingItemToCreate.parse(createdItem);
 
+                        console.log("parsed create item:", parsedCreatedItem);
+
                         //  Call set to move attributes from parsedCreatedItem to matchingItemToCreate.
                         matchingItemToCreate.set(parsedCreatedItem);
 

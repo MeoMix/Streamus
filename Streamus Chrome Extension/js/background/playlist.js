@@ -283,24 +283,34 @@ define(['ytHelper',
                         
                         var currentItems = self.get('items');
 
+                        console.log("Current items:", currentItems);
+                        
+                        //  TODO: I think I should be able to just go through .add but it fires the playlistItem constructor oddly.
+                        itemsToSave.each(function (itemToSave) {
+                            self.get('items').push(itemToSave);
+                        });
+
                         //  After a bulk save the following properties are still out of date on the playlist:
                         //  -  firstItemId will have changed if playlist items was empty before.
                         //  -  firstItem's lastItemId will have changed if playlist was not empty before.
                         //  -  lastItem's nextItemId will have changed if playlist was not empty before.
                         if (currentItems.length === 0) {
-                            self.set('firstItemId', itemsToSave.at(0).get('id'));
+                            //  Silent because the data just came from the sever
+                            self.set('firstItemId', itemsToSave.at(0).get('id'), {
+                                silent: true
+                            });
+
+                            console.log("itemsToSave first:", itemsToSave.at(0), itemsToSave);
+
                         } else {
                             var firstItem = currentItems.get(self.get('firstItemId'));
                             var lastItem = currentItems.get(firstItem.get('previousItemId'));
 
                             lastItem.set('nextItemId', itemsToSave.at(0).get('id'));
                             firstItem.set('previousItemId', itemsToSave.at(itemsToSave.length - 1).get('id'));
-                        }
 
-                        //  TODO: I think I should be able to just go through .add but it fires the playlistItem constructor oddly.
-                        itemsToSave.each(function (itemToSave) {
-                            self.get('items').push(itemToSave);
-                        });
+                            console.log("first item and list item:", firstItem, lastItem);
+                        }
 
                         //  TODO: Could probably be improved for very large playlists being added.
                         //  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
