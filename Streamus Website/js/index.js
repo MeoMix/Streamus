@@ -1,8 +1,4 @@
-﻿function onGooglePlusOneButtonReady(jsonParam) {
-    console.log("hey");
-    alert('hi');
-}
-$(function () {
+﻿$(function () {
     'use strict';
     
     var installButtonView = Backbone.View.extend({

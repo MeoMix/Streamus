@@ -75,14 +75,9 @@ namespace Streamus.Tests
 
         public static Stream CreateSavedStreamWithPlaylist()
         {
-            //  TODO: Should I be saving user here instead of stream?
-            User user = UserManager.CreateUser();
-            Stream stream = user.Streams.First();
+            User user = CreateSavedUserWithPlaylist();
 
-            stream.CreateAndAddPlaylist();
-            StreamManager.Save(stream);
-
-            return stream;
+            return user.Streams.First();
         }
 
         /// <summary>

@@ -245,6 +245,7 @@
     <Compile Include="Domain\Managers\PlaylistManager.cs" />
     <Compile Include="Domain\Managers\UserManager.cs" />
     <Compile Include="Domain\Playlist.cs" />
+    <Compile Include="Domain\UserChannel.cs" />
     <Compile Include="Domain\Validators\ShareCodeValidator.cs" />
     <Compile Include="Domain\Validators\ErrorValidator.cs" />
     <Compile Include="Domain\Validators\StreamValidator.cs" />

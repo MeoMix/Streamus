@@ -1,20 +1,19 @@
-﻿using System;
+﻿using Streamus.Domain;
+using Streamus.Domain.Managers;
+using Streamus.Dto;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
-using Streamus.Domain;
-using Streamus.Domain.Managers;
-using Streamus.Dto;
 
 namespace Streamus.Controllers
 {
     public class PlaylistItemController : Controller
     {
         private static readonly PlaylistItemManager PlaylistItemManager = new PlaylistItemManager();
-        private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
 
         [HttpPost]
         public JsonDataContractActionResult Create(PlaylistItemDto playlistItemDto)
@@ -34,12 +33,6 @@ namespace Streamus.Controllers
         }
 
         [HttpPost]
-        public ActionResult Test(string testString)
-        {
-            return Json(testString);
-        }
-
-        [HttpPost]
         public JsonDataContractActionResult CreateMultiple(List<PlaylistItemDto> playlistItemDtos)
         {
             List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos);
@@ -54,13 +47,12 @@ namespace Streamus.Controllers
                 playlist.AddItems(groupingItems);
                 groupingItems.ForEach(i => i.ValidateAndThrow());
 
-                //  TODO: Should I be called PlaylistItemmanager save here?
-                PlaylistManager.Save(playlist);
+                PlaylistItemManager.Save(groupingItems);
             }
 
             List<PlaylistItemDto> savedPlaylistItemDtos = PlaylistItemDto.Create(playlistItems);
 
-            return new JsonDataContractActionResult(playlistItemDtos);
+            return new JsonDataContractActionResult(savedPlaylistItemDtos);
         }
 
         [HttpPut]

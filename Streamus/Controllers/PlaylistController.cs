@@ -1,12 +1,12 @@
-﻿using log4net;
+﻿using System;
+using System.Reflection;
+using System.Web.Mvc;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
 using Streamus.Dto;
-using System;
-using System.Reflection;
-using System.Web.Mvc;
+using log4net;
 
 namespace Streamus.Controllers
 {
@@ -102,8 +102,12 @@ namespace Streamus.Controllers
                 });
         }
 
+        /// <summary>
+        ///     Retrieves a ShareCode relating to a Playlist, create a copy of the Playlist referenced by the ShareCode,
+        ///     and return the copied Playlist.
+        /// </summary>
         [HttpGet]
-        public JsonResult CreateAndGetCopyByShareCode(string shareCodeShortId, string urlFriendlyEntityTitle, Guid streamId)
+        public JsonResult CreateCopyByShareCode(string shareCodeShortId, string urlFriendlyEntityTitle, Guid streamId)
         {
             ShareCode shareCode = ShareCodeDao.GetByShortIdAndEntityTitle(shareCodeShortId, urlFriendlyEntityTitle);
 
@@ -118,23 +122,16 @@ namespace Streamus.Controllers
             }
 
             //  Never return the sharecode's playlist reference. Make a copy of it to give out so people can't modify the original.
-            Playlist copyablePlaylist = PlaylistDao.Get(shareCode.EntityId);
+            Playlist playlistToCopy = PlaylistDao.Get(shareCode.EntityId);
 
             Stream stream = StreamDao.Get(streamId);
 
-            var playlist = new Playlist();
-            stream.AddPlaylist(playlist);
-            StreamDao.Save(stream);
+            var playlistCopy = new Playlist(playlistToCopy);
+            stream.AddPlaylist(playlistCopy);
 
-            //  TODO: I think I have to call save on my playlist before calling copy to add items to it because it expects the playlist to have an ID already
-            PlaylistDao.Save(playlist);
+            PlaylistManager.Save(playlistCopy);
 
-            playlist.Copy(copyablePlaylist);
-
-            PlaylistManager.Save(playlist);
-
-            PlaylistDto playlistDto = PlaylistDto.Create(playlist);
-
+            PlaylistDto playlistDto = PlaylistDto.Create(playlistCopy);
             return new JsonDataContractActionResult(playlistDto);
         }
     }

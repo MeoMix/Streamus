@@ -290,46 +290,43 @@ define(['ytHelper',
                         //  -  firstItemId will have changed if playlist items was empty before.
                         //  -  firstItem's lastItemId will have changed if playlist was not empty before.
                         //  -  lastItem's nextItemId will have changed if playlist was not empty before.
-                        //if (currentItems.length === 0) {
-                        //    //  Silent because the data just came from the sever
-                        //    self.set('firstItemId', itemsToSave.at(0).get('id'), {
-                        //        silent: true
-                        //    });
+                        if (currentItems.length === 0) {
+                            //  Silent because the data just came from the sever
+                            self.set('firstItemId', itemsToSave.at(0).get('id'), {
+                                silent: true
+                            });
 
-                        //    console.log("itemsToSave first:", itemsToSave.at(0), itemsToSave);
+                            console.log("itemsToSave first:", itemsToSave.at(0), itemsToSave);
 
-                        //} else {
-                        //    var firstItem = currentItems.get(self.get('firstItemId'));
-                        //    var lastItem = currentItems.get(firstItem.get('previousItemId'));
+                        } else {
+                            var firstItem = currentItems.get(self.get('firstItemId'));
+                            var lastItem = currentItems.get(firstItem.get('previousItemId'));
 
-                        //    lastItem.set('nextItemId', itemsToSave.at(0).get('id'));
-                        //    firstItem.set('previousItemId', itemsToSave.at(itemsToSave.length - 1).get('id'));
+                            lastItem.set('nextItemId', itemsToSave.at(0).get('id'));
+                            firstItem.set('previousItemId', itemsToSave.at(itemsToSave.length - 1).get('id'));
 
-                        //    console.log("first item and list item:", firstItem, lastItem);
-                        //}
+                            console.log("first item and list item:", firstItem, lastItem);
+                        }
                         
-                        ////  TODO: I think I should be able to just go through .add but it fires the playlistItem constructor oddly.
-                        //itemsToSave.each(function (itemToSave) {
-                        //    self.get('items').push(itemToSave);
-                        //});
+                        self.get('items').add(itemsToSave.models);
 
-                        ////  TODO: Could probably be improved for very large playlists being added.
-                        ////  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
-                        //var sampleSize = videos.length > 30 ? 30 : videos.length;
-                        //var randomSampleIndices = helpers.getRandomNonOverlappingNumbers(sampleSize, videos.length);
+                        //  TODO: Could probably be improved for very large playlists being added.
+                        //  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
+                        var sampleSize = videos.length > 30 ? 30 : videos.length;
+                        var randomSampleIndices = helpers.getRandomNonOverlappingNumbers(sampleSize, videos.length);
 
-                        //_.each(randomSampleIndices, function (randomIndex) {
-                        //    var randomVideo = videos.at(randomIndex);
+                        _.each(randomSampleIndices, function (randomIndex) {
+                            var randomVideo = videos.at(randomIndex);
 
-                        //    ytHelper.getRelatedVideoInformation(randomVideo.get('id'), function (relatedVideoInformation) {
+                            ytHelper.getRelatedVideoInformation(randomVideo.get('id'), function (relatedVideoInformation) {
 
-                        //        var playlistItem = self.get('items').find(function (item) {
-                        //            return item.get('video').get('id') == randomVideo.get('id');
-                        //        });
+                                var playlistItem = self.get('items').find(function (item) {
+                                    return item.get('video').get('id') == randomVideo.get('id');
+                                });
 
-                        //        playlistItem.set('relatedVideoInformation', relatedVideoInformation);
-                        //    });
-                        //});
+                                playlistItem.set('relatedVideoInformation', relatedVideoInformation);
+                            });
+                        });
 
                         if (callback) {
                             callback();

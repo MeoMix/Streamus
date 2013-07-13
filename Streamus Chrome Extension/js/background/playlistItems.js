@@ -44,43 +44,18 @@
 
                 if (createdItems) {
 
-                    //var getCharCodes = function (s) {
-
-                    //    var cc = [];
-
-                    //    for (var i = 0; i < s.length; ++i)
-                    //        cc[i] = s.charCodeAt(i);
-
-                    //    return cc;
-                    //};
-                    
                     //  For each of the createdItems, remap properties back to the old items.
                     _.each(createdItems, function (createdItem) {
 
                         var matchingNewItem = _.find(newItems, function (newItem) {
-
-                            console.log("new item:", newItem.get('title'));
-                            console.log("Created item:", createdItem.title);
-
-                            //  If two items have the same title then they're equal -- skip ones already set to a savedItem by checking isNew
-                            return newItem.get('title') == createdItem.title && newItem.isNew();
+                            return newItem.cid == createdItem.cid;
                         });
-
-                        //console.log("Created Item:", createdItem);
-                        //console.log("newItems:", newItems);
-                        //console.log("MatchingItemToCreate:", matchingItemToCreate);
-                        
-
 
                         //  Call parse to emulate going through the Model's save logic.
                         var parsedNewItem = matchingNewItem.parse(createdItem);
 
-                        //console.log("parsed new item:", parsedNewItem);
-
                         //  Call set to move attributes from parsedCreatedItem to matchingItemToCreate.
                         matchingNewItem.set(parsedNewItem);
-                        //console.log("Matching new item set:", matchingNewItem);
-
                     });
 
                     //  TODO: Pass intelligent paramaters back to options.success

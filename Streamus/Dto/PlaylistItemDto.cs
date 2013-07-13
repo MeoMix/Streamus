@@ -28,6 +28,9 @@ namespace Streamus.Dto
         [DataMember(Name = "video")]
         public VideoDto Video { get; set; }
 
+        [DataMember(Name = "cid")]
+        public string Cid { get; set; }
+
         public PlaylistItemDto()
         {
             Id = Guid.Empty;

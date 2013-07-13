@@ -32,10 +32,10 @@ define(['helpers', 'programState', 'video'], function(helpers, programState, Vid
 
             return playlistItemDto;
         },
-        toJSON: function () {
-            
-
-
+        toJSON: function() {
+            var json = Backbone.Model.prototype.toJSON.apply(this, arguments);
+            json.cid = this.cid;
+            return json;
         },
         initialize: function () {
 
@@ -55,7 +55,7 @@ define(['helpers', 'programState', 'video'], function(helpers, programState, Vid
 
     //  Public exposure of a constructor for building new PlaylistItem objects.
     return function (config) {
-        
+
         //  Default the PlaylistItem's title to the Video's title, but allow overriding.
         if (config && config.title === undefined || config.title === '') {
             console.log("Config:", config);

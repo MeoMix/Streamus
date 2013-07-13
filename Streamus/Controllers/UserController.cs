@@ -1,13 +1,14 @@
-﻿using log4net;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Web.Mvc;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
 using Streamus.Dto;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Web.Mvc;
+using log4net;
 
 namespace Streamus.Controllers
 {
@@ -15,8 +16,8 @@ namespace Streamus.Controllers
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly UserManager UserManager = new UserManager();
-        //  TODO: Consider creating a class for this if it gets any more complicated.
-        private static Dictionary<Guid, List<string>> UsersChannelList = new Dictionary<Guid, List<string>>();  
+
+        private static List<UserChannel> UserChannels = new List<UserChannel>();
 
         private readonly IUserDao UserDao;
 
@@ -25,7 +26,7 @@ namespace Streamus.Controllers
             try
             {
                 UserDao = new UserDao();
-                UsersChannelList = new Dictionary<Guid, List<string>>();
+                UserChannels = new List<UserChannel>();
             }
             catch (TypeInitializationException exception)
             {
@@ -57,32 +58,32 @@ namespace Streamus.Controllers
         }
 
         /// <summary>
-        /// Record a user's extension's channelId. This is for pushMessaging so that
-        /// the extension can receive updates from the user's other instances of the extension.
-        /// This will keep all the extensions in-sync if the user has more than 1 instance of Streamus running.
+        ///     Record a user's extension's channelId. This is for pushMessaging so that
+        ///     the extension can receive updates from the user's other instances of the extension.
+        ///     This will keep all the extensions in-sync if the user has more than 1 instance of Streamus running.
         /// </summary>
         [HttpPost]
         public ActionResult AddChannelId(Guid userId, string channelId)
         {
-            if (UsersChannelList.ContainsKey(userId))
+            UserChannel existingUserChannel = UserChannels.FirstOrDefault(uc => uc.UserId == userId);
+
+            if (existingUserChannel == null)
             {
-                List<string> userChannelList = UsersChannelList[userId];
-
-                if (!userChannelList.Contains(channelId))
-                {
-                    userChannelList.Add(channelId);
-                }
-
+                var userChannel = new UserChannel(userId, new List<string> {channelId});
+                UserChannels.Add(userChannel);
             }
             else
             {
-                UsersChannelList.Add(userId, new List<string> { channelId });
+                if (!existingUserChannel.ChannelIds.Contains(channelId))
+                {
+                    existingUserChannel.ChannelIds.Add(channelId);
+                }
             }
 
             return Json(new
-            {
-                success = true
-            });
+                {
+                    success = true
+                });
         }
     }
 }

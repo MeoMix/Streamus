@@ -99,7 +99,7 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
             var self = this;
 
             $.ajax({
-                url: programState.getBaseUrl() + 'Playlist/CreateAndGetCopyByShareCode',
+                url: programState.getBaseUrl() + 'Playlist/CreateCopyByShareCode',
                 type: 'GET',
                 dataType: 'json',
                 data: {

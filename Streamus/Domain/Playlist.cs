@@ -30,6 +30,12 @@ namespace Streamus.Domain
             Title = title;
         }
 
+        public Playlist(Playlist playlist)
+            : this()
+        {
+            Copy(playlist);
+        }
+
         public static Playlist Create(PlaylistDto playlistDto)
         {
             Playlist playlist = Mapper.Map<PlaylistDto, Playlist>(playlistDto);

@@ -15,6 +15,9 @@ namespace Streamus.Domain
         public string Title { get; set; }
         public Video Video { get; set; }
 
+        //  Not written to the database. Used for client to tell who is who after a save.
+        public string Cid { get; set; }
+
         public PlaylistItem()
         {
             Id = Guid.Empty;

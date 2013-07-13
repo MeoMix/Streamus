@@ -1,8 +1,7 @@
-﻿using System;
-using System.Runtime.Serialization;
-using AutoMapper;
+﻿using AutoMapper;
 using Streamus.Domain;
-using Streamus.Domain.Interfaces;
+using System;
+using System.Runtime.Serialization;
 
 namespace Streamus.Dto
 {
@@ -31,20 +30,6 @@ namespace Streamus.Dto
             EntityType = ShareableEntityType.None;
             ShortId = string.Empty;
             UrlFriendlyEntityTitle = string.Empty;
-        }
-
-        public ShareCodeDto(IShareableEntity shareableEntity)
-            : this()
-        {
-            //  TODO: Fix this.
-            if (shareableEntity is PlaylistDto)
-            {
-                EntityType = ShareableEntityType.Playlist;
-            }
-
-            EntityId = shareableEntity.Id;
-            UrlFriendlyEntityTitle = shareableEntity.GetUrlFriendlyTitle();
-            ShortId = shareableEntity.GetShortId();
         }
 
         public static ShareCodeDto Create(ShareCode shareCode)

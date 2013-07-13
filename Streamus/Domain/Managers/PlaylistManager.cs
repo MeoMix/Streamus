@@ -64,7 +64,7 @@ namespace Streamus.Domain.Managers
         {
             foreach (PlaylistItem playlistItem in playlist.Items)
             {
-                //  TODO: This is a bit of a hack, but NHibernate pays attention to the "dirtyness" of immutable entities.
+                //  This is a bit of a hack, but NHibernate pays attention to the "dirtyness" of immutable entities.
                 //  As such, if two PlaylistItems reference the same Video object -- NonUniqueObjectException is thrown even though no changes
                 //  can be persisted to the database.
                 playlistItem.Video = VideoDao.Merge(playlistItem.Video);
