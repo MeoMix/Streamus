@@ -152,6 +152,8 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
                     //  Update other affected Playlist pointers. DB is already correct, but backbone doesn't update automatically.
                     var currentPlaylists = self.get('playlists');
 
+                    console.log("Playlist saved. Length:", currentPlaylists.length);
+
                     if (currentPlaylists.length === 0) {
                         self.set('firstPlaylistId', playlist.get('id'));
                     } else {

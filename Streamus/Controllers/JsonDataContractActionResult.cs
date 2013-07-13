@@ -28,7 +28,7 @@ namespace Streamus.Controllers
             if (Data != null)
             {
                 var serializer = new DataContractJsonSerializer(Data.GetType());
-                context.HttpContext.Response.ContentType = "application/json";
+                context.HttpContext.Response.ContentType = "application/json; charset=utf-8";
                 serializer.WriteObject(context.HttpContext.Response.OutputStream, Data);
             }
         }

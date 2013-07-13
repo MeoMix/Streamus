@@ -27,11 +27,12 @@
                 });
             }
             else if (newItems.length > 1) {
-                
+
                 //  Otherwise revert to a CreateMultiple
                 newItemsJqXhr = $.ajax({
                     url: programState.getBaseUrl() + 'PlaylistItem/CreateMultiple',
                     type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
                     dataType: 'json',
                     data: JSON.stringify(newItems),
                     error: options ? options.error : null
@@ -40,7 +41,7 @@
             }
 
             $.when(newItemsJqXhr).done(function (createdItems) {
-   
+
                 if (createdItems) {
 
                     //var getCharCodes = function (s) {
@@ -56,10 +57,10 @@
                     //  For each of the createdItems, remap properties back to the old items.
                     _.each(createdItems, function (createdItem) {
 
-                        var matchingItemToCreate = _.find(newItems, function (newItem) {
+                        var matchingNewItem = _.find(newItems, function (newItem) {
 
-                            //console.log("new item:", newItem.get('title'), getCharCodes(newItem.get('title')));
-                            //console.log("Created item:", createdItem.title, getCharCodes(createdItem.title));
+                            console.log("new item:", newItem.get('title'));
+                            console.log("Created item:", createdItem.title);
 
                             //  If two items have the same title then they're equal -- skip ones already set to a savedItem by checking isNew
                             return newItem.get('title') == createdItem.title && newItem.isNew();
@@ -72,12 +73,13 @@
 
 
                         //  Call parse to emulate going through the Model's save logic.
-                        var parsedCreatedItem = matchingItemToCreate.parse(createdItem);
+                        var parsedNewItem = matchingNewItem.parse(createdItem);
 
-                        console.log("parsed create item:", parsedCreatedItem);
+                        //console.log("parsed new item:", parsedNewItem);
 
                         //  Call set to move attributes from parsedCreatedItem to matchingItemToCreate.
-                        matchingItemToCreate.set(parsedCreatedItem);
+                        matchingNewItem.set(parsedNewItem);
+                        //console.log("Matching new item set:", matchingNewItem);
 
                     });
 

@@ -32,7 +32,11 @@ define(['helpers', 'programState', 'video'], function(helpers, programState, Vid
 
             return playlistItemDto;
         },
+        toJSON: function () {
+            
 
+
+        },
         initialize: function () {
 
             var video = this.get('video');

@@ -34,6 +34,12 @@ namespace Streamus.Controllers
         }
 
         [HttpPost]
+        public ActionResult Test(string testString)
+        {
+            return Json(testString);
+        }
+
+        [HttpPost]
         public JsonDataContractActionResult CreateMultiple(List<PlaylistItemDto> playlistItemDtos)
         {
             List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos);
@@ -54,7 +60,7 @@ namespace Streamus.Controllers
 
             List<PlaylistItemDto> savedPlaylistItemDtos = PlaylistItemDto.Create(playlistItems);
 
-            return new JsonDataContractActionResult(savedPlaylistItemDtos);
+            return new JsonDataContractActionResult(playlistItemDtos);
         }
 
         [HttpPut]
