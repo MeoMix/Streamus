@@ -17,8 +17,6 @@ namespace Streamus.Controllers
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly UserManager UserManager = new UserManager();
 
-        private static List<UserChannel> UserChannels = new List<UserChannel>();
-
         private readonly IUserDao UserDao;
 
         public UserController()
@@ -26,7 +24,6 @@ namespace Streamus.Controllers
             try
             {
                 UserDao = new UserDao();
-                UserChannels = new List<UserChannel>();
             }
             catch (TypeInitializationException exception)
             {
@@ -57,33 +54,5 @@ namespace Streamus.Controllers
             return new JsonDataContractActionResult(userDto);
         }
 
-        /// <summary>
-        ///     Record a user's extension's channelId. This is for pushMessaging so that
-        ///     the extension can receive updates from the user's other instances of the extension.
-        ///     This will keep all the extensions in-sync if the user has more than 1 instance of Streamus running.
-        /// </summary>
-        [HttpPost]
-        public ActionResult AddChannelId(Guid userId, string channelId)
-        {
-            UserChannel existingUserChannel = UserChannels.FirstOrDefault(uc => uc.UserId == userId);
-
-            if (existingUserChannel == null)
-            {
-                var userChannel = new UserChannel(userId, new List<string> {channelId});
-                UserChannels.Add(userChannel);
-            }
-            else
-            {
-                if (!existingUserChannel.ChannelIds.Contains(channelId))
-                {
-                    existingUserChannel.ChannelIds.Add(channelId);
-                }
-            }
-
-            return Json(new
-                {
-                    success = true
-                });
-        }
     }
 }

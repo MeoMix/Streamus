@@ -13,7 +13,7 @@ define(function () {
             
             var baseUrl;
             if (this.get('isLocal')) {
-                baseUrl = 'http://localhost:61975/';
+                baseUrl = 'http://test.streamus.com:61975/';
             } else {
                 baseUrl = 'http://streamus.apphb.com/';
             }

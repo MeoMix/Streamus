@@ -12,7 +12,7 @@ namespace Streamus.App_Start
             routes.MapRoute("post-Error", "Error", new {controller = "Error", action = "create"},
                             new {httpMethod = new HttpMethodConstraint("POST")});
 
-            routes.MapRoute("addChannelId", "User/AddChannelId", new { controller = "User", action = "AddChannelId" },
+            routes.MapRoute("addChannelId", "PushMessage/AddChannelId", new { controller = "PushMessage", action = "AddChannelId" },
                 new { httpMethod = new HttpMethodConstraint("POST") });
 
             routes.MapRoute("post-User", "User", new {controller = "User", action = "create"},

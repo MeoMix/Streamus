@@ -19,9 +19,14 @@ namespace Streamus.Dto
         [DataMember(Name = "firstPlaylistId")]
         public Guid FirstPlaylistId { get; set; }
 
+        [DataMember(Name = "userId")]
+        public Guid UserId { get; set; }
+
         public StreamDto()
         {
             Id = Guid.Empty;
+            FirstPlaylistId = Guid.Empty;
+            UserId = Guid.Empty;
             Title = string.Empty;
             Playlists = new List<PlaylistDto>();
         }

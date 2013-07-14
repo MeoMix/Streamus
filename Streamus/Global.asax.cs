@@ -51,6 +51,7 @@ namespace Streamus
             IPlaylistItemDao playlistItemDao = daoFactory.GetPlaylistItemDao();
             IPlaylistDao playlistDao = daoFactory.GetPlaylistDao();
             IStreamDao streamDao = daoFactory.GetStreamDao();
+            IUserDao userDao = daoFactory.GetUserDao();
 
             Mapper.CreateMap<Playlist, PlaylistDto>()
                   .ReverseMap()
@@ -77,7 +78,9 @@ namespace Streamus
             Mapper.CreateMap<Stream, StreamDto>()
                   .ReverseMap()
                   .ForMember(stream => stream.FirstPlaylist,
-                             opt => opt.MapFrom(streamDto => playlistDao.Get(streamDto.FirstPlaylistId)));
+                             opt => opt.MapFrom(streamDto => playlistDao.Get(streamDto.FirstPlaylistId)))
+                  .ForMember(stream => stream.User,
+                             opt => opt.MapFrom(streamDto => userDao.Get(streamDto.UserId)));
 
             Mapper.CreateMap<User, UserDto>().ReverseMap();
             Mapper.CreateMap<Video, VideoDto>().ReverseMap();

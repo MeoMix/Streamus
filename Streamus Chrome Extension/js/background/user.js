@@ -13,6 +13,7 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
             return {
                 id: '',
                 name: '',
+                dirty: false,
                 loaded: false,
                 streams: new Streams()
             };
@@ -25,7 +26,7 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
             var self = this;
             chrome.idle.onStateChanged.addListener(function(newState) {
                 console.log('State changed', newState);
-                if (newState === 'active') {
+                if (newState === 'active' && self.get('dirty')) {
                     fetchUser.call(self, false);
                 }
 
@@ -103,6 +104,7 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
 
         //  Announce that user has loaded so managers can use it to fetch data.
         this.set('loaded', true);
+        this.set('dirty', false);
     }
     
     //  Loads user data by ID from the server, writes the ID

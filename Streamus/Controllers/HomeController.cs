@@ -3,6 +3,7 @@ using System.Net;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using Streamus.Domain.Managers;
 
 namespace Streamus.Controllers
 {
@@ -10,9 +11,11 @@ namespace Streamus.Controllers
     //  Request URL: https://www.googleapis.com/gcm_for_chrome/v1/messages
     public class HomeController : Controller
     {
-        private const string GoogleClientId = "346456917689-kmkvbtmhafoak5glon55do0ukqppsh6l.apps.googleusercontent.com";
-        private const string GoogleSecret = "VfOFLGVHO58dNQ3qVPqkah0H";
-        private const string ReturnUrl = "http://localhost:61975/Home/UserAuthorizationResponse";
+        private static readonly PushMessageManager PushMessageManager = new PushMessageManager();
+
+        private const string GoogleClientId = "346456917689-3upp3fcan7lb3e93truv9vk2lr8vnu80.apps.googleusercontent.com";
+        private const string GoogleSecret = "DhgVWzC2mCBO8BMLpHTVog9o";
+        private const string ReturnUrl = "http://test.streamus.com:61975/Home/UserAuthorizationResponse";
 
         public ActionResult Index()
         {
@@ -100,7 +103,7 @@ namespace Streamus.Controllers
 
             var jsonSerializer = new JavaScriptSerializer();
             var tokenData = jsonSerializer.Deserialize<GoogleTokenData>(result);
-            Session["GoogleOAuth2AccessToken"] = tokenData.Access_Token;
+            PushMessageManager.SetAccessToken(tokenData.Access_Token);
 
             return new EmptyResult();
         }

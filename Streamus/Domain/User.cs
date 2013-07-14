@@ -32,6 +32,7 @@ namespace Streamus.Domain
         {
             string title = string.Format("New Stream {0:D4}", Streams.Count);
             var stream = new Stream(title);
+            stream.User = this;
             Streams.Add(stream);
 
             return stream;

@@ -212,6 +212,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\PushMessageController.cs" />
     <Compile Include="Controllers\ShareCodeController.cs" />
     <Compile Include="Dao\AutofacRegistrations.cs" />
     <Compile Include="Dao\NHibernateDaoFactory.cs" />
@@ -227,6 +228,7 @@
     <Compile Include="Domain\Interfaces\IShareCodeDao.cs" />
     <Compile Include="Domain\Managers\AbstractManager.cs" />
     <Compile Include="Domain\Managers\PlaylistItemManager.cs" />
+    <Compile Include="Domain\Managers\PushMessageManager.cs" />
     <Compile Include="Domain\Managers\ShareCodeManager.cs" />
     <Compile Include="Domain\Managers\StreamManager.cs" />
     <Compile Include="Domain\ShareCode.cs" />
@@ -353,7 +355,9 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>63807</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:61975/</IISUrl>
+          <IISUrl>http://localhost:61975</IISUrl>
+          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
+          <IISAppRootUrl>http://test.streamus.com:61975/</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

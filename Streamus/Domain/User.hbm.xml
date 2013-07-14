@@ -8,7 +8,7 @@
     
     <property name="Name" not-null="true" />
 
-    <set name="Streams" inverse="false" fetch="join" cascade="all-delete-orphan" >
+    <set name="Streams" inverse="true" fetch="join" cascade="all-delete-orphan" >
       <key column="UserId" />
       <one-to-many class="Stream" />
     </set>

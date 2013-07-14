@@ -35,19 +35,30 @@
                 var pushMessage = new PushMessage(JSON.parse(pushMessageDto.payload));
 
                 console.log("pushMessage:", pushMessage);
-                
-                if (pushMessage.get('entityType') === EntityType.Playlist) {
 
-                    var playlist = backgroundManager.getPlaylistById(pushMessage.get('entityId'));
-                    
-                    if (pushMessage.get('entityAction') == EntityAction.Refresh) {
+                chrome.idle.queryState(60, function(currentState) {
 
-                        console.log('Fetching');
-                        playlist.fetch();
-                        
+                    if (currentState !== 'active') {
+                        console.log("Marking dirty");
+                        user.set('dirty', true);
                     }
 
-                }
+                });
+                
+
+                
+                //if (pushMessage.get('entityType') === EntityType.Playlist) {
+
+                //    var playlist = backgroundManager.getPlaylistById(pushMessage.get('entityId'));
+                    
+                //    if (pushMessage.get('entityAction') == EntityAction.Refresh) {
+
+                //        console.log('Fetching');
+                //        playlist.fetch();
+                        
+                //    }
+
+                //}
 
             });
 
@@ -56,7 +67,7 @@
         sendChannelIdToServer: function () {
 
             $.ajax({
-                url: programState.getBaseUrl() + 'User/AddChannelId',
+                url: programState.getBaseUrl() + 'PushMessage/AddChannelId',
                 type: 'POST',
                 dataType: 'json',
                 data: {

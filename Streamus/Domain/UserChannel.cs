@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Streamus.Domain
 {
@@ -16,7 +14,8 @@ namespace Streamus.Domain
 
         public UserChannel(Guid userId, List<string> channelIds)
         {
-            
+            UserId = userId;
+            ChannelIds = channelIds;
         }
     }
 }
