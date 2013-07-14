@@ -16,9 +16,9 @@ namespace Streamus.Controllers
 
         public ActionResult Index()
         {
-            //string googleOAuthUrl = GetGoogleOAuthUrl();
+            string googleOAuthUrl = GetGoogleOAuthUrl();
 
-            //return Redirect(googleOAuthUrl);
+            return Redirect(googleOAuthUrl);
             return View();
         }
 

@@ -23,8 +23,15 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
         initialize: function () {
             
             var self = this;
-            //  chrome.Storage.sync is cross-computer syncing with restricted read/write amounts.
+            chrome.idle.onStateChanged.addListener(function(newState) {
+                console.log('State changed', newState);
+                if (newState === 'active') {
+                    fetchUser.call(self, false);
+                }
 
+            });
+
+            //  chrome.Storage.sync is cross-computer syncing with restricted read/write amounts.
             chrome.storage.sync.get(syncUserIdKey, function (data) {
                 //  Look for a user id in sync, it might be undefined though.
                 var foundUserId = data[syncUserIdKey];

@@ -83,6 +83,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="background.htm" />
+    <Content Include="js\background\entityAction.js" />
+    <Content Include="js\background\entityType.js" />
+    <Content Include="js\background\pushMessage.js" />
     <Content Include="js\options\localStorageManager.js" />
     <Content Include="js\options\main.js" />
     <Content Include="js\options\options.js" />

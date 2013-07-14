@@ -22,12 +22,13 @@ namespace Streamus.Controllers
 
             playlistItem.Playlist.AddItem(playlistItem);
 
-            //  Make sure the playlistItem has been setup properly before it is cascade-saved through the Playlist.
-            playlistItem.ValidateAndThrow();
-
             PlaylistItemManager.Save(playlistItem);
 
             PlaylistItemDto savedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
+
+            PushMessageDto pushMessageDto = new PushMessageDto(savedPlaylistItemDto);
+
+            //SendPushMessage(pushMessageDto);
 
             return new JsonDataContractActionResult(savedPlaylistItemDto);
         }
@@ -43,10 +44,8 @@ namespace Streamus.Controllers
                 List<PlaylistItem> groupingItems = playlistGrouping.ToList();
 
                 Playlist playlist = groupingItems.First().Playlist;
-
                 playlist.AddItems(groupingItems);
-                groupingItems.ForEach(i => i.ValidateAndThrow());
-
+      
                 PlaylistItemManager.Save(groupingItems);
             }
 
@@ -60,8 +59,6 @@ namespace Streamus.Controllers
         {
             PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto);
             PlaylistItemManager.Update(playlistItem);
-
-            //SendPushMessage("update playlistItem:" + playlistItem.Id);
 
             PlaylistItemDto updatedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
 
@@ -91,10 +88,10 @@ namespace Streamus.Controllers
                 });
         }
 
-        private void SendPushMessage(string payload)
+        private void SendPushMessage(PushMessageDto pushMessageDto)
         {
-            var httpWebRequest =
-                (HttpWebRequest) WebRequest.Create("https://www.googleapis.com/gcm_for_chrome/v1/messages");
+            const string requestUri = "https://www.googleapis.com/gcm_for_chrome/v1/messages";
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(requestUri);
             httpWebRequest.ContentType = "application/json; charset=utf-8";
             httpWebRequest.Method = "POST";
             httpWebRequest.Headers.Add("Authorization", "OAuth " + Session["GoogleOAuth2AccessToken"]);
@@ -105,7 +102,7 @@ namespace Streamus.Controllers
                     {
                         channelId = "15312359557864779180/jbnkffmindojffecdhbbmekbmkkfpmjd",
                         subchannelId = "0",
-                        payload
+                        payload = pushMessageDto.ToJson()
                     });
 
                 streamWriter.Write(json);

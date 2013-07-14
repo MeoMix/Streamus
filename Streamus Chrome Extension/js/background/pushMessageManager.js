@@ -1,4 +1,4 @@
-﻿define(['user', 'programState'], function(user, programState) {
+﻿define(['user', 'programState', 'pushMessage', 'backgroundManager', 'entityType', 'entityAction'], function(user, programState, PushMessage, backgroundManager, EntityType, EntityAction) {
     'use strict';
     
     var pushMessageManagerModel = Backbone.Model.extend({
@@ -30,23 +30,24 @@
                 
             });
 
-            chrome.pushMessaging.onMessage.addListener(function (message) {
+            chrome.pushMessaging.onMessage.addListener(function (pushMessageDto) {
 
-                console.log("Message received:", message);
+                var pushMessage = new PushMessage(JSON.parse(pushMessageDto.payload));
 
-                //if (message.event == null) {
-                //    throw "Expected message to contain an event.";
-                //}
+                console.log("pushMessage:", pushMessage);
+                
+                if (pushMessage.get('entityType') === EntityType.Playlist) {
 
-                //switch (message.event) {
-                //    case '':
-                //        break;
+                    var playlist = backgroundManager.getPlaylistById(pushMessage.get('entityId'));
+                    
+                    if (pushMessage.get('entityAction') == EntityAction.Refresh) {
 
-                //    default:
-                //        console.error("Unhandled message event:", message.event);
+                        console.log('Fetching');
+                        playlist.fetch();
+                        
+                    }
 
-                //}
-
+                }
 
             });
 

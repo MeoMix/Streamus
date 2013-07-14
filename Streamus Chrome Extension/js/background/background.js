@@ -171,7 +171,7 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
                 
                 break;
         }
-
+        
         //  Return true to allow sending a response back.
         return true;
     });
