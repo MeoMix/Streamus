@@ -44,9 +44,10 @@ var require = {
         'spinnerManager': 'foreground/spinnerManager',
         'overscroll': 'thirdParty/jquery.overscroll',
 
-        'radioModeItems': 'foreground/collection/radioModeItems',
-        'radioModeItem': 'foreground/model/radioModeItem',
-        'radioModeView': 'foreground/view/radioModeView',
-        'radioModeItemView': 'foreground/view/radioModeItemView'
+        'queueItems': 'foreground/collection/queueItems',
+        'queueItem': 'foreground/model/queueItem',
+        'queueContextMenuView': 'foreground/view/queueContextMenuView',
+        'queueView': 'foreground/view/queueView',
+        'queueItemView': 'foreground/view/queueItemView'
     }
 };

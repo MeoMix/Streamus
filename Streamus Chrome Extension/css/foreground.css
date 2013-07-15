@@ -658,41 +658,25 @@
     z-index: 10;
 }
 
-.streamItem {
+.queueItem {
     color: white;
     width: 120px;
     height: 90px;
     display: inline-block;
 }
 
-#RadioMode {
+#QueueView {
     left: 0;
-    top: 427px;
+    right: 0;
+    top: 435px;
     z-index: 3;
     position: absolute;
     height: 90px;
     background-color: black;
     white-space: nowrap;
     display: inline-block;
-    width: 513px;
+    width: 529px;
 }
-
-#RadioMode {
-    display: none !important;
-}
-
-#menu {
-    bottom: 0 !important;
-}
-
-.content {
-    bottom: 0 !important
-}
-
-body {
-    height: 452px !important;
-}
-
 
 .videoImage {
     width: 120px;

@@ -1,5 +1,5 @@
 ﻿//  Background.js is a bit of a dumping ground for code which needs a permanent housing spot.
-define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManager', 'ytHelper', 'repeatButtonState', 'playerState'],
+define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManager', 'ytHelper', 'repeatButtonState', 'playerState', 'queueItems'],
     function (player, backgroundManager, localStorageManager, pushMessageManager, ytHelper, RepeatButtonState, PlayerState) {
         'use strict';
   

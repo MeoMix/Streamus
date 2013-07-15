@@ -85,7 +85,10 @@
     <Content Include="background.htm" />
     <Content Include="js\background\entityAction.js" />
     <Content Include="js\background\entityType.js" />
+    <Content Include="js\background\collection\queueItems.js" />
+    <Content Include="js\background\model\queueItem.js" />
     <Content Include="js\background\pushMessage.js" />
+    <Content Include="js\foreground\view\queueContextMenuView.js" />
     <Content Include="js\options\localStorageManager.js" />
     <Content Include="js\options\main.js" />
     <Content Include="js\options\options.js" />
@@ -148,10 +151,9 @@
     <Content Include="js\background\user.js" />
     <Content Include="js\background\video.js" />
     <Content Include="js\background\videos.js" />
-    <Content Include="js\foreground\collection\radioModeItems.js" />
-    <Content Include="js\foreground\model\radioModeItem.js" />
-    <Content Include="js\foreground\view\radioModeItemView.js" />
-    <Content Include="js\foreground\view\radioModeView.js" />
+    <Content Include="js\foreground\collection\queueItems.js" />
+    <Content Include="js\foreground\view\queueItemView.js" />
+    <Content Include="js\foreground\view\queueView.js" />
     <Content Include="js\shareInject.js" />
     <Content Include="js\dataSource.js" />
     <Content Include="js\foreground\backgroundManager.js" />

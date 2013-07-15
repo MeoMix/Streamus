@@ -1,5 +1,5 @@
 //  Responsible for showing options when interacting with a Video in PlaylistItemList.
-define(['contextMenu', 'backgroundManager'], function (contextMenu) {
+define(['contextMenu'], function (contextMenu) {
     'use strict';
 
     var playlistItemsContextMenu = $.extend({}, contextMenu, {

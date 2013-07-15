@@ -1,5 +1,5 @@
 ﻿//  Represents the videos in a given playlist
-define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], function (contextMenu, backgroundManager, player, helpers) {
+define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers', 'queueView'], function (contextMenu, backgroundManager, player, helpers, queueView) {
     'use strict';
     var playlistItemList = $('#PlaylistItemList ul');
 
@@ -55,6 +55,14 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
             playlist.selectItem(playlistItem);
             backgroundManager.set('activePlaylistItem', playlistItem);
         }
+    }
+    
+    function enqueueItembyId(itemId) {
+        
+        //  TODO: What if the item is already queued? Does spam double clicking just keep adding?
+        var playlistItem = backgroundManager.getPlaylistItemById(itemId);
+
+        queueView.enqueuePlaylistItem(playlistItem);
     }
 
     backgroundManager.on('change:activePlaylist', function () {
@@ -151,6 +159,11 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers'], f
                 var itemId = $(this).data('itemid');
                 selectItemById(itemId);
                 setListItemClass(itemId, 'loaded');
+            },
+            dblclick: function() {
+                //  Add item to queue on dblclick.
+                var itemId = $(this).data('itemid');
+                enqueueItembyId(itemId);
             }
         });
         

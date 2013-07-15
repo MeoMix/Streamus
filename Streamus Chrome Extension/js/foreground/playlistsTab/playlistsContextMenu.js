@@ -1,5 +1,5 @@
 //  Responsible for showing options when interacting with a Playlist in Playlist_List.
-define(['contextMenu', 'backgroundManager'], function (contextMenu, backgroundManager) {
+define(['contextMenu'], function (contextMenu) {
     'use strict';
     
     var playlistContextMenu = $.extend({}, contextMenu, {

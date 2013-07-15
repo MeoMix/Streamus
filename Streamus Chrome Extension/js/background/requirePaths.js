@@ -34,6 +34,9 @@ var require = {
         'iconManager': 'background/iconManager',
         'spin': 'thirdParty/jquery.spin',
         'shareCode': 'background/shareCode',
-        'shareableEntityType': 'shareableEntityType'
+        'shareableEntityType': 'shareableEntityType',
+        
+        'queueItems': 'background/collection/queueItems',
+        'queueItem': 'background/model/queueItem'
     }
 };

@@ -202,13 +202,19 @@
 
         </div>
         
-        <div id="RadioMode" >
+        <div id="QueueView" >
         </div>
         
-        <script type="text/template" id="radioModeItemTemplate">
-<!--              <label><%- title %></label>-->
-
+        <script type="text/template" id="queueItemTemplate">
               <img class="videoImage" src="<%- videoImageUrl %>" />
+        </script>
+        
+        <script type="text/template" id="queueContextMenuTemplate">
+              <ul>
+                  <li>
+                      <a href="javascript: void(0);">Remove</a>
+                  </li>
+              </ul>
         </script>
 
     </body>
