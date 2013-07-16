@@ -47,6 +47,7 @@ var require = {
         'queueItems': 'foreground/collection/queueItems',
         'queueItem': 'foreground/model/queueItem',
         'queueContextMenuView': 'foreground/view/queueContextMenuView',
+        'queueContextMenu': 'foreground/model/queueContextMenu',
         'queueView': 'foreground/view/queueView',
         'queueItemView': 'foreground/view/queueItemView'
     }

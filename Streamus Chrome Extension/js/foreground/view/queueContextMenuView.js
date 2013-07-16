@@ -7,42 +7,50 @@
 
         template: _.template($('#queueContextMenuTemplate').html()),
 
-        render: function () {
+        render: function (top, left) {
             this.$el.html(this.template(this.model.toJSON()));
+
+            this.$el.offset({
+                top: top,
+                left: left
+            });
 
             return this;
         },
 
         initialize: function () {
+            //  TODO: This seems incorrect?
+            this.$el.appendTo('body');
         },
         
-        show: function (queueItem, event) {
-            this.set('queueItem', queueItem);
+        show: function (options) {
+            if (options.top === undefined || options.left === undefined) throw "ContextMenu must be shown with top/left coordinates.";
 
-            var self = this;
-            var queueContextMenu = $.extend({}, contextMenu, {
-                initialize: function () {
-                    
-                    this.addContextMenuItem({
-                        text: 'Remove',
-                        click: function () {
+            this.render(options.top, options.left);
 
-                            console.log("Removing");
-                            self.trigger('removeItem', self.get('queueItem'));
-                        }
-                    });
-                    
-                }
-            });
+            console.log("Appending to body:", this.$el);
+            
+            
 
-            //  TODO: Shouldn't have to say initialize...
-            queueContextMenu.initialize();
+            //var self = this;
+            //var queueContextMenu = $.extend({}, contextMenu, {
+            //    initialize: function () {
 
-            console.log("Event:", event);
+            //        this.addContextMenuItem({
+            //            text: 'Remove',
+            //            click: function () {
+            //                self.queueItem.destroy();
+            //            }
+            //        });
 
-            queueContextMenu.show(event.pageY, event.pageX + 1);
+            //    }
+            //});
+
+            ////  TODO: Shouldn't have to say initialize...
+            //queueContextMenu.initialize();
+            //queueContextMenu.show(top, left);
         }
     });
 
-    return new QueueContextMenuView;
+    return QueueContextMenuView;
 });

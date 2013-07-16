@@ -210,11 +210,19 @@
         </script>
         
         <script type="text/template" id="queueContextMenuTemplate">
-              <ul>
-                  <li>
-                      <a href="javascript: void(0);">Remove</a>
-                  </li>
-              </ul>
+            
+            <ul>
+                <li>
+                    <a href="javascript:void(0)">Clear Queue</a>
+                </li>
+            </ul>
+            
+            <ul>
+                <li>
+                    <a href="javascript:void(0)">Remove <%- queueItem.get('title') %></a>
+                </li>
+            </ul>
+        
         </script>
 
     </body>
