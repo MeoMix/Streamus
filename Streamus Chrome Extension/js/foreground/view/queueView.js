@@ -1,16 +1,15 @@
-﻿define(['backgroundManager', 'queueItems', 'queueItemView', 'queueContextMenuView', 'queueContextMenu', 'overscroll'], function (backgroundManager, QueueItems, QueueItemView, QueueContextMenuView, QueueContextMenu) {
+﻿define(['backgroundManager', 'queueItems', 'queueItemView', 'queueContextMenuView', 'overscroll'], function (backgroundManager, QueueItems, QueueItemView, QueueContextMenuView) {
     'use strict';
 
     var QueueView = Backbone.View.extend({
         el: $('#QueueView'),
         
         events: {
-            
-            'contextMenu': 'showContextMenu'
-
+            'contextmenu': 'showContextMenu',
         },
 
         initialize: function () {
+            this.contextMenu = new QueueContextMenuView();
             
             //  Initialize the collection we'll use to store items in.
             this.items = QueueItems;
@@ -30,12 +29,12 @@
             });
         },
         
-        render: function() {
-            
-        },
-        
         addItem: function (queueItem) {
-            var queueItemView = new QueueItemView({ model: queueItem });
+            var queueItemView = new QueueItemView({
+                model: queueItem,
+                parent: this
+            });
+            
             this.$el.append(queueItemView.render().el);
         },
         
@@ -48,17 +47,13 @@
             });
         },
         
-        showContextMenu: function (event) {
+        showContextMenu: function (event, queueItem) {
 
-            var queueContextMenu = new QueueContextMenu();
-
-            console.log("contextMenu:", queueContextMenu);
-
-            var queueContextMenuView = new QueueContextMenuView({
-                model: queueContextMenu
+            this.contextMenu.show({
+                queueItem: queueItem,
+                top: event.pageY,
+                left: event.pageX + 1
             });
-            
-            //queueContextMenuView.show(event.pageY, event.pageX + 1);
 
             return false;
         },

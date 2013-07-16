@@ -217,11 +217,14 @@
                 </li>
             </ul>
             
-            <ul>
-                <li>
-                    <a href="javascript:void(0)">Remove <%- queueItem.get('title') %></a>
-                </li>
+            <!--Show an extended context menu if a queueItem has been right-clicked.-->
+            <% if( typeof queueItem !== 'undefined' ) { %>
+                <ul>
+                    <li>
+                        <a href="javascript:void(0)">Remove <% queueItem.get('title') %></a>
+                    </li>
             </ul>
+            <% } %>
         
         </script>
 

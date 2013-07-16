@@ -1,4 +1,4 @@
-﻿define(['queueContextMenu', 'queueContextMenuView'], function (QueueContextMenu, QueueContextMenuView) {
+﻿define(function () {
     'use strict';
 
     var QueueItemView = Backbone.View.extend({
@@ -18,31 +18,21 @@
             return this;
         },
         
-        initialize: function () {
-
-            this.listenTo(this.model, 'destroy', this.remove);
-        },
-        
-        showContextMenu: function (event) {
-
-            var queueContextMenu = new QueueContextMenu({
-                queueItem: this.model
-            });
+        initialize: function (options) {
+            this.parent = options.parent;
             
-            var queueContextMenuView = new QueueContextMenuView({
-                model: queueContextMenu
-            });
-
-            queueContextMenuView.show({
-                top: event.pageY,
-                left: event.pageX + 1
-            });
-
-            return false;
+            this.listenTo(this.model, 'destroy', this.remove);
         },
         
         toggleSelected: function() {
             this.$el.toggleClass('selected');
+        },
+        
+        showContextMenu: function (event) {
+
+            this.parent.showContextMenu(event, this.model);
+            
+            return false;
         }
     });
 

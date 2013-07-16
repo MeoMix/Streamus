@@ -1,4 +1,4 @@
-﻿define(['contextMenu'], function (contextMenu) {
+﻿define(['queueContextMenu'], function (QueueContextMenu) {
     'use strict';
 
     var QueueContextMenuView = Backbone.View.extend({
@@ -6,49 +6,42 @@
         className: 'queueContextMenu',
 
         template: _.template($('#queueContextMenuTemplate').html()),
-
-        render: function (top, left) {
-            this.$el.html(this.template(this.model.toJSON()));
+        //  Defined if a queueItem is loaded
+        model: null,
+        
+        render: function () {
+            //  Can be built with or without a specific queueItem.
+            this.$el.html(this.template(this.model ? this.model.toJSON() : ''));
 
             this.$el.offset({
-                top: top,
-                left: left
+                top: this.top,
+                left: this.left
             });
 
             return this;
         },
 
         initialize: function () {
-            //  TODO: This seems incorrect?
+            //  TODO: If I implement Backbone View's more properly, then 'body' should be responsible for this, but for now this is fine.
             this.$el.appendTo('body');
         },
         
         show: function (options) {
+            
             if (options.top === undefined || options.left === undefined) throw "ContextMenu must be shown with top/left coordinates.";
 
-            this.render(options.top, options.left);
-
-            console.log("Appending to body:", this.$el);
+            this.top = options.top;
+            this.left = options.left;
             
-            
+            if (options.queueItem) {
+                this.model = new QueueContextMenu({
+                    queueItem: options.queueItem
+                });
+            } else {
+                this.model = null;
+            }
 
-            //var self = this;
-            //var queueContextMenu = $.extend({}, contextMenu, {
-            //    initialize: function () {
-
-            //        this.addContextMenuItem({
-            //            text: 'Remove',
-            //            click: function () {
-            //                self.queueItem.destroy();
-            //            }
-            //        });
-
-            //    }
-            //});
-
-            ////  TODO: Shouldn't have to say initialize...
-            //queueContextMenu.initialize();
-            //queueContextMenu.show(top, left);
+            this.render();
         }
     });
 
