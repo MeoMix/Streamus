@@ -209,20 +209,34 @@
               <img class="videoImage" src="<%- videoImageUrl %>" />
         </script>
         
+        <script type="text/template" id="contextMenuTemplate">
+
+        <% groups.each(function(group){ %>
+            <ul id="group_<%= group.cid %>">
+                <% group.get('items').each(function(item){ %>
+                   <li>
+                       <a id="groupItem_<%= item.cid %>" href="#"><%= item.get('text') %></a>
+                   </li>
+                <% }); %>
+            </ul>
+        <% }); %>
+
+        </script>
+        
         <script type="text/template" id="queueContextMenuTemplate">
             
             <ul>
                 <li>
-                    <a href="javascript:void(0)">Clear Queue</a>
+                    <a id="clearQueue" href="#">Clear Queue</a>
                 </li>
             </ul>
             
             <!--Show an extended context menu if a queueItem has been right-clicked.-->
             <% if( typeof queueItem !== 'undefined' ) { %>
-                <ul>
-                    <li>
-                        <a href="javascript:void(0)">Remove <% queueItem.get('title') %></a>
-                    </li>
+            <ul>
+                <li>
+                    <a id="removeQueueItem" href="#">Remove <% queueItem.get('title') %></a>
+                </li>
             </ul>
             <% } %>
         

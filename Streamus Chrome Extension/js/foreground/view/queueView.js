@@ -1,4 +1,4 @@
-﻿define(['backgroundManager', 'queueItems', 'queueItemView', 'queueContextMenuView', 'overscroll'], function (backgroundManager, QueueItems, QueueItemView, QueueContextMenuView) {
+﻿define(['queueItems', 'queueItemView', 'contextMenuView', 'overscroll'], function (QueueItems, QueueItemView, ContextMenuView) {
     'use strict';
 
     var QueueView = Backbone.View.extend({
@@ -9,22 +9,19 @@
         },
 
         initialize: function () {
-            this.contextMenu = new QueueContextMenuView();
+            this.contextMenuView = new ContextMenuView();
             
-            //  Initialize the collection we'll use to store items in.
-            this.items = QueueItems;
-
             var self = this;
-            this.items.each(function(queueItem) {
+            QueueItems.each(function (queueItem) {
                 self.addItem(queueItem);
             });
 
             //  Whenever an item is added to the collection, visually add an item, too.
-            this.listenTo(this.items, 'add', this.addItem);
+            this.listenTo(QueueItems, 'add', this.addItem);
+            this.listenTo(QueueItems, 'all', this.render);
 
             //  His instructions say I should be able to achieve direction:horizontal via just css, but I'm unable to get it while drunk.
             this.$el.overscroll({
-                //showThumbs: false,
                 direction: 'horizontal'
             });
         },
@@ -38,10 +35,16 @@
             this.$el.append(queueItemView.render().el);
         },
         
+        clear: function () {
+            QueueItems.each(function () {
+                this.destroy();
+            });
+        },
+        
         enqueuePlaylistItem: function(playlistItem) {
             var videoId = playlistItem.get('video').get('id');
 
-            this.items.create({
+            QueueItems.create({
                 title: playlistItem.get('title'),
                 videoImageUrl: 'http://img.youtube.com/vi/' + videoId + '/default.jpg'
             });
@@ -49,10 +52,28 @@
         
         showContextMenu: function (event, queueItem) {
 
-            this.contextMenu.show({
-                queueItem: queueItem,
+            var queueContextMenuGroups = [{
+                position: 0,
+                items: [{
+                    position: 0,
+                    text: 'Clear Queue'
+                }]
+            }];
+            
+            if (queueItem) {
+                queueContextMenuGroups.push({
+                    position: 1,
+                    items: [{
+                        position: 0,
+                        text: 'Remove ' + queueItem.get('title')
+                    }]
+                });
+            }
+
+            this.contextMenuView.show({
                 top: event.pageY,
-                left: event.pageX + 1
+                left: event.pageX + 1,
+                groups: queueContextMenuGroups
             });
 
             return false;

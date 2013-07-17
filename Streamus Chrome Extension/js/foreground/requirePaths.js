@@ -20,7 +20,6 @@ var require = {
         'playlistsDisplay': 'foreground/playlistsTab/playlistsDisplay',
         'playlistInput': 'foreground/playlistsTab/playlistInput',
         'playlistsContextMenu': 'foreground/playlistsTab/playlistsContextMenu',
-        'contextMenu': 'foreground/contextMenu',
         'contentHeader': 'foreground/contentHeader',
         'dialogs': 'foreground/dialogs',
         'contentButtons': 'foreground/contentButtons',
@@ -44,11 +43,19 @@ var require = {
         'spinnerManager': 'foreground/spinnerManager',
         'overscroll': 'thirdParty/jquery.overscroll',
 
+        //  Collection:
+        'contextMenuGroups': 'foreground/collection/contextMenuGroups',
+        'contextMenuItems': 'foreground/collection/contextMenuItems',
         'queueItems': 'foreground/collection/queueItems',
-        'queueItem': 'foreground/model/queueItem',
-        'queueContextMenuView': 'foreground/view/queueContextMenuView',
-        'queueContextMenu': 'foreground/model/queueContextMenu',
-        'queueView': 'foreground/view/queueView',
-        'queueItemView': 'foreground/view/queueItemView'
+
+        //  Model:
+        'contextMenu': 'foreground/model/contextMenu',
+        'contextMenuGroup': 'foreground/model/contextMenuGroup',
+        'contextMenuItem': 'foreground/model/contextMenuItem',
+        
+        //  View:
+        'contextMenuView': 'foreground/view/contextMenuView',
+        'queueItemView': 'foreground/view/queueItemView',
+        'queueView': 'foreground/view/queueView'
     }
 };

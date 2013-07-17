@@ -579,8 +579,8 @@
 
 .muted > svg > rect { fill: Black !important; }
 
-.queueContextMenu {
-    -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, .3);
+.contextMenu {
+    -webkit-box-shadow: 4px 7px 3px rgba(0, 0, 0, .3);
     background: #fff;
     position: absolute;
     z-index: 100;
@@ -589,13 +589,13 @@
     display: none;
 }
 
-.queueContextMenu ul {
+.contextMenu ul {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-.queueContextMenu ul a {
+.contextMenu ul a {
     color: #000;
     display: block;
     font: 12px/1 sans-serif;
@@ -603,9 +603,9 @@
     text-decoration: none;
 }
 
-.queueContextMenu ul a:hover { background: #EFEFEF; }
+.contextMenu ul a:hover { background: #EFEFEF; }
 
-.queueContextMenu ul a:active {
+.contextMenu ul a:active {
     background: rgb(36, 109, 149);
     color: #fff;
 }

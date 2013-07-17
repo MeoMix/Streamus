@@ -88,7 +88,12 @@
     <Content Include="js\background\collection\queueItems.js" />
     <Content Include="js\background\model\queueItem.js" />
     <Content Include="js\background\pushMessage.js" />
-    <Content Include="js\foreground\view\queueContextMenuView.js" />
+    <Content Include="js\foreground\collection\contextMenuGroups.js" />
+    <Content Include="js\foreground\collection\contextMenuItems.js" />
+    <Content Include="js\foreground\model\contextMenu.js" />
+    <Content Include="js\foreground\model\contextMenuGroup.js" />
+    <Content Include="js\foreground\model\contextMenuItem.js" />
+    <Content Include="js\foreground\view\contextMenuView.js" />
     <Content Include="js\options\localStorageManager.js" />
     <Content Include="js\options\main.js" />
     <Content Include="js\options\options.js" />

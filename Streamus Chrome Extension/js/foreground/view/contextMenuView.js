@@ -1,20 +1,16 @@
-﻿define(['queueContextMenu'], function (QueueContextMenu) {
+﻿define(['contextMenu'], function (ContextMenu) {
     'use strict';
 
-    var QueueContextMenuView = Backbone.View.extend({
+    var ContextMenuView = Backbone.View.extend({
 
-        className: 'queueContextMenu',
+        className: 'contextMenu',
 
-        template: _.template($('#queueContextMenuTemplate').html()),
+        template: _.template($('#contextMenuTemplate').html()),
         
         parentSelector: 'body',
-
-        //  Defined if a queueItem is loaded
-        model: null,
         
         render: function () {
-            //  Can be built with or without a specific queueItem.
-            this.$el.html(this.template(this.model ? this.model.toJSON() : ''));
+            this.$el.html(this.template(this.model.toJSON()));
 
             //  Prevent display outside viewport.
             var offsetTop = this.top;
@@ -29,6 +25,7 @@
                 offsetLeft = offsetLeft - this.$el.width();
             }
 
+            //  Show the element before setting offset to ensure correct positioning.
             this.$el.show().offset({
                 top: offsetTop,
                 left: offsetLeft
@@ -44,29 +41,24 @@
             var self = this;
             //  Hide the context menu whenever any click occurs not just when selecting an item.
             $(this.parentSelector).on('click contextmenu', function () {
-                console.log("Hiding");
                 self.$el.hide();
             });
         },
         
         show: function (options) {
-            
             if (options.top === undefined || options.left === undefined) throw "ContextMenu must be shown with top/left coordinates.";
+            if (options.groups === undefined) throw "ContextMenu needs ContextMenuGroups to be shown.";
 
             this.top = options.top;
             this.left = options.left;
-            
-            if (options.queueItem) {
-                this.model = new QueueContextMenu({
-                    queueItem: options.queueItem
-                });
-            } else {
-                this.model = null;
-            }
+
+            this.model = new ContextMenu({
+                groups: options.groups
+            });
 
             this.render();
         }
     });
 
-    return QueueContextMenuView;
+    return ContextMenuView;
 });
