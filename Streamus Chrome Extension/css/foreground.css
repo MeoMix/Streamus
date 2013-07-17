@@ -582,10 +582,11 @@
 .queueContextMenu {
     -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, .3);
     background: #fff;
-    border-radius: 5px;
-    padding: 5px 0;
     position: absolute;
     z-index: 100;
+    padding: 5px 0;
+    border: 1px solid #BABABA;
+    display: none;
 }
 
 .queueContextMenu ul {
@@ -598,11 +599,11 @@
     color: #000;
     display: block;
     font: 12px/1 sans-serif;
-    padding: 4px 8px;
+    padding: 7px 15px;
     text-decoration: none;
 }
 
-.queueContextMenu ul a:hover { background: #efefef; }
+.queueContextMenu ul a:hover { background: #EFEFEF; }
 
 .queueContextMenu ul a:active {
     background: rgb(36, 109, 149);

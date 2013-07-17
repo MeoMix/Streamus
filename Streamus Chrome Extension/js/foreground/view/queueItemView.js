@@ -29,7 +29,7 @@
         },
         
         showContextMenu: function (event) {
-
+            //  TODO: I don't feel great about telling the parent to show context menu
             this.parent.showContextMenu(event, this.model);
             
             return false;

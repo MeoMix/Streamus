@@ -12,7 +12,7 @@ namespace Streamus.Controllers
         ///     Handles the naming conventions for converting C# objects to JavaScript objects.
         /// </summary>
         /// <param name="data">The object to be serialized under data contract. </param>
-        public JsonDataContractActionResult(Object data)
+        public JsonDataContractActionResult(object data)
         {
             //  Ensure that programmers are returning the proper entities.
             if (data is IAbstractDomainEntity<Guid> || data is IAbstractDomainEntity<string>)
