@@ -10,6 +10,7 @@
         <script data-main="main" src="../js/thirdParty/require.js"></script>
     </head>
     <body>
+
         <div id="content" >
             <div id="head" class="gradient">
                 <div id="PlayPauseButton" class="disabled" title="Play disabled. Try adding a video to your playlist, first!">
@@ -209,6 +210,10 @@
               <img class="videoImage" src="<%- videoImageUrl %>" />
         </script>
         
+        <div id="contextMenu">
+            
+        </div>
+        
         <script type="text/template" id="contextMenuTemplate">
 
             <% groups.each(function(group){ %>
@@ -221,25 +226,6 @@
                 </ul>
             <% }); %>
 
-        </script>
-        
-        <script type="text/template" id="queueContextMenuTemplate">
-            
-            <ul>
-                <li>
-                    <a id="clearQueue" href="#">Clear Queue</a>
-                </li>
-            </ul>
-            
-            <!--Show an extended context menu if a queueItem has been right-clicked.-->
-            <% if( typeof queueItem !== 'undefined' ) { %>
-            <ul>
-                <li>
-                    <a id="removeQueueItem" href="#">Remove <% queueItem.get('title') %></a>
-                </li>
-            </ul>
-            <% } %>
-        
         </script>
 
     </body>

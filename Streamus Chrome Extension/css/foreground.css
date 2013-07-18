@@ -579,7 +579,7 @@
 
 .muted > svg > rect { fill: Black !important; }
 
-.contextMenu {
+#contextMenu {
     -webkit-box-shadow: 4px 7px 3px rgba(0, 0, 0, .3);
     background: #fff;
     position: absolute;
@@ -589,51 +589,33 @@
     display: none;
 }
 
-.contextMenu ul {
+#contextMenu ul {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-.contextMenu ul a {
-    color: #000;
-    display: block;
-    font: 12px/1 sans-serif;
-    padding: 7px 15px;
-    text-decoration: none;
+#contextMenu ul:not(:last-child) {
+   border-bottom: 1px solid #EFEFEF;
+}
+
+#contextMenu ul li {
     overflow: hidden;
-    text-overflow: ellipsis;
     max-width: 200px;
+    text-overflow: ellipsis;
     white-space: nowrap;
+    padding: 0 15px;
 }
 
-.contextMenu ul a:hover { background: #EFEFEF; }
-
-.contextMenu ul a:active {
-    background: rgb(36, 109, 149);
-    color: #fff;
-}
-
-#ContextMenu {
-    -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, .3);
-    background: #fff;
-    border-radius: 5px;
-    padding: 5px 0;
-    position: absolute;
-    z-index: 100;
-}
-
-#ContextMenu a {
+#contextMenu ul a {
     color: #000;
-    display: block;
-    font: 12px/1 sans-serif;
-    padding: 4px 8px;
+    font: 12px/2.2 sans-serif;
     text-decoration: none;
 }
 
-#ContextMenu a:hover { background: #efefef; }
+#contextMenu ul li:hover { background: #EFEFEF; }
 
-#ContextMenu a:active {
+#contextMenu ul li:active {
     background: rgb(36, 109, 149);
     color: #fff;
 }

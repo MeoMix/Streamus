@@ -6,6 +6,7 @@ define(function () {
         defaults: function () {
             return {
                 // TODO: Figure out all the properties this model needs.
+                videoId: '',
                 title: 'Empty Queue Item',
                 videoImageUrl: ''
             };

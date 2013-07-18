@@ -1,12 +1,11 @@
-﻿define(['contextMenuView'], function (ContextMenuView) {
+﻿define(['contextMenuView'], function(ContextMenuView) {
     'use strict';
 
     var QueueItemView = Backbone.View.extend({
-
         className: 'queueItem',
 
         template: _.template($('#queueItemTemplate').html()),
-        
+
         events: {
             'contextmenu': 'showContextMenu',
             'click': 'toggleSelected'
@@ -17,30 +16,37 @@
 
             return this;
         },
-        
-        initialize: function (options) {
-            this.parent = options.parent;
-            
+
+        initialize: function() {
             this.listenTo(this.model, 'destroy', this.remove);
         },
-        
+
         toggleSelected: function() {
             this.$el.toggleClass('selected');
         },
-        
-        showContextMenu: function (event) {
+
+        showContextMenu: function() {
             var self = this;
 
-            //  TODO: Maybe position should be inferred if not provided?
+            //  TODO: Maybe position should be inferred if not provided? Or maybe I say 'first', 'last' instead of 0, 1, 2.. etc
             ContextMenuView.addGroup({
                 position: 1,
                 items: [{
-                    position: 0,
-                    text: 'Remove ' + this.model.get('title'),
-                    onClick: function () {
-                        self.model.destroy();
-                    }
-                }]
+                        position: 0,
+                        text: 'Remove ' + this.model.get('title'),
+                        onClick: function() {
+                            self.model.destroy();
+                        }
+                    }, {
+                        position: 1,
+                        text: 'Copy video URL',
+                        onClick: function() {
+                            chrome.extension.sendMessage({
+                                method: 'copy',
+                                text: 'http://youtu.be/' + self.model.get('videoId')
+                            });
+                        }
+                    }]
             });
 
         }

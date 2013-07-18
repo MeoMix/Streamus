@@ -24,6 +24,8 @@ define(function () {
             $(element).mouseover(function () {
                 var distanceToMove = $(this).width() - $(parent).width();
 
+                console.log("distance to move", $(this).width(), $(parent).width());
+
                 $(this).animate({
                     marginLeft: "-" + distanceToMove + "px"
                 }, {

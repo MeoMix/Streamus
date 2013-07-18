@@ -1,33 +1,40 @@
-﻿define(['contextMenu'], function (ContextMenu) {
+﻿define(['contextMenu', 'helpers'], function (ContextMenu, helpers) {
     'use strict';
 
+    //  A singleton view which is either displayed somewhere in body with groups of items or empty and hidden.
     var ContextMenuView = Backbone.View.extend({
 
-        className: 'contextMenu',
-
+        el: $('#contextMenu'),
+        
         template: _.template($('#contextMenuTemplate').html()),
 
         events: {
-            'click li': 'groupItemClicked',
+            'click li': 'onItemClick',
         },
 
         model: new ContextMenu,
         
-        parentSelector: 'body',
-        
         render: function () {
             this.$el.html(this.template(this.model.toJSON()));
+
+            this.$el.find('a').each(function () {
+                console.log("iterating over and calling helpers");
+                var parentUl = $(this).closest('ul');
+                console.log("parent ul and this:", parentUl, this);
+                helpers.scrollElementInsideParent(this, parentUl);
+
+            });
 
             //  TODO: Should this logic be part of 'show' or 'render' ?
             //  Prevent display outside viewport.
             var offsetTop = this.top;
-            var needsVerticalFlip = offsetTop + this.$el.height() > $(this.parentSelector).height();
+            var needsVerticalFlip = offsetTop + this.$el.height() > this.$el.parent().height();
             if (needsVerticalFlip) {
                 offsetTop = offsetTop - this.$el.height();
             }
 
             var offsetLeft = this.left;
-            var needsHorizontalFlip = offsetLeft + this.$el.width() > $(this.parentSelector).width();
+            var needsHorizontalFlip = offsetLeft + this.$el.width() > this.$el.parent().width();
             if (needsHorizontalFlip) {
                 offsetLeft = offsetLeft - this.$el.width();
             }
@@ -38,28 +45,35 @@
                 left: offsetLeft
             });
 
-            //  Every rendering will cause new groups to be added based on the location clicked.
-            //  So, once rendered, remove the groups to be ready to re-render with new groups.
-            this.model.get('groups').reset();
-
             return this;
         },
 
         initialize: function () {
-            //  TODO: If I implement Backbone View's more properly, then 'body' should be responsible for this, but for now this is fine.
-            this.$el.appendTo(this.parentSelector);
-
             var self = this;
+            
             //  Hide the context menu whenever any click occurs not just when selecting an item.
-            $(this.parentSelector).on('click contextmenu', function () {
-                self.$el.hide();
+            this.$el.parent().on('click contextmenu', function () {
+                self.reset();
             });
         },
 
-        addGroup: function(group){
+        addGroup: function (group) {
+            //  Adding a group is an indication that the contextMenu is about to be re-rendered.
+            //  Prepare the contextMenu for this by resetting it.
+            if (this.$el.is(':visible')) {
+                this.reset();
+            }
+
             this.model.get('groups').add(group);
         },
         
+        //  Hide the context menu and empty its displayed groups.
+        reset: function () {
+            this.$el.hide();
+            this.model.get('groups').reset();
+        },
+        
+        //  Displays the context menu at given x,y coordinates.
         show: function (options) {
             if (options.top === undefined || options.left === undefined) throw "ContextMenu must be shown with top/left coordinates.";
 
@@ -69,22 +83,24 @@
             this.render();
         },
 
-        groupItemClicked: function (event) {
+        //  Event that runs when any item in a group is clicked.
+        //  Maps the click action to the related model's onClick event.
+        onItemClick: function (event) {
 
             //  TODO: I don't think this is necessary if I create additional views? ContextMenuGroupView and ContextMenuItemView
-            var groupCid = $(event.target).closest('ul').attr('id');
-            var groupItemCid = event.target.id;
-
-            var group = this.model.get('groups').find(function (group) {
-                return group.cid == groupCid;
+            var clickGoupItemCid = event.target.id;
+            var clickGroupCid = $(event.target).closest('ul').attr('id');
+            
+            var clickedGroup = this.model.get('groups').find(function (group) {
+                return group.cid == clickGroupCid;
             });
 
-            var groupItem = group.get('items').find(function (item) {
-                return item.cid == groupItemCid;
+            var clickedGroupItem = clickedGroup.get('items').find(function (item) {
+                return item.cid == clickGoupItemCid;
             });
 
             // TODO: I don't really like how I'm invoking this event. I don't think the onClick should even be on the model.
-            groupItem.get('onClick')();
+            clickedGroupItem.get('onClick')();
 
         }
     });

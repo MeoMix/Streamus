@@ -57,6 +57,13 @@
                     onClick: function () {
                         self.clear();
                     }
+                }, {
+                    position: 1,
+                    text: 'Save Queue as Playlist',
+                    onClick: function () {
+                        // TODO: Implement saving queue as a playlist.
+                        console.error("not implemented");
+                    }
                 }]
             });
 

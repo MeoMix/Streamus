@@ -30,37 +30,37 @@ namespace Streamus.Domain.Managers
 
         public void SendPushMessage(Guid userId, string payload)
         {
-            UserChannel userChannel = UserChannels.First(uc => uc.UserId == userId);
+            //UserChannel userChannel = UserChannels.First(uc => uc.UserId == userId);
 
-            foreach (string channelId in userChannel.ChannelIds)
-            {
-                const string requestUri = "https://www.googleapis.com/gcm_for_chrome/v1/messages";
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create(requestUri);
-                httpWebRequest.ContentType = "application/json; charset=utf-8";
-                httpWebRequest.Method = "POST";
-                httpWebRequest.Headers.Add("Authorization", "OAuth " + AccessToken);
+            //foreach (string channelId in userChannel.ChannelIds)
+            //{
+            //    const string requestUri = "https://www.googleapis.com/gcm_for_chrome/v1/messages";
+            //    var httpWebRequest = (HttpWebRequest)WebRequest.Create(requestUri);
+            //    httpWebRequest.ContentType = "application/json; charset=utf-8";
+            //    httpWebRequest.Method = "POST";
+            //    httpWebRequest.Headers.Add("Authorization", "OAuth " + AccessToken);
 
-                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
-                {
-                    string json = new JavaScriptSerializer().Serialize(new
-                    {
-                        channelId = channelId,
-                        subchannelId = "0",
-                        payload = payload
-                    });
+            //    using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+            //    {
+            //        string json = new JavaScriptSerializer().Serialize(new
+            //        {
+            //            channelId = channelId,
+            //            subchannelId = "0",
+            //            payload = payload
+            //        });
 
-                    streamWriter.Write(json);
-                    streamWriter.Flush();
-                    streamWriter.Close();
+            //        streamWriter.Write(json);
+            //        streamWriter.Flush();
+            //        streamWriter.Close();
 
-                    var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-                    using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                    {
-                        //  Success response from writing out push message -- empty is OK.
-                        string streamResult = streamReader.ReadToEnd();
-                    }
-                }
-            }
+            //        var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            //        using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            //        {
+            //            //  Success response from writing out push message -- empty is OK.
+            //            string streamResult = streamReader.ReadToEnd();
+            //        }
+            //    }
+            //}
 
         }
     }
