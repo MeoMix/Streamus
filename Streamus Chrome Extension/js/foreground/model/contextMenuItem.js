@@ -5,7 +5,8 @@
         defaults: function () {
             return {
                 position: -1,
-                text: ''
+                text: '',
+                onClick: null
             };
         }
     });

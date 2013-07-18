@@ -211,15 +211,15 @@
         
         <script type="text/template" id="contextMenuTemplate">
 
-        <% groups.each(function(group){ %>
-            <ul id="group_<%= group.cid %>">
-                <% group.get('items').each(function(item){ %>
-                   <li>
-                       <a id="groupItem_<%= item.cid %>" href="#"><%= item.get('text') %></a>
-                   </li>
-                <% }); %>
-            </ul>
-        <% }); %>
+            <% groups.each(function(group){ %>
+                <ul id="<%= group.cid %>">
+                    <% group.get('items').each(function(item){ %>
+                       <li>
+                           <a id="<%= item.cid %>" href="#"><%= item.get('text') %></a>
+                       </li>
+                    <% }); %>
+                </ul>
+            <% }); %>
 
         </script>
         

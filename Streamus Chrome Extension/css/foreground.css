@@ -601,6 +601,10 @@
     font: 12px/1 sans-serif;
     padding: 7px 15px;
     text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    white-space: nowrap;
 }
 
 .contextMenu ul a:hover { background: #EFEFEF; }

@@ -9,8 +9,6 @@
         },
 
         initialize: function () {
-            this.contextMenuView = new ContextMenuView();
-            
             var self = this;
             QueueItems.each(function (queueItem) {
                 self.addItem(queueItem);
@@ -28,17 +26,15 @@
         
         addItem: function (queueItem) {
             var queueItemView = new QueueItemView({
-                model: queueItem,
-                parent: this
+                model: queueItem
             });
             
             this.$el.append(queueItemView.render().el);
         },
         
         clear: function () {
-            QueueItems.each(function () {
-                this.destroy();
-            });
+            //  Convert to array to avoid error of destroying while iterating over collection.
+            _.invoke(QueueItems.toArray(), 'destroy');
         },
         
         enqueuePlaylistItem: function(playlistItem) {
@@ -50,30 +46,23 @@
             });
         },
         
-        showContextMenu: function (event, queueItem) {
+        showContextMenu: function (event) {
+            var self = this;
 
-            var queueContextMenuGroups = [{
+            ContextMenuView.addGroup({
                 position: 0,
                 items: [{
                     position: 0,
-                    text: 'Clear Queue'
+                    text: 'Clear Queue',
+                    onClick: function () {
+                        self.clear();
+                    }
                 }]
-            }];
-            
-            if (queueItem) {
-                queueContextMenuGroups.push({
-                    position: 1,
-                    items: [{
-                        position: 0,
-                        text: 'Remove ' + queueItem.get('title')
-                    }]
-                });
-            }
+            });
 
-            this.contextMenuView.show({
+            ContextMenuView.show({
                 top: event.pageY,
-                left: event.pageX + 1,
-                groups: queueContextMenuGroups
+                left: event.pageX + 1
             });
 
             return false;

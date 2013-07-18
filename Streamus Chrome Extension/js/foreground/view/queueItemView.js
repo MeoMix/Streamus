@@ -1,4 +1,4 @@
-﻿define(function () {
+﻿define(['contextMenuView'], function (ContextMenuView) {
     'use strict';
 
     var QueueItemView = Backbone.View.extend({
@@ -29,10 +29,20 @@
         },
         
         showContextMenu: function (event) {
-            //  TODO: I don't feel great about telling the parent to show context menu
-            this.parent.showContextMenu(event, this.model);
-            
-            return false;
+            var self = this;
+
+            //  TODO: Maybe position should be inferred if not provided?
+            ContextMenuView.addGroup({
+                position: 1,
+                items: [{
+                    position: 0,
+                    text: 'Remove ' + this.model.get('title'),
+                    onClick: function () {
+                        self.model.destroy();
+                    }
+                }]
+            });
+
         }
     });
 
