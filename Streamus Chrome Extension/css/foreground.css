@@ -266,12 +266,7 @@
     width: 40px;
 }
 
-.contextMenuItem[disabled=disabled] {
-    background-color: transparent !important;
-    color: gray !important;
-    cursor: default;
-    text-decoration: line-through !important;
-}
+
 
 #PlayPauseButton.disabled:hover {
     background-color: transparent;
@@ -607,17 +602,24 @@
     padding: 0 15px;
 }
 
-#contextMenu ul a {
-    color: #000;
-    font: 12px/2.2 sans-serif;
-    text-decoration: none;
-}
-
 #contextMenu ul li:hover { background: #EFEFEF; }
 
 #contextMenu ul li:active {
     background: rgb(36, 109, 149);
     color: #fff;
+}
+
+#contextMenu ul li a {
+    color: #000;
+    font: 12px/2.2 sans-serif;
+    text-decoration: none;
+}
+
+#contextMenu ul li a[disabled=disabled] {
+    background-color: transparent !important;
+    color: gray !important;
+    cursor: default;
+    text-decoration: line-through !important;
 }
 
 .pressed *,

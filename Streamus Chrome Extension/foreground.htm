@@ -220,7 +220,7 @@
                 <ul id="<%= group.cid %>">
                     <% group.get('items').each(function(item){ %>
                        <li>
-                           <a id="<%= item.cid %>" href="#"><%= item.get('text') %></a>
+                           <a id="<%= item.cid %>" <% if( item.get('disabled') ) { %> disabled="disabled" <% } %> href="#"><%= item.get('text') %></a>
                        </li>
                     <% }); %>
                 </ul>

@@ -1,5 +1,5 @@
 //  This is the list of playlists on the playlists tab.
-define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerManager', 'dataSource'], function (contextMenu, ytHelper, backgroundManager, helpers, spinnerManager, DataSource) {
+define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerManager', 'dataSource'], function (ContextMenuView, ytHelper, backgroundManager, helpers, spinnerManager, DataSource) {
     //  TODO: Make this sortable and should inherit from a common List object. 
     var playlistList = $('#PlaylistList ul');
 
@@ -122,14 +122,60 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
 
             var listItem = $('<li/>', {
                 'data-playlistid': currentPlaylist.get('id'),
-                contextmenu: function (e) {
-                        
+                contextmenu: function (event) {
+                    
                     var clickedPlaylistId = $(this).data('playlistid');
                     var clickedPlaylist = activeStream.get('playlists').get(clickedPlaylistId);
-                    contextMenu.initialize(clickedPlaylist);
-                    //  +1 offset because if contextmenu appears directly under mouse, hover css will be removed from element.
-                    contextMenu.show(e.pageY, e.pageX + 1);
-                    //  Prevent default context menu display.
+
+                    //  Don't allow deleting of the last playlist in a stream ( at least for now )
+                    var isDeleteDisabled = clickedPlaylist.get('nextPlaylistId') === clickedPlaylist.get('id');
+
+                    ContextMenuView.addGroup({
+                        position: 0,
+                        items: [{
+                            position: 0,
+                            text: 'Copy URL',
+                            onClick: function () {
+
+                                clickedPlaylist.getShareCode(function (shareCode) {
+
+                                    var shareCodeShortId = shareCode.get('shortId');
+                                    var urlFriendlyEntityTitle = shareCode.get('urlFriendlyEntityTitle');
+
+                                    var playlistShareUrl = 'http://share.streamus.com/playlist/' + shareCodeShortId + '/' + urlFriendlyEntityTitle;
+
+                                    chrome.extension.sendMessage({
+                                        method: 'copy',
+                                        text: playlistShareUrl
+                                    });
+
+                                });
+
+
+                            }
+                        }, {
+                            position: 1,
+                            text: 'Delete',
+                            disabled: isDeleteDisabled,
+                            title: isDeleteDisabled ? 'This is your last Playlist, so you can\'t delete it' : '',
+                            onClick: function () {
+              
+                                if (!isDeleteDisabled) {
+                                    clickedPlaylist.destroy({
+                                        error: function (error) {
+                                            console.error(error);
+                                        }
+                                    });
+                                }
+                            }
+                        }]
+                    });
+
+                    ContextMenuView.show({
+                        top: event.pageY,
+                        left: event.pageX + 1
+                    });
+
                     return false;
                 },
 

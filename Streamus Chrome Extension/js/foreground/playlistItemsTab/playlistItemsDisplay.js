@@ -1,5 +1,5 @@
 ﻿//  Represents the videos in a given playlist
-define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers', 'queueView'], function (contextMenu, backgroundManager, player, helpers, queueView) {
+define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'queueView'], function (ContextMenuView, backgroundManager, player, helpers, queueView) {
     'use strict';
     var playlistItemList = $('#PlaylistItemList ul');
 
@@ -74,8 +74,6 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers', 'q
     var emptyPlaylistNotificationId = 'EmptyPlaylistNotification';
     backgroundManager.get('allPlaylistItems').on('add', function(item) {
 
-        console.log("add item firing");
-
         var listItem = buildListItem(item);
 
         if (playlistItemList.find('li').length > 0) {
@@ -141,18 +139,47 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers', 'q
         
         var listItem = $('<li/>', {
             'data-itemid': item.get('id'),
-            contextmenu: function (e) {
+            contextmenu: function (event) {
                 
                 var activePlaylist = backgroundManager.get('activePlaylist');
-
                 var clickedItemId = $(this).data('itemid');
                 var clickedItem = activePlaylist.get('items').get(clickedItemId);
 
-                contextMenu.initialize(clickedItem);
+                ContextMenuView.addGroup({
+                    position: 0,
+                    items: [{
+                        position: 0,
+                        text: 'Copy URL',
+                        onClick: function () {
+                            
+                            chrome.extension.sendMessage({
+                                method: 'copy',
+                                text: 'http://youtu.be/' + clickedItem.get('video').get('id')
+                            });
+                            
+                        }
+                    }, {
+                        position: 1,
+                        text: 'Delete',
+                        onClick: function () {
+                            
+                            clickedItem.destroy({
+                                success: function () {
+                                },
+                                error: function (error) {
+                                    console.error("Failed to destroy item", error);
+                                }
+                            });
+                            
+                        }
+                    }]
+                });
 
-                //  +1 offset because if contextmenu appears directly under mouse, hover css will be removed from element.
-                contextMenu.show(e.pageY, e.pageX + 1);
-                //  Prevent default context menu display.
+                ContextMenuView.show({
+                    top: event.pageY,
+                    left: event.pageX + 1
+                });
+
                 return false;
             },
             click: function() {

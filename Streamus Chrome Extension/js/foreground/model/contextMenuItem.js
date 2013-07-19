@@ -6,6 +6,7 @@
             return {
                 position: -1,
                 text: '',
+                disabled: false,
                 onClick: null
             };
         }

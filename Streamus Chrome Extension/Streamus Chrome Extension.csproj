@@ -179,10 +179,8 @@
     <Content Include="js\foreground\playerControls\nextButton.js" />
     <Content Include="js\foreground\playerControls\volumeControl.js" />
     <Content Include="js\foreground\playlistItemsTab\playlistItemInput.js" />
-    <Content Include="js\foreground\playlistItemsTab\playlistItemsContextMenu.js" />
     <Content Include="js\foreground\playlistItemsTab\playlistItemsDisplay.js" />
     <Content Include="js\foreground\playlistsTab\playlistInput.js" />
-    <Content Include="js\foreground\playlistsTab\playlistsContextMenu.js" />
     <Content Include="js\foreground\playlistsTab\playlistsDisplay.js" />
     <Content Include="js\foreground\progressBar.js" />
     <Content Include="js\foreground\requirePaths.js" />
