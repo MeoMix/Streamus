@@ -5,7 +5,7 @@ define(['backgroundManager', 'helpers'], function (backgroundManager, helpers) {
     var headerTitle = $('#HeaderTitle');
     var defaultTitle = 'Welcome to Streamus';
     
-    helpers.scrollElementInsideParent(headerTitle, header);
+    helpers.scrollElementInsideParent(headerTitle);
     
     backgroundManager.on('change:activePlaylistItem', function (model, activePlaylistItem) {
         setTitle(activePlaylistItem);

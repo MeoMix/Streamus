@@ -19,12 +19,10 @@ define(function () {
             return guid;
         },
         
-        scrollElementInsideParent: function(element, parent) {
+        scrollElementInsideParent: function(element) {
             //  Scroll the element if its too long to read.
             $(element).mouseover(function () {
-                var distanceToMove = $(this).width() - $(parent).width();
-
-                console.log("distance to move", $(this).width(), $(parent).width());
+                var distanceToMove = $(this).width() - $(this).parent().width();
 
                 $(this).animate({
                     marginLeft: "-" + distanceToMove + "px"

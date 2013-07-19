@@ -18,11 +18,7 @@
             this.$el.html(this.template(this.model.toJSON()));
 
             this.$el.find('a').each(function () {
-                console.log("iterating over and calling helpers");
-                var parentUl = $(this).closest('ul');
-                console.log("parent ul and this:", parentUl, this);
-                helpers.scrollElementInsideParent(this, parentUl);
-
+                helpers.scrollElementInsideParent(this);
             });
 
             //  TODO: Should this logic be part of 'show' or 'render' ?

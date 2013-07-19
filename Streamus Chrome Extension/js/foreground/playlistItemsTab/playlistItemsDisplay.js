@@ -189,7 +189,7 @@ define(['playlistItemsContextMenu', 'backgroundManager', 'player', 'helpers', 'q
             text: helpers.prettyPrintTime(video.get('duration')) + ' by ' + video.get('author')
         }).appendTo(textWrapper);
         
-        helpers.scrollElementInsideParent(itemTitle, textWrapper);
+        helpers.scrollElementInsideParent(itemTitle);
 
         return listItem;
     }

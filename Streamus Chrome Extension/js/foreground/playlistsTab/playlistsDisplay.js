@@ -175,7 +175,7 @@ define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spi
                 text: 'Videos: ' + currentVideos.length + ', Duration: ' + helpers.prettyPrintTime(sumVideosDurations)
             }).appendTo(textWrapper);
             
-            helpers.scrollElementInsideParent(currentPlaylistTitle, textWrapper);
+            helpers.scrollElementInsideParent(currentPlaylistTitle);
             
             currentPlaylist = activeStream.get('playlists').get(currentPlaylist.get('nextPlaylistId'));
 
