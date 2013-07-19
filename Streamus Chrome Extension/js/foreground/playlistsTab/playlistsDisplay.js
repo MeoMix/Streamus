@@ -5,7 +5,7 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
 
     var spinner = spinnerManager.getPlaylistSpinner();
 
-    backgroundManager.on('change:activeStream', reload);
+    backgroundManager.on('change:activeFolder', reload);
     backgroundManager.get('allPlaylists').on('remove change:title reset', reload);
 
     backgroundManager.on('change:activePlaylist', function (collection, playlist) {
@@ -27,12 +27,9 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
 
     //  Playlists keep track of how many videos they have. When adding a lot of items -- throttle.
     var throttledUpdatePlaylistDescription = _.throttle(function (playlistItem) {
-        console.log("PlaylistItem:", playlistItem);
-
+        
         var playlistId = playlistItem.get('playlistId');
         var playlistLink = playlistList.find('li[data-playlistid="' + playlistId + '"]');
-
-        console.log("Searching for playlist with ID:", playlistId);
 
         var playlist = backgroundManager.getPlaylistById(playlistId);
 
@@ -106,15 +103,13 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
     function reload() {
         playlistList.empty();
 
-        var activeStream = backgroundManager.get('activeStream');
+        var activeFolder = backgroundManager.get('activeFolder');
 
-        if (activeStream.get('playlists').length === 0) return;
+        if (activeFolder.get('playlists').length === 0) return;
 
-        var firstPlaylistId = activeStream.get('firstPlaylistId');
-        var currentPlaylist = activeStream.get('playlists').get(firstPlaylistId);
+        var firstPlaylistId = activeFolder.get('firstPlaylistId');
+        var currentPlaylist = activeFolder.get('playlists').get(firstPlaylistId);
 
-        console.log("Active Stream:", activeStream);
-        
         //  Build up each row.
         do {
 
@@ -125,9 +120,9 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
                 contextmenu: function (event) {
                     
                     var clickedPlaylistId = $(this).data('playlistid');
-                    var clickedPlaylist = activeStream.get('playlists').get(clickedPlaylistId);
+                    var clickedPlaylist = activeFolder.get('playlists').get(clickedPlaylistId);
 
-                    //  Don't allow deleting of the last playlist in a stream ( at least for now )
+                    //  Don't allow deleting of the last playlist in a folder ( at least for now )
                     var isDeleteDisabled = clickedPlaylist.get('nextPlaylistId') === clickedPlaylist.get('id');
 
                     ContextMenuView.addGroup({
@@ -223,7 +218,7 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
             
             helpers.scrollElementInsideParent(currentPlaylistTitle);
             
-            currentPlaylist = activeStream.get('playlists').get(currentPlaylist.get('nextPlaylistId'));
+            currentPlaylist = activeFolder.get('playlists').get(currentPlaylist.get('nextPlaylistId'));
 
         } while (currentPlaylist.get('id') !== firstPlaylistId)
 
