@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using Streamus.Controllers;
 using Streamus.Dao;
@@ -34,23 +33,24 @@ namespace Streamus.Tests.Controller_Tests
         }
 
         [Test]
-        public void GetUserWithBulkPlaylistItemsInStream_UserCreatedWithLotsOfItems_UserHasOneStreamOnePlaylist()
+        public void GetUserWithBulkPlaylistItemsInFolder_UserCreatedWithLotsOfItems_UserHasOneFolderOnePlaylist()
         {
             User user = Helpers.CreateSavedUserWithPlaylist();
 
             const int numItemsToCreate = 2000;
 
-            List<PlaylistItemDto> playlistItemDtos = Helpers.CreatePlaylistItemsDto(numItemsToCreate, user.Streams.First().Playlists.First().Id);
+            Guid playlistId = user.Folders.First().Playlists.First().Id;
+            List<PlaylistItemDto> playlistItemDtos = Helpers.CreatePlaylistItemsDto(numItemsToCreate, playlistId);
             PlaylistItemController.CreateMultiple(playlistItemDtos);
 
             NHibernateSessionManager.Instance.Clear();
 
             User userFromDatabase = UserDao.Get(user.Id);
 
-            Assert.That(userFromDatabase.Streams.Count == user.Streams.Count);
-            Assert.That(userFromDatabase.Streams.First().Playlists.Count == user.Streams.First().Playlists.Count);
-            Assert.That(userFromDatabase.Streams.First().Playlists.First().Items.Count() == numItemsToCreate); 
-            Assert.That(userFromDatabase.Streams.First().Playlists.First().Items.Count() == user.Streams.First().Playlists.First().Items.Count());
+            Assert.That(userFromDatabase.Folders.Count == user.Folders.Count);
+            Assert.That(userFromDatabase.Folders.First().Playlists.Count == user.Folders.First().Playlists.Count);
+            Assert.That(userFromDatabase.Folders.First().Playlists.First().Items.Count() == numItemsToCreate);
+            Assert.That(userFromDatabase.Folders.First().Playlists.First().Items.Count() == user.Folders.First().Playlists.First().Items.Count());
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Streamus.Domain
 {
     public class Playlist : AbstractShareableDomainEntity
     {
-        public Stream Stream { get; set; }
+        public Folder Folder { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
         public ICollection<PlaylistItem> Items { get; set; }
         public PlaylistItem FirstItem { get; set; }

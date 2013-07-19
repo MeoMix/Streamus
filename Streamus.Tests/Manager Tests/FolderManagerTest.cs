@@ -8,10 +8,10 @@ using Streamus.Domain.Managers;
 namespace Streamus.Tests.Manager_Tests
 {
     [TestFixture]
-    public class StreamManagerTest : AbstractTest
+    public class FolderManagerTest : AbstractTest
     {
-        private IStreamDao StreamDao { get; set; }
-        private static readonly StreamManager StreamManager = new StreamManager();
+        private IFolderDao FolderDao { get; set; }
+        private static readonly FolderManager FolderManager = new FolderManager();
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -21,7 +21,7 @@ namespace Streamus.Tests.Manager_Tests
         {
             try
             {
-                StreamDao = DaoFactory.GetStreamDao();
+                FolderDao = DaoFactory.GetFolderDao();
             }
             catch (TypeInitializationException exception)
             {
@@ -39,17 +39,17 @@ namespace Streamus.Tests.Manager_Tests
         }
 
         [Test]
-        public void SaveStream_StreamDoesNotExist_StreamCreated()
+        public void SaveFolder_FolderDoesNotExist_FolderCreated()
         {
-            var stream = new Stream();
-            StreamManager.Save(stream);
+            Folder folder = new Folder();
+            FolderManager.Save(folder);
 
             //  Remove entity from NHibernate cache to force DB query to ensure actually created.
             NHibernateSessionManager.Instance.Clear();
 
-            Stream streamFromDatabase = StreamDao.Get(stream.Id);
+            Folder folderFromDatabase = FolderDao.Get(folder.Id);
 
-            Assert.IsNotNull(streamFromDatabase);
+            Assert.IsNotNull(folderFromDatabase);
         }
     }
 }

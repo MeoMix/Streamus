@@ -1,5 +1,5 @@
 ﻿//  Background.js is a bit of a dumping ground for code which needs a permanent housing spot.
-define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManager', 'ytHelper', 'repeatButtonState', 'playerState', 'queueItems'],
+define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManager', 'ytHelper', 'repeatButtonState', 'playerState', 'streamItems'],
     function (player, backgroundManager, localStorageManager, pushMessageManager, ytHelper, RepeatButtonState, PlayerState) {
         'use strict';
   
@@ -115,13 +115,13 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
                 sendResponse({});
                 break;
 
-            case 'getStreams':
-                var allStreams = backgroundManager.get('allStreams');
-                sendResponse({ streams: allStreams });
+            case 'getFolders':
+                var allFolders = backgroundManager.get('allFolders');
+                sendResponse({ folders: allFolders });
                 break;
             case 'getPlaylists':                
-                var stream = backgroundManager.getStreamById(request.streamId);
-                var playlists = stream.get('playlists');
+                var folder = backgroundManager.getFolderById(request.folderId);
+                var playlists = folder.get('playlists');
 
                 sendResponse({ playlists: playlists });
                 break;
@@ -149,9 +149,9 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
 
                 break;
             case 'addPlaylistByShareData':
-                var activeStream = backgroundManager.get('activeStream');
+                var activeFolder = backgroundManager.get('activeFolder');
                 
-                activeStream.addPlaylistByShareData(request.shareCodeShortId, request.urlFriendlyEntityTitle, function(playlist) {
+                activeFolder.addPlaylistByShareData(request.shareCodeShortId, request.urlFriendlyEntityTitle, function (playlist) {
 
                     if (playlist) {
                         

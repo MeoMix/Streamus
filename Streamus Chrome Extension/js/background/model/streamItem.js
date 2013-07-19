@@ -2,12 +2,12 @@
 define(function () {
     'use strict';
    
-    var QueueItem = Backbone.Model.extend({
+    var StreamItem = Backbone.Model.extend({
         defaults: function () {
             return {
                 // TODO: Figure out all the properties this model needs.
                 videoId: '',
-                title: 'Empty Queue Item',
+                title: 'Empty Stream Item',
                 videoImageUrl: ''
             };
         },
@@ -16,5 +16,5 @@ define(function () {
         sync: function () { return false; }
     });
 
-    return QueueItem;
+    return StreamItem;
 });

@@ -11,11 +11,11 @@ namespace Streamus.Domain.Validators
 
             RuleFor(playlist => playlist.NextPlaylist)
                 .NotNull()
-                .When(playlist => playlist.Stream != null);
+                .When(playlist => playlist.Folder != null);
 
             RuleFor(playlist => playlist.PreviousPlaylist)
                 .NotNull()
-                .When(playlist => playlist.Stream != null);
+                .When(playlist => playlist.Folder != null);
 
 
 

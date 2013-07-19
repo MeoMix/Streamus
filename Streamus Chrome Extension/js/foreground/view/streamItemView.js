@@ -1,10 +1,10 @@
 ﻿define(['contextMenuView'], function(ContextMenuView) {
     'use strict';
 
-    var QueueItemView = Backbone.View.extend({
-        className: 'queueItem',
+    var StreamItemView = Backbone.View.extend({
+        className: 'streamItem',
 
-        template: _.template($('#queueItemTemplate').html()),
+        template: _.template($('#streamItemTemplate').html()),
 
         events: {
             'contextmenu': 'showContextMenu',
@@ -52,5 +52,5 @@
         }
     });
 
-    return QueueItemView;
+    return StreamItemView;
 });

@@ -18,7 +18,7 @@ define(['ytHelper',
             defaults: function() {
                 return {
                     id: null,
-                    streamId: null,
+                    folderId: null,
                     title: 'New Playlist',
                     firstItemId: null,
                     nextPlaylistId: null,

@@ -28,9 +28,9 @@ namespace Streamus.Dao
             return new ShareCodeDao();
         }
 
-        public IStreamDao GetStreamDao()
+        public IFolderDao GetFolderDao()
         {
-            return new StreamDao();
+            return new FolderDao();
         }
 
         public IUserDao GetUserDao()

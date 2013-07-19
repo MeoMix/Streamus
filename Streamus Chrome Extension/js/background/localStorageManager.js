@@ -11,13 +11,13 @@ define(['repeatButtonState'], function (RepeatButtonState) {
             suggestedQuality: 'default'
         },
 
-        getActiveStreamId: function() {
-            var activeStreamId = getItem('activeStreamId');
-            return activeStreamId;
+        getActiveFolderId: function() {
+            var activeFolderId = getItem('activeFolderId');
+            return activeFolderId;
         },
         
-        setActiveStreamId: function (activeStreamId) {
-            localStorage.setItem('activeStreamId', JSON.stringify(activeStreamId));
+        setActiveFolderId: function (activeFolderId) {
+            localStorage.setItem('activeFolderId', JSON.stringify(activeFolderId));
         },
         
         getActivePlaylistId: function() {

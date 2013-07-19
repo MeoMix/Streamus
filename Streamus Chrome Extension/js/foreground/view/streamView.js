@@ -1,8 +1,8 @@
-﻿define(['queueItems', 'queueItemView', 'contextMenuView', 'overscroll'], function (QueueItems, QueueItemView, ContextMenuView) {
+﻿define(['streamItems', 'streamItemView', 'contextMenuView', 'overscroll'], function (StreamItems, StreamItemView, ContextMenuView) {
     'use strict';
 
-    var QueueView = Backbone.View.extend({
-        el: $('#QueueView'),
+    var StreamView = Backbone.View.extend({
+        el: $('#StreamView'),
         
         events: {
             'contextmenu': 'showContextMenu',
@@ -10,13 +10,13 @@
 
         initialize: function () {
             var self = this;
-            QueueItems.each(function (queueItem) {
-                self.addItem(queueItem);
+            StreamItems.each(function (streamItem) {
+                self.addItem(streamItem);
             });
 
             //  Whenever an item is added to the collection, visually add an item, too.
-            this.listenTo(QueueItems, 'add', this.addItem);
-            this.listenTo(QueueItems, 'all', this.render);
+            this.listenTo(StreamItems, 'add', this.addItem);
+            this.listenTo(StreamItems, 'all', this.render);
 
             //  His instructions say I should be able to achieve direction:horizontal via just css, but I'm unable to get it while drunk.
             this.$el.overscroll({
@@ -24,23 +24,23 @@
             });
         },
         
-        addItem: function (queueItem) {
-            var queueItemView = new QueueItemView({
-                model: queueItem
+        addItem: function (streamItem) {
+            var streamItemView = new StreamItemView({
+                model: streamItem
             });
             
-            this.$el.append(queueItemView.render().el);
+            this.$el.append(streamItemView.render().el);
         },
         
         clear: function () {
             //  Convert to array to avoid error of destroying while iterating over collection.
-            _.invoke(QueueItems.toArray(), 'destroy');
+            _.invoke(StreamItems.toArray(), 'destroy');
         },
         
-        enqueuePlaylistItem: function(playlistItem) {
+        addPlaylistItem: function(playlistItem) {
             var videoId = playlistItem.get('video').get('id');
 
-            QueueItems.create({
+            StreamItems.create({
                 title: playlistItem.get('title'),
                 videoImageUrl: 'http://img.youtube.com/vi/' + videoId + '/default.jpg'
             });
@@ -53,15 +53,15 @@
                 position: 0,
                 items: [{
                     position: 0,
-                    text: 'Clear Queue',
+                    text: 'Clear Stream',
                     onClick: function () {
                         self.clear();
                     }
                 }, {
                     position: 1,
-                    text: 'Save Queue as Playlist',
+                    text: 'Save Stream as Playlist',
                     onClick: function () {
-                        // TODO: Implement saving queue as a playlist.
+                        // TODO: Implement saving stream as a playlist.
                         console.error("not implemented");
                     }
                 }]
@@ -77,5 +77,5 @@
 
     });
 
-    return new QueueView;
+    return new StreamView;
 });

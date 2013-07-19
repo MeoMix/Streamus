@@ -173,7 +173,7 @@
     <Compile Include="Manager Tests\ShareCodeManagerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResetDatabase.cs" />
-    <Compile Include="Manager Tests\StreamManagerTest.cs" />
+    <Compile Include="Manager Tests\FolderManagerTest.cs" />
     <Compile Include="Dao Tests\UserDaoTest.cs" />
     <Compile Include="Manager Tests\UserManagerTest.cs" />
     <Compile Include="Manager Tests\VideoManagerTest.cs" />

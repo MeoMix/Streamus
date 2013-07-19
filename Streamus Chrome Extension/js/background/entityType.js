@@ -6,7 +6,7 @@
         Video: 0,
         PlaylistItem: 1,
         Playlist: 2,
-        Stream: 3,
+        Folder: 3,
         User: 4
     });
 

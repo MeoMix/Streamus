@@ -15,13 +15,13 @@ namespace Streamus.Dto
         [DataMember(Name = "name")]
         public string Name { get; set; }
 
-        [DataMember(Name = "streams")]
-        public List<StreamDto> Streams { get; set; }
+        [DataMember(Name = "folders")]
+        public List<FolderDto> Folders { get; set; }
 
         public UserDto()
         {
             Name = string.Empty;
-            Streams = new List<StreamDto>();
+            Folders = new List<FolderDto>();
         }
 
         public static UserDto Create(User user)

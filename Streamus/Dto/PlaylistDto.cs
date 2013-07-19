@@ -15,8 +15,8 @@ namespace Streamus.Dto
         [DataMember(Name = "title")]
         public string Title { get; set; }
 
-        [DataMember(Name = "streamId")]
-        public Guid StreamId { get; set; }
+        [DataMember(Name = "folderId")]
+        public Guid FolderId { get; set; }
 
         [DataMember(Name = "items")]
         public List<PlaylistItemDto> Items { get; set; }

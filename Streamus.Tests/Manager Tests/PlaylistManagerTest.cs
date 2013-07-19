@@ -13,7 +13,7 @@ namespace Streamus.Tests.Manager_Tests
     {
         private IPlaylistDao PlaylistDao { get; set; }
         private User User { get; set; }
-        private Stream Stream { get; set; }
+        private Folder Folder { get; set; }
         private Video Video { get; set; }
         private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
 
@@ -33,7 +33,7 @@ namespace Streamus.Tests.Manager_Tests
             }
 
             User = new UserManager().CreateUser();
-            Stream = User.Streams.First();
+            Folder = User.Folders.First();
 
             Video = Helpers.CreateUnsavedVideoWithId();
             new VideoManager().Save(Video);
@@ -46,7 +46,7 @@ namespace Streamus.Tests.Manager_Tests
         [Test]
         public void AddItem_NoItemsInPlaylist_FirstItemIdSet()
         {
-            Playlist playlist = Stream.CreateAndAddPlaylist();
+            Playlist playlist = Folder.CreateAndAddPlaylist();
             PlaylistManager.Save(playlist);
 
             PlaylistItem playlistItem = Helpers.CreateItemInPlaylist(playlist);
@@ -61,7 +61,7 @@ namespace Streamus.Tests.Manager_Tests
         [Test]
         public void Updates()
         {
-            Playlist playlist = Stream.CreateAndAddPlaylist();
+            Playlist playlist = Folder.CreateAndAddPlaylist();
 
             PlaylistManager.Save(playlist);
 
@@ -78,16 +78,16 @@ namespace Streamus.Tests.Manager_Tests
 
         /// <summary>
         ///     Verifies that a Playlist can be deleted properly. The Playlist
-        ///     has no items underneath it and the Stream is assumed to not have any additional Playlists.
+        ///     has no items underneath it and the Folder is assumed to not have any additional Playlists.
         /// </summary>
         [Test]
         public void DeletePlaylist()
         {
             //  Create a new Playlist and write it to the database.
-            string title = string.Format("New Playlist {0:D4}", Stream.Playlists.Count);
+            string title = string.Format("New Playlist {0:D4}", Folder.Playlists.Count);
             var playlist = new Playlist(title);
 
-            Stream.AddPlaylist(playlist);
+            Folder.AddPlaylist(playlist);
             PlaylistManager.Save(playlist);
 
             //  Now delete the created Playlist and ensure it is removed.

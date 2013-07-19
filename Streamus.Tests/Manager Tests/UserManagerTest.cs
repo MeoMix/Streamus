@@ -42,7 +42,7 @@ namespace Streamus.Tests.Manager_Tests
             Assert.AreNotSame(user, userFromDatabase);
 
             Assert.IsNotNull(userFromDatabase);
-            Assert.IsNotEmpty(userFromDatabase.Streams);
+            Assert.IsNotEmpty(userFromDatabase.Folders);
         }
     }
 }

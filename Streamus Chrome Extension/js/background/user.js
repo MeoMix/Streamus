@@ -2,7 +2,7 @@
 //  Tries to load itself by ID stored in localStorage and then by chrome.storage.sync.
 //  If still unloaded, tells the server to create a new user and assumes that identiy.
 var User = null;
-define(['streams', 'programState', 'localStorageManager'], function (Streams, programState, localStorageManager) {
+define(['folders', 'programState', 'localStorageManager'], function (Folders, programState, localStorageManager) {
     'use strict';
 
     var syncUserIdKey = 'UserId';
@@ -15,7 +15,7 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
                 name: '',
                 dirty: false,
                 loaded: false,
-                streams: new Streams()
+                folders: new Folders()
             };
         },
         
@@ -83,10 +83,10 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
         console.log("onUserLoaded:", model);
 
         //  Have to manually convert the JSON array into a Backbone.Collection
-        var streams = new Streams(model.get('streams'));
+        var folders = new Folders(model.get('folders'));
 
-        this.set('streams', streams, {
-            //  Silent operation because streams isn't technically changing - just being made correct.
+        this.set('folders', folders, {
+            //  Silent operation because folders isn't technically changing - just being made correct.
             silent: true
         });
 

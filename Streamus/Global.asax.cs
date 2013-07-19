@@ -50,7 +50,7 @@ namespace Streamus
 
             IPlaylistItemDao playlistItemDao = daoFactory.GetPlaylistItemDao();
             IPlaylistDao playlistDao = daoFactory.GetPlaylistDao();
-            IStreamDao streamDao = daoFactory.GetStreamDao();
+            IFolderDao folderDao = daoFactory.GetFolderDao();
             IUserDao userDao = daoFactory.GetUserDao();
 
             Mapper.CreateMap<Playlist, PlaylistDto>()
@@ -61,8 +61,8 @@ namespace Streamus
                              opt => opt.MapFrom(playlistDto => playlistDao.Get(playlistDto.NextPlaylistId)))
                   .ForMember(playlist => playlist.PreviousPlaylist,
                              opt => opt.MapFrom(playlistDto => playlistDao.Get(playlistDto.PreviousPlaylistId)))
-                  .ForMember(playlist => playlist.Stream,
-                             opt => opt.MapFrom(playlistDto => streamDao.Get(playlistDto.StreamId)));
+                  .ForMember(playlist => playlist.Folder,
+                             opt => opt.MapFrom(playlistDto => folderDao.Get(playlistDto.FolderId)));
 
             Mapper.CreateMap<PlaylistItem, PlaylistItemDto>()
                   .ReverseMap()
@@ -75,12 +75,12 @@ namespace Streamus
 
             Mapper.CreateMap<ShareCode, ShareCodeDto>().ReverseMap();
 
-            Mapper.CreateMap<Stream, StreamDto>()
+            Mapper.CreateMap<Folder, FolderDto>()
                   .ReverseMap()
-                  .ForMember(stream => stream.FirstPlaylist,
-                             opt => opt.MapFrom(streamDto => playlistDao.Get(streamDto.FirstPlaylistId)))
-                  .ForMember(stream => stream.User,
-                             opt => opt.MapFrom(streamDto => userDao.Get(streamDto.UserId)));
+                  .ForMember(folder => folder.FirstPlaylist,
+                             opt => opt.MapFrom(folderDto => playlistDao.Get(folderDto.FirstPlaylistId)))
+                  .ForMember(folder => folder.User,
+                             opt => opt.MapFrom(folderDto => userDao.Get(folderDto.UserId)));
 
             Mapper.CreateMap<User, UserDto>().ReverseMap();
             Mapper.CreateMap<Video, VideoDto>().ReverseMap();

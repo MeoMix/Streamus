@@ -14,7 +14,7 @@ namespace Streamus.Tests
     {
         private static readonly UserManager UserManager = new UserManager();
         private static readonly PlaylistItemManager PlaylistItemManager = new PlaylistItemManager();
-        private static readonly StreamManager StreamManager = new StreamManager();
+        private static readonly FolderManager FolderManager = new FolderManager();
 
         /// <summary>
         ///     Creates a new Video and PlaylistItem, puts item in the database and then returns
@@ -48,18 +48,18 @@ namespace Streamus.Tests
         }
 
         /// <summary>
-        ///     Create a new Stream, save it to the DB, then generate a PlaylistDto which has the
-        ///     Stream as its parent.
+        ///     Create a new Folder, save it to the DB, then generate a PlaylistDto which has the
+        ///     Folder as its parent.
         /// </summary>
         /// <returns></returns>
         public static PlaylistDto CreatePlaylistDto()
         {
-            var stream = new Stream();
-            StreamManager.Save(stream);
+            Folder folder = new Folder();
+            FolderManager.Save(folder);
 
             var playlistDto = new PlaylistDto
                 {
-                    StreamId = stream.Id
+                    FolderId = folder.Id
                 };
 
             return playlistDto;
@@ -73,21 +73,21 @@ namespace Streamus.Tests
             return user;
         }
 
-        public static Stream CreateSavedStreamWithPlaylist()
+        public static Folder CreateSavedFolderWithPlaylist()
         {
             User user = CreateSavedUserWithPlaylist();
 
-            return user.Streams.First();
+            return user.Folders.First();
         }
 
         /// <summary>
-        ///     Create a new Stream and Playlist, save them to the DB, then generate a PlaylistItemDto
+        ///     Create a new Folder and Playlist, save them to the DB, then generate a PlaylistItemDto
         ///     which has those entities as its parents.
         /// </summary>
         public static PlaylistItemDto CreatePlaylistItemDto()
         {
-            Stream stream = CreateSavedStreamWithPlaylist();
-            Guid playlistId = stream.Playlists.First().Id;
+            Folder folder = CreateSavedFolderWithPlaylist();
+            Guid playlistId = folder.Playlists.First().Id;
 
             Video video = CreateUnsavedVideoWithId();
             VideoDto videoDto = VideoDto.Create(video);
@@ -102,15 +102,15 @@ namespace Streamus.Tests
         }
 
         /// <summary>
-        ///     Create a new Stream and Playlist, save them to the DB, then generate N PlaylistItemDtos
+        ///     Create a new Folder and Playlist, save them to the DB, then generate N PlaylistItemDtos
         ///     which have those entities as their parents.
         /// </summary>
         public static List<PlaylistItemDto> CreatePlaylistItemsDto(int itemsToCreate, Guid playlistId = default(Guid))
         {
             if (playlistId == default(Guid))
             {
-                Stream stream = CreateSavedStreamWithPlaylist();
-                playlistId = stream.Playlists.First().Id;
+                Folder folder = CreateSavedFolderWithPlaylist();
+                playlistId = folder.Playlists.First().Id;
             }
 
             Video video = CreateUnsavedVideoWithId();

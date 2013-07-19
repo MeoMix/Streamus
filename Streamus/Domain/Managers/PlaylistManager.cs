@@ -112,7 +112,7 @@ namespace Streamus.Domain.Managers
                 NHibernateSessionManager.Instance.BeginTransaction();
 
                 Playlist playlist = PlaylistDao.Get(id);
-                playlist.Stream.RemovePlaylist(playlist);
+                playlist.Folder.RemovePlaylist(playlist);
                 PlaylistDao.Delete(playlist);
 
                 NHibernateSessionManager.Instance.CommitTransaction();

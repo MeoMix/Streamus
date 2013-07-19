@@ -1,8 +1,8 @@
-﻿//  A stream is a collection of playlists
+﻿//  A folder is a collection of playlists
 define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'dataSource', 'ytHelper'], function (Playlists, Playlist, Videos, Video, player, programState, DataSource, ytHelper) {
     'use strict';
     
-    var streamModel = Backbone.Model.extend({
+    var folderModel = Backbone.Model.extend({
         defaults: function () {
             return {
                 id: null,
@@ -13,16 +13,16 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
         },
         urlRoot: programState.getBaseUrl() + 'Video/',
         
-        parse: function (streamDto) {
+        parse: function (folderDto) {
             
             //  Convert C# Guid.Empty into BackboneJS null
-            for (var key in streamDto) {
-                if (streamDto.hasOwnProperty(key) && streamDto[key] == '00000000-0000-0000-0000-000000000000') {
-                    streamDto[key] = null;
+            for (var key in folderDto) {
+                if (folderDto.hasOwnProperty(key) && folderDto[key] == '00000000-0000-0000-0000-000000000000') {
+                    folderDto[key] = null;
                 }
             }
 
-            return streamDto;
+            return folderDto;
         },
 
         initialize: function () {
@@ -105,7 +105,7 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
                 data: {
                     shareCodeShortId: shareCodeShortId,
                     urlFriendlyEntityTitle: urlFriendlyEntityTitle,
-                    streamId: self.get('id')
+                    folderId: self.get('id')
                 },
                 success: function (playlistCopy) {
                     //  Convert back from JSON to a backbone object.
@@ -141,7 +141,7 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
 
             var playlist = new Playlist({
                 title: playlistTitle,
-                streamId: this.get('id'),
+                folderId: this.get('id'),
                 dataSource: dataSource
             });
 
@@ -237,8 +237,8 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
     });
     
     return function (config) {
-        var stream = new streamModel(config);
+        var folder = new folderModel(config);
 
-        return stream;
+        return folder;
     };
 });

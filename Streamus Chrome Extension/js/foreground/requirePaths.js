@@ -44,7 +44,7 @@ var require = {
         //  Collection:
         'contextMenuGroups': 'foreground/collection/contextMenuGroups',
         'contextMenuItems': 'foreground/collection/contextMenuItems',
-        'queueItems': 'foreground/collection/queueItems',
+        'streamItems': 'foreground/collection/streamItems',
 
         //  Model:
         'contextMenu': 'foreground/model/contextMenu',
@@ -53,7 +53,7 @@ var require = {
         
         //  View:
         'contextMenuView': 'foreground/view/contextMenuView',
-        'queueItemView': 'foreground/view/queueItemView',
-        'queueView': 'foreground/view/queueView'
+        'streamItemView': 'foreground/view/streamItemView',
+        'streamView': 'foreground/view/streamView'
     }
 };

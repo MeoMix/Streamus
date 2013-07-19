@@ -11,8 +11,8 @@ var require = {
         'player': 'background/player',
         'playlistItem': 'background/playlistItem',
         'playlistItems': 'background/playlistItems',
-        'stream': 'background/stream',
-        'streams': 'background/streams',
+        'folder': 'background/folder',
+        'folders': 'background/folders',
         'playlist': 'background/playlist',
         'playlists': 'background/playlists',
         'youTubePlayerAPI': 'youTubePlayerAPI',
@@ -36,7 +36,7 @@ var require = {
         'shareCode': 'background/shareCode',
         'shareableEntityType': 'shareableEntityType',
         
-        'queueItems': 'background/collection/queueItems',
-        'queueItem': 'background/model/queueItem'
+        'streamItems': 'background/collection/streamItems',
+        'streamItem': 'background/model/streamItem'
     }
 };

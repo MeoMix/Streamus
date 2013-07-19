@@ -1,5 +1,5 @@
 ﻿//  Represents the videos in a given playlist
-define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'queueView'], function (ContextMenuView, backgroundManager, player, helpers, queueView) {
+define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamView'], function (ContextMenuView, backgroundManager, player, helpers, streamView) {
     'use strict';
     var playlistItemList = $('#PlaylistItemList ul');
 
@@ -57,12 +57,12 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'queueView'
         }
     }
     
-    function enqueueItembyId(itemId) {
+    function addItemById(itemId) {
         
-        //  TODO: What if the item is already queued? Does spam double clicking just keep adding?
+        //  TODO: What if the item is already added? Does spam double clicking just keep adding?
         var playlistItem = backgroundManager.getPlaylistItemById(itemId);
 
-        queueView.enqueuePlaylistItem(playlistItem);
+        streamView.addPlaylistItem(playlistItem);
     }
 
     backgroundManager.on('change:activePlaylist', function () {
@@ -188,9 +188,9 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'queueView'
                 setListItemClass(itemId, 'loaded');
             },
             dblclick: function() {
-                //  Add item to queue on dblclick.
+                //  Add item to stream on dblclick.
                 var itemId = $(this).data('itemid');
-                enqueueItembyId(itemId);
+                addItemById(itemId);
             }
         });
         

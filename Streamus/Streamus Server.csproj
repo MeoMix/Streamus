@@ -218,7 +218,7 @@
     <Compile Include="Dao\NHibernateDaoFactory.cs" />
     <Compile Include="Dao\ShareCodeDao.cs" />
     <Compile Include="Dao\ErrorDao.cs" />
-    <Compile Include="Dao\StreamDao.cs" />
+    <Compile Include="Dao\FolderDao.cs" />
     <Compile Include="Dao\PlaylistItemDao.cs" />
     <Compile Include="Domain\AbstractDomainEntity.cs" />
     <Compile Include="Domain\AbstractShareableEntity.cs" />
@@ -230,14 +230,14 @@
     <Compile Include="Domain\Managers\PlaylistItemManager.cs" />
     <Compile Include="Domain\Managers\PushMessageManager.cs" />
     <Compile Include="Domain\Managers\ShareCodeManager.cs" />
-    <Compile Include="Domain\Managers\StreamManager.cs" />
+    <Compile Include="Domain\Managers\FolderManager.cs" />
     <Compile Include="Domain\ShareCode.cs" />
     <Compile Include="Domain\Error.cs" />
     <Compile Include="Domain\Interfaces\IErrorDao.cs" />
-    <Compile Include="Domain\Interfaces\IStreamDao.cs" />
+    <Compile Include="Domain\Interfaces\IFolderDao.cs" />
     <Compile Include="Domain\Interfaces\IPlaylistItemDao.cs" />
     <Compile Include="Domain\Managers\ErrorManager.cs" />
-    <Compile Include="Domain\Stream.cs" />
+    <Compile Include="Domain\Folder.cs" />
     <Compile Include="Domain\PlaylistItem.cs" />
     <Compile Include="Domain\Interfaces\IUserDao.cs" />
     <Compile Include="Domain\Interfaces\IPlaylistDao.cs" />
@@ -250,7 +250,7 @@
     <Compile Include="Domain\UserChannel.cs" />
     <Compile Include="Domain\Validators\ShareCodeValidator.cs" />
     <Compile Include="Domain\Validators\ErrorValidator.cs" />
-    <Compile Include="Domain\Validators\StreamValidator.cs" />
+    <Compile Include="Domain\Validators\FolderValidator.cs" />
     <Compile Include="Domain\Validators\PlaylistItemValidator.cs" />
     <Compile Include="Domain\Validators\PlaylistValidator.cs" />
     <Compile Include="Domain\Validators\UserValidator.cs" />
@@ -275,7 +275,7 @@
     <Compile Include="Dto\PlaylistItemDto.cs" />
     <Compile Include="Dto\PushMessageDto.cs" />
     <Compile Include="Dto\ShareCodeDto.cs" />
-    <Compile Include="Dto\StreamDto.cs" />
+    <Compile Include="Dto\FolderDto.cs" />
     <Compile Include="Dto\UserDto.cs" />
     <Compile Include="Dto\VideoDto.cs" />
     <Compile Include="Global.asax.cs">
@@ -296,7 +296,7 @@
     <EmbeddedResource Include="Domain\Playlist.hbm.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Domain\Stream.hbm.xml">
+    <EmbeddedResource Include="Domain\Folder.hbm.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Domain\Error.hbm.xml">

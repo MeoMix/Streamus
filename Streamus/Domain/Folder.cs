@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace Streamus.Domain
 {        
-    //  TODO: Currently there is only the ability to have a single Stream.
+    //  TODO: Currently there is only the ability to have a single Folder.
     //  Should create Strean objects as a LinkedList so that adding and removing is possible.
-    public class Stream : AbstractDomainEntity<Guid>
+    public class Folder : AbstractDomainEntity<Guid>
     {
         public string Title { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
@@ -15,17 +15,17 @@ namespace Streamus.Domain
         public Playlist FirstPlaylist { get; set; }
         public User User { get; set; }
 
-        public Stream()
+        public Folder()
         {
             Id = Guid.Empty;
             Title = string.Empty;
             Playlists = new List<Playlist>();
 
-            //  A stream should always have at least one Playlist.
+            //  A Folder should always have at least one Playlist.
             CreateAndAddPlaylist();
         }
 
-        public Stream(string title) 
+        public Folder(string title) 
             : this()
         {
             Title = title;
@@ -43,10 +43,10 @@ namespace Streamus.Domain
 
         public void AddPlaylist(Playlist playlist)
         {
-            //  Playlist must be removed from other Stream before AddPlaylist affects it.
-            if (playlist.Stream != null && playlist.Stream != this)
+            //  Playlist must be removed from other Folder before AddPlaylist affects it.
+            if (playlist.Folder != null && playlist.Folder != this)
             {
-                string message = string.Format("Playlist {0} is already a child of Stream {1}", playlist.Title, playlist.Stream.Title);
+                string message = string.Format("Playlist {0} is already a child of Folder {1}", playlist.Title, playlist.Folder.Title);
                 throw new Exception(message);
             }
 
@@ -69,7 +69,7 @@ namespace Streamus.Domain
                 playlist.NextPlaylist = firstPlayist;
             }
 
-            playlist.Stream = this;
+            playlist.Folder = this;
             Playlists.Add(playlist);
         }
 
@@ -92,7 +92,7 @@ namespace Streamus.Domain
 
         public void ValidateAndThrow()
         {
-            var validator = new StreamValidator();
+            var validator = new FolderValidator();
             validator.ValidateAndThrow(this);
         }
 

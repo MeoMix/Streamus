@@ -4,23 +4,23 @@ using System;
 
 namespace Streamus.Domain.Managers
 {
-    public class StreamManager : AbstractManager
+    public class FolderManager : AbstractManager
     {
-        private IStreamDao StreamDao { get; set; }
+        private IFolderDao FolderDao { get; set; }
 
-        public StreamManager()
+        public FolderManager()
         {
-            StreamDao = DaoFactory.GetStreamDao();
+            FolderDao = DaoFactory.GetFolderDao();
         }
 
-        public void Save(Stream stream)
+        public void Save(Folder folder)
         {
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
 
-                stream.ValidateAndThrow();
-                StreamDao.Save(stream);
+                folder.ValidateAndThrow();
+                FolderDao.Save(folder);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }

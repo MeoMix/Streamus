@@ -16,7 +16,7 @@ namespace Streamus.Dto
         Video = 0,
         PlaylistItem = 1,
         Playlist = 2,
-        Stream = 3,
+        Folder = 3,
         User = 4
     }
 
@@ -55,10 +55,10 @@ namespace Streamus.Dto
         public string ToJson()
         {
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(GetType());
-            using (MemoryStream stream = new MemoryStream())
+            using (MemoryStream memoryStream = new MemoryStream())
             {
-                serializer.WriteObject(stream, this);
-                return Encoding.Default.GetString(stream.ToArray());
+                serializer.WriteObject(memoryStream, this);
+                return Encoding.Default.GetString(memoryStream.ToArray());
             }
         }
 

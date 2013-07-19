@@ -1,9 +1,9 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using AutoMapper;
 using FluentValidation;
 using Streamus.Domain.Validators;
 using Streamus.Dto;
-using System;
-using System.Collections.Generic;
 
 namespace Streamus.Domain
 {
@@ -11,15 +11,15 @@ namespace Streamus.Domain
     {
         public string Name { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
-        public ICollection<Stream> Streams { get; set; }
+        public ICollection<Folder> Folders { get; set; }
 
         public User()
         {
             Name = string.Empty;
-            Streams = new List<Stream>();
+            Folders = new List<Folder>();
 
-            //  A user should always have at least one Stream.
-            CreateAndAddStream();
+            //  A user should always have at least one Folder.
+            CreateAndAddFolder();
         }
 
         public static User Create(UserDto userDto)
@@ -28,19 +28,21 @@ namespace Streamus.Domain
             return user;
         }
 
-        public Stream CreateAndAddStream()
+        public Folder CreateAndAddFolder()
         {
-            string title = string.Format("New Stream {0:D4}", Streams.Count);
-            var stream = new Stream(title);
-            stream.User = this;
-            Streams.Add(stream);
+            string title = string.Format("New Folder {0:D4}", Folders.Count);
+            Folder folder = new Folder(title)
+                {
+                    User = this
+                };
+            Folders.Add(folder);
 
-            return stream;
+            return folder;
         }
 
-        public void RemoveStream(Stream stream)
+        public void RemoveFolder(Folder folder)
         {
-            Streams.Remove(stream);
+            Folders.Remove(folder);
         }
 
         public void ValidateAndThrow()
@@ -48,6 +50,5 @@ namespace Streamus.Domain
             var validator = new UserValidator();
             validator.ValidateAndThrow(this);
         }
-
     }
 }

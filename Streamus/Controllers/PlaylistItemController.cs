@@ -25,7 +25,7 @@ namespace Streamus.Controllers
             PlaylistItemDto savedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
 
             PushMessageDto pushMessageDto = new PushMessageDto(savedPlaylistItemDto);
-            PushMessageManager.SendPushMessage(playlistItem.Playlist.Stream.User.Id, pushMessageDto.ToJson());
+            PushMessageManager.SendPushMessage(playlistItem.Playlist.Folder.User.Id, pushMessageDto.ToJson());
 
             return new JsonDataContractActionResult(savedPlaylistItemDto);
         }

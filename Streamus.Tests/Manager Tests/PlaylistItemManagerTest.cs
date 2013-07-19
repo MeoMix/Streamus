@@ -47,10 +47,10 @@ namespace Streamus.Tests.Manager_Tests
         [SetUp]
         public void SetupContext()
         {
-            Stream stream = User.Streams.First();
+            Folder folder = User.Folders.First();
 
             //  Make a new Playlist object each time to ensure no side-effects from previous test case.
-            Playlist = stream.CreateAndAddPlaylist();
+            Playlist = folder.CreateAndAddPlaylist();
 
             PlaylistManager.Save(Playlist);
         }

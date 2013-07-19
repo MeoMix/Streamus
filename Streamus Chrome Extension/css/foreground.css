@@ -677,7 +677,7 @@
     z-index: 10;
 }
 
-.queueItem {
+.streamItem {
     color: white;
     width: 120px;
     height: 90px;
@@ -685,15 +685,15 @@
     border: 1px solid transparent;
 }
 
-.queueItem:hover {
+.streamItem:hover {
     border: 1px solid white;
 }
 
-.queueItem.selected {
+.streamItem.selected {
     border: 1px solid green;
 }
 
-#QueueView {
+#StreamView {
     left: 0;
     right: 0;
     top: 435px;

@@ -3,28 +3,28 @@ var BackgroundManager = null;
 
 //  BackgroundManager is a denormalization point for the Background's selected models.
 //  NOTE: It is important to understand that the activePlaylistItem is NOT guaranteed to be in the activePlaylist.
-//  The same applies for activePlaylist being under the activeStream. The user can click around, but this shouldn't affect state
+//  The same applies for activePlaylist being under the activeFolder. The user can click around, but this shouldn't affect state
 //  until they make a decision.
-define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', 'streams', 'repeatButtonState'],
-    function (user, player, localStorageManager, PlaylistItems, Playlists, Streams, RepeatButtonState) {
+define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', 'folders', 'repeatButtonState'],
+    function (user, player, localStorageManager, PlaylistItems, Playlists, Folders, RepeatButtonState) {
     'use strict';
 
     var backgroundManagerModel = Backbone.Model.extend({
         defaults: {
             activePlaylistItem: null,
             activePlaylist: null,
-            activeStream: null,
+            activeFolder: null,
             allPlaylistItems: new PlaylistItems(),
             allPlaylists: new Playlists(),
-            allStreams: new Streams()
+            allFolders: new Folders()
         },
         initialize: function () {
 
             var self = this;
             //  TODO:  What if user's loaded state gets set before backgroundManager initializes? Not really possible unless instant response, but still.
             user.once('change:loaded', function() {
-                if (user.get('streams').length === 0) {
-                    throw "User should be initialized and have at least 1 stream before loading backgroundManager.";
+                if (user.get('folders').length === 0) {
+                    throw "User should be initialized and have at least 1 folder before loading backgroundManager.";
                 }
 
                 //  TODO: I hate this whole concept of having to check if its ready else wait for it to be ready.
@@ -52,19 +52,19 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
             });
         },
         
-        getStreamById: function(streamId) {
-            return this.get('allStreams').find(function(stream) {
-                return stream.get('id') === streamId;
+        getFolderById: function(folderId) {
+            return this.get('allFolders').find(function(folder) {
+                return folder.get('id') === folderId;
             });
         }
     });
     
     function initialize() {
-        this.get('allStreams').add(user.get('streams').models);
+        this.get('allFolders').add(user.get('folders').models);
         this.get('allPlaylists').add(getAllPlaylists());
         this.get('allPlaylistItems').add(getAllPlaylistItems());
 
-        loadActiveStream.call(this);
+        loadActiveFolder.call(this);
         loadActivePlaylist.call(this);
         loadActivePlaylistItem.call(this);
 
@@ -84,28 +84,28 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
             bindEventsToPlaylist.call(self, playlist);
         });
 
-        this.get('allStreams').on('change:active', function(stream, isActive) {
+        this.get('allFolders').on('change:active', function(folder, isActive) {
 
-            if (self.get('activeStream') === stream && !isActive) {
-                self.set('activeStream', null);
+            if (self.get('activeFolder') === folder && !isActive) {
+                self.set('activeFolder', null);
             } else if (isActive) {
-                self.set('activeStream', stream);
+                self.set('activeFolder', folder);
             }
 
         });
 
         //  Message any YouTube pages to ensure that Streamus data loaded on the YouTube page stays up to date.
-        this.get('allStreams').on('add', function (stream) {
-            chrome.runtime.sendMessage({ method: "streamAdded", stream: stream });
+        this.get('allFolders').on('add', function (folder) {
+            chrome.runtime.sendMessage({ method: "folderAdded", folder: folder });
         });
 
-        this.get('allStreams').on('remove', function (stream) {
-            chrome.runtime.sendMessage({ method: "streamRemoved", stream: stream });
+        this.get('allFolders').on('remove', function (folder) {
+            chrome.runtime.sendMessage({ method: "folderRemoved", folder: folder });
         });
 
-        this.get('allStreams').each(function(stream) {
+        this.get('allFolders').each(function (folder) {
 
-            stream.get('playlists').on('add', function (playlist) {
+            folder.get('playlists').on('add', function (playlist) {
                 self.get('allPlaylists').add(playlist);
  
                 var playlistItems = playlist.get('items');
@@ -125,16 +125,16 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                 bindEventsToPlaylist.call(self, playlist);
             });
 
-            stream.get('playlists').on('remove', function (playlist) {
+            folder.get('playlists').on('remove', function (playlist) {
 
                 self.get('allPlaylists').remove(playlist);
 
                 if (self.get('activePlaylist') === playlist) {
 
-                    var streamId = playlist.get('streamId');
-                    var playlistStream = self.getStreamById(streamId);
+                    var folderId = playlist.get('folderId');
+                    var playlistFolder = self.getFolderById(folderId);
 
-                    var activePlaylist = playlistStream.getPlaylistById(playlist.get('nextPlaylistId'));
+                    var activePlaylist = playlistFolder.getPlaylistById(playlist.get('nextPlaylistId'));
                     self.set('activePlaylist', activePlaylist);
                 }
 
@@ -147,8 +147,8 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
 
         });
 
-        //  TODO: Support adding Stream here.
-        //  TODO: Support removing Stream here.
+        //  TODO: Support adding Folder here.
+        //  TODO: Support removing Folder here.
     }
     
     function bindEventsToPlaylist(playlist) {
@@ -213,24 +213,24 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
         });
     }
     
-    function loadActiveStream() {
+    function loadActiveFolder() {
  
-        this.on('change:activeStream', function (model, activeStream) {
+        this.on('change:activeFolder', function (model, activeFolder) {
 
-            if (activeStream === null) {
-                localStorageManager.setActiveStreamId(null);
+            if (activeFolder === null) {
+                localStorageManager.setActiveFolderId(null);
             } else {
-                localStorageManager.setActiveStreamId(activeStream.get('id'));
+                localStorageManager.setActiveFolderId(activeFolder.get('id'));
             }
         });
         
-        var activeStreamId = localStorageManager.getActiveStreamId();
-        var activeStream = this.get('allStreams').get(activeStreamId);
+        var activeFolderId = localStorageManager.getActiveFolderId();
+        var activeFolder = this.get('allFolders').get(activeFolderId);
 
-        if (typeof (activeStream) === 'undefined') {
-            this.set('activeStream', this.get('allStreams').at(0));
+        if (typeof (activeFolder) === 'undefined') {
+            this.set('activeFolder', this.get('allFolders').at(0));
         } else {
-            this.set('activeStream', activeStream);
+            this.set('activeFolder', activeFolder);
         }
     }
 
@@ -255,14 +255,14 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
         
         var activePlaylistId = localStorageManager.getActivePlaylistId();
 
-        //  There is no guarantee that activePlaylist is in activeStream because a user could be looking
-        //  at another stream without having selected a playlist in that stream.
+        //  There is no guarantee that activePlaylist is in activeFolder because a user could be looking
+        //  at another folder without having selected a playlist in that folder.
         var activePlaylist = _.find(getAllPlaylists(), function (playlist) {
             return playlist.get('id') === activePlaylistId;
         }) || null;
         
         if (activePlaylist === null) {
-            activePlaylist = this.get('activeStream').get('playlists').at(0) || null;
+            activePlaylist = this.get('activeFolder').get('playlists').at(0) || null;
         }
 
         this.set('activePlaylist', activePlaylist);
@@ -344,7 +344,7 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
         }
     }
 
-    //  Takes all streams, retrieves all playlists from streams and then all items from playlists.
+    //  Takes all folders, retrieves all playlists from folders and then all items from playlists.
     function getAllPlaylistItems() {
         var allPlaylists = getAllPlaylists();
 
@@ -355,10 +355,10 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
         return allPlaylistItems;
     }
 
-    //  Takes all streams and retrieves all playlists from the streams.
+        //  Takes all folders and retrieves all playlists from the folders.
     function getAllPlaylists() {
-        var allPlaylists = _.flatten(BackgroundManager.get('allStreams').map(function (stream) {
-            return stream.get('playlists').models;
+        var allPlaylists = _.flatten(BackgroundManager.get('allFolders').map(function (folder) {
+            return folder.get('playlists').models;
         }));
 
         return allPlaylists;

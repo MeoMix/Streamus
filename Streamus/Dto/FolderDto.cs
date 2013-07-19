@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace Streamus.Dto
 {
     [DataContract]
-    public class StreamDto
+    public class FolderDto
     {
         [DataMember(Name = "id")]
         public Guid Id { get; set; }
@@ -22,7 +22,7 @@ namespace Streamus.Dto
         [DataMember(Name = "userId")]
         public Guid UserId { get; set; }
 
-        public StreamDto()
+        public FolderDto()
         {
             Id = Guid.Empty;
             FirstPlaylistId = Guid.Empty;
@@ -31,7 +31,7 @@ namespace Streamus.Dto
             Playlists = new List<PlaylistDto>();
         }
 
-        public StreamDto(string title)
+        public FolderDto(string title)
             : this()
         {
             Title = title;

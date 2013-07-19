@@ -29,29 +29,29 @@
                 contentHeader.flashMessage('Thanks!', 2000);
 
                 var dataSource = ytHelper.parseUrlForDataSource(userInput);
-                var activeStream = backgroundManager.get('activeStream');
+                var activeFolder = backgroundManager.get('activeFolder');
 
                 switch (dataSource.type) {
                     case DataSource.USER_INPUT:
-                        activeStream.addPlaylistByDataSource(userInput, dataSource, function (playlist) {
+                        activeFolder.addPlaylistByDataSource(userInput, dataSource, function (playlist) {
                             backgroundManager.set('activePlaylist', playlist);
                         });
                         break;
                     case DataSource.YOUTUBE_PLAYLIST:
                         ytHelper.getPlaylistTitle(dataSource.id, function (youTubePlaylistTitle) {
-                            activeStream.addPlaylistByDataSource(youTubePlaylistTitle, dataSource, function (playlist) {
+                            activeFolder.addPlaylistByDataSource(youTubePlaylistTitle, dataSource, function (playlist) {
                                 backgroundManager.set('activePlaylist', playlist);
                             });
                         });
                         break;
                     case DataSource.YOUTUBE_CHANNEL:
                         var playlistTitle = dataSource.id + '\'s Feed';
-                        activeStream.addPlaylistByDataSource(playlistTitle, dataSource, function (playlist) {
+                        activeFolder.addPlaylistByDataSource(playlistTitle, dataSource, function (playlist) {
                             backgroundManager.set('activePlaylist', playlist);
                         });
                         break;
                     case DataSource.SHARED_PLAYLIST:
-                        activeStream.addPlaylistByDataSource('', dataSource, function (playlist) {
+                        activeFolder.addPlaylistByDataSource('', dataSource, function (playlist) {
                             backgroundManager.set('activePlaylist', playlist);
                         });
                         break;
