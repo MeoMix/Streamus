@@ -1,6 +1,6 @@
 ﻿//  Background.js is a bit of a dumping ground for code which needs a permanent housing spot.
-define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManager', 'ytHelper', 'repeatButtonState', 'playerState', 'streamItems'],
-    function (player, backgroundManager, localStorageManager, pushMessageManager, ytHelper, RepeatButtonState, PlayerState) {
+define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 'ytHelper', 'repeatButtonState', 'playerState', 'streamItems'],
+    function (player, backgroundManager, settingsManager, pushMessageManager, ytHelper, RepeatButtonState, PlayerState, StreamItems) {
         'use strict';
   
     player.on('change:state', function (model, state) {
@@ -12,13 +12,14 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
             if (foreground.length === 0) {
 
                 //  If the foreground UI is not open, show a notification to indicate active video.
-                var activeVideoId = backgroundManager.get('activePlaylistItem').get('video').get('id');
+                var selectedStreamItem = StreamItems.findWhere({ selected: true });
+                var activeVideoId = selectedStreamItem.get('video').get('id');
 
                 //  TODO: Create HTML notification in the future. Doesn't have all the support we need currently.
                 var notification = window.webkitNotifications.createNotification(
                   'http://img.youtube.com/vi/' + activeVideoId + '/default.jpg',
                   'Now Playing',
-                  backgroundManager.get('activePlaylistItem').get('title')
+                  selectedStreamItem.get('title')
                 );
 
                 notification.show();
@@ -28,32 +29,9 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
                 }, 3000);
             }
         }
-        //  If the video stopped playing and there is another video to play (not the same one), do so.
+
         else if (state === PlayerState.ENDED) {
-
-            var activePlaylistItem = backgroundManager.get('activePlaylistItem');
-            //  NOTE: No guarantee that the activePlaylistItem's playlistId will be activePlaylist's ID.
-            var playlistId = activePlaylistItem.get('playlistId');
-            var playlist = backgroundManager.getPlaylistById(playlistId);
-            
-            playlist.gotoNextItem(function (nextItem) {
-                
-                backgroundManager.set('activePlaylistItem', nextItem);
-
-                var nextVideoId = nextItem.get('video').get('id');
-
-                var repeatButtonState = localStorageManager.getRepeatButtonState();
-                var shouldRepeatPlaylist = repeatButtonState === RepeatButtonState.REPEAT_PLAYLIST_ENABLED;
-
-                //  Cue the next video if looping around to the top of the playlist and we're not supposed to repeat playlists.
-                if (nextItem.get('id') === playlist.get('firstItemId') && !shouldRepeatPlaylist) {
-                    player.cueVideoById(nextVideoId);
-                } else {
-                    player.loadVideoById(nextVideoId);
-                }
-                
-            });
-
+            StreamItems.selectNext();
         }
 
     });
@@ -61,26 +39,14 @@ define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManage
     //  Receive keyboard shortcuts from users.
     chrome.commands.onCommand.addListener(function (command) {
         
-        if (command === 'nextVideo' || command === 'previousVideo') {
+        if (command === 'nextVideo' || command === 'previousVideo' && StreamItems.length > 0) {
             
-            //  Skip to the next or previous video based on the command given
-            var activePlaylistItem = backgroundManager.get('activePlaylistItem');
-
-            if (activePlaylistItem !== null) {
-                var playlistId = activePlaylistItem.get('playlistId');
-                var playlist = backgroundManager.getPlaylistById(playlistId);
-
-                if (command == 'nextVideo') {
-                    playlist.gotoNextItem(function(nextItem) {
-                        backgroundManager.set('activePlaylistItem', nextItem);
-                    });
-                } else {
-                    var previousItem = playlist.gotoPreviousItem();
-                    backgroundManager.set('activePlaylistItem', previousItem);
-                }
-
-                
+            if (command == 'nextVideo') {
+                StreamItems.selectNext();
+            } else {
+                StreamItems.selectPrevious();
             }
+            
         }
         else if (command === 'toggleVideo') {
             

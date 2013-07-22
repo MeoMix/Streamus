@@ -1,7 +1,7 @@
 //  Exposed globally so that Chrome Extension's foreground can access through chrome.extension.getBackgroundPage()
 var YouTubePlayer = null;
 
-define(['youTubePlayerAPI', 'localStorageManager', 'playerState'], function (youTubePlayerAPI, localStorageManager, PlayerState) {
+define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTubePlayerAPI, settingsManager, PlayerState) {
     'use strict';
 
     //  This is the actual YouTube Player API object housed within the iframe.
@@ -190,7 +190,7 @@ define(['youTubePlayerAPI', 'localStorageManager', 'playerState'], function (you
             youTubePlayer.loadVideoById({
                 videoId: videoId,
                 startSeconds: 0,
-                suggestedQuality: localStorageManager.getSuggestedQuality()
+                suggestedQuality: settingsManager.get('suggestedQuality')
             });
         },
             
@@ -208,7 +208,7 @@ define(['youTubePlayerAPI', 'localStorageManager', 'playerState'], function (you
             youTubePlayer.loadVideoById({
                 videoId: videoId,
                 startSeconds: 0,
-                suggestedQuality: localStorageManager.getSuggestedQuality()
+                suggestedQuality: settingsManager.get('suggestedQuality')
             });
         },
         

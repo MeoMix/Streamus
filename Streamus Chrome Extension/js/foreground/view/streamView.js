@@ -1,51 +1,73 @@
-﻿define(['streamItems', 'streamItemView', 'contextMenuView', 'overscroll'], function (StreamItems, StreamItemView, ContextMenuView) {
+﻿define(['streamItems', 'streamItemView', 'contextMenuView', 'sly'], function (StreamItems, StreamItemView, ContextMenuView) {
     'use strict';
 
     var StreamView = Backbone.View.extend({
         el: $('#StreamView'),
         
+        slidee: $('#StreamView ul.slidee'),
+        
         events: {
             'contextmenu': 'showContextMenu',
         },
+        
+        sly: null,
+        overlay: $('#StreamViewOverlay'),
 
         initialize: function () {
+            
+            // Call Sly on frame
+            this.sly = new window.Sly(this.$el, {
+                horizontal: 1,
+                itemNav: 'forceCentered',
+                smart: 1,
+                activateOn: 'click',
+                mouseDragging: 1,
+                touchDragging: 1,
+                releaseSwing: 1,
+                startAt: 3,
+                speed: 300,
+                elasticBounds: 1,
+                easing: 'easeOutExpo',
+                clickBar: 1
+            }).init();
+
             var self = this;
             StreamItems.each(function (streamItem) {
-                self.addItem(streamItem);
+                self.addItem(streamItem, true);
             });
-
+            
             //  Whenever an item is added to the collection, visually add an item, too.
             this.listenTo(StreamItems, 'add', this.addItem);
-            this.listenTo(StreamItems, 'all', this.render);
-
-            //  His instructions say I should be able to achieve direction:horizontal via just css, but I'm unable to get it while drunk.
-            this.$el.overscroll({
-                direction: 'horizontal'
+            this.listenTo(StreamItems, 'remove', function () {
+                this.sly.reload();
+            });
+            this.sly.reload();
+            this.listenTo(StreamItems, 'empty', function() {
+                this.overlay.show();
             });
         },
         
-        addItem: function (streamItem) {
+        addItem: function (streamItem, activateImmediate) {
             var streamItemView = new StreamItemView({
                 model: streamItem
             });
+
+            var element = streamItemView.render().el;
+            this.sly.add(element);
+            this.overlay.hide();
             
-            this.$el.append(streamItemView.render().el);
+            if (streamItem.get('selected')) {
+                //  activateImmediate will go directly to element without animation.
+                this.sly.activate(element, activateImmediate);
+            }
         },
         
         clear: function () {
             //  Convert to array to avoid error of destroying while iterating over collection.
             _.invoke(StreamItems.toArray(), 'destroy');
+            this.sly.reload();
         },
-        
-        addPlaylistItem: function(playlistItem) {
-            var videoId = playlistItem.get('video').get('id');
 
-            StreamItems.create({
-                title: playlistItem.get('title'),
-                videoImageUrl: 'http://img.youtube.com/vi/' + videoId + '/default.jpg'
-            });
-        },
-        
         showContextMenu: function (event) {
             var self = this;
 

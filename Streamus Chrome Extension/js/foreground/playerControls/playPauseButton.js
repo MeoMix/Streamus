@@ -1,5 +1,5 @@
 //  The play/pause icon.
-define(['backgroundManager', 'player', 'spinnerManager', 'playerState'], function (backgroundManager, player, spinnerManager, PlayerState) {
+define(['player', 'spinnerManager', 'playerState', 'streamItems'], function (player, spinnerManager, PlayerState, StreamItems) {
     'use strict';
     
     var playPauseButtonView = Backbone.View.extend({
@@ -16,6 +16,12 @@ define(['backgroundManager', 'player', 'spinnerManager', 'playerState'], functio
         playTitle: 'Click to play the current video.',
         
         render: function () {
+            
+            if (StreamItems.where({ selected: true }).length > 0) {
+                this.enable();
+            } else {
+                this.disable();
+            }
 
             var pauseIcon = $('#PauseIcon');
             var playIcon = $('#PlayIcon');
@@ -51,31 +57,17 @@ define(['backgroundManager', 'player', 'spinnerManager', 'playerState'], functio
         },
         
         initialize: function () {
-
-            var self = this;
             
-            //  Only allowed to play if an item exists in the current playlist.
-            this.listenTo(backgroundManager, 'change:activePlaylistItem', function (model, activePlaylistItem) {
-                if (activePlaylistItem === null) {
-                    self.disable();
-                } else {
-                    self.enable();
-                }
-
-            });
-
-            if (backgroundManager.get('activePlaylistItem') !== null) {
-                self.enable();
-            }
-
+            this.listenTo(StreamItems, 'change:selected remove', this.render);
             this.listenTo(player, 'change:state', this.render);
+            
             this.render();
         },
         
         //  Only allow changing once every 100ms to preent spamming.
         togglePlayingState: _.debounce(function () {
 
-            if (!$(this).hasClass('disabled')) {
+            if (!this.$el.hasClass('disabled')) {
                 if (player.isPlaying()) {
                     player.pause();
                 } else {

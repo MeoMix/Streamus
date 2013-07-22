@@ -1,10 +1,46 @@
 ﻿//  Represents the videos in a given playlist
-define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamView'], function (ContextMenuView, backgroundManager, player, helpers, streamView) {
+define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamItems'], function (ContextMenuView, backgroundManager, player, helpers, StreamItems) {
     'use strict';
-    var playlistItemList = $('#PlaylistItemList ul');
+
+    var playlistItemList = $('#PlaylistItemList');
+
+    playlistItemList.contextmenu(function() {
+
+        ContextMenuView.addGroup({
+            position: 0,
+            items: [{
+                position: 0,
+                text: 'Add Playlist to Stream',
+                onClick: function () {
+
+                    var activePlaylist = backgroundManager.get('activePlaylist');
+                    
+                    activePlaylist.get('items').each(function (playlistItem) {
+
+                        StreamItems.add({
+                            video: playlistItem.get('video'),
+                            title: playlistItem.get('title'),
+                            videoImageUrl: 'http://img.youtube.com/vi/' + playlistItem.get('video').get('id') + '/default.jpg'
+                        });
+
+                    });
+
+                }
+            }]
+        });
+
+        ContextMenuView.show({
+            top: event.pageY,
+            left: event.pageX + 1
+        });
+
+        return false;
+    });
+
+    var playlistItemListUl = $('#PlaylistItemList ul');
 
     //  Allows for drag-and-drop of videos
-    playlistItemList.sortable({
+    playlistItemListUl.sortable({
         axis: 'y',
         //  Adding this helps prevent unwanted clicks to play
         delay: 100,
@@ -15,10 +51,10 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamView
             var newIndex = ui.item.index();
             var nextIndex = newIndex + 1;
 
-            var nextListItem = playlistItemList.children('ul li:eq(' + nextIndex + ')');
+            var nextListItem = playlistItemListUl.children('ul li:eq(' + nextIndex + ')');
 
             if (nextListItem == null) {
-                nextListItem = playlistItemList.children('ul li:eq(0)'); 
+                nextListItem = playlistItemListUl.children('ul li:eq(0)');
             }
 
             var nextItemId = nextListItem.data('itemid');
@@ -27,48 +63,8 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamView
         }
     });
 
-    //  Removes the old 'current' marking and move it to the newly selected row.
-    function setListItemClass(itemId, itemClass) {
-        playlistItemList.find('li').removeClass(itemClass);
-        playlistItemList.find('li[data-itemid="' + itemId + '"]').addClass(itemClass);
-    };
-    
-    function selectItemById(itemId) {
-
-        var activePlaylistItem = backgroundManager.get('activePlaylistItem');
-
-        //  If the item is already selected then it is cued up -- so just play it.
-        if (activePlaylistItem !== null && activePlaylistItem.get('id') === itemId) {
-            
-            if (player.isPlaying()) {
-                player.pause();
-            } else {
-                player.play();
-            }
-
-        } else {
-            var playlistItem = backgroundManager.getPlaylistItemById(itemId);
-            
-            var playlistId = playlistItem.get('playlistId');
-            var playlist = backgroundManager.getPlaylistById(playlistId);
-
-            playlist.selectItem(playlistItem);
-            backgroundManager.set('activePlaylistItem', playlistItem);
-        }
-    }
-    
-    function addItemById(itemId) {
-        
-        //  TODO: What if the item is already added? Does spam double clicking just keep adding?
-        var playlistItem = backgroundManager.getPlaylistItemById(itemId);
-
-        streamView.addPlaylistItem(playlistItem);
-    }
-
     backgroundManager.on('change:activePlaylist', function () {
-
         reload();
-        
     });
 
     var emptyPlaylistNotificationId = 'EmptyPlaylistNotification';
@@ -76,60 +72,42 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamView
 
         var listItem = buildListItem(item);
 
-        if (playlistItemList.find('li').length > 0) {
+        if (playlistItemListUl.find('li').length > 0) {
             
             var previousItemId = item.get('previousItemId');
             
-            var previousItemLi = playlistItemList.find('li[data-itemid="' + previousItemId + '"]');
+            var previousItemLi = playlistItemListUl.find('li[data-itemid="' + previousItemId + '"]');
             listItem.insertAfter(previousItemLi);
             
         } else {
-            listItem.appendTo(playlistItemList);
+            listItem.appendTo(playlistItemListUl);
         }
 
         $('#' + emptyPlaylistNotificationId).remove();
-
-        //  Since we emptied our list we lost the selection, reselect.
-        scrollIntoView(item, true);
-    });
-
-    backgroundManager.on('change:activePlaylistItem', function (model, playlistItem) {
-        
-        if (playlistItem !== null) {
-            visuallySelectItem(playlistItem);
-        } else {
-            playlistItemList.find('li').removeClass('loaded');
-        }
-
+        scrollIntoView(item);
     });
 
     backgroundManager.get('allPlaylistItems').on('remove', function (item) {
-        playlistItemList.find('li[data-itemid="' + item.get('id') + '"]').remove();
+        playlistItemListUl.find('li[data-itemid="' + item.get('id') + '"]').remove();
         
-        if(playlistItemList.find('li').length === 0){
+        if (playlistItemListUl.find('li').length === 0) {
             showEmptyPlaylistNotification();
         }
 
     });
 
     reload();
-    scrollIntoView(backgroundManager.get('activePlaylistItem'), false);
-    
+
     function showEmptyPlaylistNotification() {
         
         if ($('#' + emptyPlaylistNotificationId).length == 0) {
             
             var emptyPlaylistNotification = $('<div>', {
                 id: emptyPlaylistNotificationId,
-                text: 'Your Playlist is empty. Try adding some videos by clicking above.',
-                css: {
-                    fontSize: '14px',
-                    top: '154px',
-                    left: '23px'
-                }
+                text: 'Your Playlist is empty. Try adding some videos by clicking above.'
             });
 
-            emptyPlaylistNotification.insertBefore(playlistItemList);
+            emptyPlaylistNotification.insertBefore(playlistItemListUl);
             
         }
 
@@ -149,28 +127,49 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamView
                     position: 0,
                     items: [{
                         position: 0,
-                        text: 'Copy URL',
+                        text: 'Copy Video URL',
                         onClick: function () {
-                            
                             chrome.extension.sendMessage({
                                 method: 'copy',
                                 text: 'http://youtu.be/' + clickedItem.get('video').get('id')
                             });
-                            
                         }
                     }, {
                         position: 1,
-                        text: 'Delete',
+                        text: 'Delete Video',
                         onClick: function () {
-                            
-                            clickedItem.destroy({
-                                success: function () {
-                                },
-                                error: function (error) {
-                                    console.error("Failed to destroy item", error);
-                                }
+                            clickedItem.destroy();
+                        }
+                    }, {
+                        position: 2,
+                        text: 'Add Video to Stream',
+                        onClick: function() {
+                            StreamItems.add({
+                                video: clickedItem.get('video'),
+                                title: clickedItem.get('title'),
+                                videoImageUrl: 'http://img.youtube.com/vi/' + clickedItem.get('video').get('id') + '/default.jpg'
                             });
-                            
+                        }
+                    }]
+                });
+
+                ContextMenuView.addGroup({
+                    position: 1,
+                    items: [{
+                        position: 0,
+                        text: 'Add Playlist to Stream',
+                        onClick: function () {
+
+                            activePlaylist.get('items').each(function (playlistItem) {
+
+                                StreamItems.add({
+                                    video: playlistItem.get('video'),
+                                    title: playlistItem.get('title'),
+                                    videoImageUrl: 'http://img.youtube.com/vi/' + playlistItem.get('video').get('id') + '/default.jpg'
+                                });
+                                
+                            });
+
                         }
                     }]
                 });
@@ -182,15 +181,17 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamView
 
                 return false;
             },
+            //  TODO: Double click maybe plays immediately? Unsure.
             click: function() {
-                var itemId = $(this).data('itemid');
-                selectItemById(itemId);
-                setListItemClass(itemId, 'loaded');
-            },
-            dblclick: function() {
                 //  Add item to stream on dblclick.
                 var itemId = $(this).data('itemid');
-                addItemById(itemId);
+                var playlistItem = backgroundManager.getPlaylistItemById(itemId);
+
+                StreamItems.add({
+                    video: playlistItem.get('video'),
+                    title: playlistItem.get('title'),
+                    videoImageUrl: 'http://img.youtube.com/vi/' + playlistItem.get('video').get('id') + '/default.jpg'
+                });
             }
         });
         
@@ -221,36 +222,20 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamView
         return listItem;
     }
     
-    function visuallySelectItem(item) {
-        //  Since we emptied our list we lost the selection, reselect.
-        scrollIntoView(item, false);
+    function scrollIntoView(item) {
+        var itemId = item.get('id');
+        var $activeItem = playlistItemListUl.find('li[data-itemid="' + itemId + '"]');
 
-        var activeItemId = item.get('id');
-        setListItemClass(activeItemId, 'loaded');
-    }
-    
-    function scrollIntoView(activeItem, useAnimation) {
-
-        //  Since we emptied our list we lost the selection, reselect.
-        if (activeItem) {
-            var loadedItemId = activeItem.get('id');
-            var $activeItem = playlistItemList.find('li[data-itemid="' + loadedItemId + '"]');
-
-            if ($activeItem.length > 0) {
-                $activeItem.scrollIntoView(useAnimation);
-            }
-
+        if ($activeItem.length > 0) {
+            $activeItem.scrollIntoView(true);
         }
     }
 
     //  Refresh all the videos displayed to ensure they GUI matches background's data.
     function reload() {
-        console.log("emptied");
-        playlistItemList.empty();
+        playlistItemListUl.empty();
 
         var activePlaylist = backgroundManager.get('activePlaylist');
-
-        console.log("Reloading PlaylistItemsDisplay Active playlist items:", activePlaylist, activePlaylist.get('items'));
 
         if (activePlaylist.get('items').length === 0) {
             showEmptyPlaylistNotification();
@@ -258,8 +243,6 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamView
             $('#' + emptyPlaylistNotificationId).remove();
 
             var firstItemId = activePlaylist.get('firstItemId');
-
-            console.log("First item ID of playlist:", firstItemId);
 
             var item = activePlaylist.get('items').get(firstItemId);
 
@@ -270,21 +253,14 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamView
                 if (item !== null) {
 
                     var listItem = buildListItem(item);
-                    listItem.appendTo(playlistItemList);
+                    listItem.appendTo(playlistItemListUl);
 
                     item = activePlaylist.get('items').get(item.get('nextItemId'));
 
                 }
 
             } while (item && item.get('id') !== firstItemId)
-
-            var activeItem = backgroundManager.get('activePlaylistItem');
-
-            //  Since we emptied our list we lost the selection, reselect.
-            if (activeItem) {
-                visuallySelectItem(activeItem);
-            }
-            
+       
         }
     }
 });

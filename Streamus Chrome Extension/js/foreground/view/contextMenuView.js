@@ -82,9 +82,7 @@
         //  Event that runs when any item in a group is clicked.
         //  Maps the click action to the related model's onClick event.
         onItemClick: function (event) {
-
-            //  TODO: I don't think this is necessary if I create additional views? ContextMenuGroupView and ContextMenuItemView
-            var clickGoupItemCid = event.target.id;
+            var clickGoupItemCid = $(event.currentTarget).find('a').attr('id');
             var clickGroupCid = $(event.target).closest('ul').attr('id');
             
             var clickedGroup = this.model.get('groups').find(function (group) {
@@ -97,7 +95,6 @@
 
             // TODO: I don't really like how I'm invoking this event. I don't think the onClick should even be on the model.
             clickedGroupItem.get('onClick')();
-
         }
     });
 

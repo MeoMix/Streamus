@@ -75,7 +75,7 @@ define(['backgroundManager'], function (backgroundManager) {
 
         function expand() {
             addCancelIcon.css('right', '0px').one('click', contract);
-            addButton.width('382');
+            addButton.width('483');
             addInput.css('opacity', 1).css('cursor', "auto").focus();
             addButton.find('span').hide();
             headerInput.attr('disabled', 'disabled');

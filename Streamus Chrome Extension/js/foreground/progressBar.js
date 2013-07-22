@@ -1,6 +1,6 @@
 ﻿//  A progress bar which shows the elapsed time as compared to the total time of the current video.
 //  Changes colors based on player state -- yellow when paused, green when playing.
-define(['backgroundManager', 'player', 'helpers'], function (backgroundManager, player, helpers) {
+define(['streamItems', 'player', 'helpers'], function (StreamItems, player, helpers) {
     'use strict';
     
     var progressBar = $('#VideoTimeProgressBar');
@@ -57,16 +57,18 @@ define(['backgroundManager', 'player', 'helpers'], function (backgroundManager, 
         }
     });
 
-    backgroundManager.on('change:activePlaylistItem', function(model, activePlaylistItem) {
+    StreamItems.on('remove', function () {
 
-        if (activePlaylistItem === null) {
+        if (StreamItems.length === 0) {
             setCurrentTime(0);
             setTotalTime(0);
-        } else {
-            setCurrentTime(0);
-            setTotalTime(getCurrentVideoDuration());
         }
-        
+
+    });
+
+    StreamItems.on('change:selected', function () {
+        setCurrentTime(0);
+        setTotalTime(getCurrentVideoDuration());
     });
 
     //  If a video is currently playing when the GUI opens then initialize with those values.
@@ -99,10 +101,10 @@ define(['backgroundManager', 'player', 'helpers'], function (backgroundManager, 
     //  Return 0 or currently selected video's duration.
     function getCurrentVideoDuration() {
         var duration = 0;
-        var activeItem = backgroundManager.get('activePlaylistItem');
 
-        if (activeItem != null) {
-            duration = activeItem.get('video').get('duration');
+        if (StreamItems.length > 0) {
+            var selectedStreamItem = StreamItems.findWhere({ selected: true });
+            duration = selectedStreamItem.get('video').get('duration');
         }
 
         return duration;

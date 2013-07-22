@@ -2,9 +2,9 @@
     -webkit-user-select: none;
     background: #fff;
     font: 12px/1.3 sans-serif;
-    height: 509px;
-    min-width: 513px;
-    max-width: 513px;
+    height: 524px;
+    min-width: 614px;
+    max-width: 614px;
 }
 
 /*http://beautifulpixels.com/goodies/create-custom-webkit-scrollbar/*/
@@ -43,6 +43,12 @@
 
 .halfGradient { background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, .1)), to(rgba(103, 103, 103, .1))); }
 
+#EmptyPlaylistNotification {
+    font-size: 14px;
+    top: 154px;
+    left: 70px;
+}
+
 #head {
     -webkit-box-shadow: 0 5px 5px rgba(0, 0, 0, .15);
     background-color: #efefef;
@@ -57,7 +63,7 @@
 #menu {
     background: #eaeaea;
     border-right: 1px solid #fff;
-    bottom: 92px;
+    bottom: 120px;
     left: 0;
     top: 70px;
     width: 70px;
@@ -208,14 +214,14 @@
 .ui-autocomplete {
     left: 0 !important;
     max-height: 346px;
-    max-width: 523px;
+    max-width: 624px;
     overflow-y: auto;
     top: 110px !important;
-    width: 523px !important;
+    width: 624px !important;
 }
 
 .content {
-    bottom: 92px;
+    bottom: 120px;
     left: 70px;
     right: 0;
     top: 70px;
@@ -229,7 +235,13 @@
 
 #VideoContent { background-color: black; }
 
-#VideoDisplay { margin-top: 29px; }
+#VideoDisplayView {
+    margin-top: 18px;
+}
+
+.clickable {
+    cursor: pointer;
+}
 
 #PlayPauseButton {
     border-right: 1px solid #fff;
@@ -568,7 +580,7 @@
     top: 20px;
 }
 
-.loaded span { font-weight: bold !important; }
+#PlaylistList .loaded span { font-weight: bold !important; }
 
 .muted > svg > path { fill: Red !important; }
 
@@ -605,7 +617,7 @@
 #contextMenu ul li:hover { background: #EFEFEF; }
 
 #contextMenu ul li:active {
-    background: rgb(36, 109, 149);
+    background: #efefef;
     color: #fff;
 }
 
@@ -683,27 +695,54 @@
     height: 90px;
     display: inline-block;
     border: 1px solid transparent;
+    margin-top: 15px !important;
+    position: relative;
+    margin: 0 -5px;
+    border: 1px solid #3e404a;
+    -webkit-transform: scale(0.8);
+    transform: scale(0.8);
+    -webkit-transition: -webkit-transform 300ms ease-out;
+    transition: transform 300ms ease-out;
+    -webkit-box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.5);
 }
 
-.streamItem:hover {
-    border: 1px solid white;
+.streamItem.active {
+    z-index: 10;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    margin: 0;
 }
 
-.streamItem.selected {
-    border: 1px solid green;
-}
-
+#StreamViewOverlay,
 #StreamView {
     left: 0;
     right: 0;
-    top: 435px;
-    z-index: 3;
+    top: 420px;
+    height: 120px;
     position: absolute;
-    height: 90px;
-    background-color: black;
+}
+
+#StreamViewOverlay {
+    z-index: 99;
+    text-align: center;
+    margin-top: 51px;
+    font-size: 14px;
+}
+
+#StreamView {
+    background-color: #eaeaea;
     white-space: nowrap;
-    display: inline-block;
-    width: 529px;
+    -webkit-box-shadow: inset 0px 2px 5px #FFF;
+    box-shadow: inset 0px 2px 5px #FFF;
+}
+
+#StreamView ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	font-size: 50px;
+    -webkit-box-shadow: inset 0px 0px 5px rgba(0, 0, 0, .3);
 }
 
 .videoImage {

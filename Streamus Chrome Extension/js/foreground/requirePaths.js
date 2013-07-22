@@ -2,9 +2,9 @@ var require = {
     baseUrl: '../js/',
     paths: {
         'main': 'foreground/main',
-        'playerState': 'playerState',
+        'playerState': 'enum/playerState',
         'programState': 'programState',
-        'dataSource': 'dataSource',
+        'dataSource': 'enum/dataSource',
         'foreground': 'foreground/foreground',
         'volumeControl': 'foreground/playerControls/volumeControl',
         'playPauseButton': 'foreground/playerControls/playPauseButton',
@@ -13,7 +13,7 @@ var require = {
         'shuffleButton': 'foreground/playerControls/shuffleButton',
         'radioModeButton': 'foreground/playerControls/radioModeButton',
         'repeatButton': 'foreground/playerControls/repeatButton',
-        'header': 'foreground/header',
+
         'playlistItemsDisplay': 'foreground/playlistItemsTab/playlistItemsDisplay',
         'playlistItemInput': 'foreground/playlistItemsTab/playlistItemInput',
         'playlistsDisplay': 'foreground/playlistsTab/playlistsDisplay',
@@ -32,14 +32,14 @@ var require = {
         'underscore': 'thirdParty/underscore',
         'backbone': 'thirdParty/backbone',
         'backgroundManager': 'foreground/backgroundManager',
-        'localStorageManager': 'foreground/localStorageManager',
+        'settingsManager': 'foreground/settingsManager',
         'player': 'foreground/player',
-        'videoDisplay': 'foreground/videoTab/videoDisplay',
+
         'scrollIntoView': 'thirdParty/jquery.scrollIntoView',
         'spin': 'thirdParty/jquery.spin',
-        'repeatButtonState': 'repeatButtonState',
+        'repeatButtonState': 'enum/repeatButtonState',
         'spinnerManager': 'foreground/spinnerManager',
-        'overscroll': 'thirdParty/jquery.overscroll',
+        'sly': 'thirdParty/sly',
 
         //  Collection:
         'contextMenuGroups': 'foreground/collection/contextMenuGroups',
@@ -53,7 +53,9 @@ var require = {
         
         //  View:
         'contextMenuView': 'foreground/view/contextMenuView',
+        'headerTitleView': 'foreground/view/headerTitleView',
         'streamItemView': 'foreground/view/streamItemView',
-        'streamView': 'foreground/view/streamView'
+        'streamView': 'foreground/view/streamView',
+        'videoDisplayView': 'foreground/view/videoDisplayView',
     }
 };

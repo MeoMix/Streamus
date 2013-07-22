@@ -1,17 +1,16 @@
-//  Playlist holds a collection of PlaylistItems as well as properties pertaining to a playlist such as its title and
-//  history of videos played. Provides methods to work with PlaylistItems such as getting, removing, updating, etc..
-define(['ytHelper',
-        'playlistItems',
+//  Playlist holds a collection of PlaylistItems as well as properties pertaining to a playlist.
+//  Provides methods to work with PlaylistItems such as getting, removing, updating, etc..
+define(['playlistItems',
         'playlistItem',
         'programState',
-        'localStorageManager',
+        'settingsManager',
         'video',
         'videos',
         'helpers',
         'repeatButtonState',
         'shareCode',
         'shareableEntityType'
-], function (ytHelper, PlaylistItems, PlaylistItem, programState, localStorageManager, Video, Videos, helpers, RepeatButtonState, ShareCode, ShareableEntityType) {
+], function (PlaylistItems, PlaylistItem, programState, settingsManager, Video, Videos, helpers, RepeatButtonState, ShareCode, ShareableEntityType) {
         'use strict';
 
         var playlistModel = Backbone.Model.extend({
@@ -23,7 +22,6 @@ define(['ytHelper',
                     firstItemId: null,
                     nextPlaylistId: null,
                     previousPlaylistId: null,
-                    history: new PlaylistItems(),
                     items: new PlaylistItems(),
                     dataSource: null,
                     dataSourceLoaded: false
@@ -64,10 +62,8 @@ define(['ytHelper',
                 if (!(items instanceof Backbone.Collection)) {
                     items = new PlaylistItems(items);
                     
-                    this.set('items', items, {
-                        //  Silent operation because the playlist isn't technically changing - just being made correct.
-                        silent: true
-                    });
+                    //  Silent operation because the playlist isn't technically changing - just being made correct.
+                    this.set('items', items, { silent: true });
                 }
 
                 //  Debounce because I want automatic typing but no reason to spam server with saves.
@@ -88,8 +84,6 @@ define(['ytHelper',
                 
                 this.on('change:firstItemId', function (model, firstItemId) {
 
-                    console.log("First Item ID has changed to:", firstItemId);
-
                     $.ajax({
                         url: programState.getBaseUrl() + 'Playlist/UpdateFirstItem',
                         type: 'POST',
@@ -107,106 +101,6 @@ define(['ytHelper',
 
             },
             
-            selectItem: function (playlistItem) {
-                playlistItem.set('playedRecently', true);
-
-                var history = this.get('history');
-                //  Unshift won't have an effect if item exists in history, so remove silently.
-                history.remove(playlistItem, { silent: true });
-                history.unshift(playlistItem);
-            },
-
-            getItemById: function(id) {
-                return this.get('items').get(id);
-            },
-
-            getRelatedVideo: function() {
-                var relatedVideos = this.get('items').getRelatedVideos();
-
-                var randomIndex = Math.floor(Math.random() * relatedVideos.length);
-                var randomRelatedVideo = relatedVideos[randomIndex];
-
-                return randomRelatedVideo;
-            },
-            
-            //  TODO: I don't like this needing a callback, but it is necessary due to getRelatedVideo requiring a callback to save.
-            //  In the future, I think that relatedVideo should be moved out into its own thing, but there are a few dependencies on this right now.
-            gotoNextItem: function (callback) {
-
-                var isRadioModeEnabled = localStorageManager.getIsRadioModeEnabled();
-                var isShuffleEnabled = localStorageManager.getIsShuffleEnabled();
-                var repeatButtonState = localStorageManager.getRepeatButtonState();
-
-                var self = this;
-
-                var setNextItem = function (nextItem) {
-
-                    console.log("nextItem:", nextItem);
-
-                    if (nextItem !== null) {
-                        self.selectItem(nextItem);
-                    }
-                    
-                    if (callback) {
-                        callback(nextItem);
-                    }
-                };
-                
-                //  Radio mode overrides the other settings
-                if (isRadioModeEnabled) {
-                    
-                    var relatedVideo = this.getRelatedVideo();
-                    this.addItem(relatedVideo, setNextItem);
-
-                } else {
-                    
-                    //  If repeat video is enabled then keep on the last item in history
-                    if (repeatButtonState === RepeatButtonState.REPEAT_VIDEO_ENABLED) {
-                        //  TODO: potentially need to be popping from history so gotoPrevious doesn't loop through same item a lot
-                        setNextItem(this.get('history').at(0));
-                    }
-                    else if (isShuffleEnabled) {
-
-                        var items = this.get('items');
-                        var itemsNotPlayedRecently = items.where({ playedRecently: false });
-
-                        if (itemsNotPlayedRecently.length === 0) {
-                            items.each(function (item) {
-                                item.set('playedRecently', false);
-                                itemsNotPlayedRecently.push(item);
-                            });
-                        }
-
-                        setNextItem(_.shuffle(itemsNotPlayedRecently)[0]);
-
-                    } else {
-
-                        var currentItem = this.get('history').at(0);
-                        var nextItemId = currentItem.get('nextItemId');
-
-                        setNextItem(this.get('items').get(nextItemId));
-
-                    }
-
-                }
-
-            },
-            
-            gotoPreviousItem: function () {
-                var selectedItem = this.get('history').shift();
-                var previousItem = this.get('history').shift();
-                
-                //  If no previous item was found in the history, then just go back one item
-                if (!previousItem) {
-                    var previousItemId = selectedItem.get('previousItemId');
-                    previousItem = this.get('items').get(previousItemId);
-                }
-                
-                this.selectItem(previousItem);
-
-                return previousItem;
-            },
-
             //  This is generally called from the foreground to not couple the Video object with the foreground.
             addItemByInformation: function (videoInformation) {
 
@@ -244,10 +138,6 @@ define(['ytHelper',
                             lastItem.set('nextItemId', playlistItemId);
                             firstItem.set('previousItemId', playlistItemId);
                         }
-                        
-                        ytHelper.getRelatedVideoInformation(video.get('id'), function (relatedVideoInformation) {
-                            playlistItem.set('relatedVideoInformation', relatedVideoInformation);
-                        });
 
                         self.get('items').push(playlistItem);
   
@@ -282,51 +172,20 @@ define(['ytHelper',
                     success: function () {
                         
                         var currentItems = self.get('items');
-
-                        console.log("Current items:", currentItems, currentItems.length);
-                        console.log("Items to save:", itemsToSave, itemsToSave.length);
-
-                        //  After a bulk save the following properties are still out of date on the playlist:
-                        //  -  firstItemId will have changed if playlist items was empty before.
-                        //  -  firstItem's lastItemId will have changed if playlist was not empty before.
-                        //  -  lastItem's nextItemId will have changed if playlist was not empty before.
+                        
+                        //  After a bulk save the following properties are still out of date on the playlist.
                         if (currentItems.length === 0) {
                             //  Silent because the data just came from the sever
-                            self.set('firstItemId', itemsToSave.at(0).get('id'), {
-                                silent: true
-                            });
-
-                            console.log("itemsToSave first:", itemsToSave.at(0), itemsToSave);
-
+                            self.set('firstItemId', itemsToSave.at(0).get('id'), { silent: true });
                         } else {
                             var firstItem = currentItems.get(self.get('firstItemId'));
                             var lastItem = currentItems.get(firstItem.get('previousItemId'));
 
                             lastItem.set('nextItemId', itemsToSave.at(0).get('id'));
                             firstItem.set('previousItemId', itemsToSave.at(itemsToSave.length - 1).get('id'));
-
-                            console.log("first item and list item:", firstItem, lastItem);
                         }
                         
                         self.get('items').add(itemsToSave.models);
-
-                        //  TODO: Could probably be improved for very large playlists being added.
-                        //  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
-                        var sampleSize = videos.length > 30 ? 30 : videos.length;
-                        var randomSampleIndices = helpers.getRandomNonOverlappingNumbers(sampleSize, videos.length);
-
-                        _.each(randomSampleIndices, function (randomIndex) {
-                            var randomVideo = videos.at(randomIndex);
-
-                            ytHelper.getRelatedVideoInformation(randomVideo.get('id'), function (relatedVideoInformation) {
-
-                                var playlistItem = self.get('items').find(function (item) {
-                                    return item.get('video').get('id') == randomVideo.get('id');
-                                });
-
-                                playlistItem.set('relatedVideoInformation', relatedVideoInformation);
-                            });
-                        });
 
                         if (callback) {
                             callback();

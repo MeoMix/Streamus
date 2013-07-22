@@ -10,10 +10,7 @@ define(['helpers', 'programState', 'video'], function(helpers, programState, Vid
                 nextItemId: null,
                 previousItemId: null,
                 video: null,
-                title: '',
-                //  Used to weight randomness in shuffle. Resets to false when all in collection are set to true.
-                playedRecently: false,
-                relatedVideoInformation: [] 
+                title: ''
             };
         },
         urlRoot: programState.getBaseUrl() + 'PlaylistItem/',
@@ -32,24 +29,21 @@ define(['helpers', 'programState', 'video'], function(helpers, programState, Vid
 
             return playlistItemDto;
         },
-        toJSON: function() {
+        toJSON: function () {
+            //  Backbone Model's toJSON doesn't automatically send cid across, but I want it for re-mapping collections after server saves.
             var json = Backbone.Model.prototype.toJSON.apply(this, arguments);
             json.cid = this.cid;
             return json;
         },
         initialize: function () {
-
             var video = this.get('video');
-            
-            //  Data was fetched from the server. Need to convert to Backbone.
-            if (!(video instanceof Backbone.Model)) {
 
-                this.set('video', new Video(video), {
-                    //  Silent operation because it isn't technically changing - just being made correct.
-                    silent: true
-                });
-                
+            //  Need to convert to video object to Backbone.Model
+            if (!(video instanceof Backbone.Model)) {
+                //  Silent because Video is just being properly set.
+                this.set('video', new Video(video), { silent: true });
             }
+
         }
     });
 

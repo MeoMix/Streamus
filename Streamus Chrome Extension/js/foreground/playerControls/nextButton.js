@@ -1,5 +1,5 @@
 //  When clicked -- goes to the next video. Can potentially go from the end of the list to the front if repeat playlist is toggled on
-define(['backgroundManager'], function (backgroundManager) {
+define(['streamItems', 'settingsManager', 'repeatButtonState'], function (StreamItems, settingsManager, RepeatButtonState) {
     'use strict';
 
     var nextButtonView = Backbone.View.extend({
@@ -11,17 +11,40 @@ define(['backgroundManager'], function (backgroundManager) {
 
         render: function () {
 
-            if (backgroundManager.get('activePlaylistItem') === null) {
+            if (StreamItems.length === 0) {
                 this.disable();
             } else {
-                this.enable();
+
+                var radioModeEnabled = settingsManager.get('radioModeEnabled');
+                var shuffleEnabled = settingsManager.get('shuffleEnabled');
+                var repeatButtonState = settingsManager.get('repeatButtonState');
+                
+                if (shuffleEnabled && StreamItems.length > 1) {
+                    this.enable();
+                }
+                else if (radioModeEnabled || repeatButtonState !== RepeatButtonState.DISABLED) {
+                    this.enable();
+                } else {
+                    //  Disable only if on the last item in stream with no options enabled.
+                    var selectedItemIndex = StreamItems.indexOf(StreamItems.findWhere({ selected: true }));
+                    
+                    if (selectedItemIndex + 1 === StreamItems.length) {
+                        this.disable();
+                    } else {
+                        this.enable();
+                    }
+
+                }
+
             }
 
             return this;
         },
 
         initialize: function () {
-            this.listenTo(backgroundManager, 'change:activePlaylistItem', this.render);
+            this.listenTo(StreamItems, 'add remove change:selected', this.render);
+            this.listenTo(settingsManager, 'change:radioModeEnabled change:shuffleEnabled change:repeatButtonState', this.render);
+
             this.render();
         },
 
@@ -29,22 +52,7 @@ define(['backgroundManager'], function (backgroundManager) {
         gotoNextVideo: _.debounce(function () {
 
             if (!this.$el.hasClass('disabled')) {
-
-                var activePlaylistItem = backgroundManager.get('activePlaylistItem');
-                var playlistId = activePlaylistItem.get('playlistId');
-                var playlist = backgroundManager.getPlaylistById(playlistId);
-
-                playlist.gotoNextItem(function(nextItem) {
-                    backgroundManager.set('activePlaylistItem', nextItem);
-
-                    console.log("nextItem:", nextItem);
-
-                    //  Manually triggering the change so that player can realize it needs to set its time back to 0:00.
-                    if (activePlaylistItem === nextItem) {
-                        backgroundManager.trigger('change:activePlaylistItem', backgroundManager, nextItem);
-                    }
-                });
-
+                StreamItems.selectNext();
             }
 
         }, 100, true),

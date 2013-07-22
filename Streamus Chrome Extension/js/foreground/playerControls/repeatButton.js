@@ -1,5 +1,5 @@
 ﻿//  The repeat icon.
-define(['repeatButtonState', 'localStorageManager'], function (RepeatButtonState, localStorageManager) {
+define(['repeatButtonState', 'settingsManager'], function (RepeatButtonState, settingsManager) {
     'use strict';
 
     var repeatButtonView = Backbone.View.extend({
@@ -13,7 +13,7 @@ define(['repeatButtonState', 'localStorageManager'], function (RepeatButtonState
         repeatVideoEnabledTitle: 'Repeat Video is enabled. Click to enable Repeat Playlist.',
         repeatPlaylistEnabledTitle: 'Repeat Playlist is enabled. Click to disable.',
 
-        state: '',
+        state: settingsManager.get('repeatButtonState'),
         
         render: function () {
             var repeatVideoSvg = $('#RepeatVideoSvg');
@@ -36,7 +36,7 @@ define(['repeatButtonState', 'localStorageManager'], function (RepeatButtonState
                     this.$el.attr('title', this.repeatVideoEnabledTitle);
 
                     break;
-                case RepeatButtonState.REPEAT_PLAYLIST_ENABLED:
+                case RepeatButtonState.REPEAT_STREAM_ENABLED:
 
                     repeatPlaylistSvg.show();
                     repeatVideoSvg.hide();
@@ -51,10 +51,7 @@ define(['repeatButtonState', 'localStorageManager'], function (RepeatButtonState
         },
         
         initialize: function () {
-            
-            this.state = localStorageManager.getRepeatButtonState();
             this.render();
-
         },
         
         toggleRepeat: function() {
@@ -66,9 +63,9 @@ define(['repeatButtonState', 'localStorageManager'], function (RepeatButtonState
                     nextState = RepeatButtonState.REPEAT_VIDEO_ENABLED;
                     break;
                 case RepeatButtonState.REPEAT_VIDEO_ENABLED:
-                    nextState = RepeatButtonState.REPEAT_PLAYLIST_ENABLED;
+                    nextState = RepeatButtonState.REPEAT_STREAM_ENABLED;
                     break;
-                case RepeatButtonState.REPEAT_PLAYLIST_ENABLED:
+                case RepeatButtonState.REPEAT_STREAM_ENABLED:
                     nextState = RepeatButtonState.DISABLED;
                     break;
                 default:
@@ -77,7 +74,7 @@ define(['repeatButtonState', 'localStorageManager'], function (RepeatButtonState
             }
 
             this.state = nextState;
-            localStorageManager.setRepeatButtonState(nextState);
+            settingsManager.set('repeatButtonState', nextState);
 
             this.render();
         }

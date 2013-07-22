@@ -178,9 +178,9 @@
             </div>
             
             <div id="VideoContent" class="content">
-                <canvas id="VideoDisplay" width="475" height="340"></canvas>
+                <canvas id="VideoDisplayView" width="560" height="315"></canvas>
             </div>
-
+                
             <div id="HomeContent" class="content">
                 <div id="CurrentPlaylistItemDisplay" class="header">
                 </div>
@@ -203,11 +203,18 @@
 
         </div>
         
-        <div id="StreamView" >
+        <div id="StreamViewOverlay">
+            
+            No Videos in Stream. Try clicking on a Playlist Item.
+
+        </div>
+        <div id="StreamView" class="gradient frame">
+            <ul class="slidee">
+            </ul>  
         </div>
         
-        <script type="text/template" id="streamItemTemplate">
-              <img class="videoImage" src="<%- videoImageUrl %>" />
+        <script type="text/template" id="streamItemTemplate" >
+            <img class="videoImage" src="<%- videoImageUrl %>" />
         </script>
         
         <div id="contextMenu">

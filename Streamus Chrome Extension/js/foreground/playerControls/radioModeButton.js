@@ -1,4 +1,4 @@
-﻿define(['localStorageManager'], function (localStorageManager) {
+﻿define(['settingsManager'], function (settingsManager) {
     'use strict';
 
     var radioModeButtonView = Backbone.View.extend({
@@ -13,9 +13,8 @@
         
         initialize: function () {
             //  Remember the initial state across pop-up sessions by writing to/from localStorage.
-            var isRadioModeEnabled = localStorageManager.getIsRadioModeEnabled();
-            
-            if (isRadioModeEnabled) {
+
+            if (settingsManager.get('radioModeEnabled')) {
                 this.$el
                     .addClass('pressed')
                     .attr('title', this.enabledTitle);
@@ -35,7 +34,7 @@
                 this.$el.attr('title', this.disabledTitle);
             }
 
-            localStorageManager.setIsRadioModeEnabled(isPressed);
+            settingsManager.set('radioModeEnabled', isPressed);
         }
 
     });

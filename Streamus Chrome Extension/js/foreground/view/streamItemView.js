@@ -1,28 +1,51 @@
-﻿define(['contextMenuView'], function(ContextMenuView) {
+﻿define(['contextMenuView', 'player'], function(ContextMenuView, player) {
     'use strict';
 
     var StreamItemView = Backbone.View.extend({
+        tagName: 'li',
+
         className: 'streamItem',
 
         template: _.template($('#streamItemTemplate').html()),
 
         events: {
             'contextmenu': 'showContextMenu',
-            'click': 'toggleSelected'
+            'click': 'select',
+            'dblclick': 'togglePlayingState'
         },
 
-        render: function() {
+        render: function () {
+
             this.$el.html(this.template(this.model.toJSON()));
 
             return this;
         },
 
-        initialize: function() {
+        initialize: function () {
+
+            this.toggleSelectedClass();
+            
             this.listenTo(this.model, 'destroy', this.remove);
+            this.listenTo(this.model, 'change:selected', this.toggleSelectedClass);
         },
 
-        toggleSelected: function() {
-            this.$el.toggleClass('selected');
+        select: function () {
+            this.model.set('selected', true);
+        },
+        
+        toggleSelectedClass: function() {
+            this.$el.toggleClass('active', this.model.get('selected'));
+        },
+        
+        togglePlayingState: function () {
+
+            if (player.isPlaying()) {
+                console.log("Pausing");
+                player.pause();
+            } else {
+                console.log("Playing");
+                player.play();
+            }
         },
 
         showContextMenu: function() {
@@ -39,11 +62,11 @@
                         }
                     }, {
                         position: 1,
-                        text: 'Copy video URL',
+                        text: 'Copy Video URL',
                         onClick: function() {
                             chrome.extension.sendMessage({
                                 method: 'copy',
-                                text: 'http://youtu.be/' + self.model.get('videoId')
+                                text: 'http://youtu.be/' + self.model.get('video').get('id')
                             });
                         }
                     }]

@@ -1,5 +1,5 @@
 //  When clicked -- skips to the last video. Skips from the begining of the list to the end.
-define(['backgroundManager'], function (backgroundManager) {
+define(['streamItems', 'settingsManager', 'repeatButtonState'], function (StreamItems, settingsManager, RepeatButtonState) {
     'use strict';
 
     var previousButtonView = Backbone.View.extend({
@@ -10,18 +10,40 @@ define(['backgroundManager'], function (backgroundManager) {
         },
         
         render: function () {
-            
-            if (backgroundManager.get('activePlaylistItem') === null) {
+ 
+            if (StreamItems.length === 0) {
                 this.disable();
             } else {
-                this.enable();
+
+                var shuffleEnabled = settingsManager.get('shuffleEnabled');
+                var repeatButtonState = settingsManager.get('repeatButtonState');
+                
+                if (shuffleEnabled && StreamItems.length > 1) {
+                    this.enable();
+                }
+                else if(repeatButtonState !== RepeatButtonState.DISABLED) {
+                    this.enable();
+                } else {
+                    //  Disable only if on the first item in stream with no options enabled.
+                    var selectedItemIndex = StreamItems.indexOf(StreamItems.findWhere({ selected: true }));
+
+                    if (selectedItemIndex === 0) {
+                        this.disable();
+                    } else {
+                        this.enable();
+                    }
+
+                }
+
             }
 
             return this;
         },
         
         initialize: function() {
-            this.listenTo(backgroundManager, 'change:activePlaylistItem', this.render);
+            this.listenTo(StreamItems, 'add remove change:selected', this.render);
+            this.listenTo(settingsManager, 'change:radioModeEnabled change:shuffleEnabled change:repeatButtonState', this.render);
+
             this.render();
         },
         
@@ -29,14 +51,7 @@ define(['backgroundManager'], function (backgroundManager) {
         gotoPreviousVideo: _.debounce(function () {
 
             if (!this.$el.hasClass('disabled')) {
-                
-                var activePlaylistItem = backgroundManager.get('activePlaylistItem');
-                var playlistId = activePlaylistItem.get('playlistId');
-                var playlist = backgroundManager.getPlaylistById(playlistId);
-
-                var previousItem = playlist.gotoPreviousItem();
-                backgroundManager.set('activePlaylistItem', previousItem);
-                
+                StreamItems.selectPrevious();
             }
 
         }, 100, true),

@@ -2,7 +2,7 @@
 //  Tries to load itself by ID stored in localStorage and then by chrome.storage.sync.
 //  If still unloaded, tells the server to create a new user and assumes that identiy.
 var User = null;
-define(['folders', 'programState', 'localStorageManager'], function (Folders, programState, localStorageManager) {
+define(['folders', 'programState', 'settingsManager'], function (Folders, programState, settingsManager) {
     'use strict';
 
     var syncUserIdKey = 'UserId';
@@ -24,13 +24,13 @@ define(['folders', 'programState', 'localStorageManager'], function (Folders, pr
         initialize: function () {
             
             var self = this;
-            chrome.idle.onStateChanged.addListener(function(newState) {
-                console.log('State changed', newState);
-                if (newState === 'active' && self.get('dirty')) {
-                    fetchUser.call(self, false);
-                }
+            //chrome.idle.onStateChanged.addListener(function (newState) {
+                
+            //    if (newState === 'active' && self.get('dirty')) {
+            //        fetchUser.call(self, false);
+            //    }
 
-            });
+            //});
 
             //  chrome.Storage.sync is cross-computer syncing with restricted read/write amounts.
             chrome.storage.sync.get(syncUserIdKey, function (data) {
@@ -39,7 +39,7 @@ define(['folders', 'programState', 'localStorageManager'], function (Folders, pr
 
                 if (typeof foundUserId === 'undefined') {
 
-                    foundUserId = localStorageManager.getUserId();
+                    foundUserId = settingsManager.get('userId');
                     
                     if (foundUserId !== null) {
                         self.set('id', foundUserId);
@@ -105,6 +105,7 @@ define(['folders', 'programState', 'localStorageManager'], function (Folders, pr
         //  Announce that user has loaded so managers can use it to fetch data.
         this.set('loaded', true);
         this.set('dirty', false);
+        settingsManager.set('userId', this.get('id'));
     }
     
     //  Loads user data by ID from the server, writes the ID

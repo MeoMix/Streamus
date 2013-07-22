@@ -67,51 +67,6 @@
 
             });
 
-        },
-
-        getRelatedVideos: function() {
-            //  Take each playlist item's array of related videos, pluck them all out into a collection of arrays
-            //  then flatten the arrays into a collection of videos.
-
-            var relatedVideos = _.flatten(this.map(function (item) {
-
-                return _.map(item.get('relatedVideoInformation'), function(videoInformation) {
-
-                    return new Video({
-                        videoInformation: videoInformation
-                    });
-                    
-                });
-
-            }));
-
-            //  Don't add any videos that are already in playlist.
-            var self = this;
-            relatedVideos = _.filter(relatedVideos, function (relatedVideo) {
-                var alreadyExistingItem = self.find(function (item) {
-                    var sameVideoId = item.get('video').get('id') === relatedVideo.get('id');
-                    var similiarVideoName = levDistance(item.get('video').get('title'), relatedVideo.get('title')) < 3;
-
-                    return sameVideoId || similiarVideoName;
-                });
-
-                return alreadyExistingItem == null;
-            });
-            
-            // Try to filter out 'playlist' songs, but if they all get filtered out then back out of this assumption.
-            var tempFilteredRelatedVideos = _.filter(relatedVideos, function(relatedVideo) {
-                //  assuming things >8m are playlists.
-                var isJustOneSong = relatedVideo.get('duration') < 480;
-                var isNotLive = relatedVideo.get('title').toLowerCase().indexOf('live') === -1;
-                
-                return isJustOneSong && isNotLive;
-            });
-            
-            if (tempFilteredRelatedVideos.length !== 0) {
-                relatedVideos = tempFilteredRelatedVideos;
-            }
-
-            return relatedVideos;
         }
     });
 

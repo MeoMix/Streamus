@@ -10,37 +10,14 @@ define(['backgroundManager',
         'repeatButton',
         'contentButtons',
         'progressBar',
-        'videoDisplay',
-        'header',
+        'videoDisplayView',
+        'headerTitleView',
         'playlistItemInput',
         'playlistItemsDisplay',
         'playlistInput',
-        'playlistsDisplay'
-], function (backgroundManager) {
+        'playlistsDisplay',
+        'streamView'
+], function () {
     'use strict';
 
-    console.log("Foreground loading");
-   
-    //  If the user has browser around to a different folder or playlist (but didn't make a playlistItem selection)
-    //  it is unintuitive to stay on that stream/playlist upon re-opening the UI. As such, set the state back to the 
-    //  active playlistItem during unload of the foreground.
-    addEventListener("unload", function () {
-        var activePlaylistItem = backgroundManager.get('activePlaylistItem');
-
-        if (activePlaylistItem !== null) {
-            var playlistId = activePlaylistItem.get('playlistId');
-            var playlist = backgroundManager.getPlaylistById(playlistId);
-
-            if (playlist !== null) {
-                backgroundManager.set('activePlaylist', playlist);
-
-                var folderId = playlist.get('folderId');
-                var folder = backgroundManager.getFolderById(folderId);
-
-                if (folder !== null) {
-                    backgroundManager.set('activeFolder', folder);
-                }
-            }
-        }
-    }, true);
 });
