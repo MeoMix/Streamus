@@ -41,14 +41,13 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
 
             });
 
-            this.on('remove', function (removedStreamItem) {
+            this.on('remove', function (removedStreamItem, collection, options) {
                 if (this.length === 0) {
-                    console.log("triggering empty", this);
                     this.trigger('empty');
                 }
 
                 if (removedStreamItem.get('selected') && this.length > 0) {
-                    this.selectNext();
+                    this.selectNext(options.index);
                 }
             });
             
@@ -94,6 +93,8 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
 
             }));
 
+            console.log("Related Videos:", relatedVideos);
+
             //  Don't add any videos that are already in the stream.
             var self = this;
             relatedVideos = _.filter(relatedVideos, function (relatedVideo) {
@@ -107,6 +108,8 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
 
                 return alreadyExistingItem == null;
             });
+
+            console.log("After first filter", relatedVideos.length);
             
             // Try to filter out 'playlist' songs, but if they all get filtered out then back out of this assumption.
             var tempFilteredRelatedVideos = _.filter(relatedVideos, function(relatedVideo) {
@@ -120,31 +123,40 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
             if (tempFilteredRelatedVideos.length !== 0) {
                 relatedVideos = tempFilteredRelatedVideos;
             }
+            console.log("After second filter", relatedVideos.length);
 
-            return relatedVideos[_.random(0, relatedVideos.length)];;
+            return relatedVideos[_.random(relatedVideos.length - 1)];;
         },
         
-        selectNext: function () {
-   
+        //  If a streamItem which was selected is removed, selectNext will have a removedSelectedItemIndex provided
+        selectNext: function (removedSelectedItemIndex) {
+
+            var shuffleEnabled = settingsManager.get('shuffleEnabled');
+            var radioModeEnabled = settingsManager.get('radioModeEnabled');
             var repeatButtonState = settingsManager.get('repeatButtonState');
-                
-            if (repeatButtonState === RepeatButtonState.REPEAT_VIDEO_ENABLED) {
+
+            //  If removedSelectedItemIndex is provided, RepeatButtonState -> Video doesn't matter because the video was just deleted.
+            if (removedSelectedItemIndex === undefined && repeatButtonState === RepeatButtonState.REPEAT_VIDEO_ENABLED) {
                 var selectedItem = this.findWhere({ selected: true });
                 selectedItem.trigger('change:selected', selectedItem, true);
-            } else if (settingsManager.get('shuffleEnabled')) {
+            }
+            else if (shuffleEnabled) {
 
                 var shuffledItems = _.shuffle(this.where({ playedRecently: false }));
                 shuffledItems[0].set('selected', true);
+            }
+            else {
+                console.log("Removed selected item index:", removedSelectedItemIndex);
+                var nextItemIndex = removedSelectedItemIndex || this.indexOf(this.findWhere({ selected: true })) + 1;
+                if (nextItemIndex === undefined || nextItemIndex <= 0) throw "Failed to find nextItemIndex";
 
-            } else {
                 //  Select the next item by index. Potentially loop around to the front.
-                var selectedItemIndex = this.indexOf(this.findWhere({ selected: true }));
+                if (nextItemIndex === this.length) {
 
-                if (selectedItemIndex + 1 === this.length) {
-                        
                     if (repeatButtonState === RepeatButtonState.REPEAT_STREAM_ENABLED) {
                         this.at(0).set('selected', true);
-                            
+
+                        //  TODO: Might be sending an erroneous trigger on delete?
                         //  Only one item in the playlist and it was already selected, resend selected trigger.
                         if (this.length == 1) {
                             this.at(0).trigger('change:selected', this.at(0), true);
@@ -152,7 +164,7 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
                     } else if (settingsManager.get('radioModeEnabled')) {
 
                         var randomRelatedVideo = this.getRandomRelatedVideo();
-
+                        console.log("Random related videos:", randomRelatedVideo);
                         this.add({
                             video: randomRelatedVideo,
                             title: randomRelatedVideo.get('title'),
@@ -163,7 +175,7 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
                     }
 
                 } else {
-                    this.at(selectedItemIndex + 1).set('selected', true);
+                    this.at(nextItemIndex).set('selected', true);
                 }
 
             }

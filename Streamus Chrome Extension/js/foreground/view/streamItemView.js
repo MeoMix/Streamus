@@ -36,7 +36,7 @@
         toggleSelectedClass: function() {
             this.$el.toggleClass('active', this.model.get('selected'));
         },
-        
+
         togglePlayingState: function () {
 
             if (player.isPlaying()) {
