@@ -147,8 +147,15 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
             }
             else {
                 console.log("Removed selected item index:", removedSelectedItemIndex);
-                var nextItemIndex = removedSelectedItemIndex || this.indexOf(this.findWhere({ selected: true })) + 1;
-                if (nextItemIndex === undefined || nextItemIndex <= 0) throw "Failed to find nextItemIndex";
+
+                var nextItemIndex;
+                
+                if (removedSelectedItemIndex !== undefined && removedSelectedItemIndex !== null) {
+                    nextItemIndex = removedSelectedItemIndex;
+                } else {
+                    nextItemIndex = this.indexOf(this.findWhere({ selected: true })) + 1;
+                    if (nextItemIndex <= 0) throw "Failed to find nextItemIndex";
+                }
 
                 //  Select the next item by index. Potentially loop around to the front.
                 if (nextItemIndex === this.length) {
@@ -161,7 +168,7 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
                         if (this.length == 1) {
                             this.at(0).trigger('change:selected', this.at(0), true);
                         }
-                    } else if (settingsManager.get('radioModeEnabled')) {
+                    } else if (radioModeEnabled) {
 
                         var randomRelatedVideo = this.getRandomRelatedVideo();
                         console.log("Random related videos:", randomRelatedVideo);

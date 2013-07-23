@@ -245,7 +245,7 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
                 }
             });
         },
-        
+
         getVideoInformation: function (config) {
             //videoId, optionalVideoTitle, callback
             $.ajax({

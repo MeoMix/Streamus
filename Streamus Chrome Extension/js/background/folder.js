@@ -1,5 +1,5 @@
 ﻿//  A folder is a collection of playlists
-define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'dataSource', 'ytHelper'], function (Playlists, Playlist, Videos, Video, player, programState, DataSource, ytHelper) {
+define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'dataSource', 'ytHelper', ], function (Playlists, Playlist, Videos, Video, player, programState, DataSource, ytHelper) {
     'use strict';
     
     var folderModel = Backbone.Model.extend({
@@ -93,6 +93,40 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
         
         addVideoByIdToPlaylist: function (id, playlistId) {
             this.get('playlists').get(playlistId).addVideoByIdToPlaylist(id);
+        },
+        
+        addPlaylistWithVideos: function(playlistTitle, videos, callback) {
+
+            var playlist = new Playlist({
+                title: playlistTitle,
+                folderId: this.get('id'),
+            });
+
+            var self = this;
+
+            //  TODO: Change this so only need 1 request not 2.
+            //  Save the playlist, but push after version from server because the ID will have changed.
+            playlist.save({}, {
+                success: function() {
+
+                    //  Update other affected Playlist pointers. DB is already correct, but backbone doesn't update automatically.
+                    var currentPlaylists = self.get('playlists');
+
+                    if (currentPlaylists.length === 0) {
+                        self.set('firstPlaylistId', playlist.get('id'));
+                    } else {
+                        var firstPlaylist = currentPlaylists.get(self.get('firstPlaylistId'));
+                        var lastPlaylist = currentPlaylists.get(firstPlaylist.get('previousPlaylistId'));
+
+                        lastPlaylist.set('nextPlaylistId', playlist.get('id'));
+                        firstPlaylist.set('previousPlaylistId', playlist.get('id'));
+                    }
+
+                    playlist.addItems(videos, function() {
+                        currentPlaylists.push(playlist);
+                    });
+                }
+            });
         },
         
         addPlaylistByShareData: function (shareCodeShortId, urlFriendlyEntityTitle, callback) {

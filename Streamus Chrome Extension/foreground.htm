@@ -213,8 +213,18 @@
             </ul>  
         </div>
         
-        <script type="text/template" id="streamItemTemplate" >
+        <script type="text/template" id="streamItemTemplate">
+            
+            <div class="videoTitleOverlay imageOverlayWrapper">
+                <span class="videoTitle videoImageOverlay"><%- video.get('title') %></span>
+            </div>
+            
             <img class="videoImage" src="<%- videoImageUrl %>" />
+            
+            <div class="videoTimeOverlay imageOverlayWrapper">
+                <span class="videoTime videoImageOverlay"><!--Set inside render to utilize helpers.js--></span>
+            </div>
+        
         </script>
         
         <div id="contextMenu">

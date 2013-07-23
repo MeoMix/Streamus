@@ -127,7 +127,7 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamItem
                     position: 0,
                     items: [{
                         position: 0,
-                        text: 'Copy Video URL',
+                        text: 'Copy URL',
                         onClick: function () {
                             chrome.extension.sendMessage({
                                 method: 'copy',

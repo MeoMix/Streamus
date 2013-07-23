@@ -1,4 +1,4 @@
-﻿define(['streamItems', 'streamItemView', 'contextMenuView', 'sly'], function (StreamItems, StreamItemView, ContextMenuView) {
+﻿define(['streamItems', 'streamItemView', 'contextMenuView', 'backgroundManager', 'sly'], function (StreamItems, StreamItemView, ContextMenuView, backgroundManager) {
     'use strict';
 
     var StreamView = Backbone.View.extend({
@@ -18,7 +18,7 @@
             // Call Sly on frame
             this.sly = new window.Sly(this.$el, {
                 horizontal: 1,
-                itemNav: 'forceCentered',
+                itemNav: 'centered',
                 smart: 1,
                 activateOn: 'click',
                 mouseDragging: 1,
@@ -38,13 +38,13 @@
             
             //  Whenever an item is added to the collection, visually add an item, too.
             this.listenTo(StreamItems, 'add', this.addItem);
-            this.listenTo(StreamItems, 'remove', function () {
-                this.sly.reload();
-            });
+
             this.sly.reload();
             this.listenTo(StreamItems, 'empty', function() {
                 this.overlay.show();
             });
+
+            this.listenTo(StreamItems, 'remove', this.sly.reload);
         },
         
         addItem: function (streamItem, activateImmediate) {
@@ -72,7 +72,7 @@
             var self = this;
 
             ContextMenuView.addGroup({
-                position: 0,
+                position: 1,
                 items: [{
                     position: 0,
                     text: 'Clear Stream',
@@ -83,8 +83,7 @@
                     position: 1,
                     text: 'Save Stream as Playlist',
                     onClick: function () {
-                        // TODO: Implement saving stream as a playlist.
-                        console.error("not implemented");
+                        backgroundManager.get('activeFolder').addPlaylistWithVideos('Playlist', StreamItems.pluck('video'));
                     }
                 }]
             });

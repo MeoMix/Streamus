@@ -158,7 +158,7 @@ define(['playlistItems',
                 var itemsToSave = new PlaylistItems();
                 var self = this;
 
-                videos.each(function (video) {
+                _.each(videos, function (video) {
 
                     var playlistItem = new PlaylistItem({
                         playlistId: self.get('id'),

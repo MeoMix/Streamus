@@ -1,4 +1,4 @@
-﻿define(['contextMenuView', 'player'], function(ContextMenuView, player) {
+﻿define(['contextMenuView', 'player', 'backgroundManager', 'helpers'], function (ContextMenuView, player, backgroundManager, helpers) {
     'use strict';
 
     var StreamItemView = Backbone.View.extend({
@@ -17,6 +17,8 @@
         render: function () {
 
             this.$el.html(this.template(this.model.toJSON()));
+            this.$el.find('.videoTime').text(helpers.prettyPrintTime(this.model.get('video').get('duration')));
+            helpers.scrollElementInsideParent(this.$el.find('.videoTitle'));
 
             return this;
         },
@@ -53,16 +55,22 @@
 
             //  TODO: Maybe position should be inferred if not provided? Or maybe I say 'first', 'last' instead of 0, 1, 2.. etc
             ContextMenuView.addGroup({
-                position: 1,
+                position: 0,
                 items: [{
                         position: 0,
+                        text: 'Add to Playlist',
+                        onClick: function () {
+                            backgroundManager.get('activePlaylist').addItem(self.model.get('video'));
+                        }
+                    }, {
+                        position: 1,
                         text: 'Remove ' + this.model.get('title'),
                         onClick: function() {
                             self.model.destroy();
                         }
                     }, {
-                        position: 1,
-                        text: 'Copy Video URL',
+                        position: 2,
+                        text: 'Copy URL',
                         onClick: function() {
                             chrome.extension.sendMessage({
                                 method: 'copy',

@@ -1,5 +1,5 @@
 //  This is the list of playlists on the playlists tab.
-define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerManager', 'dataSource'], function (ContextMenuView, ytHelper, backgroundManager, helpers, spinnerManager, DataSource) {
+define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerManager', 'dataSource', 'streamItems'], function (ContextMenuView, ytHelper, backgroundManager, helpers, spinnerManager, DataSource, StreamItems) {
     //  TODO: Make this sortable and should inherit from a common List object. 
     var playlistList = $('#PlaylistList ul');
 
@@ -146,7 +146,6 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
 
                                 });
 
-
                             }
                         }, {
                             position: 1,
@@ -162,6 +161,22 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
                                         }
                                     });
                                 }
+                            }
+                        }, {
+                            position: 2,
+                            text: 'Add Playlist to Stream',
+                            onClick: function () {
+
+                                clickedPlaylist.get('items').each(function (playlistItem) {
+
+                                    StreamItems.add({
+                                        video: playlistItem.get('video'),
+                                        title: playlistItem.get('title'),
+                                        videoImageUrl: 'http://img.youtube.com/vi/' + playlistItem.get('video').get('id') + '/default.jpg'
+                                    });
+
+                                });
+
                             }
                         }]
                     });
