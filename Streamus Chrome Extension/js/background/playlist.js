@@ -155,10 +155,15 @@ define(['playlistItems',
             },
             
             addItems: function (videos, callback) {
+                
+                if (!(videos instanceof Backbone.Collection)) {
+                    videos = new Videos(videos);
+                }
+
                 var itemsToSave = new PlaylistItems();
                 var self = this;
 
-                _.each(videos, function (video) {
+                videos.each(function (video) {
 
                     var playlistItem = new PlaylistItem({
                         playlistId: self.get('id'),

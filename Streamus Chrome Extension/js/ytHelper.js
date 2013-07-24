@@ -200,6 +200,11 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
                 //  Try feed from a user URL
                 dataSourceId = tryGetIdFromUrl(url, '/user/');
                 
+                //  Maybe they gave a channel ID instead which works same as user
+                if (dataSourceId === '') {
+                    dataSourceId = tryGetIdFromUrl(url, '/channel/');
+                }
+                
                 if (dataSourceId !== '') {
                     dataSource = {
                         id: dataSourceId,
@@ -220,6 +225,36 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
             }
 
             return dataSource;
+        },
+        
+        getChannelName: function (channelId, callback) {
+            
+            $.ajax({
+                type: 'GET',
+                url: 'https://gdata.youtube.com/feeds/api/users/' + channelId,
+                dataType: 'json',
+                data: {
+                    v: 2,
+                    alt: 'json',
+                    key: 'AI39si7voIBGFYe-bcndXXe8kex6-N_OSzM5iMuWCdPCSnZxLB_qIEnQ-HMijHrwN1Y9sFINBi_frhjzVVrYunHH8l77wfbLCA'
+                },
+                success: function (result) {
+
+                    console.log("Result:", result);
+
+                    if (callback) {
+                        callback(result.entry.author[0].name.$t);
+                    }
+                },
+                error: function (error) {
+                    console.error(error);
+
+                    if (callback) {
+                        callback('Error getting channel name');
+                    }
+                }
+            });
+
         },
         
         getPlaylistTitle: function (playlistId, callback) {

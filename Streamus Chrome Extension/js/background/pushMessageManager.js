@@ -15,35 +15,35 @@
             //To provide your users with a better experience, the interactive flag should be set to false the first time your app or extension calls getChannelId. 
             //Otherwise users will see the sign-in dialog with no context, even before they start your app or extension. If the first call fails because the user is not logged in, 
             //then getChannelId can be called again with the flag set to true. You should provide a context dialog before the second call is made.
-            chrome.pushMessaging.getChannelId(true, function (response) {
-                self.set('channelId', response.channelId);
+            //chrome.pushMessaging.getChannelId(true, function (response) {
+            //    self.set('channelId', response.channelId);
 
-                console.log("channelId set");
+            //    console.log("channelId set");
                 
-                if (user.get('loaded')) {
-                    self.sendChannelIdToServer();
-                } else {
-                    user.once('change:loaded', function() {
-                        self.sendChannelIdToServer();
-                    });
-                }
+            //    if (user.get('loaded')) {
+            //        self.sendChannelIdToServer();
+            //    } else {
+            //        user.once('change:loaded', function() {
+            //            self.sendChannelIdToServer();
+            //        });
+            //    }
                 
-            });
+            //});
 
-            chrome.pushMessaging.onMessage.addListener(function (pushMessageDto) {
+            //chrome.pushMessaging.onMessage.addListener(function (pushMessageDto) {
 
-                var pushMessage = new PushMessage(JSON.parse(pushMessageDto.payload));
+            //    var pushMessage = new PushMessage(JSON.parse(pushMessageDto.payload));
 
-                console.log("pushMessage:", pushMessage);
+            //    console.log("pushMessage:", pushMessage);
 
-                chrome.idle.queryState(60, function(currentState) {
+            //    chrome.idle.queryState(60, function(currentState) {
 
-                    if (currentState !== 'active') {
-                        console.log("Marking dirty");
-                        user.set('dirty', true);
-                    }
+            //        if (currentState !== 'active') {
+            //            console.log("Marking dirty");
+            //            user.set('dirty', true);
+            //        }
 
-                });
+            //    });
                 
 
                 
@@ -60,24 +60,24 @@
 
                 //}
 
-            });
+            //});
 
         },
         
         sendChannelIdToServer: function () {
 
-            $.ajax({
-                url: programState.getBaseUrl() + 'PushMessage/AddChannelId',
-                type: 'POST',
-                dataType: 'json',
-                data: {
-                    userId: user.get('id'),
-                    channelId: this.get('channelId')
-                },
-                error: function(error) {
-                    console.error(error);
-                }
-            });
+            //$.ajax({
+            //    url: programState.getBaseUrl() + 'PushMessage/AddChannelId',
+            //    type: 'POST',
+            //    dataType: 'json',
+            //    data: {
+            //        userId: user.get('id'),
+            //        channelId: this.get('channelId')
+            //    },
+            //    error: function(error) {
+            //        console.error(error);
+            //    }
+            //});
             
         }
     });

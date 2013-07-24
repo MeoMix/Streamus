@@ -151,7 +151,10 @@ define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'fold
                     var folderId = playlist.get('folderId');
                     var playlistFolder = self.getFolderById(folderId);
 
-                    var activePlaylist = playlistFolder.getPlaylistById(playlist.get('nextPlaylistId'));
+                    var nextPlaylistId = playlist.get('nextPlaylistId');
+
+                    var activePlaylist = playlistFolder.get('playlists').get(nextPlaylistId);
+
                     self.set('activePlaylist', activePlaylist);
                 }
 

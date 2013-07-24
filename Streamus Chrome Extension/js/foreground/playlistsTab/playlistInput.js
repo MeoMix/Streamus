@@ -45,10 +45,14 @@
                         });
                         break;
                     case DataSource.YOUTUBE_CHANNEL:
-                        var playlistTitle = dataSource.id + '\'s Feed';
-                        activeFolder.addPlaylistByDataSource(playlistTitle, dataSource, function (playlist) {
-                            backgroundManager.set('activePlaylist', playlist);
+                        
+                        ytHelper.getChannelName(dataSource.id, function (channelName) {
+                            var playlistTitle = channelName + '\'s Feed';
+                            activeFolder.addPlaylistByDataSource(playlistTitle, dataSource, function (playlist) {
+                                backgroundManager.set('activePlaylist', playlist);
+                            });
                         });
+
                         break;
                     case DataSource.SHARED_PLAYLIST:
                         activeFolder.addPlaylistByDataSource('', dataSource, function (playlist) {
