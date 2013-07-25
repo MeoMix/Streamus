@@ -166,17 +166,16 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
                             text: 'Add Playlist to Stream',
                             onClick: function () {
 
-                                clickedPlaylist.get('items').each(function (playlistItem) {
-
-                                    StreamItems.add({
+                                var streamItems = clickedPlaylist.get('items').map(function (playlistItem) {
+                                    return {
                                         id: playlistItem.get('video').get('id'),
                                         video: playlistItem.get('video'),
                                         title: playlistItem.get('title'),
                                         videoImageUrl: 'http://img.youtube.com/vi/' + playlistItem.get('video').get('id') + '/default.jpg'
-                                    });
-
+                                    };
                                 });
 
+                                StreamItems.addMultiple(streamItems);
                             }
                         }]
                     });
@@ -196,11 +195,6 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
 
                     visuallySelectPlaylist(playlist);
                     backgroundManager.set('activePlaylist', playlist);
-                },
-                
-                dblclick: function () {
-                    //  TODO: Terrible coupling, but it's a user QoL decision...
-                    $('#HomeMenuButton').click();
                 }
             }).appendTo(playlistList);
             

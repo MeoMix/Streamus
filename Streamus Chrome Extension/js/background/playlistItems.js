@@ -74,24 +74,6 @@
     return function(config) {
         var playlistItems = new playlistItemsCollection(config);
         
-        //  TODO: Can I move this to an initialize?
-        
-        //  TODO: Could probably be improved for very large playlists being added.
-        //  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
-        var sampleSize = playlistItems.length > 30 ? 30 : playlistItems.length;
-        var randomSampleIndices = helpers.getRandomNonOverlappingNumbers(sampleSize, playlistItems.length);
-
-        _.each(randomSampleIndices, function (randomIndex) {
-            
-            var randomItem = playlistItems.at(randomIndex);
-            
-            //  Fetch all the related videos for videos on load. I don't want to save these to the DB because they're bulky and constantly change.
-            //  Data won't appear immediately as it is an async request, I just want to get the process started now.
-            ytHelper.getRelatedVideoInformation(randomItem.get('video').get('id'), function (relatedVideoInformation) {
-                randomItem.set('relatedVideoInformation', relatedVideoInformation);
-            });
-        });
-
         return playlistItems;
     };
 });

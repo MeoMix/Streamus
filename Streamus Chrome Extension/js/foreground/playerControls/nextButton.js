@@ -42,7 +42,7 @@ define(['streamItems', 'settingsManager', 'repeatButtonState'], function (Stream
         },
 
         initialize: function () {
-            this.listenTo(StreamItems, 'add remove change:selected', this.render);
+            this.listenTo(StreamItems, 'add addMultiple remove change:selected', this.render);
             this.listenTo(settingsManager, 'change:radioModeEnabled change:shuffleEnabled change:repeatButtonState', this.render);
 
             this.render();

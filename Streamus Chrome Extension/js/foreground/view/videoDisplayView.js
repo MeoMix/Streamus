@@ -86,7 +86,7 @@
             };
             
             this.listenTo(player, 'change:state', this.render);
-            this.listenTo(StreamItems, 'add empty change:selected', this.render);
+            this.listenTo(StreamItems, 'add addMultiple empty change:selected', this.render);
 
             this.render();
         }

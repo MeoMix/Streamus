@@ -38,6 +38,7 @@
             
             //  Whenever an item is added to the collection, visually add an item, too.
             this.listenTo(StreamItems, 'add', this.addItem);
+            this.listenTo(StreamItems, 'addMultiple', this.addItems);
 
             this.sly.reload();
             this.listenTo(StreamItems, 'empty', function() {
@@ -60,6 +61,23 @@
                 //  activateImmediate will go directly to element without animation.
                 this.sly.activate(element, activateImmediate);
             }
+        },
+        
+        addItems: function (streamItems) {
+            var streamItemViews = _.map(streamItems, function(streamItem) {
+
+                return new StreamItemView({
+                    model: streamItem
+                });
+
+            });
+
+            var elements = _.map(streamItemViews, function (streamItemView) {
+                return streamItemView.render().el;
+            });
+            
+            this.sly.add(elements);
+            this.overlay.hide();
         },
         
         clear: function () {

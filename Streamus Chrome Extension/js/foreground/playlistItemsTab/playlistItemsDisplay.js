@@ -15,16 +15,16 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamItem
 
                     var activePlaylist = backgroundManager.get('activePlaylist');
                     
-                    activePlaylist.get('items').each(function (playlistItem) {
-
-                        StreamItems.add({
+                    var streamItems = activePlaylist.get('items').map(function (playlistItem) {
+                        return {
                             id: playlistItem.get('video').get('id'),
                             video: playlistItem.get('video'),
                             title: playlistItem.get('title'),
                             videoImageUrl: 'http://img.youtube.com/vi/' + playlistItem.get('video').get('id') + '/default.jpg'
-                        });
-
+                        };
                     });
+
+                    StreamItems.addMultiple(streamItems);
 
                 }
             }]
@@ -94,16 +94,16 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamItem
                 text: 'Add Playlist to Stream',
                 onClick: function () {
 
-                    activePlaylist.get('items').each(function (playlistItem) {
-
-                        StreamItems.add({
-
+                    var streamItems = activePlaylist.get('items').map(function (playlistItem) {
+                        return {
+                            id: playlistItem.get('video').get('id'),
                             video: playlistItem.get('video'),
                             title: playlistItem.get('title'),
                             videoImageUrl: 'http://img.youtube.com/vi/' + playlistItem.get('video').get('id') + '/default.jpg'
-                        });
-
+                        };
                     });
+
+                    StreamItems.addMultiple(streamItems);
 
                 }
             }]
