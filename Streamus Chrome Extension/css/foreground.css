@@ -628,6 +628,7 @@
     color: #000;
     font: 12px/2.2 sans-serif;
     text-decoration: none;
+    cursor: default;
 }
 
 #contextMenu ul li a[disabled=disabled] {
