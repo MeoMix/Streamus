@@ -42,10 +42,8 @@
         togglePlayingState: function () {
 
             if (player.isPlaying()) {
-                console.log("Pausing");
                 player.pause();
             } else {
-                console.log("Playing");
                 player.play();
             }
         },
@@ -64,18 +62,31 @@
                         }
                     }, {
                         position: 1,
-                        text: 'Remove ' + this.model.get('title'),
-                        onClick: function() {
-                            self.model.destroy();
-                        }
-                    }, {
-                        position: 2,
                         text: 'Copy URL',
-                        onClick: function() {
+                        onClick: function () {
+
                             chrome.extension.sendMessage({
                                 method: 'copy',
                                 text: 'http://youtu.be/' + self.model.get('video').get('id')
                             });
+
+                        }
+                    }, {
+                        position: 2,
+                        text: 'Copy Title - URL',
+                        onClick: function() {
+
+                            chrome.extension.sendMessage({
+                                method: 'copy',
+                                text: '"' + self.model.get('title') + '" - http://youtu.be/' + self.model.get('video').get('id')
+                            });
+
+                        }
+                    }, {
+                        position: 3,
+                        text: 'Remove ' + this.model.get('title'),
+                        onClick: function () {
+                            self.model.destroy();
                         }
                     }]
             });

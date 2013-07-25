@@ -18,6 +18,7 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamItem
                     activePlaylist.get('items').each(function (playlistItem) {
 
                         StreamItems.add({
+                            id: playlistItem.get('video').get('id'),
                             video: playlistItem.get('video'),
                             title: playlistItem.get('title'),
                             videoImageUrl: 'http://img.youtube.com/vi/' + playlistItem.get('video').get('id') + '/default.jpg'
@@ -38,6 +39,98 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamItem
     });
 
     var playlistItemListUl = $('#PlaylistItemList ul');
+
+    playlistItemListUl.on('contextmenu', 'li', function (event) {
+
+        var activePlaylist = backgroundManager.get('activePlaylist');
+        var clickedItemId = $(this).data('itemid');
+        var clickedItem = activePlaylist.get('items').get(clickedItemId);
+
+        ContextMenuView.addGroup({
+            position: 0,
+            items: [{
+                position: 0,
+                text: 'Copy URL',
+                onClick: function () {
+                    chrome.extension.sendMessage({
+                        method: 'copy',
+                        text: 'http://youtu.be/' + clickedItem.get('video').get('id')
+                    });
+                }
+            }, {
+                position: 1,
+                text: 'Copy Title - URL',
+                onClick: function () {
+
+                    chrome.extension.sendMessage({
+                        method: 'copy',
+                        text: '"' + clickedItem.get('title') + '" - http://youtu.be/' + clickedItem.get('video').get('id')
+                    });
+                }
+            }, {
+                position: 2,
+                text: 'Delete Video',
+                onClick: function () {
+                    clickedItem.destroy();
+                }
+            }, {
+                position: 3,
+                text: 'Add Video to Stream',
+                onClick: function () {
+                    StreamItems.add({
+                        id: clickedItem.get('video').get('id'),
+                        video: clickedItem.get('video'),
+                        title: clickedItem.get('title'),
+                        videoImageUrl: 'http://img.youtube.com/vi/' + clickedItem.get('video').get('id') + '/default.jpg'
+                    });
+                }
+            }]
+        });
+
+        ContextMenuView.addGroup({
+            position: 1,
+            items: [{
+                position: 0,
+                text: 'Add Playlist to Stream',
+                onClick: function () {
+
+                    activePlaylist.get('items').each(function (playlistItem) {
+
+                        StreamItems.add({
+
+                            video: playlistItem.get('video'),
+                            title: playlistItem.get('title'),
+                            videoImageUrl: 'http://img.youtube.com/vi/' + playlistItem.get('video').get('id') + '/default.jpg'
+                        });
+
+                    });
+
+                }
+            }]
+        });
+
+        ContextMenuView.show({
+            top: event.pageY,
+            left: event.pageX + 1
+        });
+
+        return false;
+    });
+    
+    playlistItemListUl.on('click', 'li', function () {
+
+        //  Add item to stream on dblclick.
+        var itemId = $(this).data('itemid');
+        var playlistItem = backgroundManager.getPlaylistItemById(itemId);
+
+        StreamItems.add({
+            id: playlistItem.get('video').get('id'),
+            video: playlistItem.get('video'),
+            title: playlistItem.get('title'),
+            videoImageUrl: 'http://img.youtube.com/vi/' + playlistItem.get('video').get('id') + '/default.jpg'
+        });
+
+    });
 
     //  Allows for drag-and-drop of videos
     playlistItemListUl.sortable({
@@ -116,83 +209,7 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamItem
     function buildListItem(item) {
         
         var listItem = $('<li/>', {
-            'data-itemid': item.get('id'),
-            contextmenu: function (event) {
-                
-                var activePlaylist = backgroundManager.get('activePlaylist');
-                var clickedItemId = $(this).data('itemid');
-                var clickedItem = activePlaylist.get('items').get(clickedItemId);
-
-                ContextMenuView.addGroup({
-                    position: 0,
-                    items: [{
-                        position: 0,
-                        text: 'Copy URL',
-                        onClick: function () {
-                            chrome.extension.sendMessage({
-                                method: 'copy',
-                                text: 'http://youtu.be/' + clickedItem.get('video').get('id')
-                            });
-                        }
-                    }, {
-                        position: 1,
-                        text: 'Delete Video',
-                        onClick: function () {
-                            clickedItem.destroy();
-                        }
-                    }, {
-                        position: 2,
-                        text: 'Add Video to Stream',
-                        onClick: function() {
-                            StreamItems.add({
-                                video: clickedItem.get('video'),
-                                title: clickedItem.get('title'),
-                                videoImageUrl: 'http://img.youtube.com/vi/' + clickedItem.get('video').get('id') + '/default.jpg'
-                            });
-                        }
-                    }]
-                });
-
-                ContextMenuView.addGroup({
-                    position: 1,
-                    items: [{
-                        position: 0,
-                        text: 'Add Playlist to Stream',
-                        onClick: function () {
-
-                            activePlaylist.get('items').each(function (playlistItem) {
-
-                                StreamItems.add({
-                                    video: playlistItem.get('video'),
-                                    title: playlistItem.get('title'),
-                                    videoImageUrl: 'http://img.youtube.com/vi/' + playlistItem.get('video').get('id') + '/default.jpg'
-                                });
-                                
-                            });
-
-                        }
-                    }]
-                });
-
-                ContextMenuView.show({
-                    top: event.pageY,
-                    left: event.pageX + 1
-                });
-
-                return false;
-            },
-            //  TODO: Double click maybe plays immediately? Unsure.
-            click: function() {
-                //  Add item to stream on dblclick.
-                var itemId = $(this).data('itemid');
-                var playlistItem = backgroundManager.getPlaylistItemById(itemId);
-
-                StreamItems.add({
-                    video: playlistItem.get('video'),
-                    title: playlistItem.get('title'),
-                    videoImageUrl: 'http://img.youtube.com/vi/' + playlistItem.get('video').get('id') + '/default.jpg'
-                });
-            }
+            'data-itemid': item.get('id')
         });
         
         var video = item.get('video');
@@ -233,9 +250,12 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamItem
 
     //  Refresh all the videos displayed to ensure they GUI matches background's data.
     function reload() {
+
         playlistItemListUl.empty();
 
         var activePlaylist = backgroundManager.get('activePlaylist');
+
+        var listItems = [];
 
         if (activePlaylist.get('items').length === 0) {
             showEmptyPlaylistNotification();
@@ -247,20 +267,20 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamItem
             var item = activePlaylist.get('items').get(firstItemId);
 
             //  Build up the ul of li's representing each playlistItem.
-
             do {
 
                 if (item !== null) {
 
                     var listItem = buildListItem(item);
-                    listItem.appendTo(playlistItemListUl);
-
+                    listItems.push(listItem);
+  
                     item = activePlaylist.get('items').get(item.get('nextItemId'));
-
                 }
 
             } while (item && item.get('id') !== firstItemId)
        
+            //  Do this all in one DOM insertion to prevent lag in large playlists.
+            playlistItemListUl.append(listItems);
         }
     }
 });

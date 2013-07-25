@@ -21,7 +21,6 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
     });
     
     backgroundManager.get('allPlaylistItems').on('add remove', function (playlistItem, other) {
-        console.log("Playlist item added:", playlistItem, other);
         throttledUpdatePlaylistDescription(playlistItem);
     });
 
@@ -170,6 +169,7 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
                                 clickedPlaylist.get('items').each(function (playlistItem) {
 
                                     StreamItems.add({
+                                        id: playlistItem.get('video').get('id'),
                                         video: playlistItem.get('video'),
                                         title: playlistItem.get('title'),
                                         videoImageUrl: 'http://img.youtube.com/vi/' + playlistItem.get('video').get('id') + '/default.jpg'

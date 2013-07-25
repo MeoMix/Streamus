@@ -38,14 +38,12 @@ require(['jquery',
 
     function loadForeground() {
 
-        console.log("Calling load foreground. Is the player ready?", player.get('ready'));
-
         if (player.get('ready')) {
             //  Load foreground when the background indicates it has loaded.
             require(['foreground']);
         } else {
             player.once('change:ready', function () {
-                console.log("player is now ready");
+
                 //  Load foreground when the background indicates it has loaded.
                 require(['foreground']);
             });

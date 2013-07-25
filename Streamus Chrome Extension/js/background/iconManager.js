@@ -65,8 +65,6 @@ define(['player', 'playerState'], function (player, PlayerState) {
             iconColor = 'Yellow';
         }
 
-        console.log("Volume:", volume);
-
         //  TODO: It would probably be better to implement this using a canvas rather than swapping images.
         var barCount = Math.ceil((volume / 25));
 

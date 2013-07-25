@@ -18,8 +18,6 @@
             //chrome.pushMessaging.getChannelId(true, function (response) {
             //    self.set('channelId', response.channelId);
 
-            //    console.log("channelId set");
-                
             //    if (user.get('loaded')) {
             //        self.sendChannelIdToServer();
             //    } else {
@@ -34,12 +32,9 @@
 
             //    var pushMessage = new PushMessage(JSON.parse(pushMessageDto.payload));
 
-            //    console.log("pushMessage:", pushMessage);
-
             //    chrome.idle.queryState(60, function(currentState) {
 
             //        if (currentState !== 'active') {
-            //            console.log("Marking dirty");
             //            user.set('dirty', true);
             //        }
 
@@ -52,8 +47,6 @@
                 //    var playlist = backgroundManager.getPlaylistById(pushMessage.get('entityId'));
                     
                 //    if (pushMessage.get('entityAction') == EntityAction.Refresh) {
-
-                //        console.log('Fetching');
                 //        playlist.fetch();
                         
                 //    }

@@ -80,8 +80,6 @@ define(['folders', 'programState', 'settingsManager'], function (Folders, progra
     
     function onUserLoaded(model, shouldSetSyncStorage) {
 
-        console.log("onUserLoaded:", model);
-
         //  Have to manually convert the JSON array into a Backbone.Collection
         var folders = new Folders(model.get('folders'));
 

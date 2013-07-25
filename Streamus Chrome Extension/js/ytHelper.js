@@ -240,8 +240,6 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
                 },
                 success: function (result) {
 
-                    console.log("Result:", result);
-
                     if (callback) {
                         callback(result.entry.author[0].name.$t);
                     }

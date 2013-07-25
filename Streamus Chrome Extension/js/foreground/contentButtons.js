@@ -1,10 +1,14 @@
 define(['settingsManager'], function(settingsManager){
     'use strict';
 
+    console.log("Loaded");
+
     var menuButtons = $('.menubutton');
     
     //  User clicks on a different button on the LHS, possible change of content display.
     menuButtons.click(function () {
+
+        console.log("Clicked");
 
         //  If the user clicked a button that isn't the current button.
         if (!$(this).hasClass('active')) {

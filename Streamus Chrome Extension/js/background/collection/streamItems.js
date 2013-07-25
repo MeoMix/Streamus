@@ -33,7 +33,7 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
             });
 
             this.on('change:selected', function (changedStreamItem, selected) {
-                console.log("This on change selected:", changedStreamItem, selected);
+
                 //  Ensure only one streamItem is selected at a time by de-selecting all other selected streamItems.
                 if (selected) {
                     this.deselectAllExcept(changedStreamItem.cid);
@@ -68,7 +68,7 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
         deselectAllExcept: function (streamItemCid) {
             
             this.each(function (streamItem) {
-                console.log("Cid and streamCid:", streamItem.cid, streamItemCid);
+
                 if (streamItem.cid != streamItemCid) {
                     streamItem.set('selected', false);
                 }
@@ -93,8 +93,6 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
 
             }));
 
-            console.log("Related Videos:", relatedVideos);
-
             //  Don't add any videos that are already in the stream.
             var self = this;
             relatedVideos = _.filter(relatedVideos, function (relatedVideo) {
@@ -109,8 +107,6 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
                 return alreadyExistingItem == null;
             });
 
-            console.log("After first filter", relatedVideos.length);
-            
             // Try to filter out 'playlist' songs, but if they all get filtered out then back out of this assumption.
             var tempFilteredRelatedVideos = _.filter(relatedVideos, function(relatedVideo) {
                 //  assuming things >8m are playlists.
@@ -123,7 +119,6 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
             if (tempFilteredRelatedVideos.length !== 0) {
                 relatedVideos = tempFilteredRelatedVideos;
             }
-            console.log("After second filter", relatedVideos.length);
 
             return relatedVideos[_.random(relatedVideos.length - 1)];;
         },
@@ -146,7 +141,6 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
                 shuffledItems[0].set('selected', true);
             }
             else {
-                console.log("Removed selected item index:", removedSelectedItemIndex);
 
                 var nextItemIndex;
                 
@@ -171,7 +165,7 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
                     } else if (radioModeEnabled) {
 
                         var randomRelatedVideo = this.getRandomRelatedVideo();
-                        console.log("Random related videos:", randomRelatedVideo);
+
                         this.add({
                             video: randomRelatedVideo,
                             title: randomRelatedVideo.get('title'),

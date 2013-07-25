@@ -50,12 +50,8 @@ define(['helpers', 'programState', 'video'], function(helpers, programState, Vid
     //  Public exposure of a constructor for building new PlaylistItem objects.
     return function (config) {
         
-
-
         //  Default the PlaylistItem's title to the Video's title, but allow overriding.
         if (config && config.title === undefined || config.title === '') {
-            console.trace();
-            console.log("Config:", config);
             config.title = config.video.get('title');
         }
 
