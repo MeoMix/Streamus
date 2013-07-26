@@ -1,36 +1,42 @@
-﻿$(function () {
-    
-    //  Monitor the video for change of src so that background can mimic player.
-    var videoStream = $('.video-stream');
+﻿//  This code runs inside of the MusicHolder iframe in the Streamus background -- hax!
+$(function () {
 
-    //  HTML5 player loaded
-    if (videoStream.length > 0) {
+    //  Only run against our intended iFrame -- not embedded YouTube iframes on other pages.
+    if (window.name === 'MusicHolder') {
+        
+        //  Monitor the video for change of src so that background can mimic player.
+        var videoStream = $('.video-stream');
 
-        var observer = new window.WebKitMutationObserver(function (mutations) {
-            mutations.forEach(function (mutation) {
-                var attributeName = mutation.attributeName;
+        //  HTML5 player loaded
+        if (videoStream.length > 0) {
 
-                if (attributeName === 'src') {
+            var observer = new window.WebKitMutationObserver(function (mutations) {
+                mutations.forEach(function (mutation) {
+                    var attributeName = mutation.attributeName;
 
-                    var videoStreamSrc = mutation.target.getAttribute(attributeName);
+                    if (attributeName === 'src') {
 
-                    //  Don't send a blank src across, I think?
-                    if (videoStreamSrc != null && $.trim(videoStreamSrc) != '') {
-                        chrome.runtime.sendMessage({
-                            method: "videoStreamSrcChange", videoStreamSrc: videoStreamSrc
-                        });
+                        var videoStreamSrc = mutation.target.getAttribute(attributeName);
 
-                        videoStream.removeAttr('src');
+                        //  Don't send a blank src across, I think?
+                        if (videoStreamSrc != null && $.trim(videoStreamSrc) != '') {
+                            chrome.runtime.sendMessage({
+                                method: "videoStreamSrcChange", videoStreamSrc: videoStreamSrc
+                            });
+
+                            videoStream.removeAttr('src');
+                        }
+
                     }
-
-                }
+                });
             });
-        });
 
-        observer.observe(videoStream[0], {
-            attributes: true,
-            subtree: false
-        });
+            observer.observe(videoStream[0], {
+                attributes: true,
+                subtree: false
+            });
+        }
+        
     }
 
 });

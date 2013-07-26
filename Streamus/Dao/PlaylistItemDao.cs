@@ -1,6 +1,4 @@
-﻿using NHibernate;
-using NHibernate.Criterion;
-using Streamus.Domain;
+﻿using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using System;
 
@@ -8,14 +6,14 @@ namespace Streamus.Dao
 {
     public class PlaylistItemDao : AbstractNHibernateDao<PlaylistItem>, IPlaylistItemDao
     {
-        public PlaylistItem Get(Guid playlistId, Guid id)
+        public PlaylistItem Get(Guid id)
         {
-            ICriteria criteria = NHibernateSession
-                .CreateCriteria(typeof (PlaylistItem), "PlaylistItem")
-                .Add(Restrictions.Eq("PlaylistItem.Id", id))
-                .Add(Restrictions.Eq("PlaylistItem.PlaylistId", playlistId));
+            PlaylistItem playlistItem = null;
 
-            PlaylistItem playlistItem = criteria.UniqueResult<PlaylistItem>();
+            if (id != default(Guid))
+            {
+                playlistItem = NHibernateSession.Get<PlaylistItem>(id);
+            }
 
             return playlistItem;
         }

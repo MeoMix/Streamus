@@ -1,29 +1,17 @@
-﻿using FluentValidation;
-using System;
-using System.Runtime.Serialization;
+﻿using AutoMapper;
+using FluentValidation;
 using Streamus.Domain.Validators;
+using Streamus.Dto;
+using System;
 
 namespace Streamus.Domain
 {
-    [DataContract]
-    public class Error
+    public class Error : AbstractDomainEntity<Guid>
     {
-        [DataMember(Name = "id")]
-        public Guid Id { get; set; }
-
-        [DataMember(Name = "message")]
         public string Message { get; set; }
-
-        [DataMember(Name = "lineNumber")]
         public int LineNumber { get; set; }
-
-        [DataMember(Name = "url")]
         public string Url { get; set; }
-
-        [DataMember(Name = "clientVersion")]
         public string ClientVersion { get; set; }
-
-        [DataMember(Name = "timeOccurred")]
         public DateTime TimeOccurred { get; set; }
 
         public Error()
@@ -33,6 +21,12 @@ namespace Streamus.Domain
             Url = string.Empty;
             ClientVersion = string.Empty;
             TimeOccurred = DateTime.Now;
+        }
+
+        public static Error Create(ErrorDto errorDto)
+        {
+            Error error = Mapper.Map<ErrorDto, Error>(errorDto);
+            return error;
         }
 
         public void ValidateAndThrow()

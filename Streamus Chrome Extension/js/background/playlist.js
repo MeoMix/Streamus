@@ -1,28 +1,33 @@
-//  Playlist holds a collection of PlaylistItems as well as properties pertaining to a playlist such as its title and
-//  history of videos played. Provides methods to work with PlaylistItems such as getting, removing, updating, etc..
-define(['ytHelper',
-        'playlistItems',
+//  Playlist holds a collection of PlaylistItems as well as properties pertaining to a playlist.
+//  Provides methods to work with PlaylistItems such as getting, removing, updating, etc..
+define(['playlistItems',
         'playlistItem',
         'programState',
-        'localStorageManager',
+        'settingsManager',
         'video',
         'videos',
         'helpers',
+<<<<<<< HEAD
         'repeatButtonStates',
         'shareCode'
 ], function (ytHelper, PlaylistItems, PlaylistItem, programState, localStorageManager, Video, Videos, helpers, repeatButtonStates, ShareCode) {
+=======
+        'repeatButtonState',
+        'shareCode',
+        'shareableEntityType'
+], function (PlaylistItems, PlaylistItem, programState, settingsManager, Video, Videos, helpers, RepeatButtonState, ShareCode, ShareableEntityType) {
+>>>>>>> origin/Development
         'use strict';
 
         var playlistModel = Backbone.Model.extend({
             defaults: function() {
                 return {
                     id: null,
-                    streamId: null,
+                    folderId: null,
                     title: 'New Playlist',
                     firstItemId: null,
-                    nextListId: null,
-                    previousListId: null,
-                    history: new PlaylistItems(),
+                    nextPlaylistId: null,
+                    previousPlaylistId: null,
                     items: new PlaylistItems(),
                     dataSource: null,
                     dataSourceLoaded: false
@@ -33,20 +38,27 @@ define(['ytHelper',
             
             //  Convert data which is sent from the server back to a proper Backbone.Model.
             //  Need to recreate submodels as Backbone.Models else they will just be regular Objects.
-            parse: function (data) {
+            parse: function (playlistDto) {
 
-                if (data.items.length > 0) {
+                //  Convert C# Guid.Empty into BackboneJS null
+                for (var key in playlistDto) {
+                    if (playlistDto.hasOwnProperty(key) && playlistDto[key] == '00000000-0000-0000-0000-000000000000') {
+                        playlistDto[key] = null;
+                    }
+                }
+
+                if (playlistDto.items.length > 0) {
                     //  Reset will load the server's response into items as a Backbone.Collection
-                    this.get('items').reset(data.items);
+                    this.get('items').reset(playlistDto.items);
 
                 } else {
                     this.set('items', new PlaylistItems());
                 }
                 
                 // Remove so parse doesn't set and overwrite instance after parse returns.
-                delete data.items;
+                delete playlistDto.items;
                 
-                return data;
+                return playlistDto;
             },
             initialize: function () {
                 var items = this.get('items');
@@ -56,10 +68,8 @@ define(['ytHelper',
                 if (!(items instanceof Backbone.Collection)) {
                     items = new PlaylistItems(items);
                     
-                    this.set('items', items, {
-                        //  Silent operation because the playlist isn't technically changing - just being made correct.
-                        silent: true
-                    });
+                    //  Silent operation because the playlist isn't technically changing - just being made correct.
+                    this.set('items', items, { silent: true });
                 }
 
                 //  Debounce because I want automatic typing but no reason to spam server with saves.
@@ -73,7 +83,10 @@ define(['ytHelper',
                             title: title
                         },
                         error: function (error) {
+<<<<<<< HEAD
                             //  TODO: Rollback client-side transaction somehow?
+=======
+>>>>>>> origin/Development
                             console.error("Error saving title", error);
                         }
                     });
@@ -82,7 +95,7 @@ define(['ytHelper',
                 this.on('change:firstItemId', function (model, firstItemId) {
 
                     $.ajax({
-                        url: programState.getBaseUrl() + 'Playlist/UpdateFirstItemId',
+                        url: programState.getBaseUrl() + 'Playlist/UpdateFirstItem',
                         type: 'POST',
                         dataType: 'json',
                         data: {
@@ -90,13 +103,17 @@ define(['ytHelper',
                             firstItemId: firstItemId
                         },
                         error: function (error) {
+<<<<<<< HEAD
                             //  TODO: Rollback client-side transaction somehow?
+=======
+>>>>>>> origin/Development
                             console.error("Error saving firstItemId", error, error.message);
                         }
                     });
                     
                 });
 
+<<<<<<< HEAD
                 var self = this;
                 
                 //  Load videos from datasource if provided.
@@ -267,89 +284,69 @@ define(['ytHelper',
                 }
 
                 return nextItem;
+=======
+>>>>>>> origin/Development
             },
             
-            gotoPreviousItem: function () {
-                var selectedItem = this.get('history').shift();
-                var previousItem = this.get('history').shift();
-                
-                //  If no previous item was found in the history, then just go back one item
-                if (!previousItem) {
-                    var previousItemId = selectedItem.get('previousItemId');
-                    previousItem = this.get('items').get(previousItemId);
-                }
-                
-                this.selectItem(previousItem);
-
-                return previousItem;
-            },
-
             //  This is generally called from the foreground to not couple the Video object with the foreground.
             addItemByInformation: function (videoInformation) {
 
-                //  Strip out the id. An example of $t's contents: tag:youtube.com,2008:video:UwHQp8WWMlg
-                var id = videoInformation.media$group.yt$videoid.$t;
-                var durationInSeconds = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
-                var author = videoInformation.author[0].name.$t;
-
                 var video = new Video({
-                    type: 'youTubeApi',
-                    id: id,
-                    title: videoInformation.title.$t,
-                    duration: durationInSeconds,
-                    author: author
+                    videoInformation: videoInformation
                 });
-                
-                return this.addItem(video);
+
+                this.addItem(video);
             },
 
-            addItem: function (video) {
-
-                var modifiedItems = new PlaylistItems();
-
-                var playlistId = this.get('id');
+            addItem: function (video, callback) {
 
                 var playlistItem = new PlaylistItem({
-                    playlistId: playlistId,
-                    video: video,
-                    title: video.get('title'),
-                    relatedVideoInformation: []
+                    playlistId: this.get('id'),
+                    video: video
                 });
                 
-                var playlistItems = this.get('items');
-                var playlistItemId = playlistItem.get('id');
-                if (playlistItems.length === 0) {
+                var self = this;
 
-                    this.set('firstItemId', playlistItemId);
-                    playlistItem.set('nextItemId', playlistItemId);
-                    playlistItem.set('previousItemId', playlistItemId);
-                } else {
-                    var firstItem = playlistItems.get(this.get('firstItemId'));
-                    var lastItem = playlistItems.get(firstItem.get('previousItemId'));
+                //  Save the playlistItem, but push after version from server because the ID will have changed.
+                playlistItem.save({}, {
+                    
+                    success: function () {
 
-                    lastItem.set('nextItemId', playlistItemId);
-                    playlistItem.set('previousItemId', lastItem.get('id'));
+                        //  Update client-side pointers for other items which are affected. The saved playlistItem updates implicitly.
+                        var playlistItemId = playlistItem.get('id');
+                        var currentItems = self.get('items');
+                        
+                        if (currentItems.length === 0) {
+                            self.set('firstItemId', playlistItemId);
+                        } else {
+                            var firstItem = currentItems.get(self.get('firstItemId'));
+                            var lastItem = currentItems.get(firstItem.get('previousItemId'));
+                            
+                            lastItem.set('nextItemId', playlistItemId);
+                            firstItem.set('previousItemId', playlistItemId);
+                        }
 
-                    firstItem.set('previousItemId', playlistItemId);
-                    playlistItem.set('nextItemId', firstItem.get('id'));
-                    modifiedItems.push(firstItem);
-                    modifiedItems.push(lastItem);
-                }
-                
-                modifiedItems.push(playlistItem);
+                        self.get('items').push(playlistItem);
+  
+                        if (callback) {
+                            callback(playlistItem);
+                        }
 
-                ytHelper.getRelatedVideoInformation(video.get('id'), function (relatedVideoInformation) {
-                    playlistItem.set('relatedVideoInformation', relatedVideoInformation);
+                    },
+                    
+                    error: function(error) {
+                        console.error(error);
+                    }
+                    
                 });
-
-                this.get('items').push(playlistItem);
-
-                modifiedItems.save();
-               
-                return playlistItem;
             },
             
             addItems: function (videos, callback) {
+                
+                if (!(videos instanceof Backbone.Collection)) {
+                    videos = new Videos(videos);
+                }
+
                 var itemsToSave = new PlaylistItems();
                 var self = this;
 
@@ -357,60 +354,42 @@ define(['ytHelper',
 
                     var playlistItem = new PlaylistItem({
                         playlistId: self.get('id'),
-                        video: video,
-                        //  PlaylistItem title is mutable, video title is immutable.
-                        title: video.get('title'),
-                        relatedVideoInformation: []
+                        video: video
                     });
-
-                    var playlistItems = self.get('items');
-                    var playlistItemId = playlistItem.get('id');
-
-                    if (playlistItems.length === 0) {
-                        //  This triggers an event which saves the firstItemId
-                        self.set('firstItemId', playlistItemId);
-                        playlistItem.set('nextItemId', playlistItemId);
-                        playlistItem.set('previousItemId', playlistItemId);
-                    } else {
-                        var firstItem = playlistItems.get(self.get('firstItemId'));
-                        var lastItem = playlistItems.get(firstItem.get('previousItemId'));
-
-                        lastItem.set('nextItemId', playlistItemId);
-                        playlistItem.set('previousItemId', lastItem.get('id'));
-
-                        firstItem.set('previousItemId', playlistItemId);
-                        playlistItem.set('nextItemId', firstItem.get('id'));
-
-                        itemsToSave.add(firstItem, { merge: true });
-                        itemsToSave.add(lastItem, { merge: true });
-                    }
 
                     itemsToSave.push(playlistItem);
-                    self.get('items').push(playlistItem);
-                });
-
-                //  TODO: Could probably be improved for very large playlists being added.
-                //  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
-                var sampleSize = videos.length > 30 ? 30 : videos.length;
-                var randomSampleIndices = helpers.getRandomNonOverlappingNumbers(sampleSize, videos.length);
-
-                _.each(randomSampleIndices, function (randomIndex) {
-                    var randomVideo = videos.at(randomIndex);
-                    
-                    ytHelper.getRelatedVideoInformation(randomVideo.get('id'), function (relatedVideoInformation) {
-
-                        var playlistItem = self.get('items').find(function (item) {
-                            return item.get('video').get('id') == randomVideo.get('id');
-                        });
-
-                        playlistItem.set('relatedVideoInformation', relatedVideoInformation);
-                    });
                 });
 
                 itemsToSave.save({}, {
-                    success: callback,
+                    success: function () {
+                        
+                        var currentItems = self.get('items');
+                        
+                        //  After a bulk save the following properties are still out of date on the playlist.
+                        if (currentItems.length === 0) {
+                            //  Silent because the data just came from the sever
+                            self.set('firstItemId', itemsToSave.at(0).get('id'), { silent: true });
+                        } else {
+                            var firstItem = currentItems.get(self.get('firstItemId'));
+                            var lastItem = currentItems.get(firstItem.get('previousItemId'));
+
+                            lastItem.set('nextItemId', itemsToSave.at(0).get('id'));
+                            firstItem.set('previousItemId', itemsToSave.at(itemsToSave.length - 1).get('id'));
+                        }
+                        
+                        self.get('items').add(itemsToSave.models);
+
+                        if (callback) {
+                            callback();
+                        }
+
+                    },
                     error: function (error) {
+<<<<<<< HEAD
                         console.error(error);
+=======
+                        console.error("There was an issue saving" + self.get('title'), error);
+>>>>>>> origin/Development
                     }
                 });
             },
@@ -467,11 +446,20 @@ define(['ytHelper',
 
                 var self = this;
                 $.ajax({
+<<<<<<< HEAD
                     url: programState.getBaseUrl() + 'Playlist/GetShareCode',
                     type: 'GET',
                     dataType: 'json',
                     data: {
                         playlistId: self.get('id')
+=======
+                    url: programState.getBaseUrl() + 'ShareCode/GetShareCode',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        entityType: ShareableEntityType.PLAYLIST,
+                        entityId: self.get('id')
+>>>>>>> origin/Development
                     },
                     success: function (shareCodeJson) {
                         var shareCode = new ShareCode(shareCodeJson);

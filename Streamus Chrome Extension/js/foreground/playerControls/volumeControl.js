@@ -61,9 +61,13 @@ define(['player'], function (player) {
         },
 
         //  Whenever the volume slider is interacted with by the user, change the volume to reflect.
+<<<<<<< HEAD
         setVolume: function (a, e) {
 
             console.log("a, e,", a, e);
+=======
+        setVolume: function () {
+>>>>>>> origin/Development
 
             var newVolume = parseInt(this.volumeSlider.val(), 10);
             player.set('volume', newVolume);
@@ -85,11 +89,19 @@ define(['player'], function (player) {
 
         //  Show the volume slider control by expanding its wrapper whenever any of the volume controls are hovered.
         expand: function () {
+<<<<<<< HEAD
             this.volumeSliderWrapper.addClass('expanded');
         },
 
         contract: function () {
             this.volumeSliderWrapper.removeClass('expanded');
+=======
+            this.$el.addClass('expanded');
+        },
+
+        contract: function () {
+            this.$el.removeClass('expanded');
+>>>>>>> origin/Development
         }
 
     });

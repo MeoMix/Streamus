@@ -1,6 +1,18 @@
+<<<<<<< HEAD
 $(function () {
 
     $('#streamusNotInstalled').hide();
+=======
+//  This code only runs on the share.streamus.com sub-domain.
+$(function () {
+    'use strict';
+    
+    var streamusNotInstalledWarning = $('.streamusNotInstalledWarning');
+
+    if (streamusNotInstalledWarning.length > 0) {
+        streamusNotInstalledWarning.remove();
+    }
+>>>>>>> origin/Development
 
     var currentUrl = document.URL;
     var urlSections = currentUrl.split('/');
@@ -11,7 +23,10 @@ $(function () {
     var shareCodeShortId = urlSections[urlSections.length - 2];
     var urlFriendlyEntityTitle = urlSections[urlSections.length - 1];
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/Development
     if (indicator === 'playlist' && shareCodeShortId.length === 12 && urlFriendlyEntityTitle.length > 0) {
         chrome.runtime.sendMessage({
             method: "addPlaylistByShareData",
@@ -27,15 +42,25 @@ $(function () {
                 resultText = 'There was an issue adding your playlist. Check the URL?';
             }
             
+<<<<<<< HEAD
             $('<div>', {
                 text: resultText
             }).appendTo('body');
+=======
+            $('<h3>', {
+                text: resultText,
+                'class': 'jumbotron'
+            }).appendTo('.container-narrow');
+>>>>>>> origin/Development
 
         });
     }
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> origin/Development
 });
 
 

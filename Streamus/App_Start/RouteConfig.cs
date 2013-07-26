@@ -12,6 +12,9 @@ namespace Streamus.App_Start
             routes.MapRoute("post-Error", "Error", new {controller = "Error", action = "create"},
                             new {httpMethod = new HttpMethodConstraint("POST")});
 
+            routes.MapRoute("addChannelId", "PushMessage/AddChannelId", new { controller = "PushMessage", action = "AddChannelId" },
+                new { httpMethod = new HttpMethodConstraint("POST") });
+
             routes.MapRoute("post-User", "User", new {controller = "User", action = "create"},
                             new {httpMethod = new HttpMethodConstraint("POST")});
 
@@ -24,8 +27,8 @@ namespace Streamus.App_Start
             routes.MapRoute("delete-User", "User/{id}", new {controller = "User", action = "delete"},
                             new {httpMethod = new HttpMethodConstraint("DELETE")});
 
-            routes.MapRoute("updateFirstItemId", "Playlist/UpdateFirstItemId",
-                            new {controller = "Playlist", action = "UpdateFirstItemId"},
+            routes.MapRoute("updateFirstItem", "Playlist/UpdateFirstItem",
+                            new {controller = "Playlist", action = "UpdateFirstItem"},
                             new {httpMethod = new HttpMethodConstraint("POST")});
 
             routes.MapRoute("updateTitle", "Playlist/UpdateTitle",
@@ -35,10 +38,14 @@ namespace Streamus.App_Start
             routes.MapRoute("post-Playlist", "Playlist", new {controller = "Playlist", action = "create"},
                             new {httpMethod = new HttpMethodConstraint("POST")});
 
+<<<<<<< HEAD
             routes.MapRoute("getShareCode", "Playlist/GetShareCode", new { controller = "Playlist", action = "GetShareCode" },
                 new { httpMethod = new HttpMethodConstraint("GET") });
 
             routes.MapRoute("createAndGetCopyByShareCode", "Playlist/CreateAndGetCopyByShareCode", new { controller = "Playlist", action = "CreateAndGetCopyByShareCode" },
+=======
+            routes.MapRoute("createCopyByShareCode", "Playlist/CreateCopyByShareCode", new { controller = "Playlist", action = "CreateCopyByShareCode" },
+>>>>>>> origin/Development
                 new { httpMethod = new HttpMethodConstraint("GET") });
 
             routes.MapRoute("get-Playlist", "Playlist/{id}", new {controller = "Playlist", action = "get"},
@@ -49,6 +56,10 @@ namespace Streamus.App_Start
 
             routes.MapRoute("delete-Playlist", "Playlist/{id}", new {controller = "Playlist", action = "delete"},
                             new {httpMethod = new HttpMethodConstraint("DELETE")});
+
+            routes.MapRoute("createMultiple", "PlaylistItem/CreateMultiple",
+                new { controller = "PlaylistItem", action = "CreateMultiple" },
+                new { httpMethod = new HttpMethodConstraint("POST") });
 
             routes.MapRoute("post-PlaylistItem", "PlaylistItem", new {controller = "PlaylistItem", action = "create"},
                             new {httpMethod = new HttpMethodConstraint("POST")});
@@ -61,7 +72,7 @@ namespace Streamus.App_Start
                             new {controller = "PlaylistItem", action = "update"},
                             new {httpMethod = new HttpMethodConstraint("PUT")});
 
-            routes.MapRoute("delete-PlaylistItem", "PlaylistItem/{id}/{playlistId}",
+            routes.MapRoute("delete-PlaylistItem", "PlaylistItem/{id}",
                             new {controller = "PlaylistItem", action = "delete"},
                             new {httpMethod = new HttpMethodConstraint("DELETE")});
 
@@ -75,6 +86,12 @@ namespace Streamus.App_Start
             routes.MapRoute("get-Video", "Video/{id}", new {controller = "Video", action = "get"},
                             new {httpMethod = new HttpMethodConstraint("GET")});
 
+<<<<<<< HEAD
+=======
+            routes.MapRoute("getShareCode", "ShareCode/GetShareCode", new { controller = "ShareCode", action = "GetShareCode" },
+                new { httpMethod = new HttpMethodConstraint("GET") });
+
+>>>>>>> origin/Development
             routes.MapRoute("get-ShareCode", "ShareCode/{id}", new { controller = "ShareCode", action = "get" },
                 new { httpMethod = new HttpMethodConstraint("GET") });
 

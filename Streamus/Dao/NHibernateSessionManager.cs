@@ -1,10 +1,10 @@
-﻿using log4net;
-using NHibernate;
-using NHibernate.Cfg;
-using System;
+﻿using System;
 using System.Reflection;
 using System.Runtime.Remoting.Messaging;
 using System.Web;
+using NHibernate;
+using NHibernate.Cfg;
+using log4net;
 
 namespace Streamus.Dao
 {
@@ -75,12 +75,7 @@ namespace Streamus.Dao
 
         public ISession GetSession()
         {
-            if (ContextSession == null)
-            {
-                ContextSession = SessionFactory.OpenSession();
-            }
-
-            return ContextSession;
+            return ContextSession ?? (ContextSession = SessionFactory.OpenSession());
         }
 
         /// <summary>
@@ -96,7 +91,7 @@ namespace Streamus.Dao
                 {
                     session.Flush();
                 }
-                
+
                 session.Close();
             }
 
@@ -166,9 +161,7 @@ namespace Streamus.Dao
         }
 
         /// <summary>
-        ///     If within a web context, this uses <see cref="HttpContext" /> instead of the WinForms
-        ///     specific <see cref="CallContext" />.  Discussion concerning this found at
-        ///     http://forum.springframework.net/showthread.php?t=572.
+        ///     Use an HttpContext during normal operations and a CallContext to emulate this during test.
         /// </summary>
         private static ITransaction ContextTransaction
         {
@@ -194,9 +187,7 @@ namespace Streamus.Dao
         }
 
         /// <summary>
-        ///     If within a web context, this uses <see cref="HttpContext" /> instead of the WinForms
-        ///     specific <see cref="CallContext" />.  Discussion concerning this found at
-        ///     http://forum.springframework.net/showthread.php?t=572.
+        ///     Use an HttpContext during normal operations and a CallContext to emulate this during test.
         /// </summary>
         private static ISession ContextSession
         {

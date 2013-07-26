@@ -3,15 +3,15 @@
   
   <class name="User" table="[Users]" lazy="false">
     <id name="Id" unsaved-value="00000000-0000-0000-0000-000000000000">
-      <generator class="guid" />
+      <generator class="guid.comb" />
     </id>
     
     <property name="Name" not-null="true" />
 
-    <bag name="Streams" inverse="true" cascade="all-delete-orphan" >
+    <set name="Folders" inverse="true" fetch="join" cascade="all-delete-orphan" >
       <key column="UserId" />
-      <one-to-many class="Stream" />
-    </bag>
+      <one-to-many class="Folder" />
+    </set>
   </class>
   
 </hibernate-mapping>

@@ -1,4 +1,4 @@
-﻿define(['contentHeader', 'ytHelper', 'backgroundManager'], function (ContentHeader, ytHelper, backgroundManager) {
+﻿define(['contentHeader', 'ytHelper', 'backgroundManager', 'dataSource'], function (ContentHeader, ytHelper, backgroundManager, DataSource) {
     'use strict';
     
     var contentHeader = new ContentHeader({
@@ -29,8 +29,9 @@
                 contentHeader.flashMessage('Thanks!', 2000);
 
                 var dataSource = ytHelper.parseUrlForDataSource(userInput);
-                var activeStream = backgroundManager.get('activeStream');
+                var activeFolder = backgroundManager.get('activeFolder');
 
+<<<<<<< HEAD
                 //  If unable to parse userInput then create playlist with userInput as title and no data.
                 if (dataSource == null) {
                     activeStream.addPlaylistByDataSource(userInput, null, function(playlist) {
@@ -60,7 +61,38 @@
                         default:
                             console && console.error("Unhandled dataSource type:", dataSource.type);
                     }
+=======
+                switch (dataSource.type) {
+                    case DataSource.USER_INPUT:
+                        activeFolder.addPlaylistByDataSource(userInput, dataSource, function (playlist) {
+                            backgroundManager.set('activePlaylist', playlist);
+                        });
+                        break;
+                    case DataSource.YOUTUBE_PLAYLIST:
+                        ytHelper.getPlaylistTitle(dataSource.id, function (youTubePlaylistTitle) {
+                            activeFolder.addPlaylistByDataSource(youTubePlaylistTitle, dataSource, function (playlist) {
+                                backgroundManager.set('activePlaylist', playlist);
+                            });
+                        });
+                        break;
+                    case DataSource.YOUTUBE_CHANNEL:
+                        
+                        ytHelper.getChannelName(dataSource.id, function (channelName) {
+                            var playlistTitle = channelName + '\'s Feed';
+                            activeFolder.addPlaylistByDataSource(playlistTitle, dataSource, function (playlist) {
+                                backgroundManager.set('activePlaylist', playlist);
+                            });
+                        });
+>>>>>>> origin/Development
 
+                        break;
+                    case DataSource.SHARED_PLAYLIST:
+                        activeFolder.addPlaylistByDataSource('', dataSource, function (playlist) {
+                            backgroundManager.set('activePlaylist', playlist);
+                        });
+                        break;
+                    default:
+                        console && console.error("Unhandled dataSource type:", dataSource.type);
                 }
                 
             }

@@ -49,6 +49,9 @@
     <Reference Include="Autofac.Configuration">
       <HintPath>..\packages\Autofac.3.0.2\lib\net40\Autofac.Configuration.dll</HintPath>
     </Reference>
+    <Reference Include="AutoMapper">
+      <HintPath>..\packages\AutoMapper.2.2.1\lib\net40\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="DotNetOpenAuth.Core">
       <HintPath>..\packages\DotNetOpenAuth.Core.4.3.0.13117\lib\net40-full\DotNetOpenAuth.Core.dll</HintPath>
     </Reference>
@@ -118,6 +121,8 @@
     <Reference Include="FluentValidation, Version=3.4.6.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\FluentValidation.3.4.6.0\lib\Net40\FluentValidation.dll</HintPath>
+    <Reference Include="FluentValidation">
+      <HintPath>..\packages\FluentValidation.4.0.0.0\lib\Net40\FluentValidation.dll</HintPath>
     </Reference>
     <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -210,24 +215,36 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\PushMessageController.cs" />
     <Compile Include="Controllers\ShareCodeController.cs" />
     <Compile Include="Dao\AutofacRegistrations.cs" />
     <Compile Include="Dao\NHibernateDaoFactory.cs" />
     <Compile Include="Dao\ShareCodeDao.cs" />
     <Compile Include="Dao\ErrorDao.cs" />
-    <Compile Include="Dao\StreamDao.cs" />
+    <Compile Include="Dao\FolderDao.cs" />
     <Compile Include="Dao\PlaylistItemDao.cs" />
     <Compile Include="Domain\AbstractShareableEntity.cs" />
     <Compile Include="Domain\Interfaces\IDaoFactory.cs" />
     <Compile Include="Domain\Interfaces\IShareableEntity.cs" />
     <Compile Include="Domain\Interfaces\IShareCodeDao.cs" />
+    <Compile Include="Domain\AbstractDomainEntity.cs" />
+    <Compile Include="Domain\AbstractShareableEntity.cs" />
+    <Compile Include="Domain\Interfaces\IAbstractDomainEntity.cs" />
+    <Compile Include="Domain\Interfaces\IDaoFactory.cs" />
+    <Compile Include="Domain\Interfaces\IShareableEntity.cs" />
+    <Compile Include="Domain\Interfaces\IShareCodeDao.cs" />
+    <Compile Include="Domain\Managers\AbstractManager.cs" />
+    <Compile Include="Domain\Managers\PlaylistItemManager.cs" />
+    <Compile Include="Domain\Managers\PushMessageManager.cs" />
+    <Compile Include="Domain\Managers\ShareCodeManager.cs" />
+    <Compile Include="Domain\Managers\FolderManager.cs" />
     <Compile Include="Domain\ShareCode.cs" />
     <Compile Include="Domain\Error.cs" />
     <Compile Include="Domain\Interfaces\IErrorDao.cs" />
-    <Compile Include="Domain\Interfaces\IStreamDao.cs" />
+    <Compile Include="Domain\Interfaces\IFolderDao.cs" />
     <Compile Include="Domain\Interfaces\IPlaylistItemDao.cs" />
     <Compile Include="Domain\Managers\ErrorManager.cs" />
-    <Compile Include="Domain\Stream.cs" />
+    <Compile Include="Domain\Folder.cs" />
     <Compile Include="Domain\PlaylistItem.cs" />
     <Compile Include="Domain\Interfaces\IUserDao.cs" />
     <Compile Include="Domain\Interfaces\IPlaylistDao.cs" />
@@ -237,9 +254,10 @@
     <Compile Include="Domain\Managers\PlaylistManager.cs" />
     <Compile Include="Domain\Managers\UserManager.cs" />
     <Compile Include="Domain\Playlist.cs" />
+    <Compile Include="Domain\UserChannel.cs" />
     <Compile Include="Domain\Validators\ShareCodeValidator.cs" />
     <Compile Include="Domain\Validators\ErrorValidator.cs" />
-    <Compile Include="Domain\Validators\StreamValidator.cs" />
+    <Compile Include="Domain\Validators\FolderValidator.cs" />
     <Compile Include="Domain\Validators\PlaylistItemValidator.cs" />
     <Compile Include="Domain\Validators\PlaylistValidator.cs" />
     <Compile Include="Domain\Validators\UserValidator.cs" />
@@ -259,6 +277,14 @@
     <Compile Include="Controllers\ThrottleAttribute.cs" />
     <Compile Include="Controllers\VideoController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Dto\ErrorDto.cs" />
+    <Compile Include="Dto\PlaylistDto.cs" />
+    <Compile Include="Dto\PlaylistItemDto.cs" />
+    <Compile Include="Dto\PushMessageDto.cs" />
+    <Compile Include="Dto\ShareCodeDto.cs" />
+    <Compile Include="Dto\FolderDto.cs" />
+    <Compile Include="Dto\UserDto.cs" />
+    <Compile Include="Dto\VideoDto.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -274,8 +300,12 @@
     <EmbeddedResource Include="Domain\User.hbm.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Domain\Playlist.hbm.xml" />
-    <EmbeddedResource Include="Domain\Stream.hbm.xml" />
+    <EmbeddedResource Include="Domain\Playlist.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Domain\Folder.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Domain\Error.hbm.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -286,7 +316,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -297,19 +326,22 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Views\Web.config" />
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="bin\" />
     <Folder Include="Images\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Properties\PublishProfiles\Streamus Staging.pubxml" />
   </ItemGroup>
   <PropertyGroup>
@@ -330,7 +362,9 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>63807</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:61975/</IISUrl>
+          <IISUrl>http://localhost:61975</IISUrl>
+          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
+          <IISAppRootUrl>http://test.streamus.com:61975</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

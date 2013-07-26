@@ -14,6 +14,17 @@ define(['programState'], function(programState){
     });
 
     return function (config) {
+
+        //  Support passing raw YouTube videoInformation instead of a precise config object.
+        if (config.videoInformation !== undefined) {
+            
+            config.id = config.videoInformation.media$group.yt$videoid.$t;
+            config.title = config.videoInformation.title.$t;
+            config.duration = parseInt(config.videoInformation.media$group.yt$duration.seconds, 10);
+            config.author = config.videoInformation.author[0].name.$t;
+
+        }
+
         var video = new videoModel(config);
         return video;
     };

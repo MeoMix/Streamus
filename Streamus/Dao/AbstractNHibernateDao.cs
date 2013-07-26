@@ -1,7 +1,7 @@
-﻿using NHibernate;
-using Streamus.Domain.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using NHibernate;
+using Streamus.Domain.Interfaces;
 
 namespace Streamus.Dao
 {

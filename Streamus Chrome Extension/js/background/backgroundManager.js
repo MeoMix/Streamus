@@ -1,30 +1,28 @@
-﻿//  TODO: Exposed globally for the foreground. Is there a better way?
+﻿//  Exposed globally so that foreground.js is able to access via chrome.getBackgroundPage
 var BackgroundManager = null;
 
 //  BackgroundManager is a denormalization point for the Background's selected models.
-//  NOTE: It is important to understand that the activePlaylistItem is NOT guaranteed to be in the activePlaylist.
-//  The same applies for activePlaylist being under the activeStream. The user can click around, but this shouldn't affect state
+//  NOTE: It is important to understand that the activePlaylist is NOT guaranteed to be in the activeFolder. The user can click around, but this shouldn't affect state
 //  until they make a decision.
-define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', 'streams', 'repeatButtonStates'],
-    function (user, player, localStorageManager, PlaylistItems, Playlists, Streams, repeatButtonStates) {
+define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'folders', 'repeatButtonState', 'streamItems', 'playerState'],
+    function (user, player, settingsManager, PlaylistItems, Playlists, Folders, RepeatButtonState, StreamItems, PlayerState) {
     'use strict';
 
     var backgroundManagerModel = Backbone.Model.extend({
         defaults: {
-            activePlaylistItem: null,
             activePlaylist: null,
-            activeStream: null,
+            activeFolder: null,
             allPlaylistItems: new PlaylistItems(),
             allPlaylists: new Playlists(),
-            allStreams: new Streams()
+            allFolders: new Folders()
         },
         initialize: function () {
 
             var self = this;
             //  TODO:  What if user's loaded state gets set before backgroundManager initializes? Not really possible unless instant response, but still.
             user.once('change:loaded', function() {
-                if (user.get('streams').length === 0) {
-                    throw "User should be initialized and have at least 1 stream before loading backgroundManager.";
+                if (user.get('folders').length === 0) {
+                    throw "User should be initialized and have at least 1 folder before loading backgroundManager.";
                 }
 
                 //  TODO: I hate this whole concept of having to check if its ready else wait for it to be ready.
@@ -52,21 +50,44 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
             });
         },
         
-        getStreamById: function(streamId) {
-            return this.get('allStreams').find(function(stream) {
-                return stream.get('id') === streamId;
+        getFolderById: function(folderId) {
+            return this.get('allFolders').find(function(folder) {
+                return folder.get('id') === folderId;
             });
         }
     });
     
     function initialize() {
-        this.get('allStreams').add(user.get('streams').models);
+        this.get('allFolders').add(user.get('folders').models);
         this.get('allPlaylists').add(getAllPlaylists());
         this.get('allPlaylistItems').add(getAllPlaylistItems());
 
-        loadActiveStream.call(this);
+        loadActiveFolder.call(this);
         loadActivePlaylist.call(this);
-        loadActivePlaylistItem.call(this);
+        
+        this.listenTo(StreamItems, 'change:selected', function (changedStreamItem, selected) {
+
+            //  TODO: Remember selected state in local storage.
+            if (selected) {
+
+                var videoId = changedStreamItem.get('video').get('id');
+
+                //  Maintain the state of the player by playing or cueuing based on current player state.
+                var playerState = player.get('state');
+
+                if (playerState === PlayerState.PLAYING || playerState === PlayerState.ENDED) {
+                    player.loadVideoById(videoId);
+                } else {
+                    player.cueVideoById(videoId);
+                }
+            }
+
+        });
+
+        this.listenTo(StreamItems, 'empty', function () {
+            //  TODO: Clear localStorage once I write to local storage.
+            player.stop();
+        });
 
         var self = this;
 
@@ -84,55 +105,63 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
             bindEventsToPlaylist.call(self, playlist);
         });
 
-        this.get('allStreams').on('change:active', function(stream, isActive) {
+        this.get('allFolders').on('change:active', function(folder, isActive) {
 
-            if (self.get('activeStream') === stream && !isActive) {
-                self.set('activeStream', null);
+            if (self.get('activeFolder') === folder && !isActive) {
+                self.set('activeFolder', null);
             } else if (isActive) {
-                self.set('activeStream', stream);
+                self.set('activeFolder', folder);
             }
 
         });
 
-        //  TODO: This isn't fully implemented yet. My intention is to send a message to any
-        //  listening YouTube pages to ensure that Streamus data loaded on the YouTube page stays up to date.
-        this.get('allStreams').on('add', function (stream) {
-            chrome.runtime.sendMessage({ method: "streamAdded", stream: stream });
+        //  Message any YouTube pages to ensure that Streamus data loaded on the YouTube page stays up to date.
+        this.get('allFolders').on('add', function (folder) {
+            chrome.runtime.sendMessage({ method: "folderAdded", folder: folder });
         });
 
-        this.get('allStreams').on('remove', function (stream) {
-            chrome.runtime.sendMessage({ method: "streamRemoved", stream: stream });
+        this.get('allFolders').on('remove', function (folder) {
+            chrome.runtime.sendMessage({ method: "folderRemoved", folder: folder });
         });
 
-        this.get('allStreams').each(function(stream) {
+        this.get('allFolders').each(function (folder) {
 
-            stream.get('playlists').on('add', function (playlist) {
+            folder.get('playlists').on('add', function (playlist) {
                 self.get('allPlaylists').add(playlist);
  
                 var playlistItems = playlist.get('items');
 
+<<<<<<< HEAD
                 playlistItems.each(function(playlistItem) {
+=======
+                playlistItems.each(function (playlistItem) {
+                    
+>>>>>>> origin/Development
                     self.get('allPlaylistItems').add(playlistItem, {
                         merge: true
                     });
 
+<<<<<<< HEAD
                     if (self.get('activePlaylistItem') === null) {
                         self.set('activePlaylistItem', playlistItem);
                         playlist.selectItem(playlistItem);
                     }
                 });
                 
+=======
+                });
+>>>>>>> origin/Development
 
                 bindEventsToPlaylist.call(self, playlist);
             });
 
-            stream.get('playlists').on('remove', function (playlist) {
+            folder.get('playlists').on('remove', function (playlist) {
 
                 self.get('allPlaylists').remove(playlist);
 
                 if (self.get('activePlaylist') === playlist) {
-                    self.set('activePlaylist', null);
 
+<<<<<<< HEAD
                     var streamId = playlist.get('streamId');
                     var stream = self.getStreamById(streamId);
                     
@@ -147,13 +176,24 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                 var activePlaylistItem = self.get('activePlaylistItem');
                 if (activePlaylistItem !== null && activePlaylistItem.get('playlistId') === playlist.id) {
                     self.set('activePlaylistItem', null);
+=======
+                    var folderId = playlist.get('folderId');
+                    var playlistFolder = self.getFolderById(folderId);
+
+                    var nextPlaylistId = playlist.get('nextPlaylistId');
+
+                    var activePlaylist = playlistFolder.get('playlists').get(nextPlaylistId);
+
+                    self.set('activePlaylist', activePlaylist);
+>>>>>>> origin/Development
                 }
+
             });
 
         });
 
-        //  TODO: Support adding Stream here.
-        //  TODO: Support removing Stream here.
+        //  TODO: Support adding Folder here.
+        //  TODO: Support removing Folder here.
     }
     
     function bindEventsToPlaylist(playlist) {
@@ -164,11 +204,6 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                 merge: true
             });
 
-            if (self.get('activePlaylistItem') === null) {
-                self.set('activePlaylistItem', playlistItem);
-                playlist.selectItem(playlistItem);
-            }
-
         });
 
         playlist.get('items').on('remove', function (playlistItem) {
@@ -177,6 +212,10 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
             var playlist = self.getPlaylistById(playlistId);
             var playlistItems = playlist.get('items');
 
+<<<<<<< HEAD
+=======
+            //  TODO: Re-evaluate this logic.
+>>>>>>> origin/Development
             //  TODO: I'd like to have this logic inside of playlist and not backgroundManager but the first bit of code
             //  needs to run first because playlist.gotoNextItem is dependent on the old firstItemId to know the next item.
             //  Update these before getting nextItem because we don't want to have something point to the removed item.
@@ -193,6 +232,7 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                 if (playlist.get('firstItemId') === playlistItem.get('id')) {
                     playlist.set('firstItemId', playlistItem.get('nextItemId'));
                 }
+<<<<<<< HEAD
 
             } else {
                 playlist.set('firstItemId', '00000000-0000-0000-0000-000000000000');
@@ -213,27 +253,35 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
 
             }
 
+=======
+
+            } else {
+                playlist.set('firstItemId', '00000000-0000-0000-0000-000000000000');
+            }
+            
+            self.get('allPlaylistItems').remove(playlistItem);
+>>>>>>> origin/Development
         });
     }
     
-    function loadActiveStream() {
+    function loadActiveFolder() {
  
-        this.on('change:activeStream', function (model, activeStream) {
+        this.on('change:activeFolder', function (model, activeFolder) {
 
-            if (activeStream === null) {
-                localStorageManager.setActiveStreamId(null);
+            if (activeFolder === null) {
+                settingsManager.set('activeFolderId', null);
             } else {
-                localStorageManager.setActiveStreamId(activeStream.get('id'));
+                settingsManager.set('activeFolderId', activeFolder.get('id'));
             }
         });
         
-        var activeStreamId = localStorageManager.getActiveStreamId();
-        var activeStream = this.get('allStreams').get(activeStreamId);
+        var activeFolderId = settingsManager.get('activeFolderId');
+        var activeFolder = this.get('allFolders').get(activeFolderId);
 
-        if (typeof (activeStream) === 'undefined') {
-            this.set('activeStream', this.get('allStreams').at(0));
+        if (typeof (activeFolder) === 'undefined') {
+            this.set('activeFolder', this.get('allFolders').at(0));
         } else {
-            this.set('activeStream', activeStream);
+            this.set('activeFolder', activeFolder);
         }
     }
 
@@ -241,6 +289,7 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
  
         this.on('change:activePlaylist', function (model, activePlaylist) {
 
+<<<<<<< HEAD
             if (activePlaylist == null) {
                 
                 //  TODO: I was experiencing some client side errors where this was undefined, trying to track down.
@@ -250,26 +299,31 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
                 }
 
                 localStorageManager.setActivePlaylistId(null);
+=======
+            if (activePlaylist === null) {
+                settingsManager.set('activePlaylistId', null);
+>>>>>>> origin/Development
             } else {
-                localStorageManager.setActivePlaylistId(activePlaylist.get('id'));
+                settingsManager.set('activePlaylistId', activePlaylist.get('id'));
             }
 
         });
         
-        var activePlaylistId = localStorageManager.getActivePlaylistId();
+        var activePlaylistId = settingsManager.get('activePlaylistId');
 
-        //  There is no guarantee that activePlaylist is in activeStream because a user could be looking
-        //  at another stream without having selected a playlist in that stream.
+        //  There is no guarantee that activePlaylist is in activeFolder because a user could be looking
+        //  at another folder without having selected a playlist in that folder.
         var activePlaylist = _.find(getAllPlaylists(), function (playlist) {
             return playlist.get('id') === activePlaylistId;
         }) || null;
         
         if (activePlaylist === null) {
-            activePlaylist = this.get('activeStream').get('playlists').at(0) || null;
+            activePlaylist = this.get('activeFolder').get('playlists').at(0) || null;
         }
 
         this.set('activePlaylist', activePlaylist);
     }
+<<<<<<< HEAD
     
     function loadActivePlaylistItem() {
         var self = this;
@@ -346,8 +400,10 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
             playlist.selectItem(activePlaylistItem);
         }
     }
+=======
+>>>>>>> origin/Development
 
-    //  Takes all streams, retrieves all playlists from streams and then all items from playlists.
+    //  Takes all folders, retrieves all playlists from folders and then all items from playlists.
     function getAllPlaylistItems() {
         var allPlaylists = getAllPlaylists();
 
@@ -358,10 +414,10 @@ define(['user', 'player', 'localStorageManager', 'playlistItems', 'playlists', '
         return allPlaylistItems;
     }
 
-    //  Takes all streams and retrieves all playlists from the streams.
+        //  Takes all folders and retrieves all playlists from the folders.
     function getAllPlaylists() {
-        var allPlaylists = _.flatten(BackgroundManager.get('allStreams').map(function (stream) {
-            return stream.get('playlists').models;
+        var allPlaylists = _.flatten(BackgroundManager.get('allFolders').map(function (folder) {
+            return folder.get('playlists').models;
         }));
 
         return allPlaylists;

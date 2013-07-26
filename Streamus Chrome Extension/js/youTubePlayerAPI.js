@@ -22,7 +22,7 @@ define(['jquery'], function () {
             $(function () {
                 //  This code will trigger onYouTubePlayerAPIReady
                 $('<script>', {
-                    src: 'https://s.ytimg.com/yts/jsbin/www-widgetapi-vflmz-CfK.js',
+                    src: 'https://s.ytimg.com/yts/jsbin/www-widgetapi-vflwt8QCF.js',
                     async: true
                 }).insertBefore($('script:first'));
             });

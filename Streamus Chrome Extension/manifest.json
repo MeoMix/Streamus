@@ -1,31 +1,49 @@
 ﻿{
   "name": "Streamus™ (Beta!)",
+<<<<<<< HEAD
   "version": "0.64",
+=======
+  "version": "0.71",
+>>>>>>> origin/Development
   "manifest_version": 2,
-  "description": "A YouTube music player built into your browser. Stream videos and songs; share playlists with friends!",
+  "description": "Streamus turns YouTube into the music player you always wanted. Streamus makes streaming YouTube refreshingly easy.",
   "background":{
     "page": "background.htm"
   },
+  "options_page": "options.htm",
   "browser_action": {
     "default_icon": {
-       "19": "images/streamus_icon19.png",
-       "38": "images/streamus_icon38.png"
+       "19": "img/streamus_icon19.png",
+       "38": "img/streamus_icon38.png"
     },
+<<<<<<< HEAD
     "default_title": "Streamus: Rediscover YouTube.",
     "default_popup": "foreground.htm"
   },"permissions": [
+=======
+    "default_title": "Streamus: Simple, streaming music.",
+    "default_popup": "foreground.htm"
+  },
+  "permissions": [
+    "idle",
+>>>>>>> origin/Development
     "pushMessaging",
-    "contextMenus",
-    "clipboardWrite",
+	"management",
 	"notifications",
     "storage",
     "webRequest",
     "webRequestBlocking",
+<<<<<<< HEAD
     "http://www.geoplugin.net/",
     "*://*.youtube.com/",
 	"http://localhost:61975/Streamus/",
+=======
+    "*://*.youtube.com/",
+	"http://test.streamus.com:61975/Streamus/",
+>>>>>>> origin/Development
 	"http://streamus.apphb.com/"
 	],
+  "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDmO/I2g0AsHj5gwKYcAv19xa/E4FYE3gD1DtReHysli/YvzOX2X/VOgPMNCB9d5PvuWNH0xud21ztmk7wsNxKLcEuDTENgGqA9voTTG+3hgT1zH5R7rm8E0Kw590KhNattqwXkoRqdvavMjnUzlB9gDbU1duI1V8U03etW4Ta8EwIDAQAB",
   "content_scripts": [
     {
       "matches": ["*://*.youtube.com/embed/*"],
@@ -33,15 +51,30 @@
       "js": ["js/thirdParty/jquery.js", "js/youTubeIFrameInject.js"]
     },
     {
+<<<<<<< HEAD
       "matches": ["*://*.youtube.com/watch?v*"],
       "css": ["css/inject.css"],
 	  "all_frames": true,
+=======
+      "matches": ["*://*.youtube.com/watch?*"],
+      "run_at": "document_start",
+>>>>>>> origin/Development
       "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/youTubeInject.js"]
     },
     {
       "matches": ["*://*.share.streamus.com/*"],
+<<<<<<< HEAD
 	  "all_frames": true,
       "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/shareInject.js"]
+=======
+	  "run_at": "document_start",
+      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/shareInject.js"]
+    },
+    {
+      "matches": ["*://*.streamus.com/*"],
+	  "run_at": "document_start",
+      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/streamusInject.js"]
+>>>>>>> origin/Development
     }
   ],
   "commands": {
@@ -58,19 +91,20 @@
       "description": "Tells the player to toggle the video state."
     },
     "_execute_browser_action": {
-      "suggested_key": {
-        "default": "Ctrl+B",
-		"windows": "Ctrl+B"
-      }
+      "suggested_key": { "default": "Ctrl+B" }
     }
   },
   "icons": {
-    "48": "images/streamus_icon48.png",
-    "128": "images/streamus_icon128.png"
+    "48": "img/streamus_icon48.png",
+    "128": "img/streamus_icon128.png"
   },
   "web_accessible_resources": [
-    "css/inject.css"
+    "css/youTubeInject.css"
   ],
   "content_security_policy": 
+<<<<<<< HEAD
     "script-src 'self' 'unsafe-eval' https://graph.facebook.com https://www.youtube.com https://ssl.google-analytics.com https://gdata.youtube.com https://suggestqueries.google.com https://s.ytimg.com; object-src 'self'"
+=======
+    "script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com https://s.ytimg.com; object-src 'self'"
+>>>>>>> origin/Development
 }

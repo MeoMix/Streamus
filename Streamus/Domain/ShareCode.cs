@@ -1,8 +1,17 @@
+<<<<<<< HEAD
 ﻿using FluentValidation;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Validators;
 using System;
 using System.Runtime.Serialization;
+=======
+﻿using AutoMapper;
+using FluentValidation;
+using Streamus.Domain.Interfaces;
+using Streamus.Domain.Validators;
+using System;
+using Streamus.Dto;
+>>>>>>> origin/Development
 
 namespace Streamus.Domain
 {
@@ -12,6 +21,7 @@ namespace Streamus.Domain
         Playlist = 0
     }
 
+<<<<<<< HEAD
     [DataContract]
     public class ShareCode
     {
@@ -28,6 +38,13 @@ namespace Streamus.Domain
         public string ShortId { get; set; }
 
         [DataMember(Name = "urlFriendlyEntityTitle")]
+=======
+    public class ShareCode : AbstractDomainEntity<Guid>
+    {
+        public ShareableEntityType EntityType { get; set; }
+        public Guid EntityId { get; set; }
+        public string ShortId { get; set; }
+>>>>>>> origin/Development
         public string UrlFriendlyEntityTitle { get; set; }
 
         public ShareCode()
@@ -52,6 +69,7 @@ namespace Streamus.Domain
             ShortId = shareableEntity.GetShortId();
         }
 
+<<<<<<< HEAD
         public void ValidateAndThrow()
         {
             var validator = new ShareCodeValidator();
@@ -91,5 +109,19 @@ namespace Streamus.Domain
 
             return other.Id.Equals(Id);
         }
+=======
+        public static ShareCode Create(ShareCodeDto shareCodeDto)
+        {
+            ShareCode shareCode = Mapper.Map<ShareCodeDto, ShareCode>(shareCodeDto);
+            return shareCode;
+        }
+
+        public void ValidateAndThrow()
+        {
+            var validator = new ShareCodeValidator();
+            validator.ValidateAndThrow(this);
+        }
+
+>>>>>>> origin/Development
     }
 }

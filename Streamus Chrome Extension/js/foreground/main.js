@@ -6,12 +6,13 @@ require(['jquery',
         'backbone',
         'jqueryMousewheel',
         'scrollIntoView',
-        'playerStates',
-        'dataSources',
+        'playerState',
+        'dataSource',
         'helpers',
         'underscore'
     ], function () {
     'use strict';
+
 
     //  TODO: Would like to access through define module, but not sure how..
     var player = chrome.extension.getBackgroundPage().YouTubePlayer;
@@ -42,6 +43,7 @@ require(['jquery',
             require(['foreground']);
         } else {
             player.once('change:ready', function () {
+
                 //  Load foreground when the background indicates it has loaded.
                 require(['foreground']);
             });

@@ -5,14 +5,14 @@ var require = {
         'error': 'background/error',
         'programState': 'programState',
         'background': 'background/background',
-        'playerStates': 'playerStates',
-        'repeatButtonStates': 'repeatButtonStates',
-        'dataSources': 'dataSources',
+        'playerState': 'enum/playerState',
+        'repeatButtonState': 'enum/repeatButtonState',
+        'dataSource': 'enum/dataSource',
         'player': 'background/player',
         'playlistItem': 'background/playlistItem',
         'playlistItems': 'background/playlistItems',
-        'stream': 'background/stream',
-        'streams': 'background/streams',
+        'folder': 'background/folder',
+        'folders': 'background/folders',
         'playlist': 'background/playlist',
         'playlists': 'background/playlists',
         'youTubePlayerAPI': 'youTubePlayerAPI',
@@ -21,16 +21,26 @@ var require = {
         'ytHelper': 'ytHelper',
         'helpers': 'helpers',
         'jquery': 'thirdParty/jquery',
-        'geoplugin': 'thirdParty/geoplugin',
         'levenshtein': 'thirdParty/levenshtein',
         'underscore': 'thirdParty/underscore',
         'user': 'background/user',
         'backbone': 'thirdParty/backbone',
         'backgroundManager': 'background/backgroundManager',
-        'localStorageManager': 'background/localStorageManager',
+        'entityAction': 'background/entityAction',
+        'entityType': 'background/entityType',
+        'settingsManager': 'background/settingsManager',
         'pushMessageManager': 'background/pushMessageManager',
+        'pushMessage': 'background/pushMessage',
         'iconManager': 'background/iconManager',
         'spin': 'thirdParty/jquery.spin',
+<<<<<<< HEAD
         'shareCode': 'background/shareCode'
+=======
+        'shareCode': 'background/shareCode',
+        'shareableEntityType': 'enum/shareableEntityType',
+        
+        'streamItems': 'background/collection/streamItems',
+        'streamItem': 'background/model/streamItem'
+>>>>>>> origin/Development
     }
 };

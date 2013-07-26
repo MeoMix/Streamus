@@ -83,6 +83,25 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="background.htm" />
+    <Content Include="js\background\entityAction.js" />
+    <Content Include="js\background\entityType.js" />
+    <Content Include="js\background\collection\streamItems.js" />
+    <Content Include="js\background\model\streamItem.js" />
+    <Content Include="js\background\pushMessage.js" />
+    <Content Include="js\foreground\collection\contextMenuGroups.js" />
+    <Content Include="js\foreground\collection\contextMenuItems.js" />
+    <Content Include="js\foreground\model\contextMenu.js" />
+    <Content Include="js\foreground\model\contextMenuGroup.js" />
+    <Content Include="js\foreground\model\contextMenuItem.js" />
+    <Content Include="js\foreground\view\contextMenuView.js" />
+    <Content Include="js\options\settingsManager.js" />
+    <Content Include="js\options\main.js" />
+    <Content Include="js\options\options.js" />
+    <Content Include="js\options\player.js" />
+    <Content Include="js\options\requirePaths.js" />
+    <Content Include="js\enum\shareableEntityType.js" />
+    <Content Include="js\thirdParty\sly.js" />
+    <Content Include="options.htm" />
     <Content Include="css\aristo\aristo.css" />
     <Content Include="css\aristo\images\bg_fallback.png" />
     <Content Include="css\aristo\images\icon_sprite.png" />
@@ -92,38 +111,38 @@
     <Content Include="css\aristo\images\ui-icons_454545_256x240.png" />
     <Content Include="css\desktopNotification.css" />
     <Content Include="css\foreground.css" />
-    <Content Include="css\inject.css" />
+    <Content Include="css\youTubeInject.css" />
     <Content Include="css\jasmine.css" />
     <Content Include="desktopNotification.htm" />
     <Content Include="foreground.htm" />
-    <Content Include="images\Green 0.png" />
-    <Content Include="images\Green 1.png" />
-    <Content Include="images\Green 2.png" />
-    <Content Include="images\Green 3.png" />
-    <Content Include="images\Green 4.png" />
-    <Content Include="images\Red 0.png" />
-    <Content Include="images\Red 1.png" />
-    <Content Include="images\Red 2.png" />
-    <Content Include="images\Red 3.png" />
-    <Content Include="images\Red 4.png" />
-    <Content Include="images\settingsButton.svg" />
-    <Content Include="images\spinner.svg" />
-    <Content Include="images\streamus_icon128.png" />
-    <Content Include="images\streamus_icon19.png" />
-    <Content Include="images\streamus_icon38.png" />
-    <Content Include="images\streamus_icon48.png" />
-    <Content Include="images\streamus_icon_white19.png" />
-    <Content Include="images\Yellow 0.png" />
-    <Content Include="images\Yellow 1.png" />
-    <Content Include="images\Yellow 2.png" />
-    <Content Include="images\Yellow 3.png" />
-    <Content Include="images\Yellow 4.png" />
+    <Content Include="img\Green 0.png" />
+    <Content Include="img\Green 1.png" />
+    <Content Include="img\Green 2.png" />
+    <Content Include="img\Green 3.png" />
+    <Content Include="img\Green 4.png" />
+    <Content Include="img\Red 0.png" />
+    <Content Include="img\Red 1.png" />
+    <Content Include="img\Red 2.png" />
+    <Content Include="img\Red 3.png" />
+    <Content Include="img\Red 4.png" />
+    <Content Include="img\settingsButton.svg" />
+    <Content Include="img\spinner.svg" />
+    <Content Include="img\streamus_icon128.png" />
+    <Content Include="img\streamus_icon19.png" />
+    <Content Include="img\streamus_icon38.png" />
+    <Content Include="img\streamus_icon48.png" />
+    <Content Include="img\streamus_icon_white19.png" />
+    <Content Include="img\Yellow 0.png" />
+    <Content Include="img\Yellow 1.png" />
+    <Content Include="img\Yellow 2.png" />
+    <Content Include="img\Yellow 3.png" />
+    <Content Include="img\Yellow 4.png" />
     <Content Include="js\background\background.js" />
     <Content Include="js\background\backgroundManager.js" />
     <Content Include="js\background\shareCode.js" />
     <Content Include="js\background\error.js" />
     <Content Include="js\background\iconManager.js" />
-    <Content Include="js\background\localStorageManager.js" />
+    <Content Include="js\background\settingsManager.js" />
     <Content Include="js\background\main.js" />
     <Content Include="js\background\player.js" />
     <Content Include="js\background\playlist.js" />
@@ -132,21 +151,25 @@
     <Content Include="js\background\playlists.js" />
     <Content Include="js\background\pushMessageManager.js" />
     <Content Include="js\background\requirePaths.js" />
-    <Content Include="js\background\stream.js" />
-    <Content Include="js\background\streams.js" />
+    <Content Include="js\background\folder.js" />
+    <Content Include="js\background\folders.js" />
     <Content Include="js\background\user.js" />
     <Content Include="js\background\video.js" />
     <Content Include="js\background\videos.js" />
     <Content Include="js\shareInject.js" />
     <Content Include="js\dataSources.js" />
+    <Content Include="js\foreground\collection\streamItems.js" />
+    <Content Include="js\foreground\view\streamItemView.js" />
+    <Content Include="js\foreground\view\streamView.js" />
+    <Content Include="js\shareInject.js" />
+    <Content Include="js\enum\dataSource.js" />
     <Content Include="js\foreground\backgroundManager.js" />
     <Content Include="js\foreground\contentButtons.js" />
     <Content Include="js\foreground\contentHeader.js" />
-    <Content Include="js\foreground\contextMenu.js" />
     <Content Include="js\foreground\dialogs.js" />
     <Content Include="js\foreground\foreground.js" />
-    <Content Include="js\foreground\header.js" />
-    <Content Include="js\foreground\localStorageManager.js" />
+    <Content Include="js\foreground\view\headerTitleView.js" />
+    <Content Include="js\foreground\settingsManager.js" />
     <Content Include="js\foreground\main.js" />
     <Content Include="js\foreground\player.js" />
     <Content Include="js\foreground\playerControls\playPauseButton.js" />
@@ -157,10 +180,8 @@
     <Content Include="js\foreground\playerControls\nextButton.js" />
     <Content Include="js\foreground\playerControls\volumeControl.js" />
     <Content Include="js\foreground\playlistItemsTab\playlistItemInput.js" />
-    <Content Include="js\foreground\playlistItemsTab\playlistItemsContextMenu.js" />
     <Content Include="js\foreground\playlistItemsTab\playlistItemsDisplay.js" />
     <Content Include="js\foreground\playlistsTab\playlistInput.js" />
-    <Content Include="js\foreground\playlistsTab\playlistsContextMenu.js" />
     <Content Include="js\foreground\playlistsTab\playlistsDisplay.js" />
     <Content Include="js\foreground\progressBar.js" />
     <Content Include="js\foreground\requirePaths.js" />
@@ -170,16 +191,17 @@
     <Content Include="js\helpers.js" />
     <Content Include="js\youTubeInject.js" />
     <Content Include="js\playerStates.js" />
+    <Content Include="js\foreground\spinnerManager.js" />
+    <Content Include="js\foreground\view\videoDisplayView.js" />
+    <Content Include="js\helpers.js" />
+    <Content Include="js\streamusInject.js" />
+    <Content Include="js\youTubeInject.js" />
+    <Content Include="js\enum\playerState.js" />
     <Content Include="js\programState.js" />
-    <Content Include="js\repeatButtonStates.js" />
-    <Content Include="js\tests\background\playerSpec.js" />
-    <Content Include="js\tests\background\playlistItemSpec.js" />
-    <Content Include="js\tests\background\playlistSpec.js" />
-    <Content Include="js\tests\background\userSpec.js" />
+    <Content Include="js\enum\repeatButtonState.js" />
     <Content Include="js\tests\main.js" />
     <Content Include="js\tests\requirePaths.js" />
     <Content Include="js\thirdParty\backbone.js" />
-    <Content Include="js\thirdParty\geoplugin.js" />
     <Content Include="js\thirdParty\googleAnalytics.js" />
     <Content Include="js\thirdParty\jasmine-html.js" />
     <Content Include="js\thirdParty\jasmine.js" />
@@ -213,9 +235,9 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerPort>49404</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:64845/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>

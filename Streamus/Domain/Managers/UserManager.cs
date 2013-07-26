@@ -1,39 +1,50 @@
+<<<<<<< HEAD
 ﻿using System;
 using System.Reflection;
 using Autofac;
 using Streamus.Dao;
+=======
+﻿using Streamus.Dao;
+>>>>>>> origin/Development
 using Streamus.Domain.Interfaces;
-using log4net;
+using System;
 
 namespace Streamus.Domain.Managers
 {
     /// <summary>
     ///     Provides a common spot for methods against Users which require transactions (Creating, Updating, Deleting)
     /// </summary>
-    public class UserManager
+    public class UserManager : AbstractManager
     {
+<<<<<<< HEAD
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly ILifetimeScope Scope;
         private readonly IDaoFactory DaoFactory;
 
+=======
+>>>>>>> origin/Development
         private IUserDao UserDao { get; set; }
 
         public UserManager()
         {
+<<<<<<< HEAD
             Scope = AutofacRegistrations.Container.BeginLifetimeScope();
             DaoFactory = Scope.Resolve<IDaoFactory>();
 
+=======
+>>>>>>> origin/Development
             UserDao = DaoFactory.GetUserDao();
         }
 
         /// <summary>
         ///     Creates a new User and saves it to the DB. As a side effect, also creates a new, empty
-        ///     Stream (which has a new, empty Playlist) for the created User and saves it to the DB.
+        ///     Folder (which has a new, empty Playlist) for the created User and saves it to the DB.
         /// </summary>
         /// <returns>The created user with a generated GUID</returns>
         public User CreateUser()
         {
             User user;
+
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
@@ -41,14 +52,6 @@ namespace Streamus.Domain.Managers
                 user = new User();
                 user.ValidateAndThrow();
                 UserDao.Save(user);
-
-                //  TODO: Can this happen automatically with NHibernate?
-                //Stream stream = user.Streams[0];
-
-                //stream.Playlists[0].NextListId = stream.Playlists[0].Id;
-
-                //stream.Playlists[0].PreviousListId = stream.Playlists[0].Id;
-                //StreamDao.Update(stream);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
@@ -60,6 +63,25 @@ namespace Streamus.Domain.Managers
             }
 
             return user;
+        }
+
+        public void Save(User user)
+        {
+            try
+            {
+                NHibernateSessionManager.Instance.BeginTransaction();
+
+                user.ValidateAndThrow();
+                UserDao.Save(user);
+
+                NHibernateSessionManager.Instance.CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
+                throw;
+            }
         }
     }
 }

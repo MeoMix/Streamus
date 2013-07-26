@@ -2,7 +2,7 @@
 //  Tries to load itself by ID stored in localStorage and then by chrome.storage.sync.
 //  If still unloaded, tells the server to create a new user and assumes that identiy.
 var User = null;
-define(['streams', 'programState', 'localStorageManager'], function (Streams, programState, localStorageManager) {
+define(['folders', 'programState', 'settingsManager'], function (Folders, programState, settingsManager) {
     'use strict';
 
     var syncUserIdKey = 'UserId';
@@ -13,8 +13,9 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
             return {
                 id: '',
                 name: '',
+                dirty: false,
                 loaded: false,
-                streams: new Streams()
+                folders: new Folders()
             };
         },
         
@@ -23,15 +24,22 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
         initialize: function () {
             
             var self = this;
-            //  chrome.Storage.sync is cross-computer syncing with restricted read/write amounts.
+            //chrome.idle.onStateChanged.addListener(function (newState) {
+                
+            //    if (newState === 'active' && self.get('dirty')) {
+            //        fetchUser.call(self, false);
+            //    }
 
+            //});
+
+            //  chrome.Storage.sync is cross-computer syncing with restricted read/write amounts.
             chrome.storage.sync.get(syncUserIdKey, function (data) {
                 //  Look for a user id in sync, it might be undefined though.
                 var foundUserId = data[syncUserIdKey];
 
                 if (typeof foundUserId === 'undefined') {
 
-                    foundUserId = localStorageManager.getUserId();
+                    foundUserId = settingsManager.get('userId');
                     
                     if (foundUserId !== null) {
                         self.set('id', foundUserId);
@@ -71,11 +79,12 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
     }
     
     function onUserLoaded(model, shouldSetSyncStorage) {
-        //  Have to manually convert the JSON array into a Backbone.Collection
-        var streams = new Streams(model.get('streams'));
 
-        this.set('streams', streams, {
-            //  Silent operation because streams isn't technically changing - just being made correct.
+        //  Have to manually convert the JSON array into a Backbone.Collection
+        var folders = new Folders(model.get('folders'));
+
+        this.set('folders', folders, {
+            //  Silent operation because folders isn't technically changing - just being made correct.
             silent: true
         });
 
@@ -93,6 +102,8 @@ define(['streams', 'programState', 'localStorageManager'], function (Streams, pr
 
         //  Announce that user has loaded so managers can use it to fetch data.
         this.set('loaded', true);
+        this.set('dirty', false);
+        settingsManager.set('userId', this.get('id'));
     }
     
     //  Loads user data by ID from the server, writes the ID

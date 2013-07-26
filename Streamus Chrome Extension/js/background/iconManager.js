@@ -1,5 +1,9 @@
 ﻿//  Handles setting and managing the Streamus icon state.
+<<<<<<< HEAD
 define(['player'], function (player) {
+=======
+define(['player', 'playerState'], function (player, PlayerState) {
+>>>>>>> origin/Development
     'use strict';
 
     var iconManagerModel = Backbone.Model.extend({
@@ -59,7 +63,11 @@ define(['player'], function (player) {
         if (isMuted) {
             iconColor = 'Red';
         }
+<<<<<<< HEAD
         else if (playerState === PlayerStates.PLAYING || playerState === PlayerStates.BUFFERING) {
+=======
+        else if (playerState === PlayerState.PLAYING || playerState === PlayerState.BUFFERING) {
+>>>>>>> origin/Development
             iconColor = 'Green';
         } else {
             iconColor = 'Yellow';
@@ -69,7 +77,11 @@ define(['player'], function (player) {
         var barCount = Math.ceil((volume / 25));
 
         chrome.browserAction.setIcon({
+<<<<<<< HEAD
             path: '../../images/' + iconColor + ' ' + barCount + '.png'
+=======
+            path: '../../img/' + iconColor + ' ' + barCount + '.png'
+>>>>>>> origin/Development
         });
     }
 

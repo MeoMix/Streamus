@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿using Autofac;
 using log4net;
 using Streamus.Dao;
@@ -5,21 +6,34 @@ using Streamus.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+=======
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Streamus.Dao;
+using Streamus.Domain.Interfaces;
+>>>>>>> origin/Development
 
 namespace Streamus.Domain.Managers
 {
-    public class VideoManager
+    public class VideoManager : AbstractManager
     {
+<<<<<<< HEAD
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly ILifetimeScope Scope;
         private readonly IDaoFactory DaoFactory;
+=======
+>>>>>>> origin/Development
         private IVideoDao VideoDao { get; set; }
 
         public VideoManager()
         {
+<<<<<<< HEAD
             Scope = AutofacRegistrations.Container.BeginLifetimeScope();
             DaoFactory = Scope.Resolve<IDaoFactory>();
 
+=======
+>>>>>>> origin/Development
             VideoDao = DaoFactory.GetVideoDao();
         }
 
@@ -28,18 +42,8 @@ namespace Streamus.Domain.Managers
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
-                video.ValidateAndThrow();
 
-                //  TODO: Is this hitting the database? Surely it's not.
-                Video videoInSession = VideoDao.Get(video.Id);
-
-                if (videoInSession == null)
-                {
-                    VideoDao.Save(video);
-                }
-
-                //  TODO: Currently no mechanism in place to UPDATE a saved Video object.
-                //  I think this is OK because Video objects should only be created or deleted.
+                DoSave(video);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
@@ -57,11 +61,7 @@ namespace Streamus.Domain.Managers
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
 
-                foreach (Video video in videos)
-                {
-                    video.ValidateAndThrow();
-                    VideoDao.SaveOrUpdate(video);
-                }
+                videos.ToList().ForEach(DoSave);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
@@ -73,34 +73,14 @@ namespace Streamus.Domain.Managers
             }
         }
 
-        public Video Get(string id)
+        public void DoSave(Video video)
         {
-            try
-            {
-                Video video = VideoDao.Get(id);
-                return video;
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
-                throw;
-            }
-        }
+            video.ValidateAndThrow();
 
-        public IList<Video> Get(List<string> ids)
-        {
-            try
-            {
-                IList<Video> videos = VideoDao.Get(ids);
-                return videos;
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
-                throw;
-            }
+            //  Merge instead of SaveOrUpdate because Video's ID is assigned, but the same Video
+            //  entity can be referenced by many different Playlists. As such, it is common to have the entity
+            //  loaded into the cache.
+            VideoDao.Merge(video);
         }
     }
 }

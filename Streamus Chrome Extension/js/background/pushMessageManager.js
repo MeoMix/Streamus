@@ -1,4 +1,4 @@
-﻿define(function() {
+﻿define(['user', 'programState', 'pushMessage', 'backgroundManager', 'entityType', 'entityAction'], function(user, programState, PushMessage, backgroundManager, EntityType, EntityAction) {
     'use strict';
     
     var pushMessageManagerModel = Backbone.Model.extend({
@@ -15,6 +15,7 @@
             //To provide your users with a better experience, the interactive flag should be set to false the first time your app or extension calls getChannelId. 
             //Otherwise users will see the sign-in dialog with no context, even before they start your app or extension. If the first call fails because the user is not logged in, 
             //then getChannelId can be called again with the flag set to true. You should provide a context dialog before the second call is made.
+<<<<<<< HEAD
             chrome.pushMessaging.getChannelId(true, function (response) {
                 self.channelId = response.channelId;
             });
@@ -32,10 +33,65 @@
                 //        console.error("Unhandled message event:", message.event);
                         
                 //}
+=======
+            //chrome.pushMessaging.getChannelId(true, function (response) {
+            //    self.set('channelId', response.channelId);
+
+            //    if (user.get('loaded')) {
+            //        self.sendChannelIdToServer();
+            //    } else {
+            //        user.once('change:loaded', function() {
+            //            self.sendChannelIdToServer();
+            //        });
+            //    }
+                
+            //});
+
+            //chrome.pushMessaging.onMessage.addListener(function (pushMessageDto) {
+
+            //    var pushMessage = new PushMessage(JSON.parse(pushMessageDto.payload));
+
+            //    chrome.idle.queryState(60, function(currentState) {
+
+            //        if (currentState !== 'active') {
+            //            user.set('dirty', true);
+            //        }
+
+            //    });
+                
+>>>>>>> origin/Development
 
                 
-            });
+                //if (pushMessage.get('entityType') === EntityType.Playlist) {
 
+                //    var playlist = backgroundManager.getPlaylistById(pushMessage.get('entityId'));
+                    
+                //    if (pushMessage.get('entityAction') == EntityAction.Refresh) {
+                //        playlist.fetch();
+                        
+                //    }
+
+                //}
+
+            //});
+
+        },
+        
+        sendChannelIdToServer: function () {
+
+            //$.ajax({
+            //    url: programState.getBaseUrl() + 'PushMessage/AddChannelId',
+            //    type: 'POST',
+            //    dataType: 'json',
+            //    data: {
+            //        userId: user.get('id'),
+            //        channelId: this.get('channelId')
+            //    },
+            //    error: function(error) {
+            //        console.error(error);
+            //    }
+            //});
+            
         }
     });
 

@@ -1,5 +1,5 @@
 //  A global object which abstracts more difficult implementations of retrieving data from YouTube.
-define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
+define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
     'use strict';
 
     var videoInformationFields = 'author,title,media:group(yt:videoid,yt:duration),yt:accessControl';
@@ -9,7 +9,10 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
     
     //  Some videos aren't allowed to be played in Streamus, but we can respond by finding similiar.
     function validateEntry(entry) {
+<<<<<<< HEAD
         //  TODO: I might need to do syndication as well, but I do not believe so.
+=======
+>>>>>>> origin/Development
         var ytAccessControlList = entry.yt$accessControl;
 
         var embedAccessControl = _.find(ytAccessControlList, function (accessControl) {
@@ -25,7 +28,11 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
         search(title, function (videoInformationList) {
 
             videoInformationList.sort(function (a, b) {
+<<<<<<< HEAD
                 return levDist(a.title.$t, title) - levDist(b.title.$t, title);
+=======
+                return levenshtein(a.title.$t, title) - levenshtein(b.title.$t, title);
+>>>>>>> origin/Development
             });
 
             var videoInformation = videoInformationList.length > 0 ? videoInformationList[0] : null;
@@ -61,7 +68,6 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                         format: 5,
                         v: 2,
                         alt: 'json',
-                        //restriction: geoplugin.countryCode,
                         q: text,
                         key: developerKey,
                         fields: videosInformationFields,
@@ -105,6 +111,57 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
     }
     
     return {
+        
+        getBulkRelatedVideoInformation: function(videoIds, callback) {
+            //  TODO: Maybe abort if takes too long or debug this really well.
+            var bulkRelatedVideoInformation = [];
+            var totalVideosToProcess = videoIds.length;
+            var videosProcessed = 0;
+            var videosToProcessConcurrently = 5;
+            var videosProcessing = 0;
+
+            var self = this;
+            var youtubeQueryInterval = setInterval(function() {
+
+                if (videosProcessed == totalVideosToProcess) {
+                    clearInterval(youtubeQueryInterval);
+
+                    callback(bulkRelatedVideoInformation);
+                } else {
+                    
+                    //  Don't flood the network -- process a few at a time.
+                    if (videosProcessing <= videosToProcessConcurrently) {
+                        videosProcessing++;
+
+                        var currentVideoId = videoIds.pop();
+
+                        var getRelatedVideoInfoClosure = function(closureCurrentVideoId) {
+                            self.getRelatedVideoInformation(closureCurrentVideoId, function (relatedVideoInformation) {
+                                //  getRelatedVideoInformation might error out.
+                                if (relatedVideoInformation) {
+
+                                    bulkRelatedVideoInformation.push({
+                                        videoId: closureCurrentVideoId,
+                                        relatedVideoInformation: relatedVideoInformation
+                                    });
+                                }
+
+                                videosProcessed++;
+                                videosProcessing--;
+                            });
+                        };
+
+                        getRelatedVideoInfoClosure(currentVideoId);
+
+                    }
+
+                }
+
+
+            }, 200);
+
+        },
+        
         //  When a video comes from the server it won't have its related videos, so need to fetch and populate.
         getRelatedVideoInformation: function (videoId, callback) {
 
@@ -118,7 +175,6 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                     v: 2,
                     alt: 'json',
                     key: developerKey,
-                    //  TODO: Retrieve restricted youtube data and filter on that.
                     fields: videosInformationFields,
                     //  Don't really need that many suggested videos, take 5.
                     'max-results': 5,
@@ -167,6 +223,10 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                 },
                 error: function(error) {
                     console.error(error);
+<<<<<<< HEAD
+=======
+                    callback();
+>>>>>>> origin/Development
                 }
             });
         },
@@ -186,7 +246,10 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
         
         parseUrlForDataSource: function (url) {
 
-            var dataSource = null;
+            var dataSource = {
+                id: null,
+                type: DataSource.USER_INPUT
+            };
             
             //  Try for PlaylistId:
             var dataSourceId = tryGetIdFromUrl(url, 'list=PL');
@@ -194,19 +257,25 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
             if (dataSourceId !== '') {
                 dataSource = {
                     id: dataSourceId,
-                    type: DataSources.YOUTUBE_PLAYLIST
+                    type: DataSource.YOUTUBE_PLAYLIST
                 };
             } else {
                 
                 //  Try feed from a user URL
                 dataSourceId = tryGetIdFromUrl(url, '/user/');
                 
+                //  Maybe they gave a channel ID instead which works same as user
+                if (dataSourceId === '') {
+                    dataSourceId = tryGetIdFromUrl(url, '/channel/');
+                }
+                
                 if (dataSourceId !== '') {
                     dataSource = {
                         id: dataSourceId,
-                        type: DataSources.YOUTUBE_CHANNEL
+                        type: DataSource.YOUTUBE_CHANNEL
                     };
                 } else {
+<<<<<<< HEAD
 
                     dataSourceId = tryGetIdFromUrl(url, 'streamus:');
                     
@@ -217,10 +286,50 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                         };
                     }
 
+=======
+
+                    dataSourceId = tryGetIdFromUrl(url, 'streamus:');
+                    
+                    if (dataSourceId !== '') {
+                        dataSource = {
+                            id: dataSourceId,
+                            type: DataSource.SHARED_PLAYLIST
+                        };
+                    }
+
+>>>>>>> origin/Development
                 }
             }
 
             return dataSource;
+        },
+        
+        getChannelName: function (channelId, callback) {
+            
+            $.ajax({
+                type: 'GET',
+                url: 'https://gdata.youtube.com/feeds/api/users/' + channelId,
+                dataType: 'json',
+                data: {
+                    v: 2,
+                    alt: 'json',
+                    key: 'AI39si7voIBGFYe-bcndXXe8kex6-N_OSzM5iMuWCdPCSnZxLB_qIEnQ-HMijHrwN1Y9sFINBi_frhjzVVrYunHH8l77wfbLCA'
+                },
+                success: function (result) {
+
+                    if (callback) {
+                        callback(result.entry.author[0].name.$t);
+                    }
+                },
+                error: function (error) {
+                    console.error(error);
+
+                    if (callback) {
+                        callback('Error getting channel name');
+                    }
+                }
+            });
+
         },
         
         getPlaylistTitle: function (playlistId, callback) {
@@ -246,14 +355,20 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                 }
             });
         },
+<<<<<<< HEAD
         
         //  TODO: Change this to taking an object so its easier to specify the optionalVideoTitle
         //  Returns NULL if the request throws a 403 error if videoId has been banned on copyright grounds.
         getVideoInformation: function (videoId, optionalVideoTitle, callback) {
 
+=======
+
+        getVideoInformation: function (config) {
+            //videoId, optionalVideoTitle, callback
+>>>>>>> origin/Development
             $.ajax({
                 type: 'GET',
-                url: 'https://gdata.youtube.com/feeds/api/videos/' + videoId,
+                url: 'https://gdata.youtube.com/feeds/api/videos/' + config.videoId,
                 dataType: 'json',
                 data: {
                     v: 2,
@@ -267,6 +382,7 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
 
                     //  result will be null if it has been banned on copyright grounds
                     if (result == null) {
+<<<<<<< HEAD
                         console.error("video banned on copyright grounds, finding alternative.");
                         
                         if (optionalVideoTitle && $.trim(optionalVideoTitle) != '') {
@@ -276,7 +392,13 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                                 if (callback) {
                                     callback(playableVideoInformation);
                                 }
+=======
+                        
+                        if (config.videoTitle && $.trim(config.videoTitle) != '') {
+>>>>>>> origin/Development
 
+                            findPlayableByTitle(config.videoTitle, function (playableVideoInformation) {
+                                config.callback(playableVideoInformation);
                             });
                         }
 
@@ -285,10 +407,17 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                         var isValid = validateEntry(result.entry);
                         
                         if (isValid) {
+<<<<<<< HEAD
                             callback(result.entry);
                         } else {
                             findPlayableByTitle(result.entry.title.$t, function (playableVideoInformation) {
                                 callback(playableVideoInformation);
+=======
+                            config.success(result.entry);
+                        } else {
+                            findPlayableByTitle(result.entry.title.$t, function (playableVideoInformation) {
+                                config.success(playableVideoInformation);
+>>>>>>> origin/Development
                             });
                         }
                         
@@ -298,38 +427,17 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                 //  This error is silently consumed and handled -- it is an OK scenario if we don't get a video... sometimes
                 //  they are banned on copyright grounds. No need to log this error.
                 error: function () {
-                    if (callback) {
-                        callback(null);
-                    }
+                    config.error();
                 }
             });
         },
         
-        getFeedResults: function (youTubeUser, getVideosCallCount, callback) {
+        getDataSourceResults: function(dataSource, currentIteration, callback) {
 
-            var maxResultsPerSearch = 50;
-            var startIndex = 1 + (maxResultsPerSearch * getVideosCallCount);
+            //  Only get data from bulky dataSources.
+            if (dataSource.type !== DataSource.YOUTUBE_CHANNEL && dataSource.type !== DataSource.YOUTUBE_PLAYLIST) return;
 
-            $.ajax({
-                type: 'GET',
-                url: 'https://gdata.youtube.com/feeds/api/users/' + youTubeUser + '/uploads',
-                dataType: 'json',
-                data: {
-                    v: 2,
-                    alt: 'json',
-                    key: 'AI39si7voIBGFYe-bcndXXe8kex6-N_OSzM5iMuWCdPCSnZxLB_qIEnQ-HMijHrwN1Y9sFINBi_frhjzVVrYunHH8l77wfbLCA',
-                    'max-results': maxResultsPerSearch,
-                    'start-index': startIndex,
-                },
-                success: function (result) {
-                    
-                    var feedResults = result.feed.entry;
-
-                    //  If the title is blank the video has been deleted from the playlist, no data to fetch.
-                    var validfeedResults = _.filter(feedResults, function (feedResult) {
-                        return $.trim(feedResult.title.$t) !== '';
-                    });
-
+<<<<<<< HEAD
                     if (callback) {
                         callback(validfeedResults);
                     }
@@ -345,14 +453,25 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
         },
         
         getPlaylistResults: function (youTubePlaylistId, getVideosCallCount, callback) {
+=======
+            var url;
+>>>>>>> origin/Development
             
+            if (dataSource.type == DataSource.YOUTUBE_CHANNEL) {
+                url = 'https://gdata.youtube.com/feeds/api/users/' + dataSource.id + '/uploads';
+            }
+            else if (dataSource.type == DataSource.YOUTUBE_PLAYLIST) {
+                url = 'https://gdata.youtube.com/feeds/api/playlists/' + dataSource.id;
+            }
+
             var maxResultsPerSearch = 50;
-            var startIndex = 1 + (maxResultsPerSearch * getVideosCallCount);
+            var startIndex = 1 + (maxResultsPerSearch * currentIteration);
 
             $.ajax({
                 type: 'GET',
-                url: 'https://gdata.youtube.com/feeds/api/playlists/' + youTubePlaylistId,
+                url: url,
                 dataType: 'json',
+                
                 data: {
                     v: 2,
                     alt: 'json',
@@ -362,25 +481,37 @@ define(['geoplugin', 'levenshtein'], function (geoplugin, levDist) {
                 },
                 success: function (result) {
 
-                    var playlistResults = result.feed.entry;
-                    
-                    //  If the title is blank the video has been deleted from the playlist, no data to fetch.
-                    var validPlaylistResults = _.filter(playlistResults, function(playlistResult) {
-                        return $.trim(playlistResult.title.$t) !== '';
+                    //  If the video duration has not been provided, video was deleted - skip.
+                    var validResults = _.filter(result.feed.entry, function (resultEntry) {
+                        return resultEntry.media$group.yt$duration !== undefined;
                     });
 
                     if (callback) {
-                        callback(validPlaylistResults);
+                        callback({
+                            iteration: currentIteration,
+                            results: validResults
+                        });
                     }
                 },
                 error: function (error) {
                     console.error(error);
+<<<<<<< HEAD
                     
+=======
+
+>>>>>>> origin/Development
                     if (callback) {
-                        callback(null);
+                        callback({
+                            iteration: currentIteration,
+                            results: []
+                        });
                     }
                 }
             });
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/Development
         }
     };
 });

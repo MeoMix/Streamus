@@ -2,7 +2,9 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Streamus" namespace="Streamus.Domain">
   
   <class name="Video" table="[Videos]" lazy="false" mutable="false">
-    <id name="Id" length="11" type="String" />
+    <id name="Id" length="11" type="String">
+      <generator class="assigned"></generator>
+    </id>
     
     <property name="Title" not-null="true" />
     <property name="Duration" not-null="true" />

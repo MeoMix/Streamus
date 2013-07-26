@@ -1,0 +1,120 @@
+﻿@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    @font-face {
+        font-family: 'Helvetica Neue';
+        src: url('../font/helvetica neue/helveticaneue-webfont.svg') format('svg');
+        font-weight: normal;
+        font-style: normal;
+    }
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    @font-face {
+        font-family: 'Helvetica Neue';
+        src: url('../font/helvetica neue/helveticaneuebold-webfont.svg') format('svg');
+        font-weight: bold;
+        font-style: normal;
+    }
+}
+
+body {
+    color: #1E1E1E !important;
+    padding-bottom: 40px;
+    padding-top: 20px;
+}
+
+/* Custom container */
+
+.container-narrow {
+    margin: 0 auto;
+    max-width: 1000px;
+}
+
+/* Main marketing message and sign up button */
+
+.jumbotron {
+    margin: 60px 0;
+    text-align: center;
+}
+
+.jumbotron.short { margin: inherit; }
+
+.jumbotron h1 {
+    font-size: 72px;
+    line-height: 1;
+}
+
+.footer { padding-top: 10px; }
+
+.footer * {
+    display: inline-block;
+    padding-right: 5px;
+}
+
+/* Supporting marketing content */
+
+.marketing { margin: 60px 0; }
+
+.marketing p + h4 { margin-top: 28px; }
+
+.badgeWrapper {
+    margin-top: -10px;
+    white-space: nowrap;
+}
+
+.legalWrapper {
+    line-height: 1;
+    padding-top: 5px;
+}
+
+
+.social {
+    max-width: 250px;
+    overflow: hidden;
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+    opacity: 0.5;
+}
+
+.social:hover {
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+    opacity: 1;
+}
+
+.social div {
+    display: block;
+}
+
+.gc-reset,.pls-dropBottom{
+    display: none !important;
+}
+
+#___plusone_0 {
+    margin-left: 4px !important;
+}
+
+@media (max-width: 1000px) {
+    .container-narrow { padding: 20px; }
+
+    .logoWrapper { text-align: center; }
+
+    .badgeWrapper { text-align: left; }
+}
+
+@media (max-width: 767px) {
+    .badgeWrapper {
+        margin-top: inherit;
+        text-align: center;
+    }
+
+    .legalWrapper { text-align: center; }
+
+    .fb-like { display: none !important; }
+}
+
+/* Hide the badges when we get really tiny because they don't look great. */
+
+@media (max-width: 352px) {
+    .badgeWrapper { display: none !important; }
+}

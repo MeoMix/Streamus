@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>CodeContracts.Unofficial</id>
+    <version>1.0.0.2</version>
+    <title>CodeContracts.Unofficial</title>
+    <authors>Nathan Totten (Unofficial Package of Microsoft Code Contracts)</authors>
+    <owners>Nathan Totten (Unofficial Package of Microsoft Code Contracts)</owners>
+    <licenseUrl>http://research.microsoft.com/en-us/projects/contracts/</licenseUrl>
+    <projectUrl>http://msdn.microsoft.com/en-us/devlabs/dd491992.aspx</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Code Contracts provide a language-agnostic way to express coding assumptions in .NET programs. The contracts take the form of pre-conditions, post-conditions, and object invariants.</description>
+    <summary>Code Contracts provide a language-agnostic way to express coding assumptions in .NET programs. The contracts take the form of pre-conditions, post-conditions, and object invariants.</summary>
+  </metadata>
+</package>

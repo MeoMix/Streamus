@@ -1,6 +1,7 @@
-﻿define(['video', 'programState'], function (Video, programState) {
+﻿define(['video', 'programState'], function (Video) {
 
     var videoCollection = Backbone.Collection.extend({
+<<<<<<< HEAD
         model: Video,
         //  Provide the ability for a VideoCollection to save.
         save: function (callback) {
@@ -24,6 +25,9 @@
 
             return new videoCollection(videosWithIds);
         }
+=======
+        model: Video
+>>>>>>> origin/Development
     });
 
     return function(config) {

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿using FluentValidation;
 using Streamus.Dao;
 using Streamus.Domain.Validators;
@@ -33,53 +34,30 @@ namespace Streamus.Domain
 
         public Stream Stream { get; set; }
 
+=======
+﻿using AutoMapper;
+using FluentValidation;
+using Streamus.Domain.Validators;
+using Streamus.Dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Streamus.Domain
+{
+    public class Playlist : AbstractShareableDomainEntity
+    {
+        public Folder Folder { get; set; }
+>>>>>>> origin/Development
         //  Use interfaces so NHibernate can inject with its own collection implementation.
-        [DataMember(Name = "items")]
-        public IList<PlaylistItem> Items { get; set; }
-
-        [DataMember(Name = "firstItemId")]
-        public Guid FirstItemId { get; set; }
-
-        [DataMember(Name = "nextListId")]
-        public Guid NextListId
-        {
-            get
-            {
-                Guid nextListId = Guid.Empty;
-                if (NextPlaylist != null)
-                {
-                    nextListId = NextPlaylist.Id;
-                }
-
-                return nextListId;
-            }
-            set { NextPlaylist.Id = value; }
-        }
-
+        public ICollection<PlaylistItem> Items { get; set; }
+        public PlaylistItem FirstItem { get; set; }
         public Playlist NextPlaylist { get; set; }
-
-        [DataMember(Name = "previousListId")]
-        public Guid PreviousListId
-        {
-            get
-            {
-                Guid previousListId = Guid.Empty;
-                if (PreviousPlaylist != null)
-                {
-                    previousListId = PreviousPlaylist.Id;
-                }
-
-                return previousListId;
-            }
-            set { PreviousPlaylist.Id = value; }
-        }
-
         public Playlist PreviousPlaylist { get; set; }
 
         public Playlist()
         {
             Id = Guid.Empty;
-            FirstItemId = Guid.Empty;
             Title = string.Empty;
             Items = new List<PlaylistItem>();
         }
@@ -90,6 +68,21 @@ namespace Streamus.Domain
             Title = title;
         }
 
+<<<<<<< HEAD
+=======
+        public Playlist(Playlist playlist)
+            : this()
+        {
+            Copy(playlist);
+        }
+
+        public static Playlist Create(PlaylistDto playlistDto)
+        {
+            Playlist playlist = Mapper.Map<PlaylistDto, Playlist>(playlistDto);
+            return playlist;
+        }
+
+>>>>>>> origin/Development
         public void Copy(Playlist playlist)
         {
             Title = playlist.Title;
@@ -101,53 +94,74 @@ namespace Streamus.Domain
 
                 //  If the old playlist's firstItemId was the currently old item we're iterating over,
                 //  set the current new item as the first item.
+<<<<<<< HEAD
                 if (playlistItem.Id == playlist.FirstItemId)
                 {
                     FirstItemId = shareableItemCopy.Id;
+=======
+                if (playlistItem == playlist.FirstItem)
+                {
+                    FirstItem = shareableItemCopy;
+>>>>>>> origin/Development
                 }
             }
         }
 
         public void AddItem(PlaylistItem playlistItem)
         {
+            //  Item must be removed from other Playlist before AddItem affects it.
+            if (playlistItem.Playlist != null && playlistItem.Playlist != this)
+            {
+                string message = string.Format("Item {0} is already a child of Playlist {1}", playlistItem.Title, playlistItem.Playlist.Title);
+                throw new Exception(message);
+            }
+
             if (Items.Count == 0)
             {
-                playlistItem.NextItemId = playlistItem.Id;
-                playlistItem.PreviousItemId = playlistItem.Id;
-                FirstItemId = playlistItem.Id;
+                FirstItem = playlistItem;
+                playlistItem.NextItem = playlistItem;
+                playlistItem.PreviousItem = playlistItem;
             }
             else
             {
-
-                PlaylistItem firstItem = Items.First(item => item.Id == FirstItemId);
-                PlaylistItem lastItem = Items.First(item => item.Id == firstItem.PreviousItemId);
+                PlaylistItem firstItem = FirstItem;
+                PlaylistItem lastItem = firstItem.PreviousItem;
 
                 //  Adjust our linked list and add the item.
-                lastItem.NextItemId = playlistItem.Id;
-                playlistItem.PreviousItemId = lastItem.Id;
+                lastItem.NextItem = playlistItem;
+                playlistItem.PreviousItem = lastItem;
 
-                firstItem.PreviousItemId = playlistItem.Id;
-                playlistItem.NextItemId = firstItem.Id;
+                firstItem.PreviousItem = playlistItem;
+                playlistItem.NextItem = firstItem;
             }
 
+<<<<<<< HEAD
             playlistItem.PlaylistId = Id;
+=======
+            playlistItem.Playlist = this;
+>>>>>>> origin/Development
             Items.Add(playlistItem);
+        }
+
+        public void AddItems(IEnumerable<PlaylistItem> playlistItems)
+        {
+            playlistItems.ToList().ForEach(AddItem);
         }
 
         public void RemoveItem(PlaylistItem playlistItem)
         {
-            if (FirstItemId == playlistItem.Id)
+            if (FirstItem == playlistItem)
             {
                 //  Move the firstItemId to the next item if playlist still has other items in it.
-                FirstItemId = Items.Count == 1 ? Guid.Empty : playlistItem.NextItemId;
+                FirstItem = Items.Count == 1 ? null : playlistItem.NextItem;
             }
 
-            PlaylistItem previousItem = Items.First(item => item.Id == playlistItem.PreviousItemId);
-            PlaylistItem nextItem = Items.First(item => item.Id == playlistItem.NextItemId);
+            PlaylistItem previousItem = playlistItem.PreviousItem;
+            PlaylistItem nextItem = playlistItem.NextItem;
 
             //  Remove the item from our linked list.
-            previousItem.NextItemId = nextItem.Id;
-            nextItem.PreviousItemId = previousItem.Id;
+            previousItem.NextItem = nextItem;
+            nextItem.PreviousItem = previousItem;
 
             Items.Remove(playlistItem);
         }
@@ -158,38 +172,5 @@ namespace Streamus.Domain
             validator.ValidateAndThrow(this);
         }
 
-        private int? _oldHashCode;
-        public override int GetHashCode()
-        {
-            //  Once we have a hash code we'll never change it
-            if (_oldHashCode.HasValue)
-                return _oldHashCode.Value;
-
-            bool thisIsTransient = Equals(Id, Guid.Empty);
-
-            //  When this instance is transient, we use the base GetHashCode()
-            //  and remember it, so an instance can NEVER change its hash code.
-            if (thisIsTransient)
-            {
-                _oldHashCode = base.GetHashCode();
-                return _oldHashCode.Value;
-            }
-            return Id.GetHashCode();
-        }
-
-        public override bool Equals(object obj)
-        {
-            Playlist other = obj as Playlist;
-            if (other == null)
-                return false;
-
-            // Handle the case of comparing two NEW objects
-            bool otherIsTransient = Equals(other.Id, Guid.Empty);
-            bool thisIsTransient = Equals(Id, Guid.Empty);
-            if (otherIsTransient && thisIsTransient)
-                return ReferenceEquals(other, this);
-
-            return other.Id.Equals(Id);
-        }
     }
 }

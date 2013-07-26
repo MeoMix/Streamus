@@ -1,91 +1,54 @@
-﻿using FluentValidation;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
+using AutoMapper;
+using FluentValidation;
 using Streamus.Domain.Validators;
+using Streamus.Dto;
 
 namespace Streamus.Domain
 {
-    [DataContract]
-    public class User
+    public class User : AbstractDomainEntity<Guid>
     {
-        [DataMember(Name = "id")]
-        public Guid Id { get; set; }
-
-        [DataMember(Name = "name")]
         public string Name { get; set; }
-
         //  Use interfaces so NHibernate can inject with its own collection implementation.
-        [DataMember(Name = "streams")]
-        public IList<Stream> Streams { get; set; }
+        public ICollection<Folder> Folders { get; set; }
 
         public User()
         {
             Name = string.Empty;
-            Streams = new List<Stream>();
+            Folders = new List<Folder>();
 
-            //  A user should always have at least one Stream.
-            CreateStream();
+            //  A user should always have at least one Folder.
+            CreateAndAddFolder();
         }
 
-        public Stream CreateStream()
+        public static User Create(UserDto userDto)
         {
-            string title = string.Format("New Stream {0:D4}", Streams.Count);
-            Stream stream = new Stream(title);
-            return AddStream(stream);
+            User user = Mapper.Map<UserDto, User>(userDto);
+            return user;
         }
 
-        public Stream AddStream(Stream stream)
+        public Folder CreateAndAddFolder()
         {
-            stream.User = this;
-            Streams.Add(stream);
+            string title = string.Format("New Folder {0:D4}", Folders.Count);
+            Folder folder = new Folder(title)
+                {
+                    User = this
+                };
+            Folders.Add(folder);
 
-            return stream;
+            return folder;
         }
 
-        public void RemoveStream(Stream stream)
+        public void RemoveFolder(Folder folder)
         {
-            Streams.Remove(stream);
+            Folders.Remove(folder);
         }
 
         public void ValidateAndThrow()
         {
             var validator = new UserValidator();
             validator.ValidateAndThrow(this);
-        }
-
-        private int? _oldHashCode;
-        public override int GetHashCode()
-        {
-            // Once we have a hash code we'll never change it
-            if (_oldHashCode.HasValue)
-                return _oldHashCode.Value;
-
-            bool thisIsTransient = Equals(Id, Guid.Empty);
-
-            // When this instance is transient, we use the base GetHashCode()
-            // and remember it, so an instance can NEVER change its hash code.
-            if (thisIsTransient)
-            {
-                _oldHashCode = base.GetHashCode();
-                return _oldHashCode.Value;
-            }
-            return Id.GetHashCode();
-        }
-
-        public override bool Equals(object obj)
-        {
-            User other = obj as User;
-            if (other == null)
-                return false;
-
-            // handle the case of comparing two NEW objects
-            bool otherIsTransient = Equals(other.Id, Guid.Empty);
-            bool thisIsTransient = Equals(Id, Guid.Empty);
-            if (otherIsTransient && thisIsTransient)
-                return ReferenceEquals(other, this);
-
-            return other.Id.Equals(Id);
         }
     }
 }

@@ -1,4 +1,4 @@
-define(['localStorageManager'], function(localStorageManager){
+define(['settingsManager'], function(settingsManager){
     'use strict';
 
     var shuffleButtonView = Backbone.View.extend({
@@ -13,9 +13,13 @@ define(['localStorageManager'], function(localStorageManager){
         
         initialize: function() {
             //  Remember the initial state across pop-up sessions by writing to/from localStorage.
+<<<<<<< HEAD
             var isShuffleEnabled = localStorageManager.getIsShuffleEnabled();
             
             if (isShuffleEnabled) {
+=======
+            if (settingsManager.get('shuffleEnabled')) {
+>>>>>>> origin/Development
                 this.$el
                     .addClass('pressed')
                     .attr('title', this.enabledTitle);
@@ -35,7 +39,11 @@ define(['localStorageManager'], function(localStorageManager){
                 this.$el.attr('title', this.disabledTitle);
             }
 
+<<<<<<< HEAD
             localStorageManager.setIsShuffleEnabled(isPressed);
+=======
+            settingsManager.set('shuffleEnabled', isPressed);
+>>>>>>> origin/Development
         }
         
     });

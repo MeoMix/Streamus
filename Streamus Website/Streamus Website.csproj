@@ -58,6 +58,42 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="index.htm" />
+    <FilesToIncludeForPublish>OnlyFilesToRunTheApp</FilesToIncludeForPublish>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="css\bootstrap-responsive.css" />
+    <Content Include="css\bootstrap.css" />
+    <Content Include="font\helvetica neue\helveticaneue-webfont.svg" />
+    <Content Include="font\helvetica neue\helveticaneuebold-webfont.svg" />
+    <Content Include="css\index.css" />
+    <Content Include="favicon.ico" />
+    <Content Include="googlee6d26778f04ae1ed.html" />
+    <Content Include="img\chromeWebStoreBadge.png" />
+    <Content Include="img\glyphicons-halflings-white.png" />
+    <Content Include="img\glyphicons-halflings.png" />
+    <Content Include="img\logo.png" />
+    <Content Include="img\youTubeBadge.png" />
+    <Content Include="index.htm" />
+    <Content Include="js\backbone.js" />
+    <Content Include="js\bootstrap.js" />
+    <Content Include="font\helvetica neue\helveticaneue-webfont.eot" />
+    <Content Include="font\helvetica neue\helveticaneue-webfont.ttf" />
+    <Content Include="font\helvetica neue\helveticaneue-webfont.woff" />
+    <Content Include="font\helvetica neue\helveticaneuebold-webfont.eot" />
+    <Content Include="font\helvetica neue\helveticaneuebold-webfont.ttf" />
+    <Content Include="font\helvetica neue\helveticaneuebold-webfont.woff" />
+    <Content Include=".htaccess" />
+    <None Include="js\chrome-api-vsdoc.js" />
+    <Content Include="js\googlePlusOneButton.js" />
+    <Content Include="js\detectMobileBrowser.js" />
+    <Content Include="js\facebookLikeButton.js" />
+    <Content Include="js\googleAnalytics.js" />
+    <Content Include="js\index.js" />
+    <Content Include="js\jquery.js" />
+    <Content Include="js\main.js" />
+    <Content Include="js\underscore.js" />
+    <Content Include="legal\privacy.htm" />
+    <Content Include="legal\terms-of-use.htm" />
     <Content Include="share\index.htm" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -65,6 +101,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="packages.config" />
     <None Include="Properties\PublishProfiles\Streamus Website.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -73,6 +110,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -89,6 +127,12 @@
           <DevelopmentServerPort>0</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:56205/</IISUrl>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>49553</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
