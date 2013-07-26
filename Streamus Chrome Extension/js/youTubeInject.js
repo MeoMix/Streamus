@@ -200,7 +200,7 @@ $(function () {
         //sharePanelFolderSelect.addClass('hid');
     });
 
-    chrome.runtime.sendMessage({ method: "getFolgers" }, function (getFoldersResponse) {
+    chrome.runtime.sendMessage({ method: "getFolders" }, function (getFoldersResponse) {
 
         var folders = getFoldersResponse.folders;
 

@@ -69,6 +69,7 @@
     <Content Include="js\index.js" />
     <Content Include="js\jquery.js" />
     <Content Include="js\main.js" />
+    <Content Include="js\olark.js" />
     <Content Include="js\underscore.js" />
     <Content Include="legal\privacy.htm" />
     <Content Include="legal\terms-of-use.htm" />
