@@ -4,58 +4,63 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
     //  TODO: Make this sortable and should inherit from a common List object. 
     var playlistListUl = $('#PlaylistList ul');
 
-    playlistListUl.on('contextmenu', 'li', function(event) {
+    playlistListUl.on('contextmenu', 'li', function (event) {
         var activeFolder = backgroundManager.get('activeFolder');
-        
+
         var clickedPlaylistId = $(this).data('playlistid');
         var clickedPlaylist = activeFolder.get('playlists').get(clickedPlaylistId);
 
         //  Don't allow deleting of the last playlist in a folder ( at least for now )
         var isDeleteDisabled = clickedPlaylist.get('nextPlaylistId') === clickedPlaylist.get('id');
+        var isAddPlaylistDisabled = clickedPlaylist.get('items').length === 0;
 
         ContextMenuView.addGroup({
             position: 0,
             items: [{
-                    position: 0,
-                    text: 'Copy URL',
-                    onClick: function() {
+                position: 0,
+                text: 'Copy URL',
+                onClick: function () {
 
-                        clickedPlaylist.getShareCode(function(shareCode) {
+                    clickedPlaylist.getShareCode(function (shareCode) {
 
-                            var shareCodeShortId = shareCode.get('shortId');
-                            var urlFriendlyEntityTitle = shareCode.get('urlFriendlyEntityTitle');
+                        var shareCodeShortId = shareCode.get('shortId');
+                        var urlFriendlyEntityTitle = shareCode.get('urlFriendlyEntityTitle');
 
-                            var playlistShareUrl = 'http://share.streamus.com/playlist/' + shareCodeShortId + '/' + urlFriendlyEntityTitle;
+                        var playlistShareUrl = 'http://share.streamus.com/playlist/' + shareCodeShortId + '/' + urlFriendlyEntityTitle;
 
-                            chrome.extension.sendMessage({
-                                method: 'copy',
-                                text: playlistShareUrl
-                            });
-
+                        chrome.extension.sendMessage({
+                            method: 'copy',
+                            text: playlistShareUrl
                         });
 
-                    }
-                }, {
-                    position: 1,
-                    text: 'Delete',
-                    disabled: isDeleteDisabled,
-                    title: isDeleteDisabled ? 'This is your last Playlist, so you can\'t delete it' : '',
-                    onClick: function() {
+                    });
 
-                        if (!isDeleteDisabled) {
-                            clickedPlaylist.destroy({
-                                error: function(error) {
-                                    console.error(error);
-                                }
-                            });
-                        }
-                    }
-                }, {
-                    position: 2,
-                    text: 'Add Playlist to Stream',
-                    onClick: function() {
+                }
+            }, {
+                position: 1,
+                text: 'Delete',
+                disabled: isDeleteDisabled,
+                title: isDeleteDisabled ? 'This is your last Playlist, so you can\'t delete it' : '',
+                onClick: function () {
 
-                        var streamItems = clickedPlaylist.get('items').map(function(playlistItem) {
+                    if (!isDeleteDisabled) {
+                        clickedPlaylist.destroy({
+                            error: function (error) {
+                                console.error(error);
+                            }
+                        });
+                    }
+                }
+            }, {
+                position: 2,
+                text: 'Add Playlist to Stream',
+                disabled: isAddPlaylistDisabled,
+                title: isAddPlaylistDisabled ? 'You need to add items to your Playlist first' : '',
+                onClick: function () {
+
+                    if (!isAddPlaylistDisabled) {
+
+                        var streamItems = clickedPlaylist.get('items').map(function (playlistItem) {
                             return {
                                 id: _.uniqueId('streamItem_'),
                                 video: playlistItem.get('video'),
@@ -66,7 +71,9 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
 
                         StreamItems.addMultiple(streamItems);
                     }
-                }]
+
+                }
+            }]
         });
 
         ContextMenuView.show({
@@ -77,7 +84,7 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
         return false;
     });
     //  Clicking on a playlist will select that playlist.
-    playlistListUl.on('click', 'li', function() {
+    playlistListUl.on('click', 'li', function () {
 
         var playlistId = $(this).data('playlistid');
         var playlist = backgroundManager.getPlaylistById(playlistId);
@@ -99,18 +106,18 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
 
         } else {
             playlistListUl.find('li').removeClass('loaded');
-            
+
         }
 
     });
-    
+
     backgroundManager.get('allPlaylistItems').on('add remove', function (playlistItem, other) {
         throttledUpdatePlaylistDescription(playlistItem);
     });
 
     //  Playlists keep track of how many videos they have. When adding a lot of items -- throttle.
     var throttledUpdatePlaylistDescription = _.throttle(function (playlistItem) {
-        
+
         var playlistId = playlistItem.get('playlistId');
         var playlistLink = playlistListUl.find('li[data-playlistid="' + playlistId + '"]');
 
@@ -132,7 +139,7 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
         var playlistLinkDescription = 'Videos: ' + currentVideos.length + ', Duration: ' + helpers.prettyPrintTime(sumVideosDurations);
         playlistLink.find('.playlistLinkDescription').text(playlistLinkDescription);
     }, 100);
-    
+
     backgroundManager.get('allPlaylists').on('add', function (playlist) {
         reload();
 
@@ -145,16 +152,16 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
                 var playlistLink = playlistListUl.find('li[data-playlistid="' + playlist.get('id') + '"]');
                 spinner.spin(playlistLink[0]);
 
-                playlist.once('change:dataSourceLoaded', function() {
+                playlist.once('change:dataSourceLoaded', function () {
                     spinner.stop();
                 });
 
             }
         }
-        
+
         scrollIntoView(playlist, true);
     });
-    
+
     //  Removes the old 'current' marking and move it to the newly selected row.
     function visuallySelectPlaylist(playlist) {
         //  Since we emptied our list we lost the selection, reselect.
@@ -163,10 +170,10 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
         playlistListUl.find('li').removeClass('loaded');
         playlistListUl.find('li[data-playlistid="' + playlist.get('id') + '"]').addClass('loaded');
     };
-    
+
     reload();
     scrollIntoView(backgroundManager.get('activePlaylist'), false);
-    
+
     //  TODO: Needs to be dry with playlistItemsDisplay
     function scrollIntoView(activePlaylist, useAnimation) {
 
@@ -181,7 +188,7 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
 
         }
     }
-    
+
     function buildListItem(playlist) {
         var listItem = $('<li/>', {
             'data-playlistid': playlist.get('id')
@@ -236,7 +243,7 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
 
             var listItem = buildListItem(currentPlaylist);
             listItems.push(listItem);
-            
+
             currentPlaylist = activeFolder.get('playlists').get(currentPlaylist.get('nextPlaylistId'));
 
         } while (currentPlaylist.get('id') !== firstPlaylistId)
@@ -247,6 +254,6 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
         if (activePlaylist !== null) {
             visuallySelectPlaylist(activePlaylist);
         }
-       
+
     }
 });
