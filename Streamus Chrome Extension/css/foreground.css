@@ -43,10 +43,11 @@
 
 .halfGradient { background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, .1)), to(rgba(103, 103, 103, .1))); }
 
-#EmptyPlaylistNotification {
+.emptyListNotification {
     font-size: 14px;
     top: 154px;
     left: 70px;
+    display: none;
 }
 
 #head {
