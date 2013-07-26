@@ -15,25 +15,6 @@
             //To provide your users with a better experience, the interactive flag should be set to false the first time your app or extension calls getChannelId. 
             //Otherwise users will see the sign-in dialog with no context, even before they start your app or extension. If the first call fails because the user is not logged in, 
             //then getChannelId can be called again with the flag set to true. You should provide a context dialog before the second call is made.
-<<<<<<< HEAD
-            chrome.pushMessaging.getChannelId(true, function (response) {
-                self.channelId = response.channelId;
-            });
-
-            chrome.pushMessaging.onMessage.addListener(function (message) {
-                //if (message.event == null) {
-                //    throw "Expected message to contain an event.";
-                //}
-                
-                //switch (message.event) {
-                //    case '':
-                //        break;
-                        
-                //    default:
-                //        console.error("Unhandled message event:", message.event);
-                        
-                //}
-=======
             //chrome.pushMessaging.getChannelId(true, function (response) {
             //    self.set('channelId', response.channelId);
 
@@ -59,7 +40,6 @@
 
             //    });
                 
->>>>>>> origin/Development
 
                 
                 //if (pushMessage.get('entityType') === EntityType.Playlist) {

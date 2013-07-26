@@ -16,11 +16,8 @@ define(['streamItems', 'player', 'helpers'], function (StreamItems, player, help
         //  Don't divide by 0.
         var fill = totalTime !== 0 ? currentTime / totalTime : 0;
 
-<<<<<<< HEAD
-=======
         if (fill < 0 || fill > 1) throw "Wow this really should not have been " + fill;
 
->>>>>>> origin/Development
         var backgroundImage = '-webkit-gradient(linear,left top, right top, from(#ccc), color-stop(' + fill + ',#ccc), color-stop(' + fill + ',rgba(0,0,0,0)), to(rgba(0,0,0,0)))';
         $(this).css('background-image', backgroundImage);
         

@@ -37,10 +37,6 @@ var require = {
 
         'scrollIntoView': 'thirdParty/jquery.scrollIntoView',
         'spin': 'thirdParty/jquery.spin',
-<<<<<<< HEAD
-        'repeatButtonStates': 'repeatButtonStates',
-        'spinnerManager': 'foreground/spinnerManager'
-=======
         'repeatButtonState': 'enum/repeatButtonState',
         'spinnerManager': 'foreground/spinnerManager',
         'sly': 'thirdParty/sly',
@@ -61,6 +57,5 @@ var require = {
         'streamItemView': 'foreground/view/streamItemView',
         'streamView': 'foreground/view/streamView',
         'videoDisplayView': 'foreground/view/videoDisplayView',
->>>>>>> origin/Development
     }
 };

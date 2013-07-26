@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-<<<<<<< HEAD
-using System.Reflection;
-using Autofac;
-=======
->>>>>>> origin/Development
 using Streamus.Dao;
 using Streamus.Domain.Interfaces;
 
@@ -13,13 +8,6 @@ namespace Streamus.Domain.Managers
 {
     public class PlaylistManager : AbstractManager
     {
-<<<<<<< HEAD
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly ILifetimeScope Scope;
-        private readonly IDaoFactory DaoFactory;
-
-=======
->>>>>>> origin/Development
         private IPlaylistDao PlaylistDao { get; set; }
         private IPlaylistItemDao PlaylistItemDao { get; set; }
         private IVideoDao VideoDao { get; set; }
@@ -27,12 +15,6 @@ namespace Streamus.Domain.Managers
 
         public PlaylistManager()
         {
-<<<<<<< HEAD
-            Scope = AutofacRegistrations.Container.BeginLifetimeScope();
-            DaoFactory = Scope.Resolve<IDaoFactory>();
-
-=======
->>>>>>> origin/Development
             PlaylistDao = DaoFactory.GetPlaylistDao();
             PlaylistItemDao = DaoFactory.GetPlaylistItemDao();
             VideoDao = DaoFactory.GetVideoDao();
@@ -58,31 +40,6 @@ namespace Streamus.Domain.Managers
         }
 
         public void Save(IEnumerable<Playlist> playlists)
-<<<<<<< HEAD
-        {
-            try
-            {
-                NHibernateSessionManager.Instance.BeginTransaction();
-
-                foreach (Playlist playlist in playlists)
-                {
-                    playlist.ValidateAndThrow();
-                    PlaylistDao.SaveOrUpdate(playlist);
-                }
-
-                NHibernateSessionManager.Instance.CommitTransaction();
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
-                throw;
-            }
-        }
-
-        public void Update(Playlist playlist)
-=======
->>>>>>> origin/Development
         {
             try
             {
@@ -202,54 +159,6 @@ namespace Streamus.Domain.Managers
                 NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
-        }
-
-        public ShareCode GetShareCode(Guid playlistId)
-        {
-            ShareCode shareCode = null;
-
-            try
-            {
-                NHibernateSessionManager.Instance.BeginTransaction();
-
-                Playlist playlist = PlaylistDao.Get(playlistId);
-
-                if (playlist == null)
-                {
-                    string errorMessage = string.Format("No playlist found with id: {0}", playlistId);
-                    throw new ApplicationException(errorMessage);
-                }
-
-                Playlist shareablePlaylistCopy = new Playlist();
-
-                //  TODO: Reconsider this.
-                shareablePlaylistCopy.NextPlaylist = shareablePlaylistCopy;
-                shareablePlaylistCopy.PreviousPlaylist = shareablePlaylistCopy;
-
-                shareablePlaylistCopy.ValidateAndThrow();
-                PlaylistDao.Save(shareablePlaylistCopy);
-
-                shareablePlaylistCopy.Copy(playlist);
-                PlaylistDao.Update(shareablePlaylistCopy);
-
-                //  Gotta do this manually.
-                shareablePlaylistCopy.Items.ToList().ForEach(PlaylistItemDao.Save);
-
-                shareCode = new ShareCode(shareablePlaylistCopy);
-
-                shareCode.ValidateAndThrow();
-                ShareCodeDao.Save(shareCode);
-
-                NHibernateSessionManager.Instance.CommitTransaction();
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
-                throw;
-            }
-
-            return shareCode;
         }
     }
 }

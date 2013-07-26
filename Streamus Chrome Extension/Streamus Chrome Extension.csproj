@@ -156,8 +156,6 @@
     <Content Include="js\background\user.js" />
     <Content Include="js\background\video.js" />
     <Content Include="js\background\videos.js" />
-    <Content Include="js\shareInject.js" />
-    <Content Include="js\dataSources.js" />
     <Content Include="js\foreground\collection\streamItems.js" />
     <Content Include="js\foreground\view\streamItemView.js" />
     <Content Include="js\foreground\view\streamView.js" />
@@ -185,12 +183,6 @@
     <Content Include="js\foreground\playlistsTab\playlistsDisplay.js" />
     <Content Include="js\foreground\progressBar.js" />
     <Content Include="js\foreground\requirePaths.js" />
-    <Content Include="js\foreground\settingsTab\settings.js" />
-    <Content Include="js\foreground\spinnerManager.js" />
-    <Content Include="js\foreground\videoTab\videoDisplay.js" />
-    <Content Include="js\helpers.js" />
-    <Content Include="js\youTubeInject.js" />
-    <Content Include="js\playerStates.js" />
     <Content Include="js\foreground\spinnerManager.js" />
     <Content Include="js\foreground\view\videoDisplayView.js" />
     <Content Include="js\helpers.js" />

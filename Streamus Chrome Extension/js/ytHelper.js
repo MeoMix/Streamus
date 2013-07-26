@@ -4,15 +4,10 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
 
     var videoInformationFields = 'author,title,media:group(yt:videoid,yt:duration),yt:accessControl';
     var videosInformationFields = 'entry(' + videoInformationFields + ')';
-    //  TODO: Uhhh should this be in here?
     var developerKey = 'AI39si7voIBGFYe-bcndXXe8kex6-N_OSzM5iMuWCdPCSnZxLB_qIEnQ-HMijHrwN1Y9sFINBi_frhjzVVrYunHH8l77wfbLCA';
     
     //  Some videos aren't allowed to be played in Streamus, but we can respond by finding similiar.
     function validateEntry(entry) {
-<<<<<<< HEAD
-        //  TODO: I might need to do syndication as well, but I do not believe so.
-=======
->>>>>>> origin/Development
         var ytAccessControlList = entry.yt$accessControl;
 
         var embedAccessControl = _.find(ytAccessControlList, function (accessControl) {
@@ -28,11 +23,7 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
         search(title, function (videoInformationList) {
 
             videoInformationList.sort(function (a, b) {
-<<<<<<< HEAD
-                return levDist(a.title.$t, title) - levDist(b.title.$t, title);
-=======
                 return levenshtein(a.title.$t, title) - levenshtein(b.title.$t, title);
->>>>>>> origin/Development
             });
 
             var videoInformation = videoInformationList.length > 0 ? videoInformationList[0] : null;
@@ -223,10 +214,7 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
                 },
                 error: function(error) {
                     console.error(error);
-<<<<<<< HEAD
-=======
                     callback();
->>>>>>> origin/Development
                 }
             });
         },
@@ -275,18 +263,6 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
                         type: DataSource.YOUTUBE_CHANNEL
                     };
                 } else {
-<<<<<<< HEAD
-
-                    dataSourceId = tryGetIdFromUrl(url, 'streamus:');
-                    
-                    if (dataSourceId !== '') {
-                        dataSource = {
-                            id: dataSourceId,
-                            type: DataSources.SHARED_PLAYLIST
-                        };
-                    }
-
-=======
 
                     dataSourceId = tryGetIdFromUrl(url, 'streamus:');
                     
@@ -297,7 +273,6 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
                         };
                     }
 
->>>>>>> origin/Development
                 }
             }
 
@@ -355,17 +330,9 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
                 }
             });
         },
-<<<<<<< HEAD
-        
-        //  TODO: Change this to taking an object so its easier to specify the optionalVideoTitle
-        //  Returns NULL if the request throws a 403 error if videoId has been banned on copyright grounds.
-        getVideoInformation: function (videoId, optionalVideoTitle, callback) {
-
-=======
 
         getVideoInformation: function (config) {
             //videoId, optionalVideoTitle, callback
->>>>>>> origin/Development
             $.ajax({
                 type: 'GET',
                 url: 'https://gdata.youtube.com/feeds/api/videos/' + config.videoId,
@@ -382,20 +349,8 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
 
                     //  result will be null if it has been banned on copyright grounds
                     if (result == null) {
-<<<<<<< HEAD
-                        console.error("video banned on copyright grounds, finding alternative.");
-                        
-                        if (optionalVideoTitle && $.trim(optionalVideoTitle) != '') {
-
-                            findPlayableByTitle(optionalVideoTitle, function (playableVideoInformation) {
-
-                                if (callback) {
-                                    callback(playableVideoInformation);
-                                }
-=======
                         
                         if (config.videoTitle && $.trim(config.videoTitle) != '') {
->>>>>>> origin/Development
 
                             findPlayableByTitle(config.videoTitle, function (playableVideoInformation) {
                                 config.callback(playableVideoInformation);
@@ -407,17 +362,10 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
                         var isValid = validateEntry(result.entry);
                         
                         if (isValid) {
-<<<<<<< HEAD
-                            callback(result.entry);
-                        } else {
-                            findPlayableByTitle(result.entry.title.$t, function (playableVideoInformation) {
-                                callback(playableVideoInformation);
-=======
                             config.success(result.entry);
                         } else {
                             findPlayableByTitle(result.entry.title.$t, function (playableVideoInformation) {
                                 config.success(playableVideoInformation);
->>>>>>> origin/Development
                             });
                         }
                         
@@ -437,25 +385,7 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
             //  Only get data from bulky dataSources.
             if (dataSource.type !== DataSource.YOUTUBE_CHANNEL && dataSource.type !== DataSource.YOUTUBE_PLAYLIST) return;
 
-<<<<<<< HEAD
-                    if (callback) {
-                        callback(validfeedResults);
-                    }
-                },
-                error: function(error) {
-                    console.error(error);
-                    
-                    if (callback) {
-                        callback(null);
-                    }
-                }
-            });
-        },
-        
-        getPlaylistResults: function (youTubePlaylistId, getVideosCallCount, callback) {
-=======
             var url;
->>>>>>> origin/Development
             
             if (dataSource.type == DataSource.YOUTUBE_CHANNEL) {
                 url = 'https://gdata.youtube.com/feeds/api/users/' + dataSource.id + '/uploads';
@@ -495,11 +425,7 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
                 },
                 error: function (error) {
                     console.error(error);
-<<<<<<< HEAD
-                    
-=======
 
->>>>>>> origin/Development
                     if (callback) {
                         callback({
                             iteration: currentIteration,
@@ -508,10 +434,7 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
                     }
                 }
             });
-<<<<<<< HEAD
-=======
 
->>>>>>> origin/Development
         }
     };
 });

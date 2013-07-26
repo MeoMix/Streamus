@@ -9,11 +9,7 @@
         IPlaylistDao GetPlaylistDao();
         IPlaylistItemDao GetPlaylistItemDao();
         IShareCodeDao GetShareCodeDao();
-<<<<<<< HEAD
-        IStreamDao GetStreamDao();
-=======
         IFolderDao GetFolderDao();
->>>>>>> origin/Development
         IUserDao GetUserDao();
         IVideoDao GetVideoDao();
     }

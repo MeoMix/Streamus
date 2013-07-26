@@ -1,11 +1,6 @@
 ﻿//  Background.js is a bit of a dumping ground for code which needs a permanent housing spot.
-<<<<<<< HEAD
-define(['player', 'backgroundManager', 'localStorageManager', 'pushMessageManager', 'ytHelper', 'error', 'programState', 'repeatButtonStates', 'iconManager'],
-    function (player, backgroundManager, localStorageManager, pushMessageManager, ytHelper, Error, programState, repeatButtonStates) {
-=======
 define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 'ytHelper', 'repeatButtonState', 'playerState', 'streamItems'],
     function (player, backgroundManager, settingsManager, pushMessageManager, ytHelper, RepeatButtonState, PlayerState, StreamItems) {
->>>>>>> origin/Development
         'use strict';
   
     player.on('change:state', function (model, state) {
@@ -102,15 +97,6 @@ define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 
             case 'addVideoByIdToPlaylist':
                 var playlist = backgroundManager.getPlaylistById(request.playlistId);
                 
-<<<<<<< HEAD
-                ytHelper.getVideoInformation(request.videoId, '', function (videoInformation) {
-                    playlist.addItemByInformation(videoInformation);
-
-                    sendResponse({
-                        result: 'success'
-                    });
-
-=======
                 ytHelper.getVideoInformation({
                     videoId: request.videoId,
                     success: function(videoInformation) {
@@ -125,20 +111,13 @@ define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 
                             result: 'error'
                         });
                     }
->>>>>>> origin/Development
                 });
 
                 break;
             case 'addPlaylistByShareData':
-<<<<<<< HEAD
-                var activeStream = backgroundManager.get('activeStream');
-                
-                activeStream.addPlaylistByShareData(request.shareCodeShortId, request.urlFriendlyEntityTitle, function(playlist) {
-=======
                 var activeFolder = backgroundManager.get('activeFolder');
                 
                 activeFolder.addPlaylistByShareData(request.shareCodeShortId, request.urlFriendlyEntityTitle, function (playlist) {
->>>>>>> origin/Development
 
                     if (playlist) {
                         
@@ -158,11 +137,6 @@ define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 
                 
                 break;
         }
-<<<<<<< HEAD
-
-        //  Return true to allow sending a response back.
-        return true;
-=======
         
         //  Return true to allow sending a response back.
         return true;
@@ -194,50 +168,7 @@ define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 
             title: playlist.get('title')
         });
 
->>>>>>> origin/Development
     });
-
-    //  TODO: How can I be more DRY with this?
-    backgroundManager.get('allPlaylists').on('add', function (playlist) {
-
-        sendEventToOpenYouTubeTabs('add', 'playlist', {
-            id: playlist.get('id'),
-            title: playlist.get('title')
-        });
-
-    });
-        
-    backgroundManager.get('allPlaylists').on('remove', function (playlist) {
-
-        sendEventToOpenYouTubeTabs('remove', 'playlist', {
-            id: playlist.get('id'),
-            title: playlist.get('title')
-        });
-
-    });
-        
-    backgroundManager.get('allPlaylists').on('change:title', function (playlist) {
-
-        sendEventToOpenYouTubeTabs('rename', 'playlist', {
-            id: playlist.get('id'),
-            title: playlist.get('title')
-        });
-
-    });
-        
-    function sendEventToOpenYouTubeTabs(event, type, data) {
-        chrome.tabs.query({ url: '*://www.youtube.com/watch?v*' }, function (tabs) {
-
-            _.each(tabs, function (tab) {
-                chrome.tabs.sendMessage(tab.id, {
-                    event: event,
-                    type: type,
-                    data: data
-                });
-            });
-
-        });
-    }
         
     function sendEventToOpenYouTubeTabs(event, type, data) {
         

@@ -118,9 +118,6 @@
     <Reference Include="DotNetOpenAuth.OpenIdOAuth">
       <HintPath>..\packages\DotNetOpenAuth.OpenIdOAuth.4.3.0.13117\lib\net40-full\DotNetOpenAuth.OpenIdOAuth.dll</HintPath>
     </Reference>
-    <Reference Include="FluentValidation, Version=3.4.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\FluentValidation.3.4.6.0\lib\Net40\FluentValidation.dll</HintPath>
     <Reference Include="FluentValidation">
       <HintPath>..\packages\FluentValidation.4.0.0.0\lib\Net40\FluentValidation.dll</HintPath>
     </Reference>
@@ -223,10 +220,6 @@
     <Compile Include="Dao\ErrorDao.cs" />
     <Compile Include="Dao\FolderDao.cs" />
     <Compile Include="Dao\PlaylistItemDao.cs" />
-    <Compile Include="Domain\AbstractShareableEntity.cs" />
-    <Compile Include="Domain\Interfaces\IDaoFactory.cs" />
-    <Compile Include="Domain\Interfaces\IShareableEntity.cs" />
-    <Compile Include="Domain\Interfaces\IShareCodeDao.cs" />
     <Compile Include="Domain\AbstractDomainEntity.cs" />
     <Compile Include="Domain\AbstractShareableEntity.cs" />
     <Compile Include="Domain\Interfaces\IAbstractDomainEntity.cs" />

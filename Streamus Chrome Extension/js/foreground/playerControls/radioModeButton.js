@@ -13,20 +13,6 @@
         
         initialize: function () {
             //  Remember the initial state across pop-up sessions by writing to/from localStorage.
-<<<<<<< HEAD
-            var isRadioModeEnabled = localStorageManager.getIsRadioModeEnabled();
-            
-            if (isRadioModeEnabled) {
-                this.$el
-                    .addClass('pressed')
-                    .attr('title', this.enabledTitle);
-            }
-            
-        },
-        
-        toggleRadioMode: function () {
-
-=======
 
             if (settingsManager.get('radioModeEnabled')) {
                 this.$el
@@ -38,7 +24,6 @@
         
         toggleRadioMode: function () {
 
->>>>>>> origin/Development
             this.$el.toggleClass('pressed');
             
             var isPressed = this.$el.hasClass('pressed');
@@ -49,11 +34,7 @@
                 this.$el.attr('title', this.disabledTitle);
             }
 
-<<<<<<< HEAD
-            localStorageManager.setIsRadioModeEnabled(isPressed);
-=======
             settingsManager.set('radioModeEnabled', isPressed);
->>>>>>> origin/Development
         }
 
     });

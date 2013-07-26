@@ -15,10 +15,6 @@ namespace Streamus.Controllers
     public class UserController : Controller
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-<<<<<<< HEAD
-        private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
-=======
->>>>>>> origin/Development
         private static readonly UserManager UserManager = new UserManager();
 
         private readonly IUserDao UserDao;
@@ -44,10 +40,7 @@ namespace Streamus.Controllers
         public ActionResult Create()
         {
             User user = UserManager.CreateUser();
-<<<<<<< HEAD
-=======
             UserDto userDto = UserDto.Create(user);
->>>>>>> origin/Development
 
             return new JsonDataContractActionResult(userDto);
         }

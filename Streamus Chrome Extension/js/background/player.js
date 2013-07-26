@@ -1,11 +1,7 @@
 //  Exposed globally so that Chrome Extension's foreground can access through chrome.extension.getBackgroundPage()
 var YouTubePlayer = null;
 
-<<<<<<< HEAD
-define(['youTubePlayerAPI'], function (youTubePlayerAPI) {
-=======
 define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTubePlayerAPI, settingsManager, PlayerState) {
->>>>>>> origin/Development
     'use strict';
 
     //  This is the actual YouTube Player API object housed within the iframe.
@@ -48,11 +44,7 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
                 } 
             });
 
-<<<<<<< HEAD
-            self.on('change:muted', function (model, isMuted) {
-=======
             this.on('change:muted', function (model, isMuted) {
->>>>>>> origin/Development
 
                 //  Same logic here as with the volume
                 if (isMuted) {
@@ -67,10 +59,7 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
                     streamusPlayer.muted = isMuted;
                 }
             });
-<<<<<<< HEAD
-=======
 
->>>>>>> origin/Development
 
             this.on('change:loadedVideoId', function() {
                 clearInterval(seekToInterval);
@@ -78,11 +67,7 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
             
             var youTubeVideo = $('#YouTubeVideo');
             youTubeVideo.on('play', function () {
-<<<<<<< HEAD
-                self.set('state', PlayerStates.PLAYING);
-=======
                 self.set('state', PlayerState.PLAYING);
->>>>>>> origin/Development
             });
 
             youTubeVideo.on('pause', function () {
@@ -106,11 +91,7 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
             });
 
             youTubeVideo.on('ended', function () {
-<<<<<<< HEAD
-                self.set('state', PlayerStates.ENDED);
-=======
                 self.set('state', PlayerState.ENDED);
->>>>>>> origin/Development
             });
 
             youTubeVideo.on('error', function (error) {
@@ -135,7 +116,6 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
 
                 var videoStreamSrc = youTubeVideo.attr('src');
 
-                //  TODO: Probably need to turn this polling on/off intelligently.
                 //  This ensure that youTube continues to update blob data.
                 if (videoStreamSrc.indexOf('blob') > -1) {
                     seekToInterval = setInterval(function () {
@@ -216,17 +196,6 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
             
         loadVideoById: function (videoId) {
             var streamusPlayer = this.get('streamusPlayer');
-<<<<<<< HEAD
-
-            if (streamusPlayer != null) {
-                //streamusPlayer.pause();
-                $(streamusPlayer).attr('autoplay', true);
-            }
-            
-            this.set('state', PlayerStates.BUFFERING);
-            this.set('loadedVideoId', videoId);
-
-=======
 
             if (streamusPlayer != null) {
                 //streamusPlayer.pause();
@@ -236,7 +205,6 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
             this.set('state', PlayerState.BUFFERING);
             this.set('loadedVideoId', videoId);
 
->>>>>>> origin/Development
             youTubePlayer.loadVideoById({
                 videoId: videoId,
                 startSeconds: 0,
@@ -273,15 +241,9 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
         },
         
         stop: function () {
-<<<<<<< HEAD
-
-            this.set('state', PlayerStates.UNSTARTED);
-
-=======
 
             this.set('state', PlayerState.UNSTARTED);
 
->>>>>>> origin/Development
             //$('#YouTubeVideo').attr('src', '');
             
             var streamusPlayer = this.get('streamusPlayer');
@@ -312,11 +274,7 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
   
             if (!this.isPlaying()) {
 
-<<<<<<< HEAD
-                this.set('state', PlayerStates.BUFFERING);
-=======
                 this.set('state', PlayerState.BUFFERING);
->>>>>>> origin/Development
                 var streamusPlayer = this.get('streamusPlayer');
 
                 if (streamusPlayer) {
@@ -342,15 +300,12 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
             //  Seek even if streamusPlayer is defined because we probably need to update the blob if it is.
             //  The true paramater allows the youTubePlayer to seek ahead past its buffered video.
             youTubePlayer.seekTo(timeInSeconds, true);
-<<<<<<< HEAD
-=======
         },
         
         //  Attempt to set playback quality to suggestedQuality or highest possible.
         setSuggestedQuality: function(suggestedQuality) {
 
             youTubePlayer.setPlaybackQuality(suggestedQuality);
->>>>>>> origin/Development
         }
     });
 

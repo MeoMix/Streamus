@@ -33,17 +33,6 @@ namespace Streamus.Domain
 
         public PlaylistItem(PlaylistItem playlistItem)
             : this()
-<<<<<<< HEAD
-        {
-            Id = Guid.NewGuid();
-            PlaylistId = playlistItem.PlaylistId;
-            Title = playlistItem.Title;
-            Video = playlistItem.Video;
-        }
-
-        public void ValidateAndThrow()
-=======
->>>>>>> origin/Development
         {
             Title = playlistItem.Title;
             Video = playlistItem.Video;

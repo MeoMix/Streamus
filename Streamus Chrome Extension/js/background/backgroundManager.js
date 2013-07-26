@@ -131,26 +131,13 @@ define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'fold
  
                 var playlistItems = playlist.get('items');
 
-<<<<<<< HEAD
-                playlistItems.each(function(playlistItem) {
-=======
                 playlistItems.each(function (playlistItem) {
                     
->>>>>>> origin/Development
                     self.get('allPlaylistItems').add(playlistItem, {
                         merge: true
                     });
 
-<<<<<<< HEAD
-                    if (self.get('activePlaylistItem') === null) {
-                        self.set('activePlaylistItem', playlistItem);
-                        playlist.selectItem(playlistItem);
-                    }
                 });
-                
-=======
-                });
->>>>>>> origin/Development
 
                 bindEventsToPlaylist.call(self, playlist);
             });
@@ -161,22 +148,6 @@ define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'fold
 
                 if (self.get('activePlaylist') === playlist) {
 
-<<<<<<< HEAD
-                    var streamId = playlist.get('streamId');
-                    var stream = self.getStreamById(streamId);
-                    
-                    //  Update activePlaylist to the next playlist if there is another.
-                    if (stream.get('playlists').length > 0) {
-                        var newlyActivePlaylist = stream.getPlaylistById(playlist.get('nextListId'));
-                        self.set('activePlaylist', newlyActivePlaylist);
-                    }
-                }
-
-                //  If the currently playing item was in the playlist that has been removed - stop the music / refresh the UI.
-                var activePlaylistItem = self.get('activePlaylistItem');
-                if (activePlaylistItem !== null && activePlaylistItem.get('playlistId') === playlist.id) {
-                    self.set('activePlaylistItem', null);
-=======
                     var folderId = playlist.get('folderId');
                     var playlistFolder = self.getFolderById(folderId);
 
@@ -185,7 +156,6 @@ define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'fold
                     var activePlaylist = playlistFolder.get('playlists').get(nextPlaylistId);
 
                     self.set('activePlaylist', activePlaylist);
->>>>>>> origin/Development
                 }
 
             });
@@ -212,10 +182,7 @@ define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'fold
             var playlist = self.getPlaylistById(playlistId);
             var playlistItems = playlist.get('items');
 
-<<<<<<< HEAD
-=======
             //  TODO: Re-evaluate this logic.
->>>>>>> origin/Development
             //  TODO: I'd like to have this logic inside of playlist and not backgroundManager but the first bit of code
             //  needs to run first because playlist.gotoNextItem is dependent on the old firstItemId to know the next item.
             //  Update these before getting nextItem because we don't want to have something point to the removed item.
@@ -232,35 +199,12 @@ define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'fold
                 if (playlist.get('firstItemId') === playlistItem.get('id')) {
                     playlist.set('firstItemId', playlistItem.get('nextItemId'));
                 }
-<<<<<<< HEAD
 
             } else {
                 playlist.set('firstItemId', '00000000-0000-0000-0000-000000000000');
             }
             
             self.get('allPlaylistItems').remove(playlistItem);
-            
-            if (self.get('activePlaylistItem') === playlistItem) {
-
-                if (playlistItems.length > 0) {
-                    var newlyActiveItem = playlist.gotoNextItem();
-
-                    self.set('activePlaylistItem', newlyActiveItem);
-                } else {
-
-                    self.set('activePlaylistItem', null);
-                }
-
-            }
-
-=======
-
-            } else {
-                playlist.set('firstItemId', '00000000-0000-0000-0000-000000000000');
-            }
-            
-            self.get('allPlaylistItems').remove(playlistItem);
->>>>>>> origin/Development
         });
     }
     
@@ -289,20 +233,8 @@ define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'fold
  
         this.on('change:activePlaylist', function (model, activePlaylist) {
 
-<<<<<<< HEAD
-            if (activePlaylist == null) {
-                
-                //  TODO: I was experiencing some client side errors where this was undefined, trying to track down.
-                if (activePlaylist !== null) {
-                    console.error("This really should've been null and not undefined.");
-                    console.trace();
-                }
-
-                localStorageManager.setActivePlaylistId(null);
-=======
             if (activePlaylist === null) {
                 settingsManager.set('activePlaylistId', null);
->>>>>>> origin/Development
             } else {
                 settingsManager.set('activePlaylistId', activePlaylist.get('id'));
             }
@@ -323,85 +255,6 @@ define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'fold
 
         this.set('activePlaylist', activePlaylist);
     }
-<<<<<<< HEAD
-    
-    function loadActivePlaylistItem() {
-        var self = this;
-        this.on('change:activePlaylistItem', function (model, activePlaylistItem) {
-
-            if (activePlaylistItem == null) {
-                localStorageManager.setActivePlaylistItemId(null);
-                player.stop();
-
-            } else {
-                localStorageManager.setActivePlaylistItemId(activePlaylistItem.get('id'));
-                
-                //  Make sure that the player keeps its video in sync with the activePlaylistItem's video.
-                var videoId = activePlaylistItem.get('video').get('id');
-                
-                //  If repeating the current video - don't do extra work.
-                if (player.get('loadedVideoId') === videoId) {
-                    player.seekTo(0);
-                } else {
-                    var playerIsPlaying = player.isPlaying();
-
-                    if (playerIsPlaying) {
-
-                        var playlist = this.getPlaylistById(activePlaylistItem.get('playlistId'));
-                        var isFirstItem = activePlaylistItem.get('id') === playlist.get('firstItemId');
-                        var repeatButtonState = localStorageManager.getRepeatButtonState();
-                        var previousActiveItem = self.previous('activePlaylistItem');
-
-                        //  If skipping around to the front of the list and don't have repeat playlist enabled - pause.
-                        //  Check to make sure that the last active was the last item in the list (first item's previous) -- could be coming back from the 2nd item in which case don't pause
-                        if (isFirstItem && previousActiveItem.get('id') === activePlaylistItem.get('previousItemId') && repeatButtonState !== repeatButtonStates.REPEAT_PLAYLIST_ENABLED) {
-                            player.cueVideoById(videoId);
-                        } else {
-                            player.loadVideoById(videoId);
-                        }
-                        
-                    } else {
-
-                        player.cueVideoById(videoId);
-                    }
-                }
-                
-            }
-        });
-
-        var activePlaylistItemId = localStorageManager.getActivePlaylistItemId();
-        
-        //  There is no guarantee that activePlaylistItem is in activePlaylist because a user could be looking
-        //  at another playlist without having selected an item in that playlist.
-        var activePlaylistItem = _.find(getAllPlaylistItems(), function (playlistItem) {
-            return playlistItem.get('id') === activePlaylistItemId;
-        }) || null;
-
-        if (activePlaylistItem === null) {
-            var activePlaylist = this.get('activePlaylist');
-            
-            if (activePlaylist !== null) {
-                var activePlaylistItems = activePlaylist.get('items');
-
-                if (activePlaylistItems.length > 0) {
-                    activePlaylistItem = activePlaylistItems.at(0);
-                    this.set('activePlaylistItem', activePlaylistItem);
-                }
-            }
-
-        } else {
-            this.set('activePlaylistItem', activePlaylistItem);
-        }
-
-        //  Need to inform the playlist to select the item so playlist history can update.
-        if (activePlaylistItem !== null) {
-          
-            var playlist = this.getPlaylistById(activePlaylistItem.get('playlistId'));
-            playlist.selectItem(activePlaylistItem);
-        }
-    }
-=======
->>>>>>> origin/Development
 
     //  Takes all folders, retrieves all playlists from folders and then all items from playlists.
     function getAllPlaylistItems() {

@@ -156,48 +156,10 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamItem
         }
     });
 
-<<<<<<< HEAD
-    //  Removes the old 'current' marking and move it to the newly selected row.
-    function setListItemClass(itemId, itemClass) {
-        playlistItemList.find('li').removeClass(itemClass);
-        playlistItemList.find('li[data-itemid="' + itemId + '"]').addClass(itemClass);
-    };
-    
-    function selectItemById(itemId) {
-
-        var activePlaylistItem = backgroundManager.get('activePlaylistItem');
-
-        //  If the item is already selected then it is cued up -- so just play it.
-        if (activePlaylistItem !== null && activePlaylistItem.get('id') === itemId) {
-            
-            if (player.isPlaying()) {
-                player.pause();
-            } else {
-                player.play();
-            }
-
-        } else {
-            var playlistItem = backgroundManager.getPlaylistItemById(itemId);
-            
-            var playlistId = playlistItem.get('playlistId');
-            var playlist = backgroundManager.getPlaylistById(playlistId);
-
-            playlist.selectItem(playlistItem);
-            backgroundManager.set('activePlaylistItem', playlistItem);
-        }
-    }
-    
-
-    backgroundManager.on('change:activePlaylist', function() {
-        reload();
-    });
-    
-=======
     backgroundManager.on('change:activePlaylist', function () {
         reload();
     });
 
->>>>>>> origin/Development
     var emptyPlaylistNotificationId = 'EmptyPlaylistNotification';
     backgroundManager.get('allPlaylistItems').on('add', function(item) {
 

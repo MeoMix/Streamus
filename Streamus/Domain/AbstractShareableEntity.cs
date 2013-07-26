@@ -1,33 +1,12 @@
-<<<<<<< HEAD
-﻿using System.Runtime.Serialization;
-using System.Text;
-using System.Text.RegularExpressions;
-using Streamus.Domain.Interfaces;
-using System;
-=======
 ﻿using System;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 using Streamus.Domain.Interfaces;
->>>>>>> origin/Development
 
 namespace Streamus.Domain
 {
     [DataContract]
-<<<<<<< HEAD
-    public abstract class AbstractShareableEntity : IShareableEntity
-    {
-        [DataMember(Name = "id")]
-        public Guid Id { get; set; }
-
-        [DataMember(Name = "title")]
-        public string Title { get; set; }
-
-        /// <summary>
-        /// Grab the first 40 characters of the title and then trim back to the last whole word.
-        /// Replace spaces with underscores.
-=======
     public abstract class AbstractShareableDomainEntity : AbstractDomainEntity<Guid>, IShareableEntity
     {
         public string Title { get; set; }
@@ -35,7 +14,6 @@ namespace Streamus.Domain
         /// <summary>
         ///     Grab the first 40 characters of the title and then trim back to the last whole word.
         ///     Replace spaces with underscores.
->>>>>>> origin/Development
         /// </summary>
         /// <returns>A URL friendly title (e.g.): as_one_of_the_few_members_of_congress_who_have </returns>
         public string GetUrlFriendlyTitle()
@@ -58,13 +36,8 @@ namespace Streamus.Domain
         }
 
         /// <summary>
-<<<<<<< HEAD
-        /// Just trim off some of the Guid to make it pretty for the URL. 
-        /// Essentially guaranteed unique when performing lookup with shortId + UrlFriendlyTitle
-=======
         ///     Just trim off some of the Guid to make it pretty for the URL.
         ///     Essentially guaranteed unique when performing lookup with shortId + UrlFriendlyTitle
->>>>>>> origin/Development
         /// </summary>
         /// <returns>6 digits of Guid without hyphen</returns>
         public string GetShortId()
@@ -85,15 +58,6 @@ namespace Streamus.Domain
             text = RemoveAccent(text).ToLower();
 
             //  Remove all invalid characters.  
-<<<<<<< HEAD
-            text = Regex.Replace(text, @"[^a-z0-9\s-]", ""); 
-
-            //  Convert multiple spaces into one space
-            text = Regex.Replace(text, @"\s+", " ").Trim(); 
-
-            //  Replace spaces by underscores.
-            text = Regex.Replace(text, @"\s", "_"); 
-=======
             text = Regex.Replace(text, @"[^a-z0-9\s-]", "");
 
             //  Convert multiple spaces into one space
@@ -101,7 +65,6 @@ namespace Streamus.Domain
 
             //  Replace spaces by underscores.
             text = Regex.Replace(text, @"\s", "_");
->>>>>>> origin/Development
 
             return text;
         }

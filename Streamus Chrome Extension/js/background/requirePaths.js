@@ -33,14 +33,10 @@ var require = {
         'pushMessage': 'background/pushMessage',
         'iconManager': 'background/iconManager',
         'spin': 'thirdParty/jquery.spin',
-<<<<<<< HEAD
-        'shareCode': 'background/shareCode'
-=======
         'shareCode': 'background/shareCode',
         'shareableEntityType': 'enum/shareableEntityType',
         
         'streamItems': 'background/collection/streamItems',
         'streamItem': 'background/model/streamItem'
->>>>>>> origin/Development
     }
 };

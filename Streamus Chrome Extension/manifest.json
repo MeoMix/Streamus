@@ -1,10 +1,6 @@
 ﻿{
   "name": "Streamus™ (Beta!)",
-<<<<<<< HEAD
-  "version": "0.64",
-=======
   "version": "0.71",
->>>>>>> origin/Development
   "manifest_version": 2,
   "description": "Streamus turns YouTube into the music player you always wanted. Streamus makes streaming YouTube refreshingly easy.",
   "background":{
@@ -16,31 +12,19 @@
        "19": "img/streamus_icon19.png",
        "38": "img/streamus_icon38.png"
     },
-<<<<<<< HEAD
-    "default_title": "Streamus: Rediscover YouTube.",
-    "default_popup": "foreground.htm"
-  },"permissions": [
-=======
     "default_title": "Streamus: Simple, streaming music.",
     "default_popup": "foreground.htm"
   },
   "permissions": [
     "idle",
->>>>>>> origin/Development
     "pushMessaging",
 	"management",
 	"notifications",
     "storage",
     "webRequest",
     "webRequestBlocking",
-<<<<<<< HEAD
-    "http://www.geoplugin.net/",
-    "*://*.youtube.com/",
-	"http://localhost:61975/Streamus/",
-=======
     "*://*.youtube.com/",
 	"http://test.streamus.com:61975/Streamus/",
->>>>>>> origin/Development
 	"http://streamus.apphb.com/"
 	],
   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDmO/I2g0AsHj5gwKYcAv19xa/E4FYE3gD1DtReHysli/YvzOX2X/VOgPMNCB9d5PvuWNH0xud21ztmk7wsNxKLcEuDTENgGqA9voTTG+3hgT1zH5R7rm8E0Kw590KhNattqwXkoRqdvavMjnUzlB9gDbU1duI1V8U03etW4Ta8EwIDAQAB",
@@ -51,22 +35,12 @@
       "js": ["js/thirdParty/jquery.js", "js/youTubeIFrameInject.js"]
     },
     {
-<<<<<<< HEAD
-      "matches": ["*://*.youtube.com/watch?v*"],
-      "css": ["css/inject.css"],
-	  "all_frames": true,
-=======
       "matches": ["*://*.youtube.com/watch?*"],
       "run_at": "document_start",
->>>>>>> origin/Development
       "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/youTubeInject.js"]
     },
     {
       "matches": ["*://*.share.streamus.com/*"],
-<<<<<<< HEAD
-	  "all_frames": true,
-      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/shareInject.js"]
-=======
 	  "run_at": "document_start",
       "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/shareInject.js"]
     },
@@ -74,7 +48,6 @@
       "matches": ["*://*.streamus.com/*"],
 	  "run_at": "document_start",
       "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/streamusInject.js"]
->>>>>>> origin/Development
     }
   ],
   "commands": {
@@ -102,9 +75,5 @@
     "css/youTubeInject.css"
   ],
   "content_security_policy": 
-<<<<<<< HEAD
-    "script-src 'self' 'unsafe-eval' https://graph.facebook.com https://www.youtube.com https://ssl.google-analytics.com https://gdata.youtube.com https://suggestqueries.google.com https://s.ytimg.com; object-src 'self'"
-=======
     "script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com https://s.ytimg.com; object-src 'self'"
->>>>>>> origin/Development
 }

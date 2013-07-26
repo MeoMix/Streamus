@@ -11,48 +11,6 @@ define(['streamItems', 'settingsManager', 'repeatButtonState'], function (Stream
 
         render: function () {
 
-<<<<<<< HEAD
-            if (backgroundManager.get('activePlaylistItem') === null) {
-                this.disable();
-            } else {
-                this.enable();
-            }
-
-            return this;
-        },
-
-        initialize: function () {
-            this.listenTo(backgroundManager, 'change:activePlaylistItem', this.render);
-            this.render();
-        },
-
-        //  Prevent spamming by only allowing a next click once every 100ms.
-        gotoNextVideo: _.debounce(function () {
-
-            if (!this.$el.hasClass('disabled')) {
-
-                var activePlaylistItem = backgroundManager.get('activePlaylistItem');
-                var playlistId = activePlaylistItem.get('playlistId');
-                var playlist = backgroundManager.getPlaylistById(playlistId);
-
-                var nextItem = playlist.gotoNextItem();
-
-                backgroundManager.set('activePlaylistItem', nextItem);
-
-                //  Manually triggering the change so that player can realize it needs to set its time back to 0:00.
-                if (activePlaylistItem === nextItem) {
-                    backgroundManager.trigger('change:activePlaylistItem', backgroundManager, nextItem);
-                }
-            }
-
-        }, 100, true),
-
-        //  Paint the button's path black and bind its click event.
-        enable: function () {
-            this.$el.prop('src', 'images/skip.png').removeClass('disabled');
-        },
-
-=======
             if (StreamItems.length === 0) {
                 this.disable();
             } else {
@@ -104,7 +62,6 @@ define(['streamItems', 'settingsManager', 'repeatButtonState'], function (Stream
             this.$el.prop('src', 'images/skip.png').removeClass('disabled');
         },
 
->>>>>>> origin/Development
         //  Paint the button's path gray and unbind its click event.
         disable: function () {
             this.$el.prop('src', 'images/skip-disabled.png').addClass('disabled');

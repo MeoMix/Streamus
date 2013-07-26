@@ -1,9 +1,5 @@
 //  The play/pause icon.
-<<<<<<< HEAD
-define(['backgroundManager', 'player', 'spinnerManager'], function (backgroundManager, player, spinnerManager) {
-=======
 define(['player', 'spinnerManager', 'playerState', 'streamItems'], function (player, spinnerManager, PlayerState, StreamItems) {
->>>>>>> origin/Development
     'use strict';
     
     var playPauseButtonView = Backbone.View.extend({
@@ -20,61 +16,6 @@ define(['player', 'spinnerManager', 'playerState', 'streamItems'], function (pla
         playTitle: 'Click to play the current video.',
         
         render: function () {
-<<<<<<< HEAD
-
-            var pauseIcon = $('#PauseIcon');
-            var playIcon = $('#PlayIcon');
-            
-            //  Whenever the YouTube player changes playing state -- update whether icon shows play or pause.
-            var playerState = player.get('state');
-
-            if (playerState === PlayerStates.BUFFERING) {
-                //  Show buffering icon and hide the others.
-                this.spinner.spin($('#LoadingSpinner')[0]);
-
-                playIcon.hide();
-                pauseIcon.hide();
-            } else {
-                // Not buffering, so hide the spinner.
-                this.spinner.stop();
-
-                if (playerState === PlayerStates.PLAYING) {
-                    //  Change the music button to the 'Pause' image
-                    pauseIcon.show();
-                    playIcon.hide();
-                    this.$el.attr('title', this.pauseTitle);
-                } else {
-                    //  Change the music button to the 'Play' image
-                    this.spinner.stop();
-                    pauseIcon.hide();
-                    playIcon.show();
-                    this.$el.attr('title', this.playTitle);
-                }
-            }
-
-            return this;
-        },
-        
-        initialize: function () {
-
-            var self = this;
-            
-            //  Only allowed to play if an item exists in the current playlist.
-            this.listenTo(backgroundManager, 'change:activePlaylistItem', function (model, activePlaylistItem) {
-                if (activePlaylistItem === null) {
-                    self.disable();
-                } else {
-                    self.enable();
-                }
-
-            });
-
-            if (backgroundManager.get('activePlaylistItem') !== null) {
-                self.enable();
-            }
-
-            this.listenTo(player, 'change:state', this.render);
-=======
 
             if (StreamItems.where({ selected: true }).length > 0) {
                 this.enable();
@@ -120,25 +61,11 @@ define(['player', 'spinnerManager', 'playerState', 'streamItems'], function (pla
             this.listenTo(StreamItems, 'change:selected empty remove', this.render);
             this.listenTo(player, 'change:state', this.render);
             
->>>>>>> origin/Development
             this.render();
         },
         
         //  Only allow changing once every 100ms to preent spamming.
         togglePlayingState: _.debounce(function () {
-<<<<<<< HEAD
-
-            if (!$(this).hasClass('disabled')) {
-                if (player.isPlaying()) {
-                    player.pause();
-                } else {
-                    player.play();
-                }
-            }
-
-        }, 100, true),
-
-=======
 
             if (!this.$el.hasClass('disabled')) {
                 if (player.isPlaying()) {
@@ -150,7 +77,6 @@ define(['player', 'spinnerManager', 'playerState', 'streamItems'], function (pla
 
         }, 100, true),
 
->>>>>>> origin/Development
         //  Paint button's path black and allow it to be clicked
         enable: function() {
             this.$el.removeClass('disabled');

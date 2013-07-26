@@ -13,13 +13,7 @@ define(['settingsManager'], function(settingsManager){
         
         initialize: function() {
             //  Remember the initial state across pop-up sessions by writing to/from localStorage.
-<<<<<<< HEAD
-            var isShuffleEnabled = localStorageManager.getIsShuffleEnabled();
-            
-            if (isShuffleEnabled) {
-=======
             if (settingsManager.get('shuffleEnabled')) {
->>>>>>> origin/Development
                 this.$el
                     .addClass('pressed')
                     .attr('title', this.enabledTitle);
@@ -39,11 +33,7 @@ define(['settingsManager'], function(settingsManager){
                 this.$el.attr('title', this.disabledTitle);
             }
 
-<<<<<<< HEAD
-            localStorageManager.setIsShuffleEnabled(isPressed);
-=======
             settingsManager.set('shuffleEnabled', isPressed);
->>>>>>> origin/Development
         }
         
     });

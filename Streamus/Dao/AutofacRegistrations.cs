@@ -9,11 +9,7 @@ namespace Streamus.Dao
 
         public static void RegisterDaoFactory()
         {
-<<<<<<< HEAD
-            ContainerBuilder containerBuilder = new ContainerBuilder();
-=======
             var containerBuilder = new ContainerBuilder();
->>>>>>> origin/Development
             containerBuilder.RegisterType<NHibernateDaoFactory>().As<IDaoFactory>();
 
             Container = containerBuilder.Build();

@@ -3,11 +3,7 @@
   
   <class name="ShareCode" table="[ShareCodes]" lazy="false">
     <id name="Id" unsaved-value="00000000-0000-0000-0000-000000000000">
-<<<<<<< HEAD
-      <generator class="guid" />
-=======
       <generator class="guid.comb" />
->>>>>>> origin/Development
     </id>
     
     <property name="EntityType" not-null="true" />

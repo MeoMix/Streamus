@@ -4,43 +4,6 @@ define(['streamItems', 'settingsManager', 'repeatButtonState'], function (Stream
 
     var previousButtonView = Backbone.View.extend({
         el: $('#PreviousButton'),
-<<<<<<< HEAD
-        
-        events: {
-            'click': 'gotoPreviousVideo'
-        },
-        
-        render: function () {
-            
-            if (backgroundManager.get('activePlaylistItem') === null) {
-                this.disable();
-            } else {
-                this.enable();
-            }
-
-            return this;
-        },
-        
-        initialize: function() {
-            this.listenTo(backgroundManager, 'change:activePlaylistItem', this.render);
-            this.render();
-        },
-        
-        //  Prevent spamming by only allowing a previous click once every 100ms.
-        gotoPreviousVideo: _.debounce(function () {
-
-            if (!this.$el.hasClass('disabled')) {
-                
-                var activePlaylistItem = backgroundManager.get('activePlaylistItem');
-                var playlistId = activePlaylistItem.get('playlistId');
-                var playlist = backgroundManager.getPlaylistById(playlistId);
-
-                var previousItem = playlist.gotoPreviousItem();
-                backgroundManager.set('activePlaylistItem', previousItem);
-                
-            }
-
-=======
         
         events: {
             'click': 'gotoPreviousVideo'
@@ -91,7 +54,6 @@ define(['streamItems', 'settingsManager', 'repeatButtonState'], function (Stream
                 StreamItems.selectPrevious();
             }
 
->>>>>>> origin/Development
         }, 100, true),
         
         //  Paint the button's path black and bind its click event.

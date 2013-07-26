@@ -1,11 +1,4 @@
-<<<<<<< HEAD
-﻿using System;
-using System.Reflection;
-using Autofac;
-using Streamus.Dao;
-=======
 ﻿using Streamus.Dao;
->>>>>>> origin/Development
 using Streamus.Domain.Interfaces;
 using System;
 
@@ -16,23 +9,10 @@ namespace Streamus.Domain.Managers
     /// </summary>
     public class UserManager : AbstractManager
     {
-<<<<<<< HEAD
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly ILifetimeScope Scope;
-        private readonly IDaoFactory DaoFactory;
-
-=======
->>>>>>> origin/Development
         private IUserDao UserDao { get; set; }
 
         public UserManager()
         {
-<<<<<<< HEAD
-            Scope = AutofacRegistrations.Container.BeginLifetimeScope();
-            DaoFactory = Scope.Resolve<IDaoFactory>();
-
-=======
->>>>>>> origin/Development
             UserDao = DaoFactory.GetUserDao();
         }
 

@@ -1,9 +1,4 @@
 //  This is the list of playlists on the playlists tab.
-<<<<<<< HEAD
-define(['playlistsContextMenu', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerManager'], function (contextMenu, ytHelper, backgroundManager, helpers, spinnerManager) {
-    //  TODO: Make this sortable and should inherit from a common List object. 
-    var playlistList = $('#PlaylistList ul');
-=======
 define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerManager', 'dataSource', 'streamItems'], function (ContextMenuView, ytHelper, backgroundManager, helpers, spinnerManager, DataSource, StreamItems) {
 
     //  TODO: Make this sortable and should inherit from a common List object. 
@@ -91,7 +86,6 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
         backgroundManager.set('activePlaylist', playlist);
 
     });
->>>>>>> origin/Development
 
     var spinner = spinnerManager.getPlaylistSpinner();
 
@@ -142,13 +136,7 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
     backgroundManager.get('allPlaylists').on('add', function (playlist) {
         reload();
 
-<<<<<<< HEAD
-        if (playlist.has('dataSource') && playlist.get('dataSource').type !== DataSources.SHARED_PLAYLIST) {
-            var playlistLink = playlistList.find('li[data-playlistid="' + playlist.get('id') + '"]');
-            spinner.spin(playlistLink[0]);
-=======
         if (playlist.has('dataSource')) {
->>>>>>> origin/Development
 
             var dataSourceType = playlist.get('dataSource').type;
 
@@ -246,62 +234,8 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
         //  Build up each row.
         do {
 
-<<<<<<< HEAD
-            if(currentPlaylist == null) break;
-
-            var listItem = $('<li/>', {
-                'data-playlistid': currentPlaylist.get('id'),
-                contextmenu: function (e) {
-                        
-                    var clickedPlaylistId = $(this).data('playlistid');
-                    var clickedPlaylist = activeStream.get('playlists').get(clickedPlaylistId);
-                    contextMenu.initialize(clickedPlaylist);
-                    //  +1 offset because if contextmenu appears directly under mouse, hover css will be removed from element.
-                    contextMenu.show(e.pageY, e.pageX + 1);
-                    //  Prevent default context menu display.
-                    return false;
-                },
-
-                //  Clicking on a playlist will select that playlist.
-                click: function() {
-                    var playlistId = $(this).data('playlistid');
-                    var playlist = backgroundManager.getPlaylistById(playlistId);
-
-                    visuallySelectPlaylist(playlist);
-                    backgroundManager.set('activePlaylist', playlist);
-                },
-                
-                dblclick: function () {
-                    //  TODO: Terrible coupling, but it's a user QoL decision...
-                    $('#HomeMenuButton').click();
-                }
-            }).appendTo(playlistList);
-            
-            var textWrapper = $('<div>', {
-                'class': 'textWrapper'
-            }).appendTo(listItem);
-
-            var currentPlaylistTitle = $('<span/>', {
-                text: currentPlaylist.get('title')
-            });
-            currentPlaylistTitle.appendTo(textWrapper);
-
-            var currentItems = currentPlaylist.get('items');
-            var currentVideos = currentItems.map(function(currentItem) {
-                return currentItem.get('video');
-            });
-
-            var currentVideosDurations = currentVideos.map(function (currentVideo) {
-                return currentVideo.get('duration');
-            });
-
-            var sumVideosDurations = _.reduce(currentVideosDurations, function (memo, duration) {
-                 return memo + duration;
-            }, 0);
-=======
             var listItem = buildListItem(currentPlaylist);
             listItems.push(listItem);
->>>>>>> origin/Development
             
             currentPlaylist = activeFolder.get('playlists').get(currentPlaylist.get('nextPlaylistId'));
 

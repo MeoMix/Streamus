@@ -1,40 +1,3 @@
-<<<<<<< HEAD
-﻿using FluentValidation;
-using Streamus.Dao;
-using Streamus.Domain.Validators;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-
-namespace Streamus.Domain
-{
-    [DataContract]
-    public class Playlist : AbstractShareableEntity
-    {
-        //  TODO: This seems forced, but I can't get NHibernate to properly figure out the mapping without holding a reference.
-        [DataMember(Name = "streamId")]
-        public Guid StreamId
-        {
-            get
-            {
-                Guid streamId = Guid.Empty;
-                if (Stream != null)
-                {
-                    streamId = Stream.Id;
-                }
-
-                return streamId;
-            }
-            set
-            {
-                Stream = new StreamDao().Get(value);
-            }
-        }
-
-        public Stream Stream { get; set; }
-
-=======
 ﻿using AutoMapper;
 using FluentValidation;
 using Streamus.Domain.Validators;
@@ -48,7 +11,6 @@ namespace Streamus.Domain
     public class Playlist : AbstractShareableDomainEntity
     {
         public Folder Folder { get; set; }
->>>>>>> origin/Development
         //  Use interfaces so NHibernate can inject with its own collection implementation.
         public ICollection<PlaylistItem> Items { get; set; }
         public PlaylistItem FirstItem { get; set; }
@@ -68,8 +30,6 @@ namespace Streamus.Domain
             Title = title;
         }
 
-<<<<<<< HEAD
-=======
         public Playlist(Playlist playlist)
             : this()
         {
@@ -82,7 +42,6 @@ namespace Streamus.Domain
             return playlist;
         }
 
->>>>>>> origin/Development
         public void Copy(Playlist playlist)
         {
             Title = playlist.Title;
@@ -94,15 +53,9 @@ namespace Streamus.Domain
 
                 //  If the old playlist's firstItemId was the currently old item we're iterating over,
                 //  set the current new item as the first item.
-<<<<<<< HEAD
-                if (playlistItem.Id == playlist.FirstItemId)
-                {
-                    FirstItemId = shareableItemCopy.Id;
-=======
                 if (playlistItem == playlist.FirstItem)
                 {
                     FirstItem = shareableItemCopy;
->>>>>>> origin/Development
                 }
             }
         }
@@ -135,11 +88,7 @@ namespace Streamus.Domain
                 playlistItem.NextItem = firstItem;
             }
 
-<<<<<<< HEAD
-            playlistItem.PlaylistId = Id;
-=======
             playlistItem.Playlist = this;
->>>>>>> origin/Development
             Items.Add(playlistItem);
         }
 

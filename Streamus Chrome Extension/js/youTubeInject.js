@@ -1,9 +1,10 @@
+//  This code runs on YouTube pages.
 $(function () {
 
     var style = document.createElement('link');
     style.rel = 'stylesheet';
     style.type = 'text/css';
-    style.href = chrome.extension.getURL('css/inject.css');
+    style.href = chrome.extension.getURL('css/youTubeInject.css');
     document.head.appendChild(style);
 
     var addButtonWrapper = $('<span >');
@@ -64,34 +65,34 @@ $(function () {
     });
     sharePanelMainButtons.appendTo(sharePanelButtons);
     
-    var selectStreamButton = $('<button>', {
-        type: 'button',
-        'class': 'share-panel-services yt-uix-button-toggled yt-uix-button yt-uix-button-text',
-        'data-button-toggle': true,
-        role: 'button',
-        onclick: function() {
-            return false;
-        }
-    });
-    selectStreamButton.appendTo(sharePanelMainButtons);
+    //var selectFolderButton = $('<button>', {
+    //    type: 'button',
+    //    'class': 'share-panel-services yt-uix-button-toggled yt-uix-button yt-uix-button-text',
+    //    'data-button-toggle': true,
+    //    role: 'button',
+    //    onclick: function() {
+    //        return false;
+    //    }
+    //});
+    //selectFolderButton.appendTo(sharePanelMainButtons);
     
-    var selectSteamContent = $('<span>', {
-        'class': 'yt-uix-button-content',
-        text: 'Select Stream'
-    });
+    //var selectSteamContent = $('<span>', {
+    //    'class': 'yt-uix-button-content',
+    //    text: 'Select Folder'
+    //});
     
-    selectSteamContent.appendTo(selectStreamButton);
+    //selectSteamContent.appendTo(selectFolderButton);
     
-    var sharePanelStreamSelect = $('<div>', {
-        'class': 'share-panel-streams-container'
-    });
-    sharePanelStreamSelect.appendTo(sharePanel);
+    //var sharePanelFolderSelect = $('<div>', {
+    //    'class': 'share-panel-folders-container'
+    //});
+    //sharePanelFolderSelect.appendTo(sharePanel);
 
-    var streamSelect = $('<select>', {
-        id: 'streamSelect',
-        'class': 'yt-uix-form-input-text share-panel-url'
-    });
-    streamSelect.appendTo(sharePanelStreamSelect);
+    //var folderSelect = $('<select>', {
+    //    id: 'folderSelect',
+    //    'class': 'yt-uix-form-input-text share-panel-url'
+    //});
+    //folderSelect.appendTo(sharePanelFolderSelect);
     
     var sharePanelPlaylistSelect = $('<div>', {
         'class': 'share-panel-playlists-container'
@@ -183,77 +184,70 @@ $(function () {
     });
     videoAddButton.appendTo(sharePanelPlaylistSelect);
 
-    selectStreamButton.click(function () {
-        sharePanelStreamSelect.removeClass('hid');
+    //selectFolderButton.click(function () {
+    //    sharePanelFolderSelect.removeClass('hid');
 
-        selectPlaylistButton.removeClass('yt-uix-button-toggled');
-        selectPlaylistButton.addClass('yt-uix-button');
-        sharePanelPlaylistSelect.addClass('hid');
-    });
+    //    selectPlaylistButton.removeClass('yt-uix-button-toggled');
+    //    selectPlaylistButton.addClass('yt-uix-button');
+    //    sharePanelPlaylistSelect.addClass('hid');
+    //});
     
     selectPlaylistButton.click(function () {
         sharePanelPlaylistSelect.removeClass('hid');
 
-        selectStreamButton.addClass('yt-uix-button');
-        selectStreamButton.removeClass('yt-uix-button-toggled');
-        sharePanelStreamSelect.addClass('hid');
+        //selectFolderButton.addClass('yt-uix-button');
+        //selectFolderButton.removeClass('yt-uix-button-toggled');
+        //sharePanelFolderSelect.addClass('hid');
     });
 
-    chrome.runtime.sendMessage({ method: "getStreams" }, function (getStreamsResponse) {
+    chrome.runtime.sendMessage({ method: "getFolgers" }, function (getFoldersResponse) {
 
-        var streams = getStreamsResponse.streams;
+        var folders = getFoldersResponse.folders;
 
-        if (streams.length === 1) {
+        if (folders.length === 1) {
    
-            selectStreamButton.removeClass('yt-uix-button-toggled');
-            sharePanelStreamSelect.addClass('hid');
+            //selectFolderButton.removeClass('yt-uix-button-toggled');
+            //sharePanelFolderSelect.addClass('hid');
             
             selectPlaylistButton.addClass('yt-uix-button-toggled');
             sharePanelPlaylistSelect.removeClass('hid');
 
-            if (streams[0].playlists.length === 0) {
-
-                //  TODO: Render input element and create playlist.
-
-            } else {
-                var firstPlaylist = _.find(streams[0].playlists, function (playlist) {
-                    return playlist.id == streams[0].firstListId;
-                });
+            var firstPlaylist = _.find(folders[0].playlists, function (playlist) {
+                return playlist.id == folders[0].firstPlaylistId;
+            });
                 
+            $('<option>', {
+                value: firstPlaylist.id,
+                text: firstPlaylist.title
+            }).appendTo(playlistSelect);
+
+            var nextPlaylist = _.find(folders[0].playlists, function (playlist) {
+                return playlist.id == firstPlaylist.nextPlaylistId;
+            });
+                
+            while (nextPlaylist.id != firstPlaylist.id) {
+                    
                 $('<option>', {
-                    value: firstPlaylist.id,
-                    text: firstPlaylist.title
+                    value: nextPlaylist.id,
+                    text: nextPlaylist.title
                 }).appendTo(playlistSelect);
 
-                var nextPlaylist = _.find(streams[0].playlists, function (playlist) {
-                    return playlist.id == firstPlaylist.nextListId;
+                nextPlaylist = _.find(folders[0].playlists, function (playlist) {
+                    return playlist.id == nextPlaylist.nextPlaylistId;
                 });
-                
-                while (nextPlaylist.id != firstPlaylist.id) {
-                    
-                    $('<option>', {
-                        value: nextPlaylist.id,
-                        text: nextPlaylist.title
-                    }).appendTo(playlistSelect);
-
-                    nextPlaylist = _.find(streams[0].playlists, function (playlist) {
-                        return playlist.id == nextPlaylist.nextListId;
-                    });
-                }
             }
             
-
         }
 
-        _.each(streams, function (stream) {
+        //_.each(folders, function (folder) {
 
-            var streamOption = $('<option>', {
-                value: stream.id,
-                text: stream.title
-            });
+        //    var folderOption = $('<option>', {
+        //        value: folder.id,
+        //        text: folder.title
+        //    });
 
-            streamOption.appendTo(streamSelect);
-        });
+        //    folderOption.appendTo(folderSelect);
+        //});
     });
     
     chrome.runtime.onMessage.addListener(function (request) {
@@ -277,49 +271,6 @@ $(function () {
                 break;
         }
   });
-
-    //  TODO: Connect to YouTube pages and live-update the injected selects instead of the user needing to refresh the page.
-    //chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    //    switch (request.method) {
-
-    //        case 'streamAdded':
-                
-    //            //  TODO: Sort alphabetically
-    //            var streamOption = $('<option>', {
-    //                value: request.stream.id,
-    //                text: request.stream.title
-    //            });
-
-    //            streamOption.appendTo(streamSelect);
-                
-    //            break;
-    //        case 'streamRemoved':
-                
-    //            streamSelect.find('option[value="' + request.stream.id + '"]');
-                
-    //            break;
-    //        case 'playlistAdded':
-
-    //            //  TODO: Sort alphabetically
-    //            var playlistOption = $('<option>', {
-    //                value: request.playlist.id,
-    //                text: request.playlist.title
-    //            });
-
-    //            playlistOption.appendTo(playlistSelect);
-                
-    //            break;
-    //        case 'playlistRemoved':
-                
-    //            playlistSelect.find('option[value="' + request.playlist.id + '"]');
-                
-    //            break;
-    //        default:
-    //            break;
-
-    //    }
-
-    //});
 
 });
 

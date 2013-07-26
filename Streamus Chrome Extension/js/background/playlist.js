@@ -7,16 +7,10 @@ define(['playlistItems',
         'video',
         'videos',
         'helpers',
-<<<<<<< HEAD
-        'repeatButtonStates',
-        'shareCode'
-], function (ytHelper, PlaylistItems, PlaylistItem, programState, localStorageManager, Video, Videos, helpers, repeatButtonStates, ShareCode) {
-=======
         'repeatButtonState',
         'shareCode',
         'shareableEntityType'
 ], function (PlaylistItems, PlaylistItem, programState, settingsManager, Video, Videos, helpers, RepeatButtonState, ShareCode, ShareableEntityType) {
->>>>>>> origin/Development
         'use strict';
 
         var playlistModel = Backbone.Model.extend({
@@ -83,10 +77,6 @@ define(['playlistItems',
                             title: title
                         },
                         error: function (error) {
-<<<<<<< HEAD
-                            //  TODO: Rollback client-side transaction somehow?
-=======
->>>>>>> origin/Development
                             console.error("Error saving title", error);
                         }
                     });
@@ -103,189 +93,12 @@ define(['playlistItems',
                             firstItemId: firstItemId
                         },
                         error: function (error) {
-<<<<<<< HEAD
-                            //  TODO: Rollback client-side transaction somehow?
-=======
->>>>>>> origin/Development
                             console.error("Error saving firstItemId", error, error.message);
                         }
                     });
                     
                 });
 
-<<<<<<< HEAD
-                var self = this;
-                
-                //  Load videos from datasource if provided.
-                var dataSource = this.get('dataSource');
-
-                if (dataSource != null) {
-                    var ytHelperDataFunction = null;
-
-                    switch (dataSource.type) {
-                        case DataSources.YOUTUBE_PLAYLIST:
-                            ytHelperDataFunction = ytHelper.getPlaylistResults;
-                            break;
-                        case DataSources.YOUTUBE_CHANNEL:
-                            ytHelperDataFunction = ytHelper.getFeedResults;
-                            break;
-                        //  This datasource works differently.
-                        case DataSources.SHARED_PLAYLIST:
-                            ytHelperDataFunction = null;
-                            break;
-                        default:
-                            console.error("Unhandled dataSource type:", dataSource.type);
-                    }
-                    
-                    if (ytHelperDataFunction != null) {
-
-                        var getVideosCallCount = 0;
-                        var unsavedVideoCount = 0;
-                        var orderedVideosArray = [];
-
-                        var getVideosInterval = setInterval(function () {
-
-                            ytHelperDataFunction(dataSource.id, getVideosCallCount, function (results) {
-
-                                //  Results will be null if an error occurs while fetching data.
-                                if (results == null || results.length === 0) {
-                                    clearInterval(getVideosInterval);
-                                    self.set('dataSourceLoaded', true);
-                                } else {
-
-                                    _.each(results, function (entry, index) {
-                                        var videoId = entry.media$group.yt$videoid.$t;
-                                        addVideoByIdAtIndex(videoId, entry.title.$t, index, results.length);
-                                    });
-
-                                    getVideosCallCount++;
-                                }
-
-                            });
-
-                            function addVideoByIdAtIndex(videoId, videoTitle, index, resultCount) {
-                                ytHelper.getVideoInformation(videoId, videoTitle, function (videoInformation) {
-
-                                    if (videoInformation != null) {
-                                        var video = getVideoFromInformation(videoInformation);
-                                        //  Insert at index to preserve order of videos retrieved from YouTube API
-                                        orderedVideosArray[index] = video;
-                                    }
-
-                                    unsavedVideoCount++;
-
-                                    //  Periodicially send bursts of packets (up to 50 videos in length) to the server and trigger visual update.
-                                    if (unsavedVideoCount == resultCount) {
-
-                                        var videos = new Videos(orderedVideosArray);
-                                        
-                                        //  orderedVideosArray may have some empty slots which get converted to empty Video objects; drop 'em.
-                                        var videosWithIds = videos.withIds();
-                                        
-                                        self.addItems(videosWithIds);
-                                        orderedVideosArray = [];
-                                        unsavedVideoCount = 0;
-                                    }
-
-                                });
-                            }
-
-                            //  TODO: Rewrite the Video constructor such that it can create a Video object from videoInformation
-                            function getVideoFromInformation(videoInformation) {
-                                var id = videoInformation.media$group.yt$videoid.$t;
-                                var durationInSeconds = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
-                                var author = videoInformation.author[0].name.$t;
-
-                                return new Video({
-                                    id: id,
-                                    title: videoInformation.title.$t,
-                                    duration: durationInSeconds,
-                                    author: author
-                                });
-                            }
-
-
-                        }, 4000);
-                    }
-                }
-
-            },
-            
-            selectItem: function (playlistItem) {
-                playlistItem.set('playedRecently', true);
-
-                var history = this.get('history');
-                //  Unshift won't have an effect if item exists in history, so remove silently.
-                history.remove(playlistItem, { silent: true });
-                history.unshift(playlistItem);
-            },
-
-            getItemById: function(id) {
-                return this.get('items').get(id);
-            },
-
-            getRelatedVideo: function() {
-                var relatedVideos = this.get('items').getRelatedVideos();
-
-                var randomIndex = Math.floor(Math.random() * relatedVideos.length);
-                var randomRelatedVideo = relatedVideos[randomIndex];
-
-                return randomRelatedVideo;
-            },
-            
-            gotoNextItem: function () {
-
-                var nextItem;
-
-                var isRadioModeEnabled = localStorageManager.getIsRadioModeEnabled();
-                var isShuffleEnabled = localStorageManager.getIsShuffleEnabled();
-                var repeatButtonState = localStorageManager.getRepeatButtonState();
-                
-                //  Radio mode overrides the other settings
-                if (isRadioModeEnabled) {
-                    
-                    var relatedVideo = this.getRelatedVideo();
-                    nextItem = this.addItem(relatedVideo);
-                    
-                } else {
-                    
-                    //  If repeat video is enabled then keep on the last item in history
-                    if (repeatButtonState === repeatButtonStates.REPEAT_VIDEO_ENABLED) {
-                        //  TODO: potentially need to be popping from history so gotoPrevious doesn't loop through same item a lot
-                        nextItem = this.get('history').at(0);
-                    }
-                    else if (isShuffleEnabled) {
-
-                        var items = this.get('items');
-                        var itemsNotPlayedRecently = items.where({ playedRecently: false });
-
-                        if (itemsNotPlayedRecently.length === 0) {
-                            items.each(function (item) {
-                                item.set('playedRecently', false);
-                                itemsNotPlayedRecently.push(item);
-                            });
-                        }
-
-                        nextItem = _.shuffle(itemsNotPlayedRecently)[0];
-
-                    } else {
-
-                        var currentItem = this.get('history').at(0);
-                        var nextItemId = currentItem.get('nextItemId');
-
-                        nextItem = this.get('items').get(nextItemId);
-
-                    }
-
-                }
-                
-                if (nextItem !== null) {
-                    this.selectItem(nextItem);
-                }
-
-                return nextItem;
-=======
->>>>>>> origin/Development
             },
             
             //  This is generally called from the foreground to not couple the Video object with the foreground.
@@ -385,11 +198,7 @@ define(['playlistItems',
 
                     },
                     error: function (error) {
-<<<<<<< HEAD
-                        console.error(error);
-=======
                         console.error("There was an issue saving" + self.get('title'), error);
->>>>>>> origin/Development
                     }
                 });
             },
@@ -446,20 +255,12 @@ define(['playlistItems',
 
                 var self = this;
                 $.ajax({
-<<<<<<< HEAD
-                    url: programState.getBaseUrl() + 'Playlist/GetShareCode',
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {
-                        playlistId: self.get('id')
-=======
                     url: programState.getBaseUrl() + 'ShareCode/GetShareCode',
                     type: 'GET',
                     dataType: 'json',
                     data: {
                         entityType: ShareableEntityType.PLAYLIST,
                         entityId: self.get('id')
->>>>>>> origin/Development
                     },
                     success: function (shareCodeJson) {
                         var shareCode = new ShareCode(shareCodeJson);

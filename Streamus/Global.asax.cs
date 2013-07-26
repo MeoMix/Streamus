@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-﻿using System;
-using System.ComponentModel;
-=======
 ﻿using System.Net.Http.Formatting;
->>>>>>> origin/Development
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -13,12 +8,9 @@ using Autofac;
 using Newtonsoft.Json;
 using Streamus.App_Start;
 using Streamus.Dao;
-<<<<<<< HEAD
-=======
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Dto;
->>>>>>> origin/Development
 
 namespace Streamus
 {
@@ -39,8 +31,6 @@ namespace Streamus
             ModelBinders.Binders.DefaultBinder = new JsonEmptyStringNotNullModelBinder();
 
             AutofacRegistrations.RegisterDaoFactory();
-<<<<<<< HEAD
-=======
 
             CreateAutoMapperMaps();
         }
@@ -96,7 +86,6 @@ namespace Streamus
             Mapper.CreateMap<Video, VideoDto>().ReverseMap();
 
             Mapper.AssertConfigurationIsValid();
->>>>>>> origin/Development
         }
     }
 
@@ -106,16 +95,12 @@ namespace Streamus
         public override object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext)
         {
             bindingContext.ModelMetadata.ConvertEmptyStringToNull = false;
-<<<<<<< HEAD
-            Binders = new ModelBinderDictionary() { DefaultBinder = this };
-=======
 
             Binders = new ModelBinderDictionary
                 {
                     DefaultBinder = this
                 };
 
->>>>>>> origin/Development
             return base.BindModel(controllerContext, bindingContext);
         }
     }

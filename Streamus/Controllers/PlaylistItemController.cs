@@ -3,19 +3,13 @@ using Streamus.Domain.Managers;
 using Streamus.Dto;
 using System;
 using System.Collections.Generic;
-<<<<<<< HEAD
-=======
 using System.Linq;
->>>>>>> origin/Development
 using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
     public class PlaylistItemController : Controller
     {
-<<<<<<< HEAD
-        private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
-=======
         private static readonly PlaylistItemManager PlaylistItemManager = new PlaylistItemManager();
         private static readonly PushMessageManager PushMessageManager = new PushMessageManager();
 
@@ -56,17 +50,12 @@ namespace Streamus.Controllers
 
             return new JsonDataContractActionResult(savedPlaylistItemDtos);
         }
->>>>>>> origin/Development
 
         [HttpPut]
         public ActionResult Update(PlaylistItemDto playlistItemDto)
         {
-<<<<<<< HEAD
-            PlaylistManager.UpdatePlaylistItem(playlistItem);
-=======
             PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto);
             PlaylistItemManager.Update(playlistItem);
->>>>>>> origin/Development
 
             PlaylistItemDto updatedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
 
@@ -76,13 +65,9 @@ namespace Streamus.Controllers
         [HttpPut]
         public ActionResult UpdateMultiple(List<PlaylistItemDto> playlistItemDtos)
         {
-<<<<<<< HEAD
-            PlaylistManager.UpdatePlaylistItems(playlistItems);
-=======
             List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos);
 
             PlaylistItemManager.Update(playlistItems);
->>>>>>> origin/Development
 
             List<PlaylistItemDto> savedPlaylistItemDtos = PlaylistItemDto.Create(playlistItems);
 
@@ -92,11 +77,7 @@ namespace Streamus.Controllers
         [HttpDelete]
         public JsonResult Delete(Guid id)
         {
-<<<<<<< HEAD
-            PlaylistManager.DeleteItem(id, playlistId);
-=======
             PlaylistItemManager.Delete(id);
->>>>>>> origin/Development
 
             return Json(new
                 {

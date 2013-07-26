@@ -39,10 +39,6 @@
     text-shadow: 0 1px 0 #fff;
 }
 
-<<<<<<< HEAD
-.gradient {
-  background-image:-webkit-gradient(linear,left top, left bottom, from(rgba(255,255,255,.1)), to(rgba(0,0,0,.1)));
-=======
 .gradient { background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, .1)), to(rgba(0, 0, 0, .1))); }
 
 .halfGradient { background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, .1)), to(rgba(103, 103, 103, .1))); }
@@ -51,11 +47,6 @@
     font-size: 14px;
     top: 154px;
     left: 70px;
->>>>>>> origin/Development
-}
-
-.halfGradient {
-  background-image:-webkit-gradient(linear,left top, left bottom, from(rgba(255,255,255,.1)), to(rgba(103, 103, 103,.1)));
 }
 
 #head {
@@ -248,13 +239,8 @@
     margin-top: 18px;
 }
 
-<<<<<<< HEAD
-#VideoDisplay {
-    margin-top: 29px;
-=======
 .clickable {
     cursor: pointer;
->>>>>>> origin/Development
 }
 
 #PlayPauseButton {
@@ -266,38 +252,6 @@
     width: 70px;
 }
 
-<<<<<<< HEAD
-#PlayPauseButton .path {
-    fill: black;
-}
-
-#NextButton {
-  top:0;
-  right:0;
-  width:40px;
-  height:40px;
-  border-left:1px solid #ccc; 
-  border-bottom: 1px solid #fff;
-  cursor:pointer;
-  background-color: #efefef !important;
-  z-index: 2;
-}
-
-#PreviousButton{
-  top:0;
-  right:40px;
-  width:40px;
-  height:40px;
-  border-left:1px solid #ccc; 
-  border-right:1px solid #fff;
-  border-bottom: 1px solid #fff;
-  cursor:pointer;
-  background-color: #efefef !important;
-}
-
-.contextMenuItem[disabled=disabled] {
-    color: gray !important;
-=======
 #PlayPauseButton .path { fill: black; }
 
 #NextButton {
@@ -328,33 +282,9 @@
 
 #PlayPauseButton.disabled:hover {
     background-color: transparent;
->>>>>>> origin/Development
     cursor: default;
 }
 
-<<<<<<< HEAD
-#PlayPauseButton.disabled:hover {
-  background-color: transparent;
-  cursor: default;
-}
-
-#NextButton.disabled:hover,
-#PreviousButton.disabled:hover {
-    background-color: #efefef !important;
-    cursor: default;
-}
-
-#PlayPauseButton.disabled .path,
-#PreviousButton.disabled > svg *,
-#NextButton.disabled > svg * {
-    fill: gray;
-}
-
-#PreviousButton > svg *,
-#NextButton > svg * {
-    fill: black;
-}
-=======
 #NextButton.disabled:hover,
 #PreviousButton.disabled:hover {
     background-color: #efefef !important;
@@ -367,33 +297,19 @@
 
 #PreviousButton > svg *,
 #NextButton > svg * { fill: black; }
->>>>>>> origin/Development
 
 #PlayPauseButton.disabled:active,
 #NextButton.disabled:active,
 #PreviousButton.disabled:active { background-image: none; }
 
-<<<<<<< HEAD
-#PlayPauseButton:hover, 
-=======
 #PlayPauseButton:hover,
->>>>>>> origin/Development
 #HomeMenuButton:hover,
 #PlaylistsMenuButton:hover { background-color: rgba(255, 255, 255, 0.3); }
 
 #NextButton:hover,
 #PreviousButton:hover { background-color: #F3F3F3 !important; }
 
-<<<<<<< HEAD
-#NextButton:hover,
-#PreviousButton:hover {
-    background-color: #F3F3F3 !important;
-}
-
-#PlayPauseButton:active, 
-=======
 #PlayPauseButton:active,
->>>>>>> origin/Development
 #NextButton:active,
 #PreviousButton:active { background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, .1)), color-stop(0.5, rgba(0, 0, 0, 0))); }
 
@@ -452,33 +368,6 @@
 }
 
 #VideoTimeProgressBar::-webkit-slider-thumb {
-<<<<<<< HEAD
-  -webkit-appearance:none !important; 
-  width:12px; 
-  height:12px; 
-  margin-top:-2px; 
-  border-radius:6px; 
-  background: #eaeaea; 
-  -webkit-box-shadow: 0 0 5px #000; 
-  cursor: pointer;
-}
-
-#VideoTimeProgressBar::-webkit-slider-thumb:active {
-  background: #fff;
-}
-  
-#timeDisplayWrapper {
-  overflow: hidden;
-  top:40px;
-  left:70px;
-  right:0;
-  height:30px; 
-  border-left: 1px solid #000; 
-  border-top:1px solid #000; 
-  background-color: #666;
-  background-image: -webkit-gradient(linear,left top, left bottom, from(rgba(0,0,0,.5)), to(rgba(0,0,0,0)));
-  z-index: 2;
-=======
     -webkit-appearance: none !important;
     -webkit-box-shadow: 0 0 5px #000;
     background: #eaeaea;
@@ -487,7 +376,6 @@
     height: 12px;
     margin-top: -2px;
     width: 12px;
->>>>>>> origin/Development
 }
 
 #VideoTimeProgressBar::-webkit-slider-thumb:active { background: #fff; }
@@ -505,31 +393,6 @@
     z-index: 2;
 }
 
-<<<<<<< HEAD
-#head {
-    overflow: visible !important;
-}
-
-#VolumeControl {
-  right:0;
-  top: 40px;
-  width:40px;
-  height:135px;
-}
-
-#MuteButton {
-  -webkit-box-shadow:inset 0 3px 5px #000;
-  top: 0;
-  width:40px;
-  height:30px;
-  border-left: 1px solid #000; 
-  cursor: pointer; 
-  border-right:1px solid #444;
-  background: rgba(0, 0, 0, .5);
-  right:0;
-  border-right:none;
-    z-index: 2;
-=======
 #time {
     border-right: 1px solid #666;
     color: #fff;
@@ -538,7 +401,6 @@
     text-align: center;
     text-shadow: 0 1px 0 #000 !important;
     width: 100px;
->>>>>>> origin/Development
 }
 
 #head { overflow: visible !important; }
@@ -551,24 +413,6 @@
     width: 40px;
 }
 
-<<<<<<< HEAD
-#VolumeSliderWrapper {
-  -webkit-transition: top 0.5s;
-  width:40px; 
-  height:100px; 
-  background: #333;
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius:5px;
-  top:-75px;
-  right:0;
-  z-index:0;
-  -webkit-box-shadow: 0 3px 5px rgba(0,0,0,0.3)
-}
-
-#VolumeSliderWrapper.expanded {
-    top: 30px;
-}
-=======
 #MuteButton {
     -webkit-box-shadow: inset 0 3px 5px #000;
     background: rgba(0, 0, 0, .5);
@@ -606,7 +450,6 @@
 #VolumeControl.expanded { height: 135px !important; }
 
 #VolumeControl.expanded #VolumeSliderWrapper { top: 30px; }
->>>>>>> origin/Development
 
 #ShuffleButton:hover,
 #RadioModeButton:hover,
@@ -630,13 +473,7 @@
     right: 4px;
 }
 
-<<<<<<< HEAD
-#RepeatPlaylistSvg {
-    display: none;
-}
-=======
 #RepeatPlaylistSvg { display: none; }
->>>>>>> origin/Development
 
 #VolumeSlider {
     -webkit-appearance: none !important;
@@ -787,11 +624,6 @@
     color: #fff;
 }
 
-<<<<<<< HEAD
-.pressed *,
-.pressed svg *{
-  fill: #6ABD45 !important;
-=======
 #contextMenu ul li a {
     color: #000;
     font: 12px/2.2 sans-serif;
@@ -804,7 +636,6 @@
     color: gray !important;
     cursor: default;
     text-decoration: line-through !important;
->>>>>>> origin/Development
 }
 
 .pressed *,
@@ -829,10 +660,6 @@
 
 #LoadingSpinner {
     height: 48px;
-<<<<<<< HEAD
-    margin-top: 14px;
-=======
->>>>>>> origin/Development
     margin-left: 10px;
     margin-top: 14px;
     width: 48px;
