@@ -16,7 +16,7 @@ define(['player', 'spinnerManager', 'playerState', 'streamItems'], function (pla
         playTitle: 'Click to play the current video.',
         
         render: function () {
-            
+
             if (StreamItems.where({ selected: true }).length > 0) {
                 this.enable();
             } else {
@@ -58,7 +58,7 @@ define(['player', 'spinnerManager', 'playerState', 'streamItems'], function (pla
         
         initialize: function () {
             
-            this.listenTo(StreamItems, 'change:selected remove', this.render);
+            this.listenTo(StreamItems, 'change:selected empty remove', this.render);
             this.listenTo(player, 'change:state', this.render);
             
             this.render();

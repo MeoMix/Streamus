@@ -195,8 +195,6 @@ define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 
             return requestHeader.name === 'Cookie';
         });
 
-        console.log("Cookie request header:", cookieRequestHeader);
-        
         if (cookieRequestHeader) {
 
             //  I've seen both of these Flash cookies before and I'm not sure if there are more.

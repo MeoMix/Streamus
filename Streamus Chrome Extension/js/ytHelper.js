@@ -104,84 +104,62 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
     return {
         
         getBulkRelatedVideoInformation: function(videoIds, callback) {
-            //  Fetch multiple videos from YouTube is as easy as piping the ids together.
-            var videoIdList = videoIds.join('|');
+            //  TODO: Maybe abort if takes too long or debug this really well.
+            var bulkRelatedVideoInformation = [];
+            var totalVideosToProcess = videoIds.length;
+            var videosProcessed = 0;
+            var videosToProcessConcurrently = 5;
+            var videosProcessing = 0;
 
-            console.log("video id list:", videoIdList);
-            
-            //  Do an async request for the videos's related videos. There isn't a hard dependency on them existing right as a video is created.
-            $.ajax({
-                type: 'GET',
-                url: 'https://gdata.youtube.com/feeds/api/videos/' + videoIdList + '/related',
-                dataType: 'json',
-                data: {
-                    category: 'Music',
-                    v: 2,
-                    alt: 'json',
-                    key: developerKey,
-                    fields: videosInformationFields,
-                    //  Don't really need that many suggested videos, take 5.
-                    'max-results': 5,
-                    strict: true
-                },
-                success: function (result) {
+            var self = this;
+            var youtubeQueryInterval = setInterval(function() {
 
-                    console.log("Result:", result);
+                if (videosProcessed == totalVideosToProcess) {
+                    clearInterval(youtubeQueryInterval);
 
-                    var playableEntryList = [];
-                    var unplayableEntryList = [];
+                    callback(bulkRelatedVideoInformation);
+                } else {
+                    
+                    //  Don't flood the network -- process a few at a time.
+                    if (videosProcessing <= videosToProcessConcurrently) {
+                        videosProcessing++;
 
-                    _.each(result.feed.entry, function (entry) {
+                        var currentVideoId = videoIds.pop();
 
-                        var isValid = validateEntry(entry);
+                        var getRelatedVideoInfoClosure = function(closureCurrentVideoId) {
+                            self.getRelatedVideoInformation(closureCurrentVideoId, function (relatedVideoInformation) {
+                                //  getRelatedVideoInformation might error out.
+                                if (relatedVideoInformation) {
 
-                        if (isValid) {
-                            playableEntryList.push(entry);
-                        } else {
-                            unplayableEntryList.push(entry);
-                        }
+                                    bulkRelatedVideoInformation.push({
+                                        videoId: closureCurrentVideoId,
+                                        relatedVideoInformation: relatedVideoInformation
+                                    });
+                                }
 
-                    });
-
-                    var deferredEvents = [];
-
-                    _.each(unplayableEntryList, function (entry) {
-
-                        var deferred = $.Deferred(function (dfd) {
-
-                            findPlayableByTitle(entry.title.$t, function (playableEntry) {
-                                playableEntryList.push(playableEntry);
-                                dfd.resolve();
+                                videosProcessed++;
+                                videosProcessing--;
                             });
+                        };
 
-                        }).promise();
+                        getRelatedVideoInfoClosure(currentVideoId);
 
-                        deferredEvents.push(deferred);
-                    });
+                    }
 
-                    $.when(deferredEvents).then(function () {
-
-                        if (callback) {
-                            callback(playableEntryList);
-                        }
-                    });
-
-                },
-                error: function (error) {
-                    console.error(error);
                 }
-            });
+
+
+            }, 200);
 
         },
         
         //  When a video comes from the server it won't have its related videos, so need to fetch and populate.
-        getRelatedVideoInformation: function (videoIds, callback) {
-
+        getRelatedVideoInformation: function (videoId, callback) {
 
             //  Do an async request for the videos's related videos. There isn't a hard dependency on them existing right as a video is created.
             $.ajax({
                 type: 'GET',
-                url: 'https://gdata.youtube.com/feeds/api/videos/' + videoIds + '/related',
+                url: 'https://gdata.youtube.com/feeds/api/videos/' + videoId + '/related',
                 dataType: 'json',
                 data: {
                     category: 'Music',
@@ -194,8 +172,6 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
                     strict: true
                 },
                 success: function (result) {
-
-                    console.log("Result:", result);
 
                     var playableEntryList = [];
                     var unplayableEntryList = [];
@@ -238,6 +214,7 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
                 },
                 error: function(error) {
                     console.error(error);
+                    callback();
                 }
             });
         },

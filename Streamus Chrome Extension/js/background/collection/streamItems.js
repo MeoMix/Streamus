@@ -13,8 +13,6 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
             var self = this;
 
             this.on('add', function (addedStreamItem) {
-                console.log("add triggered");
-
                 //  Ensure only one streamItem is selected at a time by de-selecting all other selected streamItems.
                 if (addedStreamItem.get('selected')) {
                     addedStreamItem.trigger('change:selected', addedStreamItem, true);
@@ -30,47 +28,6 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
                 ytHelper.getRelatedVideoInformation(videoId, function(relatedVideoInformation) {
                     addedStreamItem.set('relatedVideoInformation', relatedVideoInformation);
                 });
-
-            });
-
-            this.on('addMultiple', function(addedStreamItems) {
-
-                var selectedStreamItem = self.getSelectedItem();
-
-                if (selectedStreamItem === null) {
-                    console.log("null, setting");
-                    //  If the Stream has any items in it, one should be selected.
-                    //  TODO: For some reason sly.js is selecting the last item added and not the first, this causes both to be selected.
-                    //addedStreamItems[0].set('selected', true);
-                } else {
-                    console.log("triggering selection");
-                    //  Ensure only one streamItem is selected at a time by de-selecting all other selected streamItems.
-                    selectedStreamItem.trigger('change:selected', selectedStreamItem, true);
-                }
-
-                //  TODO: Could probably be improved for very large playlists being added.
-                //  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
-                var sampleSize = addedStreamItems.length > 50 ? 50 : addedStreamItems.length - 1;
-                var randomSampleIndices = helpers.getRandomNonOverlappingNumbers(sampleSize, addedStreamItems.length);
-
-                console.log("AddedStreamItems:", addedStreamItems);
-                console.log("randomSampleIndices:", randomSampleIndices);
-
-                var randomVideoIds = _.map(randomSampleIndices, function(randomSampleIndex) {
-                    return addedStreamItems[randomSampleIndex].get('video').get('id');
-                });
-
-
-                //  Fetch all the related videos for videos on load. I don't want to save these to the DB because they're bulky and constantly change.
-                //  Data won't appear immediately as it is an async request, I just want to get the process started now.
-                ytHelper.getBulkRelatedVideoInformation(randomVideoIds, function(relatedVideoInformationList) {
-
-                    console.log("RelatedVideoInformationList:", relatedVideoInformationList);
-                    //  TODO: Map list back.
-
-                    //randomItem.set('relatedVideoInformation', relatedVideoInformation);
-                });
-
 
             });
 
@@ -112,22 +69,54 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
             //  Handling this manually to not clog the network with getVideoInformation requests
             this.add(streamItems, { silent: true });
 
-            var streamItemsAsModels = _.map(streamItems, function(streamItem) {
-
-                var streamItemModel;
+            var self = this;
+            //  Fetch from collection to make sure references stay correct + leverage conversion to model
+            var streamItemsFromCollection = _.map(streamItems, function (streamItem) {
+                var streamItemId;
 
                 if (streamItem instanceof Backbone.Model) {
-                    streamItemModel = streamItem;
+                    streamItemId = streamItem.get('id');
                 } else {
-
-                    streamItemModel = new StreamItem(streamItem);
-
+                    streamItemId = streamItem.id;
                 }
 
-                return streamItemModel;
+                return self.get(streamItemId);
+            });
+            
+            var selectedStreamItem = this.getSelectedItem();
+
+            if (selectedStreamItem === null) {
+                //  If the Stream has any items in it, one should be selected.
+                this.at(0).set('selected', true);
+            }
+
+            //  TODO: Could probably be improved for very large playlists being added.
+            //  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
+            var sampleSize = streamItemsFromCollection.length >= 50 ? 50 : streamItemsFromCollection.length;
+            var randomSampleIndices = helpers.getRandomNonOverlappingNumbers(sampleSize, streamItemsFromCollection.length);
+
+            var randomVideoIds = _.map(randomSampleIndices, function (randomSampleIndex) {
+                return streamItemsFromCollection[randomSampleIndex].get('video').get('id');
             });
 
-            this.trigger('addMultiple', streamItemsAsModels);
+            //  Fetch all the related videos for videos on load. I don't want to save these to the DB because they're bulky and constantly change.
+            //  Data won't appear immediately as it is an async request, I just want to get the process started now.
+            ytHelper.getBulkRelatedVideoInformation(randomVideoIds, function (bulkInformationList) {
+
+                _.each(bulkInformationList, function (bulkInformation) {
+                    var videoId = bulkInformation.videoId;
+
+                    var streamItem = _.find(streamItemsFromCollection, function (streamItemFromCollection) {
+                        return streamItemFromCollection.get('video').get('id') === videoId;
+                    });
+
+                    streamItem.set('relatedVideoInformation', bulkInformation.relatedVideoInformation);
+
+                });
+                
+            });
+
+            this.trigger('addMultiple', streamItemsFromCollection);
         },
 
         deselectAllExcept: function(streamItemCid) {
@@ -142,10 +131,8 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
 
         },
 
-        getSelectedItem: function() {
-            return this.findWhere(function(streamItem) {
-                return streamItem.get('selected');
-            }) || null;
+        getSelectedItem: function () {
+            return this.findWhere({ selected: true }) || null;
         },
 
         getRandomRelatedVideo: function() {

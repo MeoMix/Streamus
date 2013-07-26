@@ -2,6 +2,7 @@
     'use strict';
 
     var StreamItemView = Backbone.View.extend({
+        
         tagName: 'li',
 
         className: 'streamItem',
@@ -24,19 +25,11 @@
         },
 
         initialize: function () {
-
-            this.toggleSelectedClass();
-            
             this.listenTo(this.model, 'destroy', this.remove);
-            this.listenTo(this.model, 'change:selected', this.toggleSelectedClass);
         },
 
         select: function () {
             this.model.set('selected', true);
-        },
-        
-        toggleSelectedClass: function() {
-            this.$el.toggleClass('active', this.model.get('selected'));
         },
 
         togglePlayingState: function () {

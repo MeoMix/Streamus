@@ -32,20 +32,26 @@
             }).init();
 
             var self = this;
-            StreamItems.each(function (streamItem) {
-                self.addItem(streamItem, true);
-            });
+            
+            if (StreamItems.length > 0) {
+                if (StreamItems.length === 1) {
+                    self.addItem(StreamItems.at(0), true);
+                } else {
+                    self.addItems(StreamItems.models, true);
+                }
+            }
             
             //  Whenever an item is added to the collection, visually add an item, too.
             this.listenTo(StreamItems, 'add', this.addItem);
             this.listenTo(StreamItems, 'addMultiple', this.addItems);
+            this.listenTo(StreamItems, 'change:selected', this.selectItem);
 
             this.sly.reload();
             this.listenTo(StreamItems, 'empty', function() {
                 this.overlay.show();
             });
 
-            this.listenTo(StreamItems, 'remove', this.sly.reload);
+            this.listenTo(StreamItems, 'remove empty', this.sly.reload);
         },
         
         addItem: function (streamItem, activateImmediate) {
@@ -63,7 +69,7 @@
             }
         },
         
-        addItems: function (streamItems) {
+        addItems: function (streamItems, activateImmediate) {
             var streamItemViews = _.map(streamItems, function(streamItem) {
 
                 return new StreamItemView({
@@ -77,12 +83,21 @@
             });
             
             this.sly.add(elements);
+            
+            //  Ensure proper item is selected.
+            var selectedStreamItem = StreamItems.getSelectedItem();
+            this.sly.activate(StreamItems.indexOf(selectedStreamItem), activateImmediate);
             this.overlay.hide();
         },
         
+        selectItem: function (streamItem) {
+            this.sly.activate(StreamItems.indexOf(streamItem));
+        },
+        
         clear: function () {
-            //  Convert to array to avoid error of destroying while iterating over collection.
-            _.invoke(StreamItems.toArray(), 'destroy');
+            StreamItems.reset();
+            StreamItems.trigger('empty');
+            this.slidee.empty();
             this.sly.reload();
         },
 

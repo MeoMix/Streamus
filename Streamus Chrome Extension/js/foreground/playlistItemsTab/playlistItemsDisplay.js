@@ -17,7 +17,7 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamItem
                     
                     var streamItems = activePlaylist.get('items').map(function (playlistItem) {
                         return {
-                            id: playlistItem.get('video').get('id'),
+                            id: _.uniqueId('streamItem_'),
                             video: playlistItem.get('video'),
                             title: playlistItem.get('title'),
                             videoImageUrl: 'http://img.youtube.com/vi/' + playlistItem.get('video').get('id') + '/default.jpg'
@@ -78,7 +78,7 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamItem
                 text: 'Add Video to Stream',
                 onClick: function () {
                     StreamItems.add({
-                        id: clickedItem.get('video').get('id'),
+                        id: _.uniqueId('streamItem_'),
                         video: clickedItem.get('video'),
                         title: clickedItem.get('title'),
                         videoImageUrl: 'http://img.youtube.com/vi/' + clickedItem.get('video').get('id') + '/default.jpg'
@@ -96,7 +96,7 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamItem
 
                     var streamItems = activePlaylist.get('items').map(function (playlistItem) {
                         return {
-                            id: playlistItem.get('video').get('id'),
+                            id: _.uniqueId('streamItem_'),
                             video: playlistItem.get('video'),
                             title: playlistItem.get('title'),
                             videoImageUrl: 'http://img.youtube.com/vi/' + playlistItem.get('video').get('id') + '/default.jpg'
@@ -124,7 +124,7 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamItem
         var playlistItem = backgroundManager.getPlaylistItemById(itemId);
 
         StreamItems.add({
-            id: playlistItem.get('video').get('id'),
+            id: _.uniqueId('streamItem_'),
             video: playlistItem.get('video'),
             title: playlistItem.get('title'),
             videoImageUrl: 'http://img.youtube.com/vi/' + playlistItem.get('video').get('id') + '/default.jpg'
