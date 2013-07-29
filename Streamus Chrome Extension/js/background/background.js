@@ -94,6 +94,9 @@ define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 
             case 'videoStreamSrcChange':
                 player.set('videoStreamSrc', request.videoStreamSrc);
                 break;
+            case 'needSeekTo':
+                player.triggerInitialLoadDataSeekTo();
+                break;
             case 'addVideoByIdToPlaylist':
                 var playlist = backgroundManager.getPlaylistById(request.playlistId);
                 

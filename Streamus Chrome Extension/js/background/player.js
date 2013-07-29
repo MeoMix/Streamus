@@ -102,14 +102,13 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
             youTubeVideo.on('timeupdate', function() {
                 self.set('currentTime', Math.ceil(this.currentTime));
             });
-            
+
             youTubeVideo.on('loadedmetadata', function () {
                 this.currentTime = self.get('currentTime');
             });
             
             var seekToInterval = null;
             youTubeVideo.on('canplay', function () {
-                console.log("Youtube video can play");
                 self.set('streamusPlayer', this);
 
                 //  I store volume out of 100 and volume on HTML5 player is range of 0 to 1 so divide by 100.
@@ -119,7 +118,7 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
 
                 //  This ensure that youTube continues to update blob data.
                 if (videoStreamSrc.indexOf('blob') > -1) {
-                    console.log("Updating from blob data");
+
                     seekToInterval = setInterval(function () {
 
                         if (self.get('streamusPlayer') != null) {
@@ -137,7 +136,6 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
             });
             
             this.on('change:videoStreamSrc', function (model, videoStreamSrc) {
-
                 //  Resetting streamusPlayer because it might not be able to play on src change.
                 self.set('streamusPlayer', null);
                 youTubeVideo.attr('src', videoStreamSrc);
@@ -150,7 +148,7 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
                 youTubePlayer = new window.YT.Player('MusicHolder', {
                     events: {
                         'onReady': function () {
-           
+
                             self.set('muted', youTubePlayer.isMuted());
                             self.set('volume', youTubePlayer.getVolume());
 
@@ -177,6 +175,11 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
 
             });
         },
+
+        //  YouTube won't give up the data if the src URL is non-blob unless we trigger a seekTo. Bastards.
+        triggerInitialLoadDataSeekTo: function(){
+            youTubePlayer.seekTo(1, true);
+        },
             
         cueVideoById: function (videoId) {
             
@@ -185,12 +188,10 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
             var streamusPlayer = this.get('streamusPlayer');
             
             if (streamusPlayer != null) {
-                console.log("Streamus player is not null, removing autoplay");
                 streamusPlayer.pause();
                 $(streamusPlayer).removeAttr('autoplay');
             }
 
-            console.log("loading video by ID");
             youTubePlayer.loadVideoById({
                 videoId: videoId,
                 startSeconds: 0,
@@ -293,14 +294,13 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
         },
 
         seekTo: function (timeInSeconds) {
-
             this.set('currentTime', timeInSeconds);
             var streamusPlayer = this.get('streamusPlayer');
 
             if (streamusPlayer != null) {
                 streamusPlayer.currentTime = timeInSeconds;
             }
-            
+
             //  Seek even if streamusPlayer is defined because we probably need to update the blob if it is.
             //  The true paramater allows the youTubePlayer to seek ahead past its buffered video.
             youTubePlayer.seekTo(timeInSeconds, true);

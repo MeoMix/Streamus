@@ -28,10 +28,20 @@ $(function () {
                                 method: "videoStreamSrcChange", videoStreamSrc: videoStreamSrc
                             });
 
-                            console.log("Remove src from stream");
-                            videoStream.removeAttr('src');
-                            
-                            console.log("VideoStream:", videoStream);
+                            if (videoStreamSrc.indexOf('blob') > -1) {
+                                console.log("Blob detected");
+                                videoStream.removeAttr('src');
+                            }
+                            else {
+                                console.log("No blob, removing", videoStream);
+                                videoStream.removeAttr('src');
+
+                                chrome.runtime.sendMessage({
+                                    method: "needSeekTo"
+                                });
+
+                            }
+
                         }
 
                     }
