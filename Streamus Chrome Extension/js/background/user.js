@@ -24,13 +24,16 @@ define(['folders', 'programState', 'settingsManager'], function (Folders, progra
         initialize: function () {
             
             var self = this;
-            //chrome.idle.onStateChanged.addListener(function (newState) {
-                
-            //    if (newState === 'active' && self.get('dirty')) {
-            //        fetchUser.call(self, false);
-            //    }
+            chrome.idle.setDetectionInterval(15);
+            chrome.idle.onStateChanged.addListener(function (newState) {
 
-            //});
+                if (newState === 'active') {
+
+                    self.set('loaded', false);
+                    fetchUser.call(self, false);
+                }
+
+            });
 
             //  chrome.Storage.sync is cross-computer syncing with restricted read/write amounts.
             chrome.storage.sync.get(syncUserIdKey, function (data) {
@@ -114,11 +117,11 @@ define(['folders', 'programState', 'settingsManager'], function (Folders, progra
         var self = this;
         this.fetch({
             success: function (model) {
-
+                console.log("fetch user success");
                 onUserLoaded.call(self, model, shouldSetSyncStorage);
             },
             error: function (error) {
-
+                console.log("fetch user fail");
                 //  Failed to fetch the user. Recover by creating a new user for now. Should probably do some sort of notify.
                 createNewUser.call(self);
                 console.error(error);

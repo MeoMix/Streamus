@@ -20,20 +20,35 @@ define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'fold
 
             var self = this;
             //  TODO:  What if user's loaded state gets set before backgroundManager initializes? Not really possible unless instant response, but still.
-            user.once('change:loaded', function() {
-                if (user.get('folders').length === 0) {
-                    throw "User should be initialized and have at least 1 folder before loading backgroundManager.";
+            user.on('change:loaded', function (model, loaded) {
+                console.log("Change:loaded has fired", loaded);
+                
+                if (loaded) {
+
+                    if (user.get('folders').length === 0) {
+                        throw "User should be initialized and have at least 1 folder before loading backgroundManager.";
+                    }
+
+                    //  TODO: I hate this whole concept of having to check if its ready else wait for it to be ready.
+                    //  Do not initialize the backgroundManager until player is ready to go.
+                    if (player.get('ready')) {
+                        initialize.call(self);
+                    } else {
+                        player.once('change:ready', function() {
+                            initialize.call(self);
+                        });
+                    }
+
+                } else {
+                    
+                    //  Unload streamus when refreshing ??
+                    self.set('activePlaylist', null);
+                    self.set('activeFolder', null);
+                    self.set('allPlaylistItems', new PlaylistItems());
+                    self.set('allPlaylists', new Playlists());
+                    self.set('allFolders', new Folders());
                 }
 
-                //  TODO: I hate this whole concept of having to check if its ready else wait for it to be ready.
-                //  Do not initialize the backgroundManager until player is ready to go.
-                if (player.get('ready')) {
-                    initialize.call(self);
-                } else {
-                    player.once('change:ready', function() {
-                        initialize.call(self);
-                    });
-                }
             });
 
         },
@@ -58,6 +73,7 @@ define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'fold
     });
     
     function initialize() {
+        console.log("Initializing backgroundManager with user:", user);
         this.get('allFolders').add(user.get('folders').models);
         this.get('allPlaylists').add(getAllPlaylists());
         this.get('allPlaylistItems').add(getAllPlaylistItems());

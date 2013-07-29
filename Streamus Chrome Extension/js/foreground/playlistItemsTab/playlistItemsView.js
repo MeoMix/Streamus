@@ -20,10 +20,10 @@ define(['contextMenuView', 'backgroundManager', 'streamItems', 'playlistItemView
             this.ul.empty();
 
             var activePlaylist = backgroundManager.get('activePlaylist');
-
+            
             var listItems = [];
 
-            if (activePlaylist.get('items').length === 0) {
+            if (activePlaylist === null || activePlaylist.get('items').length === 0) {
                 this.emptyNotification.show();
             } else {
                 this.emptyNotification.hide();

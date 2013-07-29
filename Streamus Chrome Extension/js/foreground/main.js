@@ -13,7 +13,6 @@ require(['jquery',
     ], function () {
     'use strict';
 
-
     //  TODO: Would like to access through define module, but not sure how..
     var player = chrome.extension.getBackgroundPage().YouTubePlayer;
         
@@ -29,7 +28,15 @@ require(['jquery',
             if (user.get('loaded')) {
                 loadForeground();
             } else {
-                user.once('change:loaded', loadForeground);
+                user.on('change:loaded', function (model, loaded) {
+                    console.log("main js change loaded");
+
+                    if (loaded) {
+                        loadForeground();
+                    } else {
+                        //  Show refreshing message?
+                    }
+                });
             }
         }
 
@@ -39,6 +46,7 @@ require(['jquery',
     function loadForeground() {
 
         if (player.get('ready')) {
+            console.log("Player is ready, requiring foreground");
             //  Load foreground when the background indicates it has loaded.
             require(['foreground']);
         } else {

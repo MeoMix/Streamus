@@ -229,7 +229,7 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
 
         var activeFolder = backgroundManager.get('activeFolder');
 
-        if (activeFolder.get('playlists').length === 0) return;
+        if (activeFolder === null || activeFolder.get('playlists').length === 0) return;
 
         var firstPlaylistId = activeFolder.get('firstPlaylistId');
         var currentPlaylist = activeFolder.get('playlists').get(firstPlaylistId);

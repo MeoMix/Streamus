@@ -20,4 +20,13 @@ define(['backgroundManager',
 ], function () {
     'use strict';
 
+    //  Close the foreground whenever the PC goes idle.
+    chrome.idle.onStateChanged.addListener(function (newState) {
+
+        if (window && newState === 'idle') {
+            window.close();
+        }
+
+    });
+
 });

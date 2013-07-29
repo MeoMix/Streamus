@@ -44,7 +44,13 @@ define(['backgroundManager'], function (backgroundManager) {
         });
 
         backgroundManager.on('change:activePlaylist ', function (model, activePlaylist) {
-            headerInput.val(activePlaylist.get('title'));
+            
+            if (activePlaylist === null) {
+                headerInput.val('No Active Playlist');
+            } else {
+                headerInput.val(activePlaylist.get('title'));
+            }
+
         });
 
         var addButton = $('<div/>', {
