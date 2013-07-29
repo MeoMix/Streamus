@@ -14,9 +14,13 @@ $(function () {
                 mutations.forEach(function (mutation) {
                     var attributeName = mutation.attributeName;
 
+                    console.log("Attribute name has changed:", attributeName);
+
                     if (attributeName === 'src') {
 
                         var videoStreamSrc = mutation.target.getAttribute(attributeName);
+
+                        console.log("VideoStreamSrc:", videoStreamSrc);
 
                         //  Don't send a blank src across, I think?
                         if (videoStreamSrc != null && $.trim(videoStreamSrc) != '') {
@@ -24,7 +28,10 @@ $(function () {
                                 method: "videoStreamSrcChange", videoStreamSrc: videoStreamSrc
                             });
 
+                            console.log("Remove src from stream");
                             videoStream.removeAttr('src');
+                            
+                            console.log("VideoStream:", videoStream);
                         }
 
                     }

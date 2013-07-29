@@ -200,8 +200,10 @@ define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 
             //  I've seen both of these Flash cookies before and I'm not sure if there are more.
             var flashCookieValue = 'f3=40008';
             var alternateFlashCookieValue = 'f3=40000';
-            var html5CookieValue = 'f2=40001000';
-            //var html5CookieValue = 'f2=40000000';
+            //var html5CookieValue = 'f2=40001000';
+            var html5CookieValue = 'f2=40000000';
+
+            console.log("Cookie request header:", cookieRequestHeader);
            
             //  Swap out the flash cookie variable with the HTML5 counterpart.
             if (cookieRequestHeader.value.indexOf(flashCookieValue) !== -1) {

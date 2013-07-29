@@ -44,11 +44,7 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
                 onClick: function () {
 
                     if (!isDeleteDisabled) {
-                        clickedPlaylist.destroy({
-                            error: function (error) {
-                                console.error(error);
-                            }
-                        });
+                        clickedPlaylist.destroy();
                     }
                 }
             }, {
@@ -174,7 +170,7 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
     reload();
     scrollIntoView(backgroundManager.get('activePlaylist'), false);
 
-    //  TODO: Needs to be dry with playlistItemsDisplay
+    //  TODO: Needs to be dry with playlistItemsView
     function scrollIntoView(activePlaylist, useAnimation) {
 
         //  Since we emptied our list we lost the selection, reselect.
@@ -228,6 +224,7 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
 
     //  Refreshes the playlist display with the current playlist information.
     function reload() {
+        console.log("playlistsDisplay is reloading");
         playlistListUl.empty();
 
         var activeFolder = backgroundManager.get('activeFolder');

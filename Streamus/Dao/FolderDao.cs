@@ -12,7 +12,14 @@ namespace Streamus.Dao
 
             if (id != default(Guid))
             {
-                folder = NHibernateSession.Get<Folder>(id);
+                try
+                {
+                    folder = NHibernateSession.Load<Folder>(id);
+                }
+                catch (Exception exception)
+                {
+                    //  Consume exception and return null playlist.
+                }
             }
 
             return folder;

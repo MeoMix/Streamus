@@ -32,5 +32,25 @@ namespace Streamus.Domain.Managers
             }
         }
 
+        public void Delete(Guid id)
+        {
+            try
+            {
+                NHibernateSessionManager.Instance.BeginTransaction();
+
+                Folder folder = FolderDao.Get(id);
+                folder.User.RemoveFolder(folder);
+                FolderDao.Delete(folder);
+
+                NHibernateSessionManager.Instance.CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                NHibernateSessionManager.Instance.RollbackTransaction();
+                throw;
+            }
+        }
+
     }
 }

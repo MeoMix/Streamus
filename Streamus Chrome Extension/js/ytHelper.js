@@ -113,7 +113,7 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
 
             var self = this;
             var youtubeQueryInterval = setInterval(function() {
-
+                console.log("interval tick. vpd and pcing", videosProcessed, videosProcessing);
                 if (videosProcessed == totalVideosToProcess) {
                     clearInterval(youtubeQueryInterval);
 
@@ -139,6 +139,7 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
 
                                 videosProcessed++;
                                 videosProcessing--;
+                                console.log("vpd and pcing", videosProcessed, videosProcessing);
                             });
                         };
 
@@ -153,6 +154,7 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
 
         },
         
+        //  TODO: Implement caching.
         //  When a video comes from the server it won't have its related videos, so need to fetch and populate.
         getRelatedVideoInformation: function (videoId, callback) {
 
@@ -331,6 +333,7 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
             });
         },
 
+        //  implement caching
         getVideoInformation: function (config) {
             //videoId, optionalVideoTitle, callback
             $.ajax({

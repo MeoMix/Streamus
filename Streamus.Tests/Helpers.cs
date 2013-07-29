@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Managers;
 using Streamus.Dto;
@@ -49,35 +50,27 @@ namespace Streamus.Tests
 
         /// <summary>
         ///     Create a new Folder, save it to the DB, then generate a PlaylistDto which has the
-        ///     Folder as its parent.
+        ///     Folder as its parent. Creates a folder for the Playlist if no folderId provided.
         /// </summary>
         /// <returns></returns>
-        public static PlaylistDto CreatePlaylistDto()
+        public static PlaylistDto CreatePlaylistDto(Guid folderIdOverride = default(Guid))
         {
-            Folder folder = new Folder();
-            FolderManager.Save(folder);
+            if (folderIdOverride == default(Guid))
+            {
+                Folder folder = new Folder();
+                FolderManager.Save(folder);
+                folderIdOverride = folder.Id;
+                
+                //  Ensure folder is lazy-loaded by evicting to make sure this helper method doesn't have side-effects.
+                NHibernateSessionManager.Instance.Evict(folder);
+            }
 
             var playlistDto = new PlaylistDto
                 {
-                    FolderId = folder.Id
+                    FolderId = folderIdOverride
                 };
 
             return playlistDto;
-        }
-
-        public static User CreateSavedUserWithPlaylist()
-        {
-            User user = UserManager.CreateUser();
-            UserManager.Save(user);
-
-            return user;
-        }
-
-        public static Folder CreateSavedFolderWithPlaylist()
-        {
-            User user = CreateSavedUserWithPlaylist();
-
-            return user.Folders.First();
         }
 
         /// <summary>
@@ -86,8 +79,7 @@ namespace Streamus.Tests
         /// </summary>
         public static PlaylistItemDto CreatePlaylistItemDto()
         {
-            Folder folder = CreateSavedFolderWithPlaylist();
-            Guid playlistId = folder.Playlists.First().Id;
+            Guid playlistId = UserManager.CreateUser().Folders.First().Playlists.First().Id;
 
             Video video = CreateUnsavedVideoWithId();
             VideoDto videoDto = VideoDto.Create(video);
@@ -109,7 +101,7 @@ namespace Streamus.Tests
         {
             if (playlistId == default(Guid))
             {
-                Folder folder = CreateSavedFolderWithPlaylist();
+                Folder folder = UserManager.CreateUser().Folders.First();
                 playlistId = folder.Playlists.First().Id;
             }
 

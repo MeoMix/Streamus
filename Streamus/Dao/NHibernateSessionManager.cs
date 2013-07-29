@@ -103,6 +103,11 @@ namespace Streamus.Dao
             GetSession().Clear();
         }
 
+        public void Evict(object obj)
+        {
+            GetSession().Evict(obj);
+        }
+
         public void BeginTransaction()
         {
             ITransaction transaction = ContextTransaction;

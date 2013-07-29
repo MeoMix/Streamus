@@ -185,7 +185,7 @@
                 <div id="CurrentPlaylistItemDisplay" class="header">
                 </div>
 
-                <div id="PlaylistItemList" class="list">
+                <div id="PlaylistItemsView" class="list">
                     <div class="emptyListNotification">
                         Your Playlist is empty. Try adding some videos by clicking above.
                     </div>
@@ -216,6 +216,19 @@
             </ul>  
         </div>
         
+        <script type="text/template" id="playlistItemTemplate">
+            
+            <div class="playlistItemVideoImage" style="background-image: url(http://img.youtube.com/vi/<%- video.get('id')%>/default.jpg)">
+
+            </div>
+            
+            <div class="textWrapper">
+                <span class="playlistItemTitle"><%- title %></span>
+                <span class="playlistItemInfo"><!--Set inside render to utilize helpers.js--></span>
+            </div>
+        
+        </script>
+        
         <script type="text/template" id="streamItemTemplate">
             
             <div class="videoTitleOverlay imageOverlayWrapper">
@@ -224,10 +237,11 @@
             
             <img class="videoImage" src="<%- videoImageUrl %>" />
             
-            <div class="star"></div>
+<!--            <div class="star"></div>-->
             <div class="videoTimeOverlay imageOverlayWrapper">
                 <span class="videoTime videoImageOverlay"><!--Set inside render to utilize helpers.js--></span>
             </div>
+        
         
         </script>
         

@@ -78,6 +78,7 @@ define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'fold
                 if (playerState === PlayerState.PLAYING || playerState === PlayerState.ENDED) {
                     player.loadVideoById(videoId);
                 } else {
+                    console.log("Cueuing video by ID:", videoId);
                     player.cueVideoById(videoId);
                 }
             }
@@ -148,12 +149,8 @@ define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'fold
 
                 if (self.get('activePlaylist') === playlist) {
 
-                    var folderId = playlist.get('folderId');
-                    var playlistFolder = self.getFolderById(folderId);
-
                     var nextPlaylistId = playlist.get('nextPlaylistId');
-
-                    var activePlaylist = playlistFolder.get('playlists').get(nextPlaylistId);
+                    var activePlaylist = folder.get('playlists').get(nextPlaylistId);
 
                     self.set('activePlaylist', activePlaylist);
                 }

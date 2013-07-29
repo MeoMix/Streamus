@@ -1,4 +1,5 @@
 ﻿using System;
+using NHibernate;
 using NUnit.Framework;
 using Streamus.Dao;
 using Streamus.Domain;
@@ -11,6 +12,7 @@ namespace Streamus.Tests.Manager_Tests
     public class FolderManagerTest : AbstractTest
     {
         private IFolderDao FolderDao { get; set; }
+        private User User { get; set; }
         private static readonly FolderManager FolderManager = new FolderManager();
 
         /// <summary>
@@ -27,6 +29,8 @@ namespace Streamus.Tests.Manager_Tests
             {
                 throw exception.InnerException;
             }
+
+            User = new UserManager().CreateUser();
         }
 
         /// <summary>
@@ -50,6 +54,40 @@ namespace Streamus.Tests.Manager_Tests
             Folder folderFromDatabase = FolderDao.Get(folder.Id);
 
             Assert.IsNotNull(folderFromDatabase);
+        }
+
+        /// <summary>
+        ///     Verifies that a Folder can be deleted properly. The Folder
+        ///     has no playlists underneath it and the User is assumed to not have any additional Folders.
+        /// </summary>
+        [Test]
+        public void DeleteFolder()
+        {
+            //  Create a new Folder and write it to the database.
+            Folder folder = User.CreateAndAddFolder();
+            FolderManager.Save(folder);
+
+            //  Now delete the created Playlist and ensure it is removed.
+            FolderManager.Delete(folder.Id);
+
+            //  Remove entity from NHibernate cache to force DB query to ensure actually created.
+            NHibernateSessionManager.Instance.Clear();
+
+            Folder deletedFolder = FolderDao.Get(folder.Id);
+
+            bool objectNotFoundExceptionEncountered = false;
+            try
+            {
+                //  Evaluating a lazyily-loaded entity which isn't in the database will throw an ONF exception.
+                Assert.IsNull(deletedFolder);
+            }
+            catch (ObjectNotFoundException)
+            {
+                objectNotFoundExceptionEncountered = true;
+            }
+
+            Assert.IsTrue(objectNotFoundExceptionEncountered);
+
         }
     }
 }

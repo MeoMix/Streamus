@@ -795,7 +795,7 @@
     opacity: 1.0;
 }
 
-.star {
+/*.star {
    width: 0px;
    height: 0px;
    border-right:  100px solid transparent;
@@ -830,4 +830,4 @@
    border-left: 100px solid transparent;
    -webkit-transform: rotate(-70deg);
    content: '';
-}
+}*/

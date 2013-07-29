@@ -10,12 +10,12 @@ namespace Streamus.Domain
 {
     public class Playlist : AbstractShareableDomainEntity
     {
-        public Folder Folder { get; set; }
+        public virtual Folder Folder { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
-        public ICollection<PlaylistItem> Items { get; set; }
-        public PlaylistItem FirstItem { get; set; }
-        public Playlist NextPlaylist { get; set; }
-        public Playlist PreviousPlaylist { get; set; }
+        public virtual ICollection<PlaylistItem> Items { get; set; }
+        public virtual PlaylistItem FirstItem { get; set; }
+        public virtual Playlist NextPlaylist { get; set; }
+        public virtual Playlist PreviousPlaylist { get; set; }
 
         public Playlist()
         {
@@ -42,7 +42,7 @@ namespace Streamus.Domain
             return playlist;
         }
 
-        public void Copy(Playlist playlist)
+        public virtual void Copy(Playlist playlist)
         {
             Title = playlist.Title;
 
@@ -60,10 +60,10 @@ namespace Streamus.Domain
             }
         }
 
-        public void AddItem(PlaylistItem playlistItem)
+        public virtual void AddItem(PlaylistItem playlistItem)
         {
             //  Item must be removed from other Playlist before AddItem affects it.
-            if (playlistItem.Playlist != null && playlistItem.Playlist != this)
+            if (playlistItem.Playlist != null && playlistItem.Playlist.Id != Id)
             {
                 string message = string.Format("Item {0} is already a child of Playlist {1}", playlistItem.Title, playlistItem.Playlist.Title);
                 throw new Exception(message);
@@ -92,12 +92,12 @@ namespace Streamus.Domain
             Items.Add(playlistItem);
         }
 
-        public void AddItems(IEnumerable<PlaylistItem> playlistItems)
+        public virtual void AddItems(IEnumerable<PlaylistItem> playlistItems)
         {
             playlistItems.ToList().ForEach(AddItem);
         }
 
-        public void RemoveItem(PlaylistItem playlistItem)
+        public virtual void RemoveItem(PlaylistItem playlistItem)
         {
             if (FirstItem == playlistItem)
             {
@@ -115,7 +115,7 @@ namespace Streamus.Domain
             Items.Remove(playlistItem);
         }
 
-        public void ValidateAndThrow()
+        public virtual void ValidateAndThrow()
         {
             var validator = new PlaylistValidator();
             validator.ValidateAndThrow(this);

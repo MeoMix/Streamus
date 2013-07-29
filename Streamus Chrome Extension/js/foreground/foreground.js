@@ -13,7 +13,7 @@ define(['backgroundManager',
         'videoDisplayView',
         'headerTitleView',
         'playlistItemInput',
-        'playlistItemsDisplay',
+        'playlistItemsView',
         'playlistInput',
         'playlistsDisplay',
         'streamView'

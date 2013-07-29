@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
 using Streamus.Controllers;
 using Streamus.Dao;
 using Streamus.Domain;
@@ -13,6 +14,8 @@ namespace Streamus.Tests.Controller_Tests
     [TestFixture]
     public class PlaylistControllerTest : AbstractTest
     {
+        private static readonly UserManager UserManager = new UserManager();
+        private static readonly PlaylistItemController PlaylistItemController = new PlaylistItemController();
         private static readonly ShareCodeManager ShareCodeManager = new ShareCodeManager();
         private static readonly PlaylistController PlaylistController = new PlaylistController();
         private IFolderDao FolderDao { get; set; }
@@ -31,6 +34,39 @@ namespace Streamus.Tests.Controller_Tests
             {
                 throw exception.InnerException;
             }
+        }
+
+        [Test]
+        public void DeletePlaylist_NextToBigPlaylist_NoStackOverflowException()
+        {
+            Folder folder = UserManager.CreateUser().Folders.First();
+            Guid firstPlaylistId = folder.Playlists.First().Id;
+
+            PlaylistDto playlistDto = Helpers.CreatePlaylistDto(folder.Id);
+            JsonDataContractActionResult result = (JsonDataContractActionResult)PlaylistController.Create(playlistDto);
+            PlaylistDto createdPlaylistDto = (PlaylistDto)result.Data;
+
+            const int numItemsToCreate = 150;
+            List<PlaylistItemDto> playlistItemDtos = Helpers.CreatePlaylistItemsDto(numItemsToCreate, createdPlaylistDto.Id);
+
+            foreach (List<PlaylistItemDto> splitPlaylistItemDtos in Split(playlistItemDtos, 50))
+            {
+                PlaylistItemController.CreateMultiple(splitPlaylistItemDtos);
+            } 
+            
+            NHibernateSessionManager.Instance.Clear();
+
+            //  Now delete the first playlist.
+            PlaylistController.Delete(firstPlaylistId);
+        }
+
+        public static List<List<PlaylistItemDto>> Split(List<PlaylistItemDto> source, int splitSize)
+        {
+            return source
+                .Select((x, i) => new { Index = i, Value = x })
+                .GroupBy(x => x.Index / splitSize)
+                .Select(x => x.Select(v => v.Value).ToList())
+                .ToList();
         }
 
         [Test]
@@ -56,7 +92,7 @@ namespace Streamus.Tests.Controller_Tests
         [Test]
         public void GetSharedPlaylist_PlaylistShareCodeExists_CopyOfPlaylistCreated()
         {
-            Folder folder = Helpers.CreateSavedFolderWithPlaylist();
+            Folder folder = UserManager.CreateUser().Folders.First();
 
             ShareCode shareCode = ShareCodeManager.GetShareCode(ShareableEntityType.Playlist, folder.Playlists.First().Id);
 

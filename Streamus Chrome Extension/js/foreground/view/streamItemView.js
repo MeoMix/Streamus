@@ -25,7 +25,9 @@
         },
 
         initialize: function () {
-            this.listenTo(this.model, 'destroy', this.remove);
+            this.listenTo(this.model, 'destroy', function() {
+                this.options.parent.sly.remove(this.render().el);
+            });
         },
 
         select: function () {

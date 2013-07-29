@@ -51,8 +51,10 @@ namespace Streamus.Tests.Manager_Tests
 
             //  Make a new Playlist object each time to ensure no side-effects from previous test case.
             Playlist = folder.CreateAndAddPlaylist();
-
             PlaylistManager.Save(Playlist);
+
+            //  Ensure that the Playlist is still lazily-loaded in all instances.
+            NHibernateSessionManager.Instance.Evict(Playlist);
         }
 
         /// <summary>

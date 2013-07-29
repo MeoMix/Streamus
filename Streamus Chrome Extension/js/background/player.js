@@ -109,6 +109,7 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
             
             var seekToInterval = null;
             youTubeVideo.on('canplay', function () {
+                console.log("Youtube video can play");
                 self.set('streamusPlayer', this);
 
                 //  I store volume out of 100 and volume on HTML5 player is range of 0 to 1 so divide by 100.
@@ -118,6 +119,7 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
 
                 //  This ensure that youTube continues to update blob data.
                 if (videoStreamSrc.indexOf('blob') > -1) {
+                    console.log("Updating from blob data");
                     seekToInterval = setInterval(function () {
 
                         if (self.get('streamusPlayer') != null) {
@@ -183,10 +185,12 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
             var streamusPlayer = this.get('streamusPlayer');
             
             if (streamusPlayer != null) {
+                console.log("Streamus player is not null, removing autoplay");
                 streamusPlayer.pause();
                 $(streamusPlayer).removeAttr('autoplay');
             }
 
+            console.log("loading video by ID");
             youTubePlayer.loadVideoById({
                 videoId: videoId,
                 startSeconds: 0,

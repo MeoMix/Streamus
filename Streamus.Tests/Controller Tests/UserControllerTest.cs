@@ -6,6 +6,7 @@ using Streamus.Controllers;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
+using Streamus.Domain.Managers;
 using Streamus.Dto;
 
 namespace Streamus.Tests.Controller_Tests
@@ -13,6 +14,7 @@ namespace Streamus.Tests.Controller_Tests
     [TestFixture]
     public class UserControllerTest : AbstractTest
     {
+        private static readonly UserManager UserManager = new UserManager();
         private static readonly PlaylistItemController PlaylistItemController = new PlaylistItemController();
         private IUserDao UserDao { get; set; }
 
@@ -35,7 +37,7 @@ namespace Streamus.Tests.Controller_Tests
         [Test]
         public void GetUserWithBulkPlaylistItemsInFolder_UserCreatedWithLotsOfItems_UserHasOneFolderOnePlaylist()
         {
-            User user = Helpers.CreateSavedUserWithPlaylist();
+            User user = UserManager.CreateUser();
 
             const int numItemsToCreate = 2000;
 

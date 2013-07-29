@@ -1,20 +1,60 @@
 ﻿//  Represents the videos in a given playlist
-define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamItems'], function (ContextMenuView, backgroundManager, player, helpers, StreamItems) {
+define(['contextMenuView', 'backgroundManager', 'streamItems', 'playlistItemView'], function (ContextMenuView, backgroundManager, StreamItems, PlaylistItemView) {
     'use strict';
 
     var PlaylistItemsView = Backbone.View.extend({
-        //  TODO: Change this to view
-        el: $('#PlaylistItemList'),
+
+        el: $('#PlaylistItemsView'),
         
-        //  TODO: Not sure if this is quite how I want to do this.
-        ul: $('#PlaylistItemList ul'),
+        ul: $('#PlaylistItemsView ul'),
         
-        emptyNotification: $('#PlaylistItemList .emptyListNotification'),
+        emptyNotification: $('#PlaylistItemsView .emptyListNotification'),
         
         events: {
             'contextmenu': 'showContextMenu',
             'contextmenu ul li': 'showItemContextMenu',
             'click ul li': 'addItemToStream'
+        },
+        
+        render: function () {
+            this.ul.empty();
+
+            var activePlaylist = backgroundManager.get('activePlaylist');
+
+            var listItems = [];
+
+            if (activePlaylist.get('items').length === 0) {
+                this.emptyNotification.show();
+            } else {
+                this.emptyNotification.hide();
+
+                var firstItemId = activePlaylist.get('firstItemId');
+
+                var playlistItem = activePlaylist.get('items').get(firstItemId);
+
+                //  Build up the ul of li's representing each playlistItem.
+                do {
+
+                    if (playlistItem !== null) {
+
+                        var playlistItemView = new PlaylistItemView({
+                            model: playlistItem
+                        });
+
+                        var element = playlistItemView.render().el;
+
+                        listItems.push(element);
+
+                        playlistItem = activePlaylist.get('items').get(playlistItem.get('nextItemId'));
+                    }
+
+                } while (playlistItem && playlistItem.get('id') !== firstItemId)
+
+                //  Do this all in one DOM insertion to prevent lag in large playlists.
+                this.ul.append(listItems);
+            }
+
+            return this;
         },
         
         initialize: function() {
@@ -45,42 +85,39 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamItem
                 }
             });
 
-            this.listenTo(backgroundManager, 'change:activePlaylist', this.reload);
+            this.listenTo(backgroundManager, 'change:activePlaylist', this.render);
             this.listenTo(backgroundManager.get('allPlaylistItems'), 'add', this.addItem);
-            this.listenTo(backgroundManager.get('allPlaylistItems'), 'remove', this.removeItem);
+            this.listenTo(backgroundManager.get('allPlaylistItems'), 'remove', function() {
 
-            this.reload();
+                if (this.ul.find('li').length === 0) {
+                    this.emptyNotification.show();
+                }
+                
+            });
+
+            this.render();
         },
         
         addItem: function (playlistItem) {
-            console.log("addItem is firing");
+            var playlistItemView = new PlaylistItemView({
+                model: playlistItem
+            });
 
-            var listItem = buildListItem(playlistItem);
+            var element = playlistItemView.render().$el;
 
             if (this.ul.find('li').length > 0) {
 
                 var previousItemId = playlistItem.get('previousItemId');
 
                 var previousItemLi = this.ul.find('li[data-itemid="' + previousItemId + '"]');
-                listItem.insertAfter(previousItemLi);
+                element.insertAfter(previousItemLi);
 
             } else {
-                listItem.appendTo(this.ul);
+                element.appendTo(this.ul);
             }
 
             this.emptyNotification.hide();
-            this.scrollIntoView(item);
-            
-        },
-        
-        removeItem: function (playlistItem) {
-            console.log("Remove item is firing");
-            this.ul.find('li[data-itemid="' + playlistItem.get('id') + '"]').remove();
-
-            if (this.ul.find('li').length === 0) {
-                this.emptyNotification.show();
-            }
-
+            this.scrollItemIntoView(playlistItem);
         },
         
         showContextMenu: function (event) {
@@ -210,89 +247,16 @@ define(['contextMenuView', 'backgroundManager', 'player', 'helpers', 'streamItem
             
         },
         
-        //  TODO: Reload should be called render.
-        //  Refresh all the videos displayed to ensure they GUI matches background's data.
-        reload: function () {
-            console.log("Reload is firing");
-
-            this.ul.empty();
-
-            var activePlaylist = backgroundManager.get('activePlaylist');
-
-            var listItems = [];
-
-            if (activePlaylist.get('items').length === 0) {
-                this.emptyNotification.show();
-            } else {
-                this.emptyNotification.hide();
-
-                var firstItemId = activePlaylist.get('firstItemId');
-
-                var item = activePlaylist.get('items').get(firstItemId);
-
-                //  Build up the ul of li's representing each playlistItem.
-                do {
-
-                    if (item !== null) {
-
-                        var listItem = buildListItem(item);
-                        listItems.push(listItem);
-
-                        item = activePlaylist.get('items').get(item.get('nextItemId'));
-                    }
-
-                } while (item && item.get('id') !== firstItemId)
-
-                //  Do this all in one DOM insertion to prevent lag in large playlists.
-                this.ul.append(listItems);
-            }
-            
-        },
-        
         scrollItemIntoView: function(item) {
             var itemId = item.get('id');
-            var $activeItem = this.ul.find('li[data-itemid="' + itemId + '"]');
+            var activeItem = this.ul.find('li[data-itemid="' + itemId + '"]');
 
-            if ($activeItem.length > 0) {
-                $activeItem.scrollIntoView(true);
+            if (activeItem.length > 0) {
+                activeItem.scrollIntoView(true);
             }
         }
         
     });
-
-    //  TODO: This should become a template.
-    function buildListItem(item) {
-        
-        var listItem = $('<li/>', {
-            'data-itemid': item.get('id')
-        });
-        
-        var video = item.get('video');
-
-        $('<div>', {
-            'class': 'playlistItemVideoImage',
-            css: {
-                backgroundImage: 'url(' + 'http://img.youtube.com/vi/' + video.get('id') + '/default.jpg' + ')',
-            }
-        }).appendTo(listItem);
-
-        var textWrapper = $('<div>', {
-            'class': 'textWrapper'
-        }).appendTo(listItem);
-
-        var itemTitle = $('<span/>', {
-            text: item.get('title')
-        });
-        itemTitle.appendTo(textWrapper);
-
-        $('<span/>', {
-            text: helpers.prettyPrintTime(video.get('duration')) + ' by ' + video.get('author')
-        }).appendTo(textWrapper);
-        
-        helpers.scrollElementInsideParent(itemTitle);
-
-        return listItem;
-    }
 
     return new PlaylistItemsView;
 });

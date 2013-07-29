@@ -12,7 +12,7 @@ namespace Streamus.Dao
 
             if (id != default(Guid))
             {
-                playlist = NHibernateSession.Get<Playlist>(id);
+                playlist = NHibernateSession.Load<Playlist>(id);
             }
 
             return playlist;

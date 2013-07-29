@@ -14,6 +14,8 @@
         overlay: $('#StreamViewOverlay'),
 
         initialize: function () {
+            var self = this;
+
             
             // Call Sly on frame
             this.sly = new window.Sly(this.$el, {
@@ -30,8 +32,6 @@
                 easing: 'easeOutExpo',
                 clickBar: 1
             }).init();
-
-            var self = this;
             
             if (StreamItems.length > 0) {
                 if (StreamItems.length === 1) {
@@ -40,7 +40,7 @@
                     self.addItems(StreamItems.models, true);
                 }
             }
-            
+
             //  Whenever an item is added to the collection, visually add an item, too.
             this.listenTo(StreamItems, 'add', this.addItem);
             this.listenTo(StreamItems, 'addMultiple', this.addItems);
@@ -55,18 +55,24 @@
         },
         
         addItem: function (streamItem, activateImmediate) {
+
             var streamItemView = new StreamItemView({
-                model: streamItem
+                model: streamItem,
+                parent: this
             });
 
             var element = streamItemView.render().el;
             this.sly.add(element);
-            this.overlay.hide();
-            
+
             if (streamItem.get('selected')) {
                 //  activateImmediate will go directly to element without animation.
                 this.sly.activate(element, activateImmediate);
             }
+
+            //  TODO: This fixes some odd padding issue with slyjs on the first item being added. Not sure why add doesn't fix it? 
+            //  Re-opening the player and calling this same method works fine..
+            this.sly.reload();
+            this.overlay.hide();
         },
         
         addItems: function (streamItems, activateImmediate) {
@@ -86,6 +92,7 @@
             
             //  Ensure proper item is selected.
             var selectedStreamItem = StreamItems.getSelectedItem();
+            //  TODO: ActivateImmediate doesn't seem to be doing anything.
             this.sly.activate(StreamItems.indexOf(selectedStreamItem), activateImmediate);
             this.overlay.hide();
         },

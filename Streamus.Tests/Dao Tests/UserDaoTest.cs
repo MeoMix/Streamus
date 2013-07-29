@@ -9,7 +9,6 @@ namespace Streamus.Tests.Dao_Tests
     {
         private IUserDao UserDao { get; set; }
 
-
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
         /// </summary>

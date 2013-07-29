@@ -14,7 +14,7 @@ var require = {
         'radioModeButton': 'foreground/playerControls/radioModeButton',
         'repeatButton': 'foreground/playerControls/repeatButton',
 
-        'playlistItemsDisplay': 'foreground/playlistItemsTab/playlistItemsDisplay',
+        
         'playlistItemInput': 'foreground/playlistItemsTab/playlistItemInput',
         'playlistsDisplay': 'foreground/playlistsTab/playlistsDisplay',
         'playlistInput': 'foreground/playlistsTab/playlistInput',
@@ -57,5 +57,7 @@ var require = {
         'streamItemView': 'foreground/view/streamItemView',
         'streamView': 'foreground/view/streamView',
         'videoDisplayView': 'foreground/view/videoDisplayView',
+        'playlistItemView': 'foreground/playlistItemsTab/playlistItemView',
+        'playlistItemsView': 'foreground/playlistItemsTab/playlistItemsView'
     }
 };

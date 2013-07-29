@@ -93,6 +93,7 @@
     <Content Include="js\foreground\model\contextMenu.js" />
     <Content Include="js\foreground\model\contextMenuGroup.js" />
     <Content Include="js\foreground\model\contextMenuItem.js" />
+    <Content Include="js\foreground\playlistItemsTab\playlistItemView.js" />
     <Content Include="js\foreground\view\contextMenuView.js" />
     <Content Include="js\options\settingsManager.js" />
     <Content Include="js\options\main.js" />
@@ -178,7 +179,7 @@
     <Content Include="js\foreground\playerControls\nextButton.js" />
     <Content Include="js\foreground\playerControls\volumeControl.js" />
     <Content Include="js\foreground\playlistItemsTab\playlistItemInput.js" />
-    <Content Include="js\foreground\playlistItemsTab\playlistItemsDisplay.js" />
+    <Content Include="js\foreground\playlistItemsTab\playlistItemsView.js" />
     <Content Include="js\foreground\playlistsTab\playlistInput.js" />
     <Content Include="js\foreground\playlistsTab\playlistsDisplay.js" />
     <Content Include="js\foreground\progressBar.js" />
