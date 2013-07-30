@@ -16,7 +16,6 @@
         initialize: function () {
             var self = this;
 
-            
             // Call Sly on frame
             this.sly = new window.Sly(this.$el, {
                 horizontal: 1,
@@ -56,6 +55,8 @@
         
         addItem: function (streamItem, activateImmediate) {
 
+            console.log("HELLO ONE: ", this);
+
             var streamItemView = new StreamItemView({
                 model: streamItem,
                 parent: this
@@ -76,10 +77,13 @@
         },
         
         addItems: function (streamItems, activateImmediate) {
+
+            var self = this;
             var streamItemViews = _.map(streamItems, function(streamItem) {
 
                 return new StreamItemView({
-                    model: streamItem
+                    model: streamItem,
+                    parent: self
                 });
 
             });

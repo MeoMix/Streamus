@@ -24,11 +24,16 @@
             return this;
         },
 
-        initialize: function () {
-            this.parent = this.options.parent;
+        initialize: function (options) {
+            if (options.parent === undefined) {
+                console.trace();
+                throw "StreamItemView should have a parent.";
+            }
+
+            this.parent = options.parent;
 
             var self = this;
-            this.listenTo(this.model, 'destroy', function() {
+            this.listenTo(this.model, 'destroy', function () {
                 self.parent.sly.remove(this.render().el);
             });
         },

@@ -169,8 +169,8 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
                     alt: 'json',
                     key: developerKey,
                     fields: videosInformationFields,
-                    //  Don't really need that many suggested videos, take 20.
-                    'max-results': 20,
+                    //  Don't really need that many suggested videos, take 10.
+                    'max-results': 10,
                     strict: true
                 },
                 success: function (result) {

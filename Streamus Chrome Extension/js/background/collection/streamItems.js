@@ -153,23 +153,15 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
 
             }));
 
-            return relatedVideos;
-        },
-
-        getRandomRelatedVideo: function() {
-
-            var relatedVideos = this.getRelatedVideos();
-
             //  Don't add any videos that are already in the stream.
             var self = this;
-            console.log("related videos:", relatedVideos);
-            relatedVideos = _.filter(relatedVideos, function(relatedVideo) {
-                var alreadyExistingItem = self.find(function(streamItem) {
+
+            relatedVideos = _.filter(relatedVideos, function (relatedVideo) {
+                var alreadyExistingItem = self.find(function (streamItem) {
 
                     var sameVideoId = streamItem.get('video').get('id') === relatedVideo.get('id');
 
                     var inBanList = _.contains(self.bannedVideoIdList, relatedVideo.get('id'));
-                    console.log("inBanList:", inBanList);
                     //  TODO: I don't think this does quite what I want it to do.
                     //var similiarVideoName = levDistance(item.get('video').get('title'), relatedVideo.get('title')) < 3;
 
@@ -180,7 +172,7 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
             });
 
             // Try to filter out 'playlist' songs, but if they all get filtered out then back out of this assumption.
-            var tempFilteredRelatedVideos = _.filter(relatedVideos, function(relatedVideo) {
+            var tempFilteredRelatedVideos = _.filter(relatedVideos, function (relatedVideo) {
                 //  assuming things >8m are playlists.
                 var isJustOneSong = relatedVideo.get('duration') < 480;
                 var isNotLive = relatedVideo.get('title').toLowerCase().indexOf('live') === -1;
@@ -191,8 +183,34 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
             if (tempFilteredRelatedVideos.length !== 0) {
                 relatedVideos = tempFilteredRelatedVideos;
             }
-            
-            return relatedVideos[_.random(relatedVideos.length - 1)];
+
+            return relatedVideos;
+        },
+
+        getRandomRelatedVideo: function() {
+
+            var relatedVideos = this.getRelatedVideos();
+
+            var groupedRelatedVideoLists = _.groupBy(relatedVideos, function (relatedVideo) {
+                return relatedVideo.get('id');
+            });
+
+            var videoArrayLengths = _.pluck(groupedRelatedVideoLists, 'length');
+
+            //  Grouping the related videos will allow us to select the array with the highest number of occurrances and grab a random video from there.
+            //  In this way we grab the 'most related for playlist' because it is part of the group of videos which are most related by occurrance.
+            var maxNumberOfOccurrances = _.max(videoArrayLengths, function (videoArrayLength) {
+                return videoArrayLength;
+            });
+
+            //  These arrays contain the duplicates of videos in which we should select. Grab one, grab a video from it and go.
+            var maxLengthRelatedVideos = _.filter(groupedRelatedVideoLists, function (groupedRelatedVideoList) {
+                return groupedRelatedVideoList.length === maxNumberOfOccurrances;
+            });
+
+            var relatedVideo = maxLengthRelatedVideos[_.random(maxLengthRelatedVideos.length - 1)][0];
+
+            return relatedVideo;
         },
         
         //  If a streamItem which was selected is removed, selectNext will have a removedSelectedItemIndex provided
@@ -235,6 +253,8 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
                     } else if (radioModeEnabled) {
 
                         var randomRelatedVideo = this.getRandomRelatedVideo();
+
+                        console.log("Adding random related video and marking it as selected");
 
                         this.add({
                             video: randomRelatedVideo,

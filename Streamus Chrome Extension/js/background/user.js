@@ -27,11 +27,11 @@ define(['folders', 'programState', 'settingsManager'], function (Folders, progra
             chrome.idle.setDetectionInterval(15);
             chrome.idle.onStateChanged.addListener(function (newState) {
 
-                if (newState === 'active') {
+                //if (newState === 'active') {
 
-                    self.set('loaded', false);
-                    fetchUser.call(self, false);
-                }
+                //    self.set('loaded', false);
+                //    fetchUser.call(self, false);
+                //}
 
             });
 
