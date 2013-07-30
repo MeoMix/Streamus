@@ -1,4 +1,4 @@
-﻿define(['contextMenuView', 'player', 'backgroundManager', 'helpers'], function (ContextMenuView, player, backgroundManager, helpers) {
+﻿define(['contextMenuView', 'player', 'backgroundManager', 'helpers', 'streamItems'], function (ContextMenuView, player, backgroundManager, helpers, StreamItems) {
     'use strict';
 
     var StreamItemView = Backbone.View.extend({
@@ -25,8 +25,11 @@
         },
 
         initialize: function () {
+            this.parent = this.options.parent;
+
+            var self = this;
             this.listenTo(this.model, 'destroy', function() {
-                this.options.parent.sly.remove(this.render().el);
+                self.parent.sly.remove(this.render().el);
             });
         },
 
@@ -81,6 +84,15 @@
                         position: 3,
                         text: 'Remove ' + this.model.get('title'),
                         onClick: function () {
+                            self.model.destroy();
+                        }
+                    }, {
+                        position: 4,
+                        text: 'Ban until Stream Clear',
+                        disabled: StreamItems.getRelatedVideos().length < 5,
+                        title: StreamItems.getRelatedVideos().length < 5 ? 'Your Stream is low on unbanned videos. Try adding more videos before banning again.' : '',
+                        onClick: function () {
+                            StreamItems.ban(self.model);
                             self.model.destroy();
                         }
                     }]

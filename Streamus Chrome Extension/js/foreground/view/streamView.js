@@ -102,8 +102,7 @@
         },
         
         clear: function () {
-            StreamItems.reset();
-            StreamItems.trigger('empty');
+            StreamItems.clear();
             this.slidee.empty();
             this.sly.reload();
         },

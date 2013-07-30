@@ -6,9 +6,11 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
     var streamItemsCollection = Backbone.Collection.extend({
         model: StreamItem,
 
-        initialize: function() {
+        initialize: function () {
+            //  TODO: Probably make a stream model instead of extending streamItems
             //  Give StreamItems a history: https://github.com/jashkenas/backbone/issues/1442
             _.extend(this, { history: [] });
+            _.extend(this, { bannedVideoIdList: [] });
 
             var self = this;
 
@@ -134,14 +136,14 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
         getSelectedItem: function () {
             return this.findWhere({ selected: true }) || null;
         },
+        
+        //  Take each streamItem's array of related videos, pluck them all out into a collection of arrays
+        //  then flatten the arrays into a collection of videos.
+        getRelatedVideos: function() {
 
-        getRandomRelatedVideo: function() {
+            var relatedVideos = _.flatten(this.map(function (streamItem) {
 
-            //  Take each streamItem's array of related videos, pluck them all out into a collection of arrays
-            //  then flatten the arrays into a collection of videos.
-            var relatedVideos = _.flatten(this.map(function(streamItem) {
-
-                return _.map(streamItem.get('relatedVideoInformation'), function(relatedVideoInformation) {
+                return _.map(streamItem.get('relatedVideoInformation'), function (relatedVideoInformation) {
 
                     return new Video({
                         videoInformation: relatedVideoInformation
@@ -151,15 +153,27 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
 
             }));
 
+            return relatedVideos;
+        },
+
+        getRandomRelatedVideo: function() {
+
+            var relatedVideos = this.getRelatedVideos();
+
             //  Don't add any videos that are already in the stream.
             var self = this;
+            console.log("related videos:", relatedVideos);
             relatedVideos = _.filter(relatedVideos, function(relatedVideo) {
                 var alreadyExistingItem = self.find(function(streamItem) {
+
                     var sameVideoId = streamItem.get('video').get('id') === relatedVideo.get('id');
+
+                    var inBanList = _.contains(self.bannedVideoIdList, relatedVideo.get('id'));
+                    console.log("inBanList:", inBanList);
                     //  TODO: I don't think this does quite what I want it to do.
                     //var similiarVideoName = levDistance(item.get('video').get('title'), relatedVideo.get('title')) < 3;
 
-                    return sameVideoId; // || similiarVideoName;
+                    return sameVideoId || inBanList; // || similiarVideoName;
                 });
 
                 return alreadyExistingItem == null;
@@ -177,9 +191,8 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
             if (tempFilteredRelatedVideos.length !== 0) {
                 relatedVideos = tempFilteredRelatedVideos;
             }
-
+            
             return relatedVideos[_.random(relatedVideos.length - 1)];
-            ;
         },
         
         //  If a streamItem which was selected is removed, selectNext will have a removedSelectedItemIndex provided
@@ -278,8 +291,17 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
             } else {
                 previousStreamItem.set('selected', true);
             }
-
-
+        },
+        
+        ban: function (streamItem) {
+            this.bannedVideoIdList.push(streamItem.get('video').get('id'));
+            console.log("BanendVideoIdList:", this.bannedVideoIdList);
+        },
+        
+        clear: function() {
+            this.bannedVideoIdList = [];
+            this.reset();
+            this.trigger('empty');
         }
     });
 
