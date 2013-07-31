@@ -20,33 +20,29 @@ define(['contextMenuView', 'backgroundManager', 'streamItems', 'playlistItemView
             this.ul.empty();
 
             var activePlaylist = backgroundManager.get('activePlaylist');
-            
-            var listItems = [];
 
+            // TODO: Why am I calling render on activePlaylistItems if activePlaylist is null?
             if (activePlaylist === null || activePlaylist.get('items').length === 0) {
                 this.emptyNotification.show();
             } else {
                 this.emptyNotification.hide();
 
                 var firstItemId = activePlaylist.get('firstItemId');
-
                 var playlistItem = activePlaylist.get('items').get(firstItemId);
 
                 //  Build up the ul of li's representing each playlistItem.
+                var listItems = [];
                 do {
 
-                    if (playlistItem !== null) {
+                    var playlistItemView = new PlaylistItemView({
+                        model: playlistItem
+                    });
 
-                        var playlistItemView = new PlaylistItemView({
-                            model: playlistItem
-                        });
+                    var element = playlistItemView.render().el;
+                    listItems.push(element);
 
-                        var element = playlistItemView.render().el;
-
-                        listItems.push(element);
-
-                        playlistItem = activePlaylist.get('items').get(playlistItem.get('nextItemId'));
-                    }
+                    var nextItemId = playlistItem.get('nextItemId');
+                    playlistItem = activePlaylist.get('items').get(nextItemId);
 
                 } while (playlistItem && playlistItem.get('id') !== firstItemId)
 
@@ -87,12 +83,10 @@ define(['contextMenuView', 'backgroundManager', 'streamItems', 'playlistItemView
 
             this.listenTo(backgroundManager, 'change:activePlaylist', this.render);
             this.listenTo(backgroundManager.get('allPlaylistItems'), 'add', this.addItem);
-            this.listenTo(backgroundManager.get('allPlaylistItems'), 'remove', function() {
-
-                if (this.ul.find('li').length === 0) {
-                    this.emptyNotification.show();
-                }
-                
+            
+            //  TODO: THIS IS INCORRECT. Instead of allPlaylistItems it should be when the activePlaylist is empty, but I need to be able to change the activePlaylist listener.
+            this.listenTo(backgroundManager.get('allPlaylistItems'), 'empty', function () {
+                self.emptyNotification.show();
             });
 
             this.render();

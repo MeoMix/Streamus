@@ -8,6 +8,7 @@
         
         template: _.template($('#playlistItemTemplate').html()),
         
+        //  TODO: Delegate events to child from parent?
         events: {
             
         },
@@ -15,10 +16,12 @@
         render: function() {
             this.$el.html(this.template(this.model.toJSON()));
             
+            //  TODO: Probably renamed this to playlistitemid to avoid confusion with listitem's id.
             this.$el.attr('data-itemid', this.model.get('id'));
 
             var videoDuration = this.model.get('video').get('duration');
             var author = this.model.get('video').get('author');
+
             var playlistItemInfo = helpers.prettyPrintTime(videoDuration) + ' by ' + author;
             this.$el.find('span.playlistItemInfo').text(playlistItemInfo);
 

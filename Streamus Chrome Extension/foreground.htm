@@ -104,7 +104,7 @@
                         <path d="m 11,2 0,2 -1.5,0 -7,6 -2.5,0 0,2 2.5,0 7,-6 1.5,0 0,2 5,-3 z" fill="#666" />
                     </svg>
                 </span>
-                <span id="RadioModeButton" title='Radio Mode is disabled. Click to enable.'>
+                <span id="RadioButton" title='Radio is disabled. Click to enable.'>
                     <svg width="16" height="18">
                         <g transform="translate(0,20) scale(0.0075,-0.0075)" fill="#666" stroke="none">
                             <path d="M482 2761 c-151 -125 -261 -302 -318 -511 -28 -102 -26 -358 4 -467
@@ -187,7 +187,7 @@
 
                 <div id="PlaylistItemsView" class="list">
                     <div class="emptyListNotification">
-                        Your Playlist is empty. Try adding some videos by clicking above.
+                        This Playlist is empty. Try adding some videos by clicking above.
                     </div>
                     <ul>
                     </ul>
@@ -198,7 +198,10 @@
                 <div id="PlaylistDisplay" class="header">
                 </div>
 
-                <div id="PlaylistList" class="list">
+                <div id="PlaylistsView" class="list">
+                    <div class="emptyListNotification">
+                        This Folder is empty. Try adding some videos by clicking above.
+                    </div>
                     <ul>
                     </ul>
                 </div>
@@ -215,6 +218,15 @@
             <ul class="slidee">
             </ul>  
         </div>
+        
+        <script type="text/template" id="playlistTemplate">
+            
+            <div class="textWrapper">
+                <span class="playlistTitle"><%- title %></span>
+                <span class="playlistInfo"><!--Set inside render--></span>
+            </div>
+
+        </script>
         
         <script type="text/template" id="playlistItemTemplate">
             

@@ -1,6 +1,6 @@
 ﻿var StreamItems;
 
-define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video', 'helpers'], function(StreamItem, settingsManager, RepeatButtonState, ytHelper, Video, helpers) {
+define(['streamItem', 'settingsManager', 'repeatButtonState', 'youTubeDataAPI', 'video', 'helpers'], function (StreamItem, settingsManager, RepeatButtonState, youTubeDataAPI, Video, helpers) {
     'use strict';
 
     var streamItemsCollection = Backbone.Collection.extend({
@@ -27,7 +27,7 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
 
                 var videoId = addedStreamItem.get('video').get('id');
 
-                ytHelper.getRelatedVideoInformation(videoId, function(relatedVideoInformation) {
+                youTubeDataAPI.getRelatedVideoInformation(videoId, function (relatedVideoInformation) {
                     addedStreamItem.set('relatedVideoInformation', relatedVideoInformation);
                 });
 
@@ -103,7 +103,7 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
 
             //  Fetch all the related videos for videos on load. I don't want to save these to the DB because they're bulky and constantly change.
             //  Data won't appear immediately as it is an async request, I just want to get the process started now.
-            ytHelper.getBulkRelatedVideoInformation(randomVideoIds, function (bulkInformationList) {
+            youTubeDataAPI.getBulkRelatedVideoInformation(randomVideoIds, function (bulkInformationList) {
 
                 _.each(bulkInformationList, function (bulkInformation) {
                     var videoId = bulkInformation.videoId;
@@ -195,21 +195,19 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
                 return relatedVideo.get('id');
             });
 
-            var videoArrayLengths = _.pluck(groupedRelatedVideoLists, 'length');
+            var sortedRelatedVideoLists = _.sortBy(groupedRelatedVideoLists, 'length');
 
-            //  Grouping the related videos will allow us to select the array with the highest number of occurrances and grab a random video from there.
-            //  In this way we grab the 'most related for playlist' because it is part of the group of videos which are most related by occurrance.
-            var maxNumberOfOccurrances = _.max(videoArrayLengths, function (videoArrayLength) {
-                return videoArrayLength;
+            //  Add items to our relatedVideos pool until we have a sufficiently random sampling amount.
+            var smartFilterRelatedVideos = [];
+            _.each(sortedRelatedVideoLists, function (sortedRelatedVideoList) {
+                
+                if (smartFilterRelatedVideos.length < 10) {
+                    smartFilterRelatedVideos.push(sortedRelatedVideoList[0]);
+                }
+
             });
 
-            //  These arrays contain the duplicates of videos in which we should select. Grab one, grab a video from it and go.
-            var maxLengthRelatedVideos = _.filter(groupedRelatedVideoLists, function (groupedRelatedVideoList) {
-                return groupedRelatedVideoList.length === maxNumberOfOccurrances;
-            });
-
-            var relatedVideo = maxLengthRelatedVideos[_.random(maxLengthRelatedVideos.length - 1)][0];
-
+            var relatedVideo = smartFilterRelatedVideos[_.random(smartFilterRelatedVideos.length - 1)];
             return relatedVideo;
         },
         
@@ -217,7 +215,7 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
         selectNext: function(removedSelectedItemIndex) {
 
             var shuffleEnabled = settingsManager.get('shuffleEnabled');
-            var radioModeEnabled = settingsManager.get('radioModeEnabled');
+            var radioEnabled = settingsManager.get('radioEnabled');
             var repeatButtonState = settingsManager.get('repeatButtonState');
 
             //  If removedSelectedItemIndex is provided, RepeatButtonState -> Video doesn't matter because the video was just deleted.
@@ -250,7 +248,7 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
                         if (this.length == 1) {
                             this.at(0).trigger('change:selected', this.at(0), true);
                         }
-                    } else if (radioModeEnabled) {
+                    } else if (radioEnabled) {
 
                         var randomRelatedVideo = this.getRandomRelatedVideo();
 

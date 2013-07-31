@@ -9,7 +9,8 @@
         },
 
         render: function () {
-
+            var self = this;
+            
             //  Stop drawing entirely when the player stops.
             if (window != null) {
 
@@ -24,7 +25,6 @@
                         //  Continously render if playing.
                         if (playerState == PlayerState.PLAYING) {
 
-                            var self = this;
                             window.requestAnimationFrame(function () {
                                 self.render();
                             });
@@ -44,7 +44,6 @@
                     
                 } else {
 
-                    var self = this;
                     setTimeout(function() {
                         //  Clear the canvas by painting over it with black.
                         //  TODO: Perhaps something more visually appealing / indicative than black fill?
@@ -53,7 +52,6 @@
                         self.context.fill();
                     }, 0);
 
-                    
                 }
                 
             }

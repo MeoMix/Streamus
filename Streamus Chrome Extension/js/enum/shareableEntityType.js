@@ -1,4 +1,6 @@
-﻿//  Mirrors the enum ShareableEntityType on the server.
+﻿//  TODO: Move this into background only?
+
+//  Mirrors the enum ShareableEntityType on the server.
 define(function () {
     'use strict';
 

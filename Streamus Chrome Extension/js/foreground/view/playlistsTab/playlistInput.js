@@ -1,4 +1,4 @@
-﻿define(['contentHeader', 'ytHelper', 'backgroundManager', 'dataSource'], function (ContentHeader, ytHelper, backgroundManager, DataSource) {
+﻿define(['contentHeader', 'youTubeDataAPI', 'backgroundManager', 'dataSource'], function (ContentHeader, youTubeDataAPI, backgroundManager, DataSource) {
     'use strict';
     
     var contentHeader = new ContentHeader({
@@ -28,7 +28,7 @@
             if (userInput.trim() !== '') {
                 contentHeader.flashMessage('Thanks!', 2000);
 
-                var dataSource = ytHelper.parseUrlForDataSource(userInput);
+                var dataSource = youTubeDataAPI.parseUrlForDataSource(userInput);
                 var activeFolder = backgroundManager.get('activeFolder');
 
                 switch (dataSource.type) {
@@ -38,7 +38,7 @@
                         });
                         break;
                     case DataSource.YOUTUBE_PLAYLIST:
-                        ytHelper.getPlaylistTitle(dataSource.id, function (youTubePlaylistTitle) {
+                        youTubeDataAPI.getPlaylistTitle(dataSource.id, function (youTubePlaylistTitle) {
                             activeFolder.addPlaylistByDataSource(youTubePlaylistTitle, dataSource, function (playlist) {
                                 backgroundManager.set('activePlaylist', playlist);
                             });
@@ -46,7 +46,7 @@
                         break;
                     case DataSource.YOUTUBE_CHANNEL:
                         
-                        ytHelper.getChannelName(dataSource.id, function (channelName) {
+                        youTubeDataAPI.getChannelName(dataSource.id, function (channelName) {
                             var playlistTitle = channelName + '\'s Feed';
                             activeFolder.addPlaylistByDataSource(playlistTitle, dataSource, function (playlist) {
                                 backgroundManager.set('activePlaylist', playlist);

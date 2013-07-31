@@ -4,7 +4,7 @@
 define(['jquery'], function () {
     'use strict';
 
-    var youTubePlayerApiModel = Backbone.Model.extend({
+    var youTubePlayerAPIModel = Backbone.Model.extend({
         defaults: {
             ready: false
         },
@@ -29,5 +29,5 @@ define(['jquery'], function () {
         }
     });
     
-    return new youTubePlayerApiModel();
+    return new youTubePlayerAPIModel();
 });

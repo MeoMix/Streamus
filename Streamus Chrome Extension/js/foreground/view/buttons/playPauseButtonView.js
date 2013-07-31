@@ -2,7 +2,7 @@
 define(['player', 'spinnerManager', 'playerState', 'streamItems'], function (player, spinnerManager, PlayerState, StreamItems) {
     'use strict';
     
-    var playPauseButtonView = Backbone.View.extend({
+    var PlayPauseButtonView = Backbone.View.extend({
         el: $('#PlayPauseButton'),
         
         events: {
@@ -90,6 +90,5 @@ define(['player', 'spinnerManager', 'playerState', 'streamItems'], function (pla
         },
     });
 
-    var playPauseButton = new playPauseButtonView;
-
+    return new PlayPauseButtonView;
 });

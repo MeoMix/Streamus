@@ -50,6 +50,20 @@ define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'fold
 
             });
 
+            //  TODO: potentially implement this at a collection level.
+            this.listenTo(this.get('allPlaylistItems'), 'remove', function() {
+                if (self.get('allPlaylistItems').length === 0) {
+                    self.get('allPlaylistItems').trigger('empty');
+                }
+            });
+            
+
+            this.listenTo(this.get('allPlaylists'), 'remove', function () {
+                if (self.get('allPlaylists').length === 0) {
+                    self.get('allPlaylists').trigger('empty');
+                }
+            });
+
         },
         
         getPlaylistById: function(playlistId) {

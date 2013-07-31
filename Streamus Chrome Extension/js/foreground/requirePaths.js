@@ -1,45 +1,40 @@
 var require = {
     baseUrl: '../js/',
     paths: {
-        'main': 'foreground/main',
-        'playerState': 'enum/playerState',
+        //  Global:
+        'helpers': 'helpers',
         'programState': 'programState',
-        'dataSource': 'enum/dataSource',
-        'foreground': 'foreground/foreground',
-        'volumeControl': 'foreground/playerControls/volumeControl',
-        'playPauseButton': 'foreground/playerControls/playPauseButton',
-        'nextButton': 'foreground/playerControls/nextButton',
-        'previousButton': 'foreground/playerControls/previousButton',
-        'shuffleButton': 'foreground/playerControls/shuffleButton',
-        'radioModeButton': 'foreground/playerControls/radioModeButton',
-        'repeatButton': 'foreground/playerControls/repeatButton',
-
+        'youTubePlayerApi': 'youTubePlayerApi',
+        'youTubeDataAPI': 'youTubeDataAPI',
         
-        'playlistItemInput': 'foreground/playlistItemsTab/playlistItemInput',
-        'playlistsDisplay': 'foreground/playlistsTab/playlistsDisplay',
-        'playlistInput': 'foreground/playlistsTab/playlistInput',
+        //  Enum:
+        'dataSource': 'enum/dataSource',
+        'playerState': 'enum/playerState',
+        'repeatButtonState': 'enum/repeatButtonState',
+
+        //  Third Party:
+        'backbone': 'thirdParty/backbone',
+        'jquery': 'thirdParty/jquery',
+        'jqueryMousewheel': 'thirdParty/jqueryMousewheel',
+        'jqueryUi': 'thirdParty/jqueryUi',
+        'levenshtein': 'thirdParty/levenshtein',
+        'scrollIntoView': 'thirdParty/jquery.scrollIntoView',
+        'sly': 'thirdParty/sly',
+        'spin': 'thirdParty/jquery.spin',
+        'underscore': 'thirdParty/underscore',
+
+        //  Foreground:
+        'main': 'foreground/main',
+        'foreground': 'foreground/foreground',
+        'backgroundManager': 'foreground/backgroundManager',
+        'settingsManager': 'foreground/settingsManager',
+        'player': 'foreground/player',
+        'spinnerManager': 'foreground/spinnerManager',
+        
         'contentHeader': 'foreground/contentHeader',
         'dialogs': 'foreground/dialogs',
         'contentButtons': 'foreground/contentButtons',
         'progressBar': 'foreground/progressBar',
-        'youTubePlayerAPI': 'youTubePlayerAPI',
-        'jqueryMousewheel': 'thirdParty/jqueryMousewheel',
-        'ytHelper': 'ytHelper',
-        'helpers': 'helpers',
-        'jquery': 'thirdParty/jquery',
-        'jqueryUi': 'thirdParty/jqueryUi',
-        'levenshtein': 'thirdParty/levenshtein',
-        'underscore': 'thirdParty/underscore',
-        'backbone': 'thirdParty/backbone',
-        'backgroundManager': 'foreground/backgroundManager',
-        'settingsManager': 'foreground/settingsManager',
-        'player': 'foreground/player',
-
-        'scrollIntoView': 'thirdParty/jquery.scrollIntoView',
-        'spin': 'thirdParty/jquery.spin',
-        'repeatButtonState': 'enum/repeatButtonState',
-        'spinnerManager': 'foreground/spinnerManager',
-        'sly': 'thirdParty/sly',
 
         //  Collection:
         'contextMenuGroups': 'foreground/collection/contextMenuGroups',
@@ -54,10 +49,31 @@ var require = {
         //  View:
         'contextMenuView': 'foreground/view/contextMenuView',
         'headerTitleView': 'foreground/view/headerTitleView',
-        'streamItemView': 'foreground/view/streamItemView',
-        'streamView': 'foreground/view/streamView',
-        'videoDisplayView': 'foreground/view/videoDisplayView',
-        'playlistItemView': 'foreground/playlistItemsTab/playlistItemView',
-        'playlistItemsView': 'foreground/playlistItemsTab/playlistItemsView'
+        'volumeControlView': 'foreground/view/volumeControlView',
+        
+        //  View -> Buttons:
+        'nextButtonView': 'foreground/view/buttons/nextButtonView',
+        'playPauseButtonView': 'foreground/view/buttons/playPauseButtonView',
+        'previousButtonView': 'foreground/view/buttons/previousButtonView',
+        'radioButtonView': 'foreground/view/buttons/radioButtonView',
+        'repeatButtonView': 'foreground/view/buttons/repeatButtonView',
+        'shuffleButtonView': 'foreground/view/buttons/shuffleButtonView',
+        
+        //  View -> PlaylistItemsTab:
+        'playlistItemInput': 'foreground/view/playlistItemsTab/playlistItemInput',
+        'playlistItemsView': 'foreground/view/playlistItemsTab/playlistItemsView',
+        'playlistItemView': 'foreground/view/playlistItemsTab/playlistItemView',
+
+        //  View -> PlaylistsTab:
+        'playlistInput': 'foreground/view/playlistsTab/playlistInput',
+        'playlistsView': 'foreground/view/playlistsTab/playlistsView',
+        'playlistView': 'foreground/view/playlistsTab/playlistView',
+        
+        //  View -> Stream:
+        'streamItemView': 'foreground/view/stream/streamItemView',
+        'streamView': 'foreground/view/stream/streamView',
+        
+        //  View -> Video:
+        'videoDisplayView': 'foreground/view/video/videoDisplayView'
     }
 };

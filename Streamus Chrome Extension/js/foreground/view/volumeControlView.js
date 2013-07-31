@@ -2,7 +2,7 @@
 define(['player'], function (player) {
     'use strict';
 
-    var volumeControlView = Backbone.View.extend({
+    var VolumeControlView = Backbone.View.extend({
         el: $('#VolumeControl'),
 
         events: {
@@ -92,5 +92,5 @@ define(['player'], function (player) {
 
     });
 
-    var volumeControl = new volumeControlView;
+    return new VolumeControlView;
 })

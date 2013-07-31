@@ -12,7 +12,7 @@ define(['repeatButtonState'], function (RepeatButtonState) {
                 activeContentButtonId: getItem('activeContentButtonId') || 'HomeMenuButton',
                 activeFolderId: getItem('activeFolderId') || null,
                 activePlaylistId: getItem('activePlaylistId') || null,
-                radioModeEnabled: getItem('radioModeEnabled') || false,
+                radioEnabled: getItem('radioEnabled') || false,
                 repeatButtonState: getItem('repeatButtonState') || RepeatButtonState.DISABLED,
                 shuffleEnabled: getItem('shuffleEnabled') || false,
                 suggestedQuality: getItem('suggestedQuality') || 'default',
@@ -34,8 +34,8 @@ define(['repeatButtonState'], function (RepeatButtonState) {
                 localStorage.setItem('activePlaylistId', JSON.stringify(activePlaylistId));
             });
 
-            this.on('change:radioModeEnabled', function(model, radioModeEnabled) {
-                localStorage.setItem('radioModeEnabled', JSON.stringify(radioModeEnabled));
+            this.on('change:radioEnabled', function (model, radioEnabled) {
+                localStorage.setItem('radioEnabled', JSON.stringify(radioEnabled));
             });
             
             this.on('change:repeatButtonState', function (model, repeatButtonState) {

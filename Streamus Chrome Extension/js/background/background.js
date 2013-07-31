@@ -1,6 +1,6 @@
 ﻿//  Background.js is a bit of a dumping ground for code which needs a permanent housing spot.
-define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 'ytHelper', 'repeatButtonState', 'playerState', 'streamItems'],
-    function (player, backgroundManager, settingsManager, pushMessageManager, ytHelper, RepeatButtonState, PlayerState, StreamItems) {
+define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 'youTubeDataAPI', 'repeatButtonState', 'playerState', 'streamItems'],
+    function (player, backgroundManager, settingsManager, pushMessageManager, youTubeDataAPI, RepeatButtonState, PlayerState, StreamItems) {
         'use strict';
   
     player.on('change:state', function (model, state) {
@@ -97,10 +97,11 @@ define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 
             case 'needSeekTo':
                 player.triggerInitialLoadDataSeekTo();
                 break;
+            //  TODO: Why don't I have the video here already?
             case 'addVideoByIdToPlaylist':
                 var playlist = backgroundManager.getPlaylistById(request.playlistId);
                 
-                ytHelper.getVideoInformation({
+                youTubeDataAPI.getVideoInformation({
                     videoId: request.videoId,
                     success: function(videoInformation) {
                         playlist.addItemByInformation(videoInformation);

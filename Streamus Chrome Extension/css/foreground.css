@@ -453,7 +453,7 @@
 #VolumeControl.expanded #VolumeSliderWrapper { top: 30px; }
 
 #ShuffleButton:hover,
-#RadioModeButton:hover,
+#RadioButton:hover,
 #RepeatButton:hover { cursor: pointer; }
 
 #ShuffleButton {
@@ -462,7 +462,7 @@
     position: absolute;
 }
 
-#RadioModeButton {
+#RadioButton {
     bottom: 1px;
     left: 28px;
     position: absolute;
@@ -584,7 +584,7 @@
     top: 20px;
 }
 
-#PlaylistList .loaded span { font-weight: bold !important; }
+#PlaylistsView .loaded span { font-weight: bold !important; }
 
 .muted > svg > path { fill: Red !important; }
 

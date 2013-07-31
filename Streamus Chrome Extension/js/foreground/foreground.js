@@ -1,13 +1,13 @@
 ﻿//  When the foreground is loaded it will load all the ui elements. Grouped like this so I can wait for the
 //  background YouTube player to load entirely before allowing foreground to open.
 define(['backgroundManager',
-        'volumeControl',
-        'playPauseButton',
-        'nextButton',
-        'previousButton',
-        'shuffleButton',
-        'radioModeButton',
-        'repeatButton',
+        'volumeControlView',
+        'playPauseButtonView',
+        'nextButtonView',
+        'previousButtonView',
+        'shuffleButtonView',
+        'radioButtonView',
+        'repeatButtonView',
         'contentButtons',
         'progressBar',
         'videoDisplayView',
@@ -15,7 +15,7 @@ define(['backgroundManager',
         'playlistItemInput',
         'playlistItemsView',
         'playlistInput',
-        'playlistsDisplay',
+        'playlistsView',
         'streamView'
 ], function () {
     'use strict';

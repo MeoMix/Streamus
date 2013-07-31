@@ -32,22 +32,22 @@
     {
       "matches": ["*://*.youtube.com/embed/*"],
 	  "all_frames": true,
-      "js": ["js/thirdParty/jquery.js", "js/youTubeIFrameInject.js"]
+      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/inject/youTubeIFrameInject.js"]
     },
     {
       "matches": ["*://*.youtube.com/watch?*"],
       "run_at": "document_start",
-      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/youTubeInject.js"]
+      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/inject/youTubeInject.js"]
     },
     {
       "matches": ["*://*.share.streamus.com/*"],
 	  "run_at": "document_start",
-      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/shareInject.js"]
+      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/inject/streamusShareInject.js"]
     },
     {
       "matches": ["*://*.streamus.com/*"],
 	  "run_at": "document_start",
-      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/streamusInject.js"]
+      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/inject/streamusInject.js"]
     }
   ],
   "commands": {

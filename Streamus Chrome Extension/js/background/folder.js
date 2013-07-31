@@ -1,5 +1,5 @@
 ﻿//  A folder is a collection of playlists
-define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'dataSource', 'ytHelper', ], function (Playlists, Playlist, Videos, Video, player, programState, DataSource, ytHelper) {
+define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'youTubeDataAPI' ], function (Playlists, Playlist, Videos, Video, player, programState, youTubeDataAPI) {
     'use strict';
     
     var folderModel = Backbone.Model.extend({
@@ -199,7 +199,7 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
                     currentPlaylists.push(playlist);
                     
                     //  Recursively load any potential bulk data from YouTube after the Playlist has saved successfully.
-                    ytHelper.getDataSourceResults(dataSource, 0, function onGetDataSourceData(response) {
+                    youTubeDataAPI.getDataSourceResults(dataSource, 0, function onGetDataSourceData(response) {
 
                         if (response.results.length === 0) {
                             playlist.set('dataSourceLoaded', true);
@@ -218,7 +218,7 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'd
                             playlist.addItems(videos, function () {
 
                                 //  Request next batch of data by iteration once addItems has succeeded.
-                                ytHelper.getDataSourceResults(dataSource, ++response.iteration, onGetDataSourceData);
+                                youTubeDataAPI.getDataSourceResults(dataSource, ++response.iteration, onGetDataSourceData);
 
                             });
                     

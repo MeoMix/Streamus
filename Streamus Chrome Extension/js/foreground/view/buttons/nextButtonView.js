@@ -2,7 +2,7 @@
 define(['streamItems', 'settingsManager', 'repeatButtonState'], function (StreamItems, settingsManager, RepeatButtonState) {
     'use strict';
 
-    var nextButtonView = Backbone.View.extend({
+    var NextButtonView = Backbone.View.extend({
         el: $('#NextButton'),
 
         events: {
@@ -15,14 +15,14 @@ define(['streamItems', 'settingsManager', 'repeatButtonState'], function (Stream
                 this.disable();
             } else {
 
-                var radioModeEnabled = settingsManager.get('radioModeEnabled');
+                var radioEnabled = settingsManager.get('radioEnabled');
                 var shuffleEnabled = settingsManager.get('shuffleEnabled');
                 var repeatButtonState = settingsManager.get('repeatButtonState');
                 
                 if (shuffleEnabled && StreamItems.length > 1) {
                     this.enable();
                 }
-                else if (radioModeEnabled || repeatButtonState !== RepeatButtonState.DISABLED) {
+                else if (radioEnabled || repeatButtonState !== RepeatButtonState.DISABLED) {
                     this.enable();
                 } else {
                     //  Disable only if on the last item in stream with no options enabled.
@@ -43,7 +43,7 @@ define(['streamItems', 'settingsManager', 'repeatButtonState'], function (Stream
 
         initialize: function () {
             this.listenTo(StreamItems, 'add addMultiple remove empty change:selected', this.render);
-            this.listenTo(settingsManager, 'change:radioModeEnabled change:shuffleEnabled change:repeatButtonState', this.render);
+            this.listenTo(settingsManager, 'change:radioEnabled change:shuffleEnabled change:repeatButtonState', this.render);
 
             this.render();
         },
@@ -69,6 +69,5 @@ define(['streamItems', 'settingsManager', 'repeatButtonState'], function (Stream
 
     });
 
-    //  TODO: Maybe should be returned to be part of a bigger picture, but for now it is self-enclosing.
-    var nextButton = new nextButtonView;
+    return new NextButtonView;
 });

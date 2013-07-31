@@ -1,20 +1,19 @@
-﻿define(['settingsManager'], function (settingsManager) {
+define(['settingsManager'], function(settingsManager){
     'use strict';
 
-    var radioModeButtonView = Backbone.View.extend({
-        el: $('#RadioModeButton'),
+    var ShuffleButtonView = Backbone.View.extend({
+        el: $('#ShuffleButton'),
         
         events: {
-            'click': 'toggleRadioMode'
+            'click': 'toggleShuffleVideo'
         },
-
-        enabledTitle: 'Radio Mode is enabled. Click to disable.',
-        disabledTitle: 'Radio Mode is disabled. Click to enable.',
         
-        initialize: function () {
+        enabledTitle: 'Playlist shuffling is enabled. Click to disable.',
+        disabledTitle: 'Playlist shuffling is disabled. Click to enable.',
+        
+        initialize: function() {
             //  Remember the initial state across pop-up sessions by writing to/from localStorage.
-
-            if (settingsManager.get('radioModeEnabled')) {
+            if (settingsManager.get('shuffleEnabled')) {
                 this.$el
                     .addClass('pressed')
                     .attr('title', this.enabledTitle);
@@ -22,7 +21,7 @@
             
         },
         
-        toggleRadioMode: function () {
+        toggleShuffleVideo: function () {
 
             this.$el.toggleClass('pressed');
             
@@ -34,10 +33,10 @@
                 this.$el.attr('title', this.disabledTitle);
             }
 
-            settingsManager.set('radioModeEnabled', isPressed);
+            settingsManager.set('shuffleEnabled', isPressed);
         }
-
+        
     });
-
-    var radioModeButton = new radioModeButtonView;
+    
+    return new ShuffleButtonView;
 });

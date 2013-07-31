@@ -167,8 +167,8 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
                     alt: 'json',
                     key: developerKey,
                     fields: videosInformationFields,
-                    //  Don't really need that many suggested videos, take 10.
-                    'max-results': 10,
+                    //  Don't really need that many suggested videos, take 20.
+                    'max-results': 20,
                     strict: true
                 },
                 success: function (result) {
@@ -220,6 +220,8 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
         },
 
         search: search,
+        
+        //  TODO: Move to helpers.
         //  Takes a URL and returns parsed URL information such as schema and video id if found inside of the URL.
         parseVideoIdFromUrl: function (url) {
             var videoId = null;

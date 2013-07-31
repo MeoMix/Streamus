@@ -1,5 +1,5 @@
-﻿define(['playlistItem', 'ytHelper', 'video', 'videos', 'levenshtein', 'programState', 'helpers'],
-    function (PlaylistItem, ytHelper, Video, Videos, levDistance, programState, helpers) {
+﻿define(['playlistItem', 'programState'],
+    function (PlaylistItem, programState) {
         'use strict';
 
     var playlistItemsCollection = Backbone.Collection.extend({

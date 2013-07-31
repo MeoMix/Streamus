@@ -1,7 +1,6 @@
 //  The videos tab header. Users may add videos by clicking on Add Videos.
 //  Clicking Add Videos will allow the user to either search w/ auto-complete suggestions, or to paste youtube URLs into the input.
-define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
-    function (ContentHeader, ytHelper, dialogs, helpers, backgroundManager) {
+define(['contentHeader', 'youTubeDataAPI', 'dialogs', 'helpers', 'backgroundManager'], function (ContentHeader, youTubeDataAPI, dialogs, helpers, backgroundManager) {
     'use strict';
 
     var contentHeader = new ContentHeader({
@@ -55,7 +54,7 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
     function handleValidInput(videoId) {
         contentHeader.flashMessage('Thanks!', 2000);
 
-        ytHelper.getVideoInformation({
+        youTubeDataAPI.getVideoInformation({
             videoId: videoId,
             success: function (videoInformation) {
                 backgroundManager.get('activePlaylist').addItemByInformation(videoInformation);
@@ -70,7 +69,7 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
         //  Wrapped in a timeout to support 'rightclick->paste' 
         setTimeout(function () {
             var url = addInput.val();
-            var parsedVideoId = ytHelper.parseVideoIdFromUrl(url);
+            var parsedVideoId = youTubeDataAPI.parseVideoIdFromUrl(url);
 
             //  If found a valid YouTube link then just add the video.
             if (parsedVideoId) {
@@ -87,7 +86,7 @@ define(['contentHeader', 'ytHelper', 'dialogs', 'helpers', 'backgroundManager'],
         if (trimmedSearchText === '') {
             addInput.autocomplete({ source: [] });
         } else {
-            ytHelper.search(trimmedSearchText, function (videoInformationList) {
+            youTubeDataAPI.search(trimmedSearchText, function (videoInformationList) {
 
                 //  Do not display results if searchText was modified while searching.
                 if (trimmedSearchText === $.trim(addInput.val())) {

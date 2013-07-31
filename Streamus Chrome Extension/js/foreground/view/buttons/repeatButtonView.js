@@ -1,8 +1,7 @@
-﻿//  The repeat icon.
-define(['repeatButtonState', 'settingsManager'], function (RepeatButtonState, settingsManager) {
+﻿define(['repeatButtonState', 'settingsManager'], function (RepeatButtonState, settingsManager) {
     'use strict';
 
-    var repeatButtonView = Backbone.View.extend({
+    var RepeatButtonView = Backbone.View.extend({
         el: $('#RepeatButton'),
 
         events: {
@@ -81,6 +80,5 @@ define(['repeatButtonState', 'settingsManager'], function (RepeatButtonState, se
 
     });
 
-    var repeatButton = new repeatButtonView;
-
+    return new RepeatButtonView;
 });

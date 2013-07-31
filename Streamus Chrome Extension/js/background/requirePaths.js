@@ -18,7 +18,7 @@ var require = {
         'youTubePlayerAPI': 'youTubePlayerAPI',
         'video': 'background/video',
         'videos': 'background/videos',
-        'ytHelper': 'ytHelper',
+        'youTubeDataAPI': 'youTubeDataAPI',
         'helpers': 'helpers',
         'jquery': 'thirdParty/jquery',
         'levenshtein': 'thirdParty/levenshtein',

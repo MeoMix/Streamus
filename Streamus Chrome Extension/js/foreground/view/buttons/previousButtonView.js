@@ -2,7 +2,7 @@
 define(['streamItems', 'settingsManager', 'repeatButtonState'], function (StreamItems, settingsManager, RepeatButtonState) {
     'use strict';
 
-    var previousButtonView = Backbone.View.extend({
+    var PreviousButtonView = Backbone.View.extend({
         el: $('#PreviousButton'),
         
         events: {
@@ -42,7 +42,7 @@ define(['streamItems', 'settingsManager', 'repeatButtonState'], function (Stream
         
         initialize: function() {
             this.listenTo(StreamItems, 'add addMultiple empty remove change:selected', this.render);
-            this.listenTo(settingsManager, 'change:radioModeEnabled change:shuffleEnabled change:repeatButtonState', this.render);
+            this.listenTo(settingsManager, 'change:radioEnabled change:shuffleEnabled change:repeatButtonState', this.render);
 
             this.render();
         },
@@ -67,6 +67,5 @@ define(['streamItems', 'settingsManager', 'repeatButtonState'], function (Stream
         }
     });
 
-    //  TODO: Maybe should be returned to be part of a bigger picture, but for now it is self-enclosing.
-    var previousButton = new previousButtonView;
+    return new PreviousButtonView;
 });
