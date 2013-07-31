@@ -30,7 +30,6 @@ var require = {
         'entityType': 'background/entityType',
         'settingsManager': 'background/settingsManager',
         'pushMessageManager': 'background/pushMessageManager',
-        'pushMessage': 'background/pushMessage',
         'iconManager': 'background/iconManager',
         'spin': 'thirdParty/jquery.spin',
         'shareCode': 'background/shareCode',

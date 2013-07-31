@@ -87,7 +87,6 @@
     <Content Include="js\background\entityType.js" />
     <Content Include="js\background\collection\streamItems.js" />
     <Content Include="js\background\model\streamItem.js" />
-    <Content Include="js\background\pushMessage.js" />
     <Content Include="js\foreground\collection\contextMenuGroups.js" />
     <Content Include="js\foreground\collection\contextMenuItems.js" />
     <Content Include="js\foreground\model\contextMenu.js" />

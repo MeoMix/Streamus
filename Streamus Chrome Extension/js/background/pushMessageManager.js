@@ -1,4 +1,4 @@
-﻿define(['user', 'programState', 'pushMessage', 'backgroundManager', 'entityType', 'entityAction'], function(user, programState, PushMessage, backgroundManager, EntityType, EntityAction) {
+﻿define(['user', 'programState', 'backgroundManager', 'entityType', 'entityAction'], function(user, programState, backgroundManager, EntityType, EntityAction) {
     'use strict';
     
     var pushMessageManagerModel = Backbone.Model.extend({
@@ -28,9 +28,8 @@
                 
             //});
 
-            //chrome.pushMessaging.onMessage.addListener(function (pushMessageDto) {
-
-            //    var pushMessage = new PushMessage(JSON.parse(pushMessageDto.payload));
+            ////  TODO: consider parsing msg for an update payload instead of just assuming.
+            //chrome.pushMessaging.onMessage.addListener(function () {
 
             //    chrome.idle.queryState(60, function(currentState) {
 
@@ -39,19 +38,6 @@
             //        }
 
             //    });
-                
-
-                
-                //if (pushMessage.get('entityType') === EntityType.Playlist) {
-
-                //    var playlist = backgroundManager.getPlaylistById(pushMessage.get('entityId'));
-                    
-                //    if (pushMessage.get('entityAction') == EntityAction.Refresh) {
-                //        playlist.fetch();
-                        
-                //    }
-
-                //}
 
             //});
 

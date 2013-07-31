@@ -273,7 +273,6 @@
     <Compile Include="Dto\ErrorDto.cs" />
     <Compile Include="Dto\PlaylistDto.cs" />
     <Compile Include="Dto\PlaylistItemDto.cs" />
-    <Compile Include="Dto\PushMessageDto.cs" />
     <Compile Include="Dto\ShareCodeDto.cs" />
     <Compile Include="Dto\FolderDto.cs" />
     <Compile Include="Dto\UserDto.cs" />

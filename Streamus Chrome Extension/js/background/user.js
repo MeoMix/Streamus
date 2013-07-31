@@ -24,16 +24,14 @@ define(['folders', 'programState', 'settingsManager'], function (Folders, progra
         initialize: function () {
             
             var self = this;
-            chrome.idle.setDetectionInterval(15);
-            chrome.idle.onStateChanged.addListener(function (newState) {
+            //chrome.idle.setDetectionInterval(15);
+            //chrome.idle.onStateChanged.addListener(function (newState) {
 
-                //if (newState === 'active') {
+            //    if (newState === 'active' && self.get('dirty')) {
+            //        fetchUser.call(self, false);
+            //    }
 
-                //    self.set('loaded', false);
-                //    fetchUser.call(self, false);
-                //}
-
-            });
+            //});
 
             //  chrome.Storage.sync is cross-computer syncing with restricted read/write amounts.
             chrome.storage.sync.get(syncUserIdKey, function (data) {
@@ -115,6 +113,8 @@ define(['folders', 'programState', 'settingsManager'], function (Folders, progra
 
     function fetchUser(shouldSetSyncStorage) {
         var self = this;
+
+        this.set('loaded', false);
         this.fetch({
             success: function (model) {
                 console.log("fetch user success");
