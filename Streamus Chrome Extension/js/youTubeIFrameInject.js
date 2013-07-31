@@ -14,13 +14,9 @@ $(function () {
                 mutations.forEach(function (mutation) {
                     var attributeName = mutation.attributeName;
 
-                    console.log("Attribute name has changed:", attributeName);
-
                     if (attributeName === 'src') {
 
                         var videoStreamSrc = mutation.target.getAttribute(attributeName);
-
-                        console.log("VideoStreamSrc:", videoStreamSrc);
 
                         //  Don't send a blank src across, I think?
                         if (videoStreamSrc != null && $.trim(videoStreamSrc) != '') {
@@ -29,11 +25,9 @@ $(function () {
                             });
 
                             if (videoStreamSrc.indexOf('blob') > -1) {
-                                console.log("Blob detected");
                                 videoStream.removeAttr('src');
                             }
                             else {
-                                console.log("No blob, removing", videoStream);
                                 videoStream.removeAttr('src');
 
                                 chrome.runtime.sendMessage({

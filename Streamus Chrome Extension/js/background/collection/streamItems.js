@@ -254,8 +254,6 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
 
                         var randomRelatedVideo = this.getRandomRelatedVideo();
 
-                        console.log("Adding random related video and marking it as selected");
-
                         this.add({
                             video: randomRelatedVideo,
                             title: randomRelatedVideo.get('title'),
@@ -315,7 +313,6 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
         
         ban: function (streamItem) {
             this.bannedVideoIdList.push(streamItem.get('video').get('id'));
-            console.log("BanendVideoIdList:", this.bannedVideoIdList);
         },
         
         clear: function() {

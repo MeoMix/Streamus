@@ -29,8 +29,6 @@ require(['jquery',
                 loadForeground();
             } else {
                 user.on('change:loaded', function (model, loaded) {
-                    console.log("main js change loaded");
-
                     if (loaded) {
                         loadForeground();
                     } else {

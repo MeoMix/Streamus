@@ -224,7 +224,6 @@ define(['contextMenuView', 'ytHelper', 'backgroundManager', 'helpers', 'spinnerM
 
     //  Refreshes the playlist display with the current playlist information.
     function reload() {
-        console.log("playlistsDisplay is reloading");
         playlistListUl.empty();
 
         var activeFolder = backgroundManager.get('activeFolder');

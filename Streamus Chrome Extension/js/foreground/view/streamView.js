@@ -55,8 +55,6 @@
         
         addItem: function (streamItem, activateImmediate) {
 
-            console.log("HELLO ONE: ", this);
-
             var streamItemView = new StreamItemView({
                 model: streamItem,
                 parent: this

@@ -206,8 +206,6 @@ define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 
             //var html5CookieValue = 'f2=40001000';
             var html5CookieValue = 'f2=40000000';
 
-            console.log("Cookie request header:", cookieRequestHeader);
-           
             //  Swap out the flash cookie variable with the HTML5 counterpart.
             if (cookieRequestHeader.value.indexOf(flashCookieValue) !== -1) {
                 

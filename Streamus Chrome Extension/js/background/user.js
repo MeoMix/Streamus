@@ -117,11 +117,9 @@ define(['folders', 'programState', 'settingsManager'], function (Folders, progra
         this.set('loaded', false);
         this.fetch({
             success: function (model) {
-                console.log("fetch user success");
                 onUserLoaded.call(self, model, shouldSetSyncStorage);
             },
             error: function (error) {
-                console.log("fetch user fail");
                 //  Failed to fetch the user. Recover by creating a new user for now. Should probably do some sort of notify.
                 createNewUser.call(self);
                 console.error(error);

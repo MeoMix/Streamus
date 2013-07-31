@@ -21,8 +21,7 @@ define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'fold
             var self = this;
             //  TODO:  What if user's loaded state gets set before backgroundManager initializes? Not really possible unless instant response, but still.
             user.on('change:loaded', function (model, loaded) {
-                console.log("Change:loaded has fired", loaded);
-                
+
                 if (loaded) {
 
                     if (user.get('folders').length === 0) {
@@ -73,7 +72,6 @@ define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'fold
     });
     
     function initialize() {
-        console.log("Initializing backgroundManager with user:", user);
         this.get('allFolders').add(user.get('folders').models);
         this.get('allPlaylists').add(getAllPlaylists());
         this.get('allPlaylistItems').add(getAllPlaylistItems());
@@ -94,7 +92,6 @@ define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'fold
                 if (playerState === PlayerState.PLAYING || playerState === PlayerState.ENDED) {
                     player.loadVideoById(videoId);
                 } else {
-                    console.log("Cueuing video by ID:", videoId);
                     player.cueVideoById(videoId);
                 }
             }

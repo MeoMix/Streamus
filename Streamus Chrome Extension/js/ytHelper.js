@@ -112,8 +112,7 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
             var videosProcessing = 0;
 
             var self = this;
-            var youtubeQueryInterval = setInterval(function() {
-                console.log("interval tick. vpd and pcing", videosProcessed, videosProcessing);
+            var youtubeQueryInterval = setInterval(function () {
                 if (videosProcessed == totalVideosToProcess) {
                     clearInterval(youtubeQueryInterval);
 
@@ -139,7 +138,6 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
 
                                 videosProcessed++;
                                 videosProcessing--;
-                                console.log("vpd and pcing", videosProcessed, videosProcessing);
                             });
                         };
 
