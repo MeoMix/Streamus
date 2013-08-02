@@ -191,23 +191,30 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'youTubeDataAPI', 
 
             var relatedVideos = this.getRelatedVideos();
 
-            var groupedRelatedVideoLists = _.groupBy(relatedVideos, function (relatedVideo) {
-                return relatedVideo.get('id');
-            });
+            //var groupedRelatedVideoLists = _.groupBy(relatedVideos, function (relatedVideo) {
+            //    return relatedVideo.get('id');
+            //});
 
-            var sortedRelatedVideoLists = _.sortBy(groupedRelatedVideoLists, 'length');
+            //var sortedRelatedVideoLists = _.sortBy(groupedRelatedVideoLists, 'length');
+
+            //console.log("SortedRelatedVideoList:", sortedRelatedVideoLists);
 
             //  Add items to our relatedVideos pool until we have a sufficiently random sampling amount.
-            var smartFilterRelatedVideos = [];
-            _.each(sortedRelatedVideoLists, function (sortedRelatedVideoList) {
+            //var smartFilterRelatedVideos = [];
+            //_.each(sortedRelatedVideoLists, function (sortedRelatedVideoList) {
+
+            //    console.log("SortedRelatedVideoList:", sortedRelatedVideoList);
                 
-                if (smartFilterRelatedVideos.length < 10) {
-                    smartFilterRelatedVideos.push(sortedRelatedVideoList[0]);
-                }
+            //    if (smartFilterRelatedVideos.length < 10) {
+            //        console.log("adding it");
+            //        smartFilterRelatedVideos.push(sortedRelatedVideoList[0]);
+            //    }
 
-            });
+            //});
 
-            var relatedVideo = smartFilterRelatedVideos[_.random(smartFilterRelatedVideos.length - 1)];
+            //console.log("SmartFilter:", smartFilterRelatedVideos);
+
+            var relatedVideo = relatedVideos[_.random(relatedVideos.length - 1)];
             return relatedVideo;
         },
         

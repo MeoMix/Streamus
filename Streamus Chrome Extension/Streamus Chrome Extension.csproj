@@ -211,7 +211,6 @@
     <Content Include="js\youTubeDataAPI.js" />
     <Content Include="tests.htm" />
     <None Include="js\thirdParty\chrome-api-vsdoc.js" />
-    <Content Include="js\thirdParty\MIT.LICENSE" />
     <Content Include="manifest.json" />
   </ItemGroup>
   <PropertyGroup>

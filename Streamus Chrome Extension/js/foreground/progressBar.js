@@ -57,13 +57,9 @@ define(['streamItems', 'player', 'helpers'], function (StreamItems, player, help
         }
     });
 
-    StreamItems.on('remove', function () {
-
-        if (StreamItems.length === 0) {
-            setCurrentTime(0);
-            setTotalTime(0);
-        }
-
+    StreamItems.on('empty', function () {
+        setCurrentTime(0);
+        setTotalTime(0);
     });
 
     StreamItems.on('change:selected', function () {
