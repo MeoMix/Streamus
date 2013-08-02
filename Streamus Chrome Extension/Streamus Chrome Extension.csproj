@@ -182,9 +182,9 @@
     <Content Include="js\foreground\view\playlistItemsTab\playlistItemsView.js" />
     <Content Include="js\foreground\view\playlistsTab\playlistInput.js" />
     <Content Include="js\foreground\view\playlistsTab\playlistsView.js" />
-    <Content Include="js\foreground\progressBar.js" />
+    <Content Include="js\foreground\view\progressBarView.js" />
     <Content Include="js\foreground\requirePaths.js" />
-    <Content Include="js\foreground\spinnerManager.js" />
+    <Content Include="js\foreground\model\spinnerBuilder.js" />
     <Content Include="js\foreground\view\video\videoDisplayView.js" />
     <Content Include="js\helpers.js" />
     <Content Include="js\inject\streamusInject.js" />

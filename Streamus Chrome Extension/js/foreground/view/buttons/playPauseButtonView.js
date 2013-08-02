@@ -1,5 +1,5 @@
 //  The play/pause icon.
-define(['player', 'spinnerManager', 'playerState', 'streamItems'], function (player, spinnerManager, PlayerState, StreamItems) {
+define(['player', 'spinnerBuilder', 'playerState', 'streamItems'], function (player, SpinnerBuilder, PlayerState, StreamItems) {
     'use strict';
     
     var PlayPauseButtonView = Backbone.View.extend({
@@ -9,7 +9,7 @@ define(['player', 'spinnerManager', 'playerState', 'streamItems'], function (pla
             'click': 'togglePlayingState'
         },
         
-        spinner: spinnerManager.getPlayPauseSpinner(),
+        spinner: SpinnerBuilder.buildPlayPauseSpinner(),
         
         disabledTitle: 'Play disabled. Try adding a video to your playlist, first!',
         pauseTitle: 'Click to pause the current video.',

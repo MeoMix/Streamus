@@ -293,7 +293,9 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
             }
         },
 
-        seekTo: function (timeInSeconds) {
+        //  seekTo can be spammed via mousewheel scrolling so debounce as to not spam the player, but still capture final result.
+        seekTo: _.debounce(function (timeInSeconds) {
+
             this.set('currentTime', timeInSeconds);
             var streamusPlayer = this.get('streamusPlayer');
 
@@ -304,7 +306,7 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
             //  Seek even if streamusPlayer is defined because we probably need to update the blob if it is.
             //  The true paramater allows the youTubePlayer to seek ahead past its buffered video.
             youTubePlayer.seekTo(timeInSeconds, true);
-        },
+        }, 250),
         
         //  Attempt to set playback quality to suggestedQuality or highest possible.
         setSuggestedQuality: function(suggestedQuality) {

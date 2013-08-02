@@ -1,6 +1,6 @@
 //  This is the list of playlists on the playlists tab.
-define(['contextMenuView', 'backgroundManager', 'helpers', 'spinnerManager', 'dataSource', 'streamItems', 'playlistView'], function (ContextMenuView, backgroundManager, helpers, spinnerManager, DataSource, StreamItems, PlaylistView) {
-    'use strict'
+define(['contextMenuView', 'backgroundManager', 'helpers', 'spinnerBuilder', 'dataSource', 'streamItems', 'playlistView'], function (ContextMenuView, backgroundManager, helpers, SpinnerBuilder, DataSource, StreamItems, PlaylistView) {
+    'use strict';
 
     var PlaylistsView = Backbone.View.extend({
         
@@ -10,7 +10,7 @@ define(['contextMenuView', 'backgroundManager', 'helpers', 'spinnerManager', 'da
         
         emptyNotification: $('#PlaylistsView .emptyListNotification'),
         
-        spinner: spinnerManager.getPlaylistSpinner(),
+        spinner: SpinnerBuilder.buildPlaylistSpinner(),
         
         events: {
             'contextmenu': 'showContextMenu',

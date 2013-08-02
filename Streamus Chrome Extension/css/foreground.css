@@ -352,7 +352,7 @@
 
 #PauseIcon { display: none; }
 
-#VideoTimeProgressBar {
+#ProgressBarView {
     -webkit-appearance: none !important;
     -webkit-box-sizing: border-box;
     background-color: #222;
@@ -368,7 +368,7 @@
     top: 12px;
 }
 
-#VideoTimeProgressBar::-webkit-slider-thumb {
+#ProgressBarView::-webkit-slider-thumb {
     -webkit-appearance: none !important;
     -webkit-box-shadow: 0 0 5px #000;
     background: #eaeaea;
@@ -379,7 +379,7 @@
     width: 12px;
 }
 
-#VideoTimeProgressBar::-webkit-slider-thumb:active { background: #fff; }
+#ProgressBarView::-webkit-slider-thumb:active { background: #fff; }
 
 #timeDisplayWrapper {
     background-color: #666;

@@ -29,12 +29,10 @@ var require = {
         'backgroundManager': 'foreground/backgroundManager',
         'settingsManager': 'foreground/settingsManager',
         'player': 'foreground/player',
-        'spinnerManager': 'foreground/spinnerManager',
         
         'contentHeader': 'foreground/contentHeader',
         'dialogs': 'foreground/dialogs',
         'contentButtons': 'foreground/contentButtons',
-        'progressBar': 'foreground/progressBar',
 
         //  Collection:
         'contextMenuGroups': 'foreground/collection/contextMenuGroups',
@@ -45,10 +43,12 @@ var require = {
         'contextMenu': 'foreground/model/contextMenu',
         'contextMenuGroup': 'foreground/model/contextMenuGroup',
         'contextMenuItem': 'foreground/model/contextMenuItem',
+        'spinnerBuilder': 'foreground/model/spinnerBuilder',
         
         //  View:
         'contextMenuView': 'foreground/view/contextMenuView',
         'headerTitleView': 'foreground/view/headerTitleView',
+        'progressBarView': 'foreground/view/progressBarView',
         'volumeControlView': 'foreground/view/volumeControlView',
         
         //  View -> Buttons:
