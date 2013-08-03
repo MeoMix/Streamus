@@ -7,7 +7,7 @@ define([
     'dataSource',
     'streamItems',
     'playlistView'
-], function (ContextMenuView, backgroundManager, Utility, SpinnerBuilder, DataSource, StreamItems, PlaylistView) {
+], function (ContextMenuView, BackgroundManager, Utility, SpinnerBuilder, DataSource, StreamItems, PlaylistView) {
     'use strict';
 
     var PlaylistsView = Backbone.View.extend({
@@ -30,7 +30,7 @@ define([
         render: function() {
             this.ul.empty();
 
-            var activeFolder = backgroundManager.get('activeFolder');
+            var activeFolder = BackgroundManager.get('activeFolder');
 
             // TODO: Why am I calling render on playlistsView if activeFolder is null?
             if (activeFolder === null || activeFolder.get('playlists').length === 0) {
@@ -62,7 +62,7 @@ define([
 
                 //  TODO: This is probably partially handled by the PlaylistView not PlaylistsView
                 //  TODO: I presume this is still useful, but playlistItemsView doesn't have it so I need to double check.
-                var activePlaylist = backgroundManager.get('activePlaylist');
+                var activePlaylist = BackgroundManager.get('activePlaylist');
                 if (activePlaylist !== null) {
                     this.visuallySelectPlaylist(activePlaylist);
                 }
@@ -76,8 +76,8 @@ define([
             
             //  TODO: Sortable.
 
-            this.listenTo(backgroundManager, 'change:activeFolder', this.render);
-            this.listenTo(backgroundManager, 'change:activePlaylist', function(collection, playlist) {
+            this.listenTo(BackgroundManager, 'change:activeFolder', this.render);
+            this.listenTo(BackgroundManager, 'change:activePlaylist', function (collection, playlist) {
                 console.log("Active playlist:", playlist);
                 if (playlist === null) {
                     self.ul.find('li').removeClass('loaded');
@@ -87,19 +87,19 @@ define([
 
             });
             
-            this.listenTo(backgroundManager.get('allPlaylistItems'), 'add remove', this.updatePlaylistDescription);
-            this.listenTo(backgroundManager.get('allPlaylists'), 'reset', this.render);
-            this.listenTo(backgroundManager.get('allPlaylists'), 'add', this.addItem);
+            this.listenTo(BackgroundManager.get('allPlaylistItems'), 'add remove', this.updatePlaylistDescription);
+            this.listenTo(BackgroundManager.get('allPlaylists'), 'reset', this.render);
+            this.listenTo(BackgroundManager.get('allPlaylists'), 'add', this.addItem);
             
             //  TODO: THIS IS INCORRECT. Instead of allPlaylists it should be when the activeFolder is empty, but I need to be able to change the activeFolder listener.
-            this.listenTo(backgroundManager.get('allPlaylists'), 'empty', function () {
+            this.listenTo(BackgroundManager.get('allPlaylists'), 'empty', function () {
                 self.emptyNotification.show();
             });
 
             this.render();
             
             //  todo: find a place for this
-            this.scrollItemIntoView(backgroundManager.get('activePlaylist'), false);
+            this.scrollItemIntoView(BackgroundManager.get('activePlaylist'), false);
         },
         
         //  TODO: This should be implemented non-naively.
@@ -133,7 +133,7 @@ define([
         
         showItemContextMenu: function (event) {
             
-            var activeFolder = backgroundManager.get('activeFolder');
+            var activeFolder = BackgroundManager.get('activeFolder');
 
             var clickedPlaylistId = $(event.currentTarget).data('playlistid');
             var clickedPlaylist = activeFolder.get('playlists').get(clickedPlaylistId);
@@ -210,10 +210,10 @@ define([
         
         selectPlaylist: function(event) {
             var playlistId = $(event.currentTarget).data('playlistid');
-            var playlist = backgroundManager.getPlaylistById(playlistId);
+            var playlist = BackgroundManager.getPlaylistById(playlistId);
 
             this.visuallySelectPlaylist(playlist);
-            backgroundManager.set('activePlaylist', playlist);
+            BackgroundManager.set('activePlaylist', playlist);
         },
         
         //  TODO: Needs to be dry with playlistItemsView
@@ -240,7 +240,7 @@ define([
             var playlistId = playlistItem.get('playlistId');
             var playlistLink = this.ul.find('li[data-playlistid="' + playlistId + '"]');
 
-            var playlist = backgroundManager.getPlaylistById(playlistId);
+            var playlist = BackgroundManager.getPlaylistById(playlistId);
 
             var currentItems = playlist.get('items');
             var currentVideos = currentItems.map(function (currentItem) {

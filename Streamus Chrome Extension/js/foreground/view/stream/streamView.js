@@ -1,4 +1,10 @@
-﻿define(['streamItems', 'streamItemView', 'contextMenuView', 'backgroundManager', 'sly'], function (StreamItems, StreamItemView, ContextMenuView, backgroundManager) {
+﻿define([
+    'streamItems',
+    'streamItemView',
+    'contextMenuView',
+    'backgroundManager',
+    'sly'
+], function (StreamItems, StreamItemView, ContextMenuView, BackgroundManager) {
     'use strict';
 
     var StreamView = Backbone.View.extend({
@@ -124,7 +130,7 @@
                     position: 1,
                     text: 'Save Stream as Playlist',
                     onClick: function () {
-                        backgroundManager.get('activeFolder').addPlaylistWithVideos('Playlist', StreamItems.pluck('video'));
+                        BackgroundManager.get('activeFolder').addPlaylistWithVideos('Playlist', StreamItems.pluck('video'));
                     }
                 }]
             });

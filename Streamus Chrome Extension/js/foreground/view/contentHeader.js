@@ -1,4 +1,4 @@
-define(['backgroundManager'], function (backgroundManager) {
+define(['backgroundManager'], function (BackgroundManager) {
     'use strict';
 
     return function (config) {
@@ -12,12 +12,12 @@ define(['backgroundManager'], function (backgroundManager) {
         var headerInput = $('<input/>', {
             'class': 'headerInput',
             type: 'text',
-            value: backgroundManager.get('activePlaylist').get('title'),
+            value: BackgroundManager.get('activePlaylist').get('title'),
             
             on: {
                 
                 input: function () {
-                    backgroundManager.get('activePlaylist').set('title', $(this).val());
+                    BackgroundManager.get('activePlaylist').set('title', $(this).val());
                 },
                 
                 mouseover: function () {
@@ -40,11 +40,11 @@ define(['backgroundManager'], function (backgroundManager) {
 
         headerInput.appendTo(headerTitle);
         
-        backgroundManager.get('allPlaylists').on('change:title', function (model, title) {
+        BackgroundManager.get('allPlaylists').on('change:title', function (model, title) {
             headerInput.val(title);
         });
 
-        backgroundManager.on('change:activePlaylist ', function (model, activePlaylist) {
+        BackgroundManager.on('change:activePlaylist ', function (model, activePlaylist) {
             
             if (activePlaylist === null) {
                 headerInput.val('No Active Playlist');
@@ -55,7 +55,8 @@ define(['backgroundManager'], function (backgroundManager) {
         });
 
         var addButton = $('<div/>', {
-            'class': 'addButton'
+            'class': 'addButton',
+            click: expand
         }).appendTo(contentHeader);
         
         //  jQuery does not support appending paths to SVG elements. You MUST declare element inside of svg's HTML mark-up.
@@ -74,37 +75,30 @@ define(['backgroundManager'], function (backgroundManager) {
         }).appendTo(addButton);
 
         var addCancelIcon = $('<div/>', {
-            'class': 'addCancelIcon'
+            'class': 'addCancelIcon',
+            click: contract
         }).appendTo(addButton);
         
         //  jQuery does not support appending paths to SVG elements. You MUST declare element inside of svg's HTML mark-up.
         addCancelIcon.append('<svg id="addCancelIconSvg"><path d="M0,2 L2,0 L12,10 L10,12z"/><path d="M12,2 L10,0 L0,10 L2,12z"/></svg>');
-
-        function expand() {
-            addCancelIcon.css('right', '0px').one('click', contract);
-            addButton.width('483');
-            addInput.css('opacity', 1).css('cursor', "auto").focus();
-            addButton.find('span').hide();
-            headerInput.attr('disabled', 'disabled');
-        }
-        
-        function contract() {
-            addButton.find('span').show();
-            headerInput.removeAttr('disabled');
-            
-            addButton.width('59px').one('click', expand);
-
-            addCancelIcon.css('right', '-30px');
-            addInput.css('opacity', 0).css('cursor', "pointer").val('').blur();
-
-            //  Prevent click event from bubbling up so button does not expand on click.
-            return false;
-        }
         
         if (config.expanded) {
             expand();
-        } else {
-            contract();
+        }
+        
+        function expand() {
+            contentHeader.addClass('expanded');
+            headerInput.attr('disabled', 'disabled');
+            addInput.focus();
+        }
+
+        function contract() {
+            contentHeader.removeClass('expanded');
+            headerInput.removeAttr('disabled');
+            addInput.val('').blur();
+
+            //  Prevent click event from bubbling up so button does not expand on click.
+            return false;
         }
 
         return {

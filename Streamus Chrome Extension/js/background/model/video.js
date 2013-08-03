@@ -1,5 +1,7 @@
 ﻿//  Holds all the relevant data for a video.
-define(['settings'], function(Settings){
+define([
+    'settings'
+], function (Settings) {
     'use strict';
 
     var videoModel = Backbone.Model.extend({

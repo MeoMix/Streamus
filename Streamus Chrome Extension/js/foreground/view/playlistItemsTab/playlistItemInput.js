@@ -7,7 +7,7 @@ define([
     'backgroundManager',
     'dialog',
     'dialogView'
-], function (ContentHeader, youTubeDataAPI, Utility, backgroundManager, Dialog, DialogView) {
+], function (ContentHeader, YouTubeDataAPI, Utility, BackgroundManager, Dialog, DialogView) {
     'use strict';
 
     var contentHeader = new ContentHeader({
@@ -16,7 +16,7 @@ define([
         addInputPlaceholder: 'Search or Enter YouTube video URL',
         expanded: true
     });
-
+    
     var addInput = $(contentHeader.addInputElement);
         
     //  Provides the drop-down suggestions and video suggestions.
@@ -37,7 +37,7 @@ define([
             //  Don't change the text when user clicks their video selection.
             event.preventDefault();
             contentHeader.addInputElement.val('');
-            backgroundManager.get('activePlaylist').addItemByInformation(ui.item.value);
+            BackgroundManager.get('activePlaylist').addItemByInformation(ui.item.value);
         }
     //  http://stackoverflow.com/questions/3488016/using-html-in-jquery-ui-autocomplete
     }).data("ui-autocomplete")._renderItem = function (ul, item) {
@@ -61,10 +61,10 @@ define([
     function handleValidInput(videoId) {
         contentHeader.addInputElement.val('');
 
-        youTubeDataAPI.getVideoInformation({
+        YouTubeDataAPI.getVideoInformation({
             videoId: videoId,
             success: function (videoInformation) {
-                backgroundManager.get('activePlaylist').addItemByInformation(videoInformation);
+                BackgroundManager.get('activePlaylist').addItemByInformation(videoInformation);
             },
             error: function () {
 
@@ -87,7 +87,7 @@ define([
         //  Wrapped in a timeout to support 'rightclick->paste' 
         setTimeout(function () {
             var url = addInput.val();
-            var parsedVideoId = youTubeDataAPI.parseVideoIdFromUrl(url);
+            var parsedVideoId = YouTubeDataAPI.parseVideoIdFromUrl(url);
 
             //  If found a valid YouTube link then just add the video.
             if (parsedVideoId) {
@@ -104,7 +104,7 @@ define([
         if (trimmedSearchText === '') {
             addInput.autocomplete({ source: [] });
         } else {
-            youTubeDataAPI.search(trimmedSearchText, function (videoInformationList) {
+            YouTubeDataAPI.search(trimmedSearchText, function (videoInformationList) {
 
                 //  Do not display results if searchText was modified while searching.
                 if (trimmedSearchText === $.trim(addInput.val())) {

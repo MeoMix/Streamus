@@ -1,4 +1,6 @@
-﻿define(['settings'], function (Settings) {
+﻿define([
+    'settings'
+], function (Settings) {
     'use strict';
 
     var RadioButtonView = Backbone.View.extend({

@@ -1,5 +1,8 @@
 ﻿//  PlaylistItems have a one-to-one relationship with a Video object via the videoId property.
-define(['settings', 'video'], function(Settings, Video) {
+define([
+    'settings',
+    'video'
+], function (Settings, Video) {
     'use strict';
     
     var playlistItemModel = Backbone.Model.extend({

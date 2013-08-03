@@ -1,5 +1,9 @@
 //  When clicked -- skips to the last video. Skips from the begining of the list to the end.
-define(['streamItems', 'settings', 'repeatButtonState'], function (StreamItems, Settings, RepeatButtonState) {
+define([
+    'streamItems',
+    'settings',
+    'repeatButtonState'
+], function (StreamItems, Settings, RepeatButtonState) {
     'use strict';
 
     var PreviousButtonView = Backbone.View.extend({

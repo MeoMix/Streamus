@@ -7,7 +7,7 @@ define([
     'youTubeDataAPI',
     'video',
     'utility'
-], function (StreamItem, Settings, RepeatButtonState, youTubeDataAPI, Video, Utility) {
+], function (StreamItem, Settings, RepeatButtonState, YouTubeDataAPI, Video, Utility) {
     'use strict';
 
     var streamItemsCollection = Backbone.Collection.extend({
@@ -34,7 +34,7 @@ define([
 
                 var videoId = addedStreamItem.get('video').get('id');
 
-                youTubeDataAPI.getRelatedVideoInformation(videoId, function (relatedVideoInformation) {
+                YouTubeDataAPI.getRelatedVideoInformation(videoId, function (relatedVideoInformation) {
                     addedStreamItem.set('relatedVideoInformation', relatedVideoInformation);
                 });
 
@@ -110,7 +110,7 @@ define([
 
             //  Fetch all the related videos for videos on load. I don't want to save these to the DB because they're bulky and constantly change.
             //  Data won't appear immediately as it is an async request, I just want to get the process started now.
-            youTubeDataAPI.getBulkRelatedVideoInformation(randomVideoIds, function (bulkInformationList) {
+            YouTubeDataAPI.getBulkRelatedVideoInformation(randomVideoIds, function (bulkInformationList) {
 
                 _.each(bulkInformationList, function (bulkInformation) {
                     var videoId = bulkInformation.videoId;
@@ -333,8 +333,6 @@ define([
             this.trigger('empty');
         }
     });
-
-
 
     StreamItems = new streamItemsCollection;
 

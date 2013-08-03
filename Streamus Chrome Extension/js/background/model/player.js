@@ -1,7 +1,11 @@
 //  Exposed globally so that Chrome Extension's foreground can access through chrome.extension.getBackgroundPage()
 var YouTubePlayer = null;
 
-define(['youTubePlayerAPI', 'settings', 'playerState'], function (youTubePlayerAPI, Settings, PlayerState) {
+define([
+    'youTubePlayerAPI',
+    'settings',
+    'playerState'
+], function (YouTubePlayerAPI, Settings, PlayerState) {
     'use strict';
 
     //  This is the actual YouTube Player API object housed within the iframe.
@@ -141,7 +145,7 @@ define(['youTubePlayerAPI', 'settings', 'playerState'], function (youTubePlayerA
                 youTubeVideo.attr('src', videoStreamSrc);
             });
 
-            youTubePlayerAPI.once('change:ready', function () {
+            YouTubePlayerAPI.once('change:ready', function () {
                 console.log("youTubePlayerAPI is now ready");
                 //  Injected YouTube code creates a global YT object with which a 'YouTube Player' object can be created.
                 //  https://developers.google.com/youtube/iframe_api_reference#Loading_a_Video_Player

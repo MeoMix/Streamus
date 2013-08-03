@@ -22,9 +22,6 @@ var require = {
         //  Foreground:
         'main': 'foreground/main',
         'foreground': 'foreground/foreground',
-        'backgroundManager': 'foreground/backgroundManager',
-        'settings': 'foreground/settings',
-        'player': 'foreground/player',
         'utility': 'foreground/utility',
         
         'contentHeader': 'foreground/contentHeader',
@@ -35,10 +32,13 @@ var require = {
         'streamItems': 'foreground/collection/streamItems',
 
         //  Model:
+        'backgroundManager': 'foreground/model/backgroundManager',
         'contextMenu': 'foreground/model/contextMenu',
         'contextMenuGroup': 'foreground/model/contextMenuGroup',
         'contextMenuItem': 'foreground/model/contextMenuItem',
         'dialog': 'foreground/model/dialog',
+        'player': 'foreground/model/player',
+        'settings': 'foreground/model/settings',
         'spinnerBuilder': 'foreground/model/spinnerBuilder',
         
         //  View:

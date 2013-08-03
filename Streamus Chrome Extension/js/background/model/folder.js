@@ -1,5 +1,13 @@
 ﻿//  A folder is a collection of playlists
-define(['playlists', 'playlist', 'videos', 'video', 'player', 'settings', 'youTubeDataAPI' ], function (Playlists, Playlist, Videos, Video, player, Settings, youTubeDataAPI) {
+define([
+    'playlists',
+    'playlist',
+    'videos',
+    'video',
+    'player',
+    'settings',
+    'youTubeDataAPI'
+], function (Playlists, Playlist, Videos, Video, Player, Settings, youTubeDataAPI) {
     'use strict';
     
     var folderModel = Backbone.Model.extend({
@@ -48,10 +56,10 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'settings', 'youTu
                             var videoId = item.get('video').get('id');
 
                             //  Maintain the playing state by loading if playing. 
-                            if (player.isPlaying()) {
-                                player.loadVideoById(videoId);
+                            if (Player.isPlaying()) {
+                                Player.loadVideoById(videoId);
                             } else {
-                                player.cueVideoById(videoId);
+                                Player.cueVideoById(videoId);
                             }
                         }
                     });

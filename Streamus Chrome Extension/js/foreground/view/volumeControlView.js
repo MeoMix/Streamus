@@ -1,5 +1,7 @@
 //  Responsible for controlling the volume indicator of the UI.
-define(['player'], function (player) {
+define([
+    'player'
+], function (Player) {
     'use strict';
 
     var VolumeControlView = Backbone.View.extend({
@@ -16,7 +18,7 @@ define(['player'], function (player) {
         },
 
         render: function () {
-            var volume = player.get('volume');
+            var volume = Player.get('volume');
 
             //  Repaint the amount of white filled in the bar showing the distance the grabber has been dragged.
             var backgroundImage = '-webkit-gradient(linear,left top, right top, from(#ccc), color-stop(' + volume / 100 + ',#ccc), color-stop(' + volume / 100 + ',rgba(0,0,0,0)), to(rgba(0,0,0,0)))';
@@ -30,7 +32,7 @@ define(['player'], function (player) {
                 this.muteButton.find('.MuteButtonBar').css('fill', '#666');
             }
 
-            var isMuted = player.get('muted');
+            var isMuted = Player.get('muted');
 
             if (isMuted) {
                 this.muteButton
@@ -52,10 +54,10 @@ define(['player'], function (player) {
             this.muteButton = this.$('#MuteButton');
 
             //  Set the initial volume of the control based on what the YouTube player says is the current volume.
-            var volume = player.get('volume');
+            var volume = Player.get('volume');
             this.volumeSlider.val(volume).trigger('change');
 
-            this.listenTo(player, 'change:muted', this.render);
+            this.listenTo(Player, 'change:muted', this.render);
 
             this.render();
         },
@@ -64,7 +66,7 @@ define(['player'], function (player) {
         setVolume: function () {
 
             var newVolume = parseInt(this.volumeSlider.val(), 10);
-            player.set('volume', newVolume);
+            Player.set('volume', newVolume);
 
             this.render();
         },
@@ -83,8 +85,8 @@ define(['player'], function (player) {
         },
 
         toggleMute: function () {
-            var isMuted = player.get('muted');
-            player.set('muted', !isMuted);
+            var isMuted = Player.get('muted');
+            Player.set('muted', !isMuted);
         },
 
         //  Show the volume slider control by expanding its wrapper whenever any of the volume controls are hovered.

@@ -2,7 +2,10 @@
 //  Tries to load itself by ID stored in localStorage and then by chrome.storage.sync.
 //  If still unloaded, tells the server to create a new user and assumes that identiy.
 var User = null;
-define(['folders', 'settings'], function (Folders, Settings) {
+define([
+    'folders',
+    'settings'
+], function (Folders, Settings) {
     'use strict';
 
     var syncUserIdKey = 'UserId';

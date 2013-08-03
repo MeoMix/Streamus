@@ -1,4 +1,8 @@
-﻿define(['streamItems', 'player', 'playerState'], function (StreamItems, player, PlayerState) {
+﻿define([
+    'streamItems',
+    'player',
+    'playerState'
+], function (StreamItems, Player, PlayerState) {
     'use strict';
 
     var VideoDisplayView = Backbone.View.extend({
@@ -19,7 +23,7 @@
                 
                 if (streamItemExists) {                    
 
-                    var playerState = player.get('state');
+                    var playerState = Player.get('state');
 
                     if (playerState == PlayerState.PLAYING) {
                         //  Continously render if playing.
@@ -34,7 +38,7 @@
                         this.context.drawImage(this.video, 0, 0, this.el.width, this.el.height);
                     } else {
 
-                        var loadedVideoId = player.get('loadedVideoId');
+                        var loadedVideoId = Player.get('loadedVideoId');
 
                         if (loadedVideoId != '') {
                             this.videoDefaultImage.src = 'http://i2.ytimg.com/vi/' + loadedVideoId + '/mqdefault.jpg ';
@@ -61,10 +65,10 @@
             
             if (StreamItems.length > 0) {
                 
-                if (player.isPlaying()) {
-                    player.pause();
+                if (Player.isPlaying()) {
+                    Player.pause();
                 } else {
-                    player.play();
+                    Player.play();
                 }
 
             }
@@ -83,7 +87,7 @@
                 self.context.drawImage(this, 0, 0, self.el.width, self.el.height);
             };
             
-            this.listenTo(player, 'change:state', this.render);
+            this.listenTo(Player, 'change:state', this.render);
             this.listenTo(StreamItems, 'add addMultiple empty change:selected', this.render);
 
             this.render();

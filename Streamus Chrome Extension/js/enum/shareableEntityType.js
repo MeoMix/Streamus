@@ -1,13 +1,6 @@
 ﻿//  TODO: Move this into background only?
-
 //  Mirrors the enum ShareableEntityType on the server.
-define(function () {
-    'use strict';
-
-    var ShareableEntityType = Object.freeze({
-        NONE: -1,
-        PLAYLIST: 0
-    });
-
-    return ShareableEntityType;
+define({
+    NONE: -1,
+    PLAYLIST: 0
 });

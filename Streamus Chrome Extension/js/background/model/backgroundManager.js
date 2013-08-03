@@ -4,8 +4,17 @@ var BackgroundManager = null;
 //  BackgroundManager is a denormalization point for the Background's selected models.
 //  NOTE: It is important to understand that the activePlaylist is NOT guaranteed to be in the activeFolder. The user can click around, but this shouldn't affect state
 //  until they make a decision.
-define(['user', 'player', 'settings', 'playlistItems', 'playlists', 'folders', 'repeatButtonState', 'streamItems', 'playerState'],
-    function (user, player, Settings, PlaylistItems, Playlists, Folders, RepeatButtonState, StreamItems, PlayerState) {
+define([
+    'user',
+    'player',
+    'settings',
+    'playlistItems',
+    'playlists',
+    'folders',
+    'repeatButtonState',
+    'streamItems',
+    'playerState'
+], function (User, Player, Settings, PlaylistItems, Playlists, Folders, RepeatButtonState, StreamItems, PlayerState) {
     'use strict';
 
     var backgroundManagerModel = Backbone.Model.extend({
@@ -20,20 +29,20 @@ define(['user', 'player', 'settings', 'playlistItems', 'playlists', 'folders', '
 
             var self = this;
             //  TODO:  What if user's loaded state gets set before backgroundManager initializes? Not really possible unless instant response, but still.
-            user.on('change:loaded', function (model, loaded) {
+            User.on('change:loaded', function (model, loaded) {
 
                 if (loaded) {
 
-                    if (user.get('folders').length === 0) {
+                    if (User.get('folders').length === 0) {
                         throw "User should be initialized and have at least 1 folder before loading backgroundManager.";
                     }
 
                     //  TODO: I hate this whole concept of having to check if its ready else wait for it to be ready.
                     //  Do not initialize the backgroundManager until player is ready to go.
-                    if (player.get('ready')) {
+                    if (Player.get('ready')) {
                         initialize.call(self);
                     } else {
-                        player.once('change:ready', function() {
+                        Player.once('change:ready', function () {
                             initialize.call(self);
                         });
                     }
@@ -86,7 +95,7 @@ define(['user', 'player', 'settings', 'playlistItems', 'playlists', 'folders', '
     });
     
     function initialize() {
-        this.get('allFolders').add(user.get('folders').models);
+        this.get('allFolders').add(User.get('folders').models);
         this.get('allPlaylists').add(getAllPlaylists());
         this.get('allPlaylistItems').add(getAllPlaylistItems());
 
@@ -101,12 +110,12 @@ define(['user', 'player', 'settings', 'playlistItems', 'playlists', 'folders', '
                 var videoId = changedStreamItem.get('video').get('id');
 
                 //  Maintain the state of the player by playing or cueuing based on current player state.
-                var playerState = player.get('state');
+                var playerState = Player.get('state');
 
                 if (playerState === PlayerState.PLAYING || playerState === PlayerState.ENDED) {
-                    player.loadVideoById(videoId);
+                    Player.loadVideoById(videoId);
                 } else {
-                    player.cueVideoById(videoId);
+                    Player.cueVideoById(videoId);
                 }
             }
 
@@ -114,7 +123,7 @@ define(['user', 'player', 'settings', 'playlistItems', 'playlists', 'folders', '
 
         this.listenTo(StreamItems, 'empty', function () {
             //  TODO: Clear localStorage once I write to local storage.
-            player.stop();
+            Player.stop();
         });
 
         var self = this;

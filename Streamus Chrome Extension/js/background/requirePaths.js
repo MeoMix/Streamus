@@ -1,38 +1,48 @@
 var require = {
     baseUrl: '../js/',
     paths: {
-        'main': 'background/main',
-        'error': 'background/error',
-        'background': 'background/background',
+
+        //  Global:
+        'youTubeDataAPI': 'youTubeDataAPI',
+
+        //  Enum:
+        'dataSource': 'enum/dataSource',
         'playerState': 'enum/playerState',
         'repeatButtonState': 'enum/repeatButtonState',
-        'dataSource': 'enum/dataSource',
-        'player': 'background/player',
-        'playlistItem': 'background/playlistItem',
-        'playlistItems': 'background/playlistItems',
-        'folder': 'background/folder',
-        'folders': 'background/folders',
-        'playlist': 'background/playlist',
-        'playlists': 'background/playlists',
-        'youTubePlayerAPI': 'background/model/youTubePlayerAPI',
-        'video': 'background/video',
-        'videos': 'background/videos',
-        'youTubeDataAPI': 'youTubeDataAPI',
-        'utility': 'background/utility',
+        'shareableEntityType': 'enum/shareableEntityType',
+
+        //  Third Party:
+        'backbone': 'thirdParty/backbone',
         'jquery': 'thirdParty/jquery',
         'levenshtein': 'thirdParty/levenshtein',
         'underscore': 'thirdParty/underscore',
-        'user': 'background/user',
-        'backbone': 'thirdParty/backbone',
-        'backgroundManager': 'background/backgroundManager',
-        'settings': 'background/settings',
-        'pushMessageManager': 'background/pushMessageManager',
-        'iconManager': 'background/iconManager',
-        'spin': 'thirdParty/jquery.spin',
-        'shareCode': 'background/shareCode',
-        'shareableEntityType': 'enum/shareableEntityType',
         
+        //  Background:
+        'background': 'background/background',
+        'main': 'background/main',
+        'utility': 'background/utility',
+        
+        //  Collection:
+        'folders': 'background/collection/folders',
+        'playlistItems': 'background/collection/playlistItems',
+        'playlists': 'background/collection/playlists',
         'streamItems': 'background/collection/streamItems',
-        'streamItem': 'background/model/streamItem'
+        'videos': 'background/collection/videos',
+        
+        //  Model:
+        'backgroundManager': 'background/model/backgroundManager',
+        'error': 'background/model/error',
+        'folder': 'background/model/folder',
+        'iconManager': 'background/model/iconManager',
+        'player': 'background/model/player',
+        'playlist': 'background/model/playlist',
+        'playlistItem': 'background/model/playlistItem',
+        'pushMessageManager': 'background/model/pushMessageManager',
+        'settings': 'background/model/settings',
+        'shareCode': 'background/model/shareCode',
+        'streamItem': 'background/model/streamItem',
+        'user': 'background/model/user',
+        'video': 'background/model/video',
+        'youTubePlayerAPI': 'background/model/youTubePlayerAPI',
     }
 };

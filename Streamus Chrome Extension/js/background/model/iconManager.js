@@ -1,5 +1,8 @@
 ﻿//  Handles setting and managing the Streamus icon state.
-define(['player', 'playerState'], function (player, PlayerState) {
+define([
+    'player',
+    'playerState'
+], function (Player, PlayerState) {
     'use strict';
 
     var iconManagerModel = Backbone.Model.extend({
@@ -8,39 +11,39 @@ define(['player', 'playerState'], function (player, PlayerState) {
 
             //  Initialize the visual state of the icon once the player is ready and able to provide information.
             var initializeIcon = function () {
-                var playerState = player.get('state');
-                var isMuted = player.get('muted');
-                var volume = player.get('volume');
+                var playerState = Player.get('state');
+                var isMuted = Player.get('muted');
+                var volume = Player.get('volume');
 
                 setIcon(playerState, isMuted, volume);
             };
             
-            if (player.get('ready')) {
+            if (Player.get('ready')) {
                 initializeIcon();
             } else {
-                player.once('change:ready', initializeIcon);
+                Player.once('change:ready', initializeIcon);
             }
 
-            player.on('change:muted', function (model, isMuted) {
+            Player.on('change:muted', function (model, isMuted) {
 
-                var playerState = player.get('state');
-                var volume = player.get('volume');
-
-                setIcon(playerState, isMuted, volume);
-            });
-
-            player.on('change:state', function (model, playerState) {
-
-                var isMuted = player.get('muted');
-                var volume = player.get('volume');
+                var playerState = Player.get('state');
+                var volume = Player.get('volume');
 
                 setIcon(playerState, isMuted, volume);
             });
 
-            player.on('change:volume', function(model, volume) {
+            Player.on('change:state', function (model, playerState) {
 
-                var playerState = player.get('state');
-                var isMuted = player.get('muted');
+                var isMuted = Player.get('muted');
+                var volume = Player.get('volume');
+
+                setIcon(playerState, isMuted, volume);
+            });
+
+            Player.on('change:volume', function (model, volume) {
+
+                var playerState = Player.get('state');
+                var isMuted = Player.get('muted');
                 
                 setIcon(playerState, isMuted, volume);
             });

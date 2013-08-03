@@ -1,5 +1,10 @@
 //  The play/pause icon.
-define(['player', 'spinnerBuilder', 'playerState', 'streamItems'], function (player, SpinnerBuilder, PlayerState, StreamItems) {
+define([
+    'player',
+    'spinnerBuilder',
+    'playerState',
+    'streamItems'
+], function (Player, SpinnerBuilder, PlayerState, StreamItems) {
     'use strict';
     
     var PlayPauseButtonView = Backbone.View.extend({
@@ -27,7 +32,7 @@ define(['player', 'spinnerBuilder', 'playerState', 'streamItems'], function (pla
             var playIcon = $('#PlayIcon');
             
             //  Whenever the YouTube player changes playing state -- update whether icon shows play or pause.
-            var playerState = player.get('state');
+            var playerState = Player.get('state');
 
             if (playerState === PlayerState.BUFFERING) {
                 //  Show buffering icon and hide the others.
@@ -59,7 +64,7 @@ define(['player', 'spinnerBuilder', 'playerState', 'streamItems'], function (pla
         initialize: function () {
             
             this.listenTo(StreamItems, 'change:selected empty remove', this.render);
-            this.listenTo(player, 'change:state', this.render);
+            this.listenTo(Player, 'change:state', this.render);
             
             this.render();
         },
@@ -68,10 +73,10 @@ define(['player', 'spinnerBuilder', 'playerState', 'streamItems'], function (pla
         togglePlayingState: _.debounce(function () {
 
             if (!this.$el.hasClass('disabled')) {
-                if (player.isPlaying()) {
-                    player.pause();
+                if (Player.isPlaying()) {
+                    Player.pause();
                 } else {
-                    player.play();
+                    Player.play();
                 }
             }
 

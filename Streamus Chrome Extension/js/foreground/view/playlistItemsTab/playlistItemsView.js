@@ -1,5 +1,10 @@
 ﻿//  Represents the videos in a given playlist
-define(['contextMenuView', 'backgroundManager', 'streamItems', 'playlistItemView'], function (ContextMenuView, backgroundManager, StreamItems, PlaylistItemView) {
+define([
+    'contextMenuView',
+    'backgroundManager',
+    'streamItems',
+    'playlistItemView'
+], function (ContextMenuView, BackgroundManager, StreamItems, PlaylistItemView) {
     'use strict';
 
     var PlaylistItemsView = Backbone.View.extend({
@@ -19,7 +24,7 @@ define(['contextMenuView', 'backgroundManager', 'streamItems', 'playlistItemView
         render: function () {
             this.ul.empty();
 
-            var activePlaylist = backgroundManager.get('activePlaylist');
+            var activePlaylist = BackgroundManager.get('activePlaylist');
 
             // TODO: Why am I calling render on activePlaylistItems if activePlaylist is null?
             if (activePlaylist === null || activePlaylist.get('items').length === 0) {
@@ -77,15 +82,15 @@ define(['contextMenuView', 'backgroundManager', 'streamItems', 'playlistItemView
 
                     var nextItemId = nextListItem.data('itemid');
 
-                    backgroundManager.get('activePlaylist').moveItem(movedItemId, nextItemId);
+                    BackgroundManager.get('activePlaylist').moveItem(movedItemId, nextItemId);
                 }
             });
 
-            this.listenTo(backgroundManager, 'change:activePlaylist', this.render);
-            this.listenTo(backgroundManager.get('allPlaylistItems'), 'add', this.addItem);
+            this.listenTo(BackgroundManager, 'change:activePlaylist', this.render);
+            this.listenTo(BackgroundManager.get('allPlaylistItems'), 'add', this.addItem);
             
             //  TODO: THIS IS INCORRECT. Instead of allPlaylistItems it should be when the activePlaylist is empty, but I need to be able to change the activePlaylist listener.
-            this.listenTo(backgroundManager.get('allPlaylistItems'), 'empty', function () {
+            this.listenTo(BackgroundManager.get('allPlaylistItems'), 'empty', function () {
                 self.emptyNotification.show();
             });
 
@@ -123,7 +128,7 @@ define(['contextMenuView', 'backgroundManager', 'streamItems', 'playlistItemView
                     text: 'Add Playlist to Stream',
                     onClick: function () {
 
-                        var activePlaylist = backgroundManager.get('activePlaylist');
+                        var activePlaylist = BackgroundManager.get('activePlaylist');
 
                         var streamItems = activePlaylist.get('items').map(function (playlistItem) {
                             return {
@@ -150,7 +155,7 @@ define(['contextMenuView', 'backgroundManager', 'streamItems', 'playlistItemView
         
         showItemContextMenu: function (event) {
 
-            var activePlaylist = backgroundManager.get('activePlaylist');
+            var activePlaylist = BackgroundManager.get('activePlaylist');
             var clickedItemId = $(event.currentTarget).data('itemid');
             var clickedItem = activePlaylist.get('items').get(clickedItemId);
 
@@ -230,7 +235,7 @@ define(['contextMenuView', 'backgroundManager', 'streamItems', 'playlistItemView
             
             //  Add item to stream on dblclick.
             var itemId = $(event.currentTarget).data('itemid');
-            var playlistItem = backgroundManager.getPlaylistItemById(itemId);
+            var playlistItem = BackgroundManager.getPlaylistItemById(itemId);
 
             StreamItems.add({
                 id: _.uniqueId('streamItem_'),

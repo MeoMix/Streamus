@@ -4,7 +4,7 @@ define([
     'player',
     'utility',
     'playerState'
-], function (StreamItems, player, Utility, PlayerState) {
+], function (StreamItems, Player, Utility, PlayerState) {
     'use strict';
 
     var ProgressBarView = Backbone.View.extend({
@@ -33,7 +33,7 @@ define([
                 //  If a video is currently playing when the GUI opens then initialize with those values.
                 //  Set total time before current time because it affects the range's max.
                 this.setTotalTime(this.getCurrentVideoDuration());
-                this.setCurrentTime(player.get('currentTime'));
+                this.setCurrentTime(Player.get('currentTime'));
                 
             }
 
@@ -44,8 +44,8 @@ define([
             
             this.listenTo(StreamItems, 'empty', this.clear);
             this.listenTo(StreamItems, 'change:selected', this.restart);
-            this.listenTo(player, 'change:currentTime', this.render);
-            this.listenTo(player, 'change:state', this.stopSeeking);
+            this.listenTo(Player, 'change:currentTime', this.render);
+            this.listenTo(Player, 'change:state', this.stopSeeking);
 
             this.render();
             this.updateProgress();
@@ -80,7 +80,7 @@ define([
             var currentTime = parseInt(this.$el.val(), 10);
             
             this.setCurrentTime(currentTime + delta);
-            player.seekTo(currentTime + delta);
+            Player.seekTo(currentTime + delta);
             
         },
         
@@ -96,7 +96,7 @@ define([
         stopSeeking: function(){
             
             //  Seek is known to have finished when the player announces a state change that isn't buffering / unstarted.
-            var state = player.get('state');
+            var state = Player.get('state');
 
             if (state == PlayerState.PLAYING || state == PlayerState.PAUSED) {
                 this.autoUpdate = true;
@@ -111,7 +111,7 @@ define([
                 //  Bind to progressBar mouse-up to support dragging as well as clicking.
                 //  I don't want to send a message until drag ends, so mouseup works nicely. 
                 var currentTime = parseInt(this.$el.val(), 10);
-                player.seekTo(currentTime);
+                Player.seekTo(currentTime);
             }
             
         },

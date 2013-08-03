@@ -1,4 +1,9 @@
-﻿define(['contentHeader', 'youTubeDataAPI', 'backgroundManager', 'dataSource'], function (ContentHeader, youTubeDataAPI, backgroundManager, DataSource) {
+﻿define([
+    'contentHeader',
+    'youTubeDataAPI',
+    'backgroundManager',
+    'dataSource'
+], function (ContentHeader, YouTubeDataAPI, BackgroundManager, DataSource) {
     'use strict';
 
     console.log("Initializing");
@@ -30,35 +35,35 @@
             if (userInput.trim() !== '') {
                 contentHeader.addInputElement.val('');
 
-                var dataSource = youTubeDataAPI.parseUrlForDataSource(userInput);
-                var activeFolder = backgroundManager.get('activeFolder');
+                var dataSource = YouTubeDataAPI.parseUrlForDataSource(userInput);
+                var activeFolder = BackgroundManager.get('activeFolder');
 
                 switch (dataSource.type) {
                     case DataSource.USER_INPUT:
                         activeFolder.addPlaylistByDataSource(userInput, dataSource, function (playlist) {
-                            backgroundManager.set('activePlaylist', playlist);
+                            BackgroundManager.set('activePlaylist', playlist);
                         });
                         break;
                     case DataSource.YOUTUBE_PLAYLIST:
-                        youTubeDataAPI.getPlaylistTitle(dataSource.id, function (youTubePlaylistTitle) {
+                        YouTubeDataAPI.getPlaylistTitle(dataSource.id, function (youTubePlaylistTitle) {
                             activeFolder.addPlaylistByDataSource(youTubePlaylistTitle, dataSource, function (playlist) {
-                                backgroundManager.set('activePlaylist', playlist);
+                                BackgroundManager.set('activePlaylist', playlist);
                             });
                         });
                         break;
                     case DataSource.YOUTUBE_CHANNEL:
                         
-                        youTubeDataAPI.getChannelName(dataSource.id, function (channelName) {
+                        YouTubeDataAPI.getChannelName(dataSource.id, function (channelName) {
                             var playlistTitle = channelName + '\'s Feed';
                             activeFolder.addPlaylistByDataSource(playlistTitle, dataSource, function (playlist) {
-                                backgroundManager.set('activePlaylist', playlist);
+                                BackgroundManager.set('activePlaylist', playlist);
                             });
                         });
 
                         break;
                     case DataSource.SHARED_PLAYLIST:
                         activeFolder.addPlaylistByDataSource('', dataSource, function (playlist) {
-                            backgroundManager.set('activePlaylist', playlist);
+                            BackgroundManager.set('activePlaylist', playlist);
                         });
                         break;
                     default:

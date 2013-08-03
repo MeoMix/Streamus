@@ -1,5 +1,7 @@
 ﻿//  Holds all the relevant data for a client-side error
-define(['settings'], function (Settings) {
+define([
+    'settings'
+], function (Settings) {
     'use strict';
 
     var errorModel = Backbone.Model.extend({

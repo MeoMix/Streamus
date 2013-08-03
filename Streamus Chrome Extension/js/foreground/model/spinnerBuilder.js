@@ -1,6 +1,8 @@
 ﻿//  Spinners share a lot of common characteristics. Use this to generate spinners so that common characteristics
 //  aren't copy/pasted each time a new spinner is needed.
-define(['spin'], function (Spin) {
+define([
+    'spin'
+], function (Spin) {
     'use strict';
 
     var SpinnerBuilder = Backbone.Model.extend({

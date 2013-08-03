@@ -1,4 +1,7 @@
-﻿define(['settings', 'player'], function (Settings, player) {
+﻿define([
+    'settings',
+    'player'
+], function (Settings, Player) {
     'use strict';
 
     var suggestedQualitySelectView = Backbone.View.extend({
@@ -19,7 +22,7 @@
             var suggestedQuality = this.$el.val();
 
             Settings.set('suggestedQuality', suggestedQuality);
-            player.setSuggestedQuality(suggestedQuality);
+            Player.setSuggestedQuality(suggestedQuality);
 
         }
     });

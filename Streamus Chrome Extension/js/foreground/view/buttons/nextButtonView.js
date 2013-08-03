@@ -1,5 +1,9 @@
 //  When clicked -- goes to the next video. Can potentially go from the end of the list to the front if repeat playlist is toggled on
-define(['streamItems', 'settings', 'repeatButtonState'], function (StreamItems, Settings, RepeatButtonState) {
+define([
+    'streamItems',
+    'settings',
+    'repeatButtonState'
+], function (StreamItems, Settings, RepeatButtonState) {
     'use strict';
 
     var NextButtonView = Backbone.View.extend({

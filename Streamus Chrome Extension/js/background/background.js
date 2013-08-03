@@ -1,9 +1,14 @@
 ﻿//  Background.js is a bit of a dumping ground for code which needs a permanent housing spot.
-define(['player', 'backgroundManager', 'pushMessageManager', 'youTubeDataAPI', 'repeatButtonState', 'playerState', 'streamItems'],
-    function (player, backgroundManager, pushMessageManager, youTubeDataAPI, RepeatButtonState, PlayerState, StreamItems) {
-        'use strict';
+define([
+    'player',
+    'backgroundManager',
+    'youTubeDataAPI',
+    'playerState',
+    'streamItems'
+], function (Player, BackgroundManager, YouTubeDataAPI, PlayerState, StreamItems) {
+   'use strict';
   
-    player.on('change:state', function (model, state) {
+   Player.on('change:state', function (model, state) {
 
         if (state === PlayerState.PLAYING) {
             //  Check if the foreground UI is open.
@@ -50,10 +55,10 @@ define(['player', 'backgroundManager', 'pushMessageManager', 'youTubeDataAPI', '
         }
         else if (command === 'toggleVideo') {
             
-            if (player.isPlaying()) {
-                player.pause();
+            if (Player.isPlaying()) {
+                Player.pause();
             } else {
-                player.play();
+                Player.play();
             }
             
         } else {
@@ -82,26 +87,26 @@ define(['player', 'backgroundManager', 'pushMessageManager', 'youTubeDataAPI', '
                 break;
 
             case 'getFolders':
-                var allFolders = backgroundManager.get('allFolders');
+                var allFolders = BackgroundManager.get('allFolders');
                 sendResponse({ folders: allFolders });
                 break;
             case 'getPlaylists':                
-                var folder = backgroundManager.getFolderById(request.folderId);
+                var folder = BackgroundManager.getFolderById(request.folderId);
                 var playlists = folder.get('playlists');
 
                 sendResponse({ playlists: playlists });
                 break;
             case 'videoStreamSrcChange':
-                player.set('videoStreamSrc', request.videoStreamSrc);
+                Player.set('videoStreamSrc', request.videoStreamSrc);
                 break;
             case 'needSeekTo':
-                player.triggerInitialLoadDataSeekTo();
+                Player.triggerInitialLoadDataSeekTo();
                 break;
             //  TODO: Why don't I have the video here already?
             case 'addVideoByIdToPlaylist':
-                var playlist = backgroundManager.getPlaylistById(request.playlistId);
+                var playlist = BackgroundManager.getPlaylistById(request.playlistId);
                 
-                youTubeDataAPI.getVideoInformation({
+                YouTubeDataAPI.getVideoInformation({
                     videoId: request.videoId,
                     success: function(videoInformation) {
                         playlist.addItemByInformation(videoInformation);
@@ -119,7 +124,7 @@ define(['player', 'backgroundManager', 'pushMessageManager', 'youTubeDataAPI', '
 
                 break;
             case 'addPlaylistByShareData':
-                var activeFolder = backgroundManager.get('activeFolder');
+                var activeFolder = BackgroundManager.get('activeFolder');
                 
                 activeFolder.addPlaylistByShareData(request.shareCodeShortId, request.urlFriendlyEntityTitle, function (playlist) {
 
@@ -147,7 +152,7 @@ define(['player', 'backgroundManager', 'pushMessageManager', 'youTubeDataAPI', '
     });
 
     //  Backbone doesn't provide a way to get the event name when binding like this and I don't want to override their code, so leaving this a little less DRY.
-    backgroundManager.get('allPlaylists').on('add', function (playlist) {
+    BackgroundManager.get('allPlaylists').on('add', function (playlist) {
 
         sendEventToOpenYouTubeTabs('add', 'playlist', {
             id: playlist.get('id'),
@@ -156,7 +161,7 @@ define(['player', 'backgroundManager', 'pushMessageManager', 'youTubeDataAPI', '
 
     });
         
-    backgroundManager.get('allPlaylists').on('remove', function (playlist) {
+    BackgroundManager.get('allPlaylists').on('remove', function (playlist) {
 
         sendEventToOpenYouTubeTabs('remove', 'playlist', {
             id: playlist.get('id'),
@@ -165,7 +170,7 @@ define(['player', 'backgroundManager', 'pushMessageManager', 'youTubeDataAPI', '
 
     });
         
-    backgroundManager.get('allPlaylists').on('change:title', function (playlist) {
+    BackgroundManager.get('allPlaylists').on('change:title', function (playlist) {
 
         sendEventToOpenYouTubeTabs('rename', 'playlist', {
             id: playlist.get('id'),

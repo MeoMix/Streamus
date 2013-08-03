@@ -1,4 +1,7 @@
-﻿define(['repeatButtonState', 'settings'], function (RepeatButtonState, Settings) {
+﻿define([
+    'repeatButtonState',
+    'settings'
+], function (RepeatButtonState, Settings) {
     'use strict';
 
     var RepeatButtonView = Backbone.View.extend({

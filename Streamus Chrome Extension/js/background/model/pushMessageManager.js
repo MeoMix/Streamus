@@ -1,4 +1,8 @@
-﻿define(['user', 'settings', 'backgroundManager'], function(user, Settings, backgroundManager) {
+﻿define([
+    'user',
+    'settings',
+    'backgroundManager'
+], function (User, Settings, backgroundManager) {
     'use strict';
     
     var pushMessageManagerModel = Backbone.Model.extend({
@@ -18,10 +22,10 @@
             //chrome.pushMessaging.getChannelId(true, function (response) {
             //    self.set('channelId', response.channelId);
 
-            //    if (user.get('loaded')) {
+            //    if (User.get('loaded')) {
             //        self.sendChannelIdToServer();
             //    } else {
-            //        user.once('change:loaded', function() {
+            //        User.once('change:loaded', function() {
             //            self.sendChannelIdToServer();
             //        });
             //    }
@@ -34,7 +38,7 @@
             //    chrome.idle.queryState(60, function(currentState) {
 
             //        if (currentState !== 'active') {
-            //            user.set('dirty', true);
+            //            User.set('dirty', true);
             //        }
 
             //    });
@@ -50,7 +54,7 @@
             //    type: 'POST',
             //    dataType: 'json',
             //    data: {
-            //        userId: user.get('id'),
+            //        userId: User.get('id'),
             //        channelId: this.get('channelId')
             //    },
             //    error: function(error) {

@@ -4,7 +4,7 @@
     'backgroundManager',
     'utility',
     'streamItems'
-], function (ContextMenuView, player, backgroundManager, Utility, StreamItems) {
+], function (ContextMenuView, Player, BackgroundManager, Utility, StreamItems) {
     'use strict';
 
     var StreamItemView = Backbone.View.extend({
@@ -50,10 +50,10 @@
 
         togglePlayingState: function () {
 
-            if (player.isPlaying()) {
-                player.pause();
+            if (Player.isPlaying()) {
+                Player.pause();
             } else {
-                player.play();
+                Player.play();
             }
         },
 
@@ -67,7 +67,7 @@
                         position: 0,
                         text: 'Add to Playlist',
                         onClick: function () {
-                            backgroundManager.get('activePlaylist').addItem(self.model.get('video'));
+                            BackgroundManager.get('activePlaylist').addItem(self.model.get('video'));
                         }
                     }, {
                         position: 1,

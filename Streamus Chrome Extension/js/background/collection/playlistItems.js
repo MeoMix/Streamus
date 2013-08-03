@@ -1,8 +1,10 @@
-﻿define(['playlistItem', 'settings'],
-    function (PlaylistItem, Settings) {
-        'use strict';
+﻿define([
+    'playlistItem',
+    'settings'
+], function (PlaylistItem, Settings) {
+   'use strict';
 
-    var playlistItemsCollection = Backbone.Collection.extend({
+    var PlaylistItems = Backbone.Collection.extend({
         model: PlaylistItem,
         
         save: function (attributes, options) {
@@ -70,10 +72,5 @@
         }
     });
 
-    //  Public exposure of a constructor for building new PlaylistItem objects.
-    return function(config) {
-        var playlistItems = new playlistItemsCollection(config);
-        
-        return playlistItems;
-    };
+    return PlaylistItems;
 });
