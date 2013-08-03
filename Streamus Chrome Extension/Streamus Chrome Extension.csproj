@@ -200,7 +200,6 @@
     <Content Include="js\thirdParty\jasmine.js" />
     <Content Include="js\thirdParty\jquery.js" />
     <Content Include="js\thirdParty\jquery.scrollIntoView.js" />
-    <Content Include="js\thirdParty\jqueryMousewheel.js" />
     <Content Include="js\thirdParty\jqueryUi.js" />
     <Content Include="js\thirdParty\levenshtein.js" />
     <Content Include="js\thirdParty\require.js" />

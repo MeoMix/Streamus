@@ -15,7 +15,6 @@ var require = {
         //  Third Party:
         'backbone': 'thirdParty/backbone',
         'jquery': 'thirdParty/jquery',
-        'jqueryMousewheel': 'thirdParty/jqueryMousewheel',
         'jqueryUi': 'thirdParty/jqueryUi',
         'levenshtein': 'thirdParty/levenshtein',
         'scrollIntoView': 'thirdParty/jquery.scrollIntoView',

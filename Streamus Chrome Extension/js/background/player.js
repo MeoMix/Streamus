@@ -142,7 +142,7 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
             });
 
             youTubePlayerAPI.once('change:ready', function () {
-
+                console.log("youTubePlayerAPI is now ready");
                 //  Injected YouTube code creates a global YT object with which a 'YouTube Player' object can be created.
                 //  https://developers.google.com/youtube/iframe_api_reference#Loading_a_Video_Player
                 youTubePlayer = new window.YT.Player('MusicHolder', {
@@ -152,6 +152,7 @@ define(['youTubePlayerAPI', 'settingsManager', 'playerState'], function (youTube
                             self.set('muted', youTubePlayer.isMuted());
                             self.set('volume', youTubePlayer.getVolume());
 
+                            console.log("PLAYER IS NOW SET TO READY");
                             //  Announce that the YouTube Player is ready to go.
                             self.set('ready', true);
                         },

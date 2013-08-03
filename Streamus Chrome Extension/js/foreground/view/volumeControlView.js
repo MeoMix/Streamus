@@ -70,7 +70,13 @@ define(['player'], function (player) {
         },
 
         //  Adjust volume when user scrolls mousewheel while hovering over volumeControl.
-        scrollVolume: function (event, delta) {
+        scrollVolume: function (event) {
+            console.log("ScrollVolume, event:", event);
+
+            var delta = event.originalEvent.wheelDeltaY / 120;
+
+            console.log("ScrollVolume, delta:", delta);
+
             //  Convert current value from string to int, then go an arbitrary, feel-good amount of volume points in a given direction (thus *3 on delta).
             var newVolume = parseInt(this.volumeSlider.val(), 10) + delta * 3;
             this.volumeSlider.val(newVolume).trigger('change');

@@ -91,7 +91,7 @@ define(['contextMenuView', 'backgroundManager', 'helpers', 'spinnerBuilder', 'da
             this.render();
             
             //  todo: find a place for this
-            this.scrollIntoView(backgroundManager.get('activePlaylist'), false);
+            this.scrollItemIntoView(backgroundManager.get('activePlaylist'), false);
         },
         
         //  TODO: This should be implemented non-naively.
@@ -115,7 +115,7 @@ define(['contextMenuView', 'backgroundManager', 'helpers', 'spinnerBuilder', 'da
                 }
             }
 
-            this.scrollIntoView(playlist, true);
+            this.scrollItemIntoView(playlist, true);
         },
         
         //  TODO: Folder otpions.
@@ -209,7 +209,7 @@ define(['contextMenuView', 'backgroundManager', 'helpers', 'spinnerBuilder', 'da
         },
         
         //  TODO: Needs to be dry with playlistItemsView
-        scrollIntoView: function (activePlaylist, useAnimation) {
+        scrollItemIntoView: function (activePlaylist, useAnimation) {
 
             //  Since we emptied our list we lost the selection, reselect.
             if (activePlaylist) {
@@ -254,7 +254,7 @@ define(['contextMenuView', 'backgroundManager', 'helpers', 'spinnerBuilder', 'da
         
         //  Removes the old 'current' marking and move it to the newly selected row.
         visuallySelectPlaylist: function(playlist) {
-            this.scrollIntoView(playlist, false);
+            this.scrollItemIntoView(playlist, false);
 
             this.ul.find('li').removeClass('loaded');
             this.ul.find('li[data-playlistid="' + playlist.get('id') + '"]').addClass('loaded');

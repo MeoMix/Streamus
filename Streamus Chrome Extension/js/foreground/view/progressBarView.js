@@ -1,6 +1,5 @@
 ﻿//  A progress bar which shows the elapsed time as compared to the total time of the current video.
-//  Changes colors based on player state -- yellow when paused, green when playing.
-define(['streamItems', 'player', 'helpers'], function (StreamItems, player, helpers) {
+define(['streamItems', 'player', 'helpers', 'playerState'], function (StreamItems, player, helpers, PlayerState) {
     'use strict';
 
     var ProgressBarView = Backbone.View.extend({
@@ -10,8 +9,8 @@ define(['streamItems', 'player', 'helpers'], function (StreamItems, player, help
         currentTimeLabel: $('#CurrentTimeLabel'),
         
         totalTimeLabel: $('#TotalTimeLabel'),
-        //  TODO: Perhaps seeking should be on a model and not on this view.
-        seeking: false,
+
+        autoUpdate: true,
         
         events: {
             
@@ -24,7 +23,7 @@ define(['streamItems', 'player', 'helpers'], function (StreamItems, player, help
         
         render: function () {
             
-            if (!this.seeking) {
+            if (this.autoUpdate) {
 
                 //  If a video is currently playing when the GUI opens then initialize with those values.
                 //  Set total time before current time because it affects the range's max.
@@ -41,12 +40,16 @@ define(['streamItems', 'player', 'helpers'], function (StreamItems, player, help
             this.listenTo(StreamItems, 'empty', this.clear);
             this.listenTo(StreamItems, 'change:selected', this.restart);
             this.listenTo(player, 'change:currentTime', this.render);
+            this.listenTo(player, 'change:state', this.stopSeeking);
 
             this.render();
+            this.updateProgress();
         },
         
-        //  TODO: should updateProgress actually be render?
         //  Repaints the progress bar's filled-in amount based on the % of time elapsed for current video.
+        //  Keep separate from render because render is based on the player's values and updateProgress is based on the progress bar's values.
+        //  This is an important distinction because when the user is dragging the progress bar -- the player won't be updating -- but progress bar
+        //  values need to be re-rendered.
         updateProgress: function () {
             
             var currentTime = parseInt(this.$el.val(), 10);
@@ -65,14 +68,14 @@ define(['streamItems', 'player', 'helpers'], function (StreamItems, player, help
  
         },
         
-        //  TODO: I think I was using jQuery mousewheel for this before and now it might not work!
         //  Allow the user to manual time change by click or scroll.
-        mousewheelUpdateProgress: function (event, delta) {
+        mousewheelUpdateProgress: function (event) {
 
+            var delta = event.originalEvent.wheelDeltaY / 120;
             var currentTime = parseInt(this.$el.val(), 10);
             
             this.setCurrentTime(currentTime + delta);
-            player.seekTo(currentTime);
+            player.seekTo(currentTime + delta);
             
         },
         
@@ -80,9 +83,20 @@ define(['streamItems', 'player', 'helpers'], function (StreamItems, player, help
 
             //  1 is primary mouse button, usually left
             if (event.which === 1) {
-                this.seeking = true;
+                this.autoUpdate = false;
             }
             
+        },
+
+        stopSeeking: function(){
+            
+            //  Seek is known to have finished when the player announces a state change.
+            var state = player.get('state');
+
+            if (state == PlayerState.PLAYING || state == PlayerState.PAUSED) {
+                this.autoUpdate = true;
+            }
+
         },
         
         seekToTime: function (event) {
@@ -93,7 +107,6 @@ define(['streamItems', 'player', 'helpers'], function (StreamItems, player, help
                 //  I don't want to send a message until drag ends, so mouseup works nicely. 
                 var currentTime = parseInt(this.$el.val(), 10);
                 player.seekTo(currentTime);
-                this.seeking = false;
             }
             
         },
@@ -103,23 +116,24 @@ define(['streamItems', 'player', 'helpers'], function (StreamItems, player, help
             this.setTotalTime(0);
         },
         
-        restart: function() {
+        restart: function () {
+            //  Disable auto-updates here because there's a split second while changing videos that a timer tick makes things flicker weirdly.
+            this.autoUpdate = false;
+
             this.setCurrentTime(0);
             this.setTotalTime(this.getCurrentVideoDuration());
+
+            this.autoUpdate = true;
         },
         
         setCurrentTime: function (currentTime) {
-            
-            if (currentTime > this.$el.prop('max')) {
-                console.trace();
-                console.error("CurrentTime: " + currentTime + " . TotalTime: " + this.$el.prop('max'));
-            }
-
-            this.$el.val(currentTime).trigger('change');
+            this.$el.val(currentTime);
+            this.updateProgress();
         },
         
         setTotalTime: function(totalTime) {
-            this.$el.prop('max', totalTime).trigger('change');
+            this.$el.prop('max', totalTime);
+            this.updateProgress();
         },
         
         //  Return 0 or currently selected video's duration.
@@ -136,5 +150,4 @@ define(['streamItems', 'player', 'helpers'], function (StreamItems, player, help
     });
 
     return new ProgressBarView;
-    
 });
