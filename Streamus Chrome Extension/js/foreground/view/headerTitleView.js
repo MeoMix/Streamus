@@ -1,5 +1,8 @@
 ﻿//  Displays the currently playing playlistItem's title or a default welcome message.
-define(['streamItems', 'helpers'], function (StreamItems, helpers) {
+define([
+    'streamItems',
+    'utility'
+], function (StreamItems, Utility) {
     'use strict';
 
     var HeaderTitleView = Backbone.View.extend({
@@ -18,7 +21,7 @@ define(['streamItems', 'helpers'], function (StreamItems, helpers) {
         },
         
         initialize: function () {
-            helpers.scrollElementInsideParent(this.$el);
+            Utility.scrollElementInsideParent(this.$el);
             this.listenTo(StreamItems, 'change:selected empty', this.render);
             this.render();
         }

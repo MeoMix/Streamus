@@ -1,5 +1,5 @@
 ﻿//  Holds all the relevant data for a video.
-define(['programState'], function(programState){
+define(['settings'], function(Settings){
     'use strict';
 
     var videoModel = Backbone.Model.extend({
@@ -10,7 +10,7 @@ define(['programState'], function(programState){
             author: '',
             duration: -1
         },
-        urlRoot: programState.getBaseUrl() + 'Video/'
+        urlRoot: Settings.get('serverURL') + 'Video/'
     });
 
     return function (config) {

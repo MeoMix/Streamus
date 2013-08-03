@@ -1,6 +1,6 @@
 ﻿//  Background.js is a bit of a dumping ground for code which needs a permanent housing spot.
-define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 'youTubeDataAPI', 'repeatButtonState', 'playerState', 'streamItems'],
-    function (player, backgroundManager, settingsManager, pushMessageManager, youTubeDataAPI, RepeatButtonState, PlayerState, StreamItems) {
+define(['player', 'backgroundManager', 'pushMessageManager', 'youTubeDataAPI', 'repeatButtonState', 'playerState', 'streamItems'],
+    function (player, backgroundManager, pushMessageManager, youTubeDataAPI, RepeatButtonState, PlayerState, StreamItems) {
         'use strict';
   
     player.on('change:state', function (model, state) {

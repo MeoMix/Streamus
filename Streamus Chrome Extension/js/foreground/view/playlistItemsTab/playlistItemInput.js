@@ -1,9 +1,14 @@
 //  The videos tab header. Users may add videos by clicking on Add Videos.
 //  Clicking Add Videos will allow the user to either search w/ auto-complete suggestions, or to paste youtube URLs into the input.
-define(['contentHeader', 'youTubeDataAPI', 'dialogs', 'helpers', 'backgroundManager'], function (ContentHeader, youTubeDataAPI, dialogs, helpers, backgroundManager) {
+define([
+    'contentHeader',
+    'youTubeDataAPI',
+    'utility',
+    'backgroundManager',
+    'dialog',
+    'dialogView'
+], function (ContentHeader, youTubeDataAPI, Utility, backgroundManager, Dialog, DialogView) {
     'use strict';
-
-    console.log("Creating expanded");
 
     var contentHeader = new ContentHeader({
         selector: '#CurrentPlaylistItemDisplay',
@@ -31,7 +36,7 @@ define(['contentHeader', 'youTubeDataAPI', 'dialogs', 'helpers', 'backgroundMana
         select: function (event, ui) {
             //  Don't change the text when user clicks their video selection.
             event.preventDefault();
-            contentHeader.flashMessage('Thanks!', 2000);
+            contentHeader.addInputElement.val('');
             backgroundManager.get('activePlaylist').addItemByInformation(ui.item.value);
         }
     //  http://stackoverflow.com/questions/3488016/using-html-in-jquery-ui-autocomplete
@@ -54,15 +59,26 @@ define(['contentHeader', 'youTubeDataAPI', 'dialogs', 'helpers', 'backgroundMana
     });
         
     function handleValidInput(videoId) {
-        contentHeader.flashMessage('Thanks!', 2000);
+        contentHeader.addInputElement.val('');
 
         youTubeDataAPI.getVideoInformation({
             videoId: videoId,
             success: function (videoInformation) {
                 backgroundManager.get('activePlaylist').addItemByInformation(videoInformation);
             },
-            error: function() {
-                dialogs.showBannedVideoDialog();
+            error: function () {
+
+                var bannedDialog = new Dialog({
+                    text: 'Unable to use video because it was banned on copyright grounds.',
+                    type: 'error'
+                });
+
+                var bannedDialogView = new DialogView({
+                    model: bannedDialog
+                });
+
+                $('#contentWrapper').append(bannedDialogView.render().el);
+
             }
         });
     }
@@ -98,7 +114,7 @@ define(['contentHeader', 'youTubeDataAPI', 'dialogs', 'helpers', 'backgroundMana
                         //  I wanted the label to be duration | title to help delinate between typing suggestions and actual videos.
                         var videoDuration = parseInt(videoInformation.media$group.yt$duration.seconds, 10);
                         var videoTitle = videoInformation.title.$t;
-                        var label = '<b>' + helpers.prettyPrintTime(videoDuration) + "</b>  " + videoTitle;
+                        var label = '<b>' + Utility.prettyPrintTime(videoDuration) + "</b>  " + videoTitle;
 
                         return {
                             label: label,

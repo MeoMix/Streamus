@@ -1,4 +1,7 @@
-﻿define(['contextMenu', 'helpers'], function (ContextMenu, helpers) {
+﻿define([
+    'contextMenu',
+    'utility'
+], function (ContextMenu, Utility) {
     'use strict';
 
     //  A singleton view which is either displayed somewhere in body with groups of items or empty and hidden.
@@ -18,7 +21,7 @@
             this.$el.html(this.template(this.model.toJSON()));
 
             this.$el.find('a').each(function () {
-                helpers.scrollElementInsideParent(this);
+                Utility.scrollElementInsideParent(this);
             });
 
             //  TODO: Should this logic be part of 'show' or 'render' ?

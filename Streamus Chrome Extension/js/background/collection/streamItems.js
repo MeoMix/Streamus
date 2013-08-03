@@ -1,6 +1,13 @@
 ﻿var StreamItems;
 
-define(['streamItem', 'settingsManager', 'repeatButtonState', 'youTubeDataAPI', 'video', 'helpers'], function (StreamItem, settingsManager, RepeatButtonState, youTubeDataAPI, Video, helpers) {
+define([
+    'streamItem',
+    'settings',
+    'repeatButtonState',
+    'youTubeDataAPI',
+    'video',
+    'utility'
+], function (StreamItem, Settings, RepeatButtonState, youTubeDataAPI, Video, Utility) {
     'use strict';
 
     var streamItemsCollection = Backbone.Collection.extend({
@@ -95,7 +102,7 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'youTubeDataAPI', 
             //  TODO: Could probably be improved for very large playlists being added.
             //  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
             var sampleSize = streamItemsFromCollection.length >= 50 ? 50 : streamItemsFromCollection.length;
-            var randomSampleIndices = helpers.getRandomNonOverlappingNumbers(sampleSize, streamItemsFromCollection.length);
+            var randomSampleIndices = Utility.getRandomNonOverlappingNumbers(sampleSize, streamItemsFromCollection.length);
 
             var randomVideoIds = _.map(randomSampleIndices, function (randomSampleIndex) {
                 return streamItemsFromCollection[randomSampleIndex].get('video').get('id');
@@ -221,9 +228,9 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'youTubeDataAPI', 
         //  If a streamItem which was selected is removed, selectNext will have a removedSelectedItemIndex provided
         selectNext: function(removedSelectedItemIndex) {
 
-            var shuffleEnabled = settingsManager.get('shuffleEnabled');
-            var radioEnabled = settingsManager.get('radioEnabled');
-            var repeatButtonState = settingsManager.get('repeatButtonState');
+            var shuffleEnabled = Settings.get('shuffleEnabled');
+            var radioEnabled = Settings.get('radioEnabled');
+            var repeatButtonState = Settings.get('repeatButtonState');
 
             //  If removedSelectedItemIndex is provided, RepeatButtonState -> Video doesn't matter because the video was just deleted.
             if (removedSelectedItemIndex === undefined && repeatButtonState === RepeatButtonState.REPEAT_VIDEO_ENABLED) {
@@ -285,12 +292,12 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'youTubeDataAPI', 
             //  If no previous item was found in the history, then just go back one item
             if (previousStreamItem == null) {
 
-                var repeatButtonState = settingsManager.get('repeatButtonState');
+                var repeatButtonState = Settings.get('repeatButtonState');
 
                 if (repeatButtonState === RepeatButtonState.REPEAT_VIDEO_ENABLED) {
                     var selectedItem = this.findWhere({ selected: true });
                     selectedItem.trigger('change:selected', selectedItem, true);
-                } else if (settingsManager.get('shuffleEnabled')) {
+                } else if (Settings.get('shuffleEnabled')) {
 
                     var shuffledItems = _.shuffle(this.where({ playedRecently: false }));
                     shuffledItems[0].set('selected', true);
@@ -326,6 +333,8 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'youTubeDataAPI', 
             this.trigger('empty');
         }
     });
+
+
 
     StreamItems = new streamItemsCollection;
 

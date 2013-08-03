@@ -1,5 +1,5 @@
 ﻿//  A folder is a collection of playlists
-define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'youTubeDataAPI' ], function (Playlists, Playlist, Videos, Video, player, programState, youTubeDataAPI) {
+define(['playlists', 'playlist', 'videos', 'video', 'player', 'settings', 'youTubeDataAPI' ], function (Playlists, Playlist, Videos, Video, player, Settings, youTubeDataAPI) {
     'use strict';
     
     var folderModel = Backbone.Model.extend({
@@ -11,7 +11,7 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'y
                 firstPlaylistId: null,
             };
         },
-        urlRoot: programState.getBaseUrl() + 'Video/',
+        urlRoot: Settings.get('serverURL') + 'Video/',
         
         parse: function (folderDto) {
             
@@ -133,7 +133,7 @@ define(['playlists', 'playlist', 'videos', 'video', 'player', 'programState', 'y
             var self = this;
 
             $.ajax({
-                url: programState.getBaseUrl() + 'Playlist/CreateCopyByShareCode',
+                url: Settings.get('serverURL') + 'Playlist/CreateCopyByShareCode',
                 type: 'GET',
                 dataType: 'json',
                 data: {

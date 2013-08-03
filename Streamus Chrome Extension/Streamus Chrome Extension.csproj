@@ -83,19 +83,20 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="background.htm" />
-    <Content Include="js\background\entityAction.js" />
-    <Content Include="js\background\entityType.js" />
     <Content Include="js\background\collection\streamItems.js" />
     <Content Include="js\background\model\streamItem.js" />
+    <Content Include="js\background\utility.js" />
     <Content Include="js\foreground\collection\contextMenuGroups.js" />
     <Content Include="js\foreground\collection\contextMenuItems.js" />
     <Content Include="js\foreground\model\contextMenu.js" />
     <Content Include="js\foreground\model\contextMenuGroup.js" />
     <Content Include="js\foreground\model\contextMenuItem.js" />
+    <Content Include="js\foreground\model\dialog.js" />
+    <Content Include="js\foreground\view\dialogView.js" />
     <Content Include="js\foreground\view\playlistItemsTab\playlistItemView.js" />
     <Content Include="js\foreground\view\contextMenuView.js" />
     <Content Include="js\foreground\view\playlistsTab\playlistView.js" />
-    <Content Include="js\options\settingsManager.js" />
+    <Content Include="js\options\settings.js" />
     <Content Include="js\options\main.js" />
     <Content Include="js\options\options.js" />
     <Content Include="js\options\player.js" />
@@ -143,7 +144,7 @@
     <Content Include="js\background\shareCode.js" />
     <Content Include="js\background\error.js" />
     <Content Include="js\background\iconManager.js" />
-    <Content Include="js\background\settingsManager.js" />
+    <Content Include="js\background\settings.js" />
     <Content Include="js\background\main.js" />
     <Content Include="js\background\player.js" />
     <Content Include="js\background\playlist.js" />
@@ -163,12 +164,10 @@
     <Content Include="js\inject\streamusShareInject.js" />
     <Content Include="js\enum\dataSource.js" />
     <Content Include="js\foreground\backgroundManager.js" />
-    <Content Include="js\foreground\contentButtons.js" />
     <Content Include="js\foreground\contentHeader.js" />
-    <Content Include="js\foreground\dialogs.js" />
     <Content Include="js\foreground\foreground.js" />
     <Content Include="js\foreground\view\headerTitleView.js" />
-    <Content Include="js\foreground\settingsManager.js" />
+    <Content Include="js\foreground\settings.js" />
     <Content Include="js\foreground\main.js" />
     <Content Include="js\foreground\player.js" />
     <Content Include="js\foreground\view\buttons\playPauseButtonView.js" />
@@ -186,11 +185,10 @@
     <Content Include="js\foreground\requirePaths.js" />
     <Content Include="js\foreground\model\spinnerBuilder.js" />
     <Content Include="js\foreground\view\video\videoDisplayView.js" />
-    <Content Include="js\helpers.js" />
+    <Content Include="js\foreground\utility.js" />
     <Content Include="js\inject\streamusInject.js" />
     <Content Include="js\inject\youTubeInject.js" />
     <Content Include="js\enum\playerState.js" />
-    <Content Include="js\programState.js" />
     <Content Include="js\enum\repeatButtonState.js" />
     <Content Include="js\tests\main.js" />
     <Content Include="js\tests\requirePaths.js" />
@@ -206,7 +204,7 @@
     <Content Include="js\thirdParty\jquery.spin.js" />
     <Content Include="js\thirdParty\underscore.js" />
     <Content Include="js\inject\youTubeIFrameInject.js" />
-    <Content Include="js\youTubePlayerAPI.js" />
+    <Content Include="js\background\model\youTubePlayerAPI.js" />
     <Content Include="js\youTubeDataAPI.js" />
     <Content Include="tests.htm" />
     <None Include="js\thirdParty\chrome-api-vsdoc.js" />

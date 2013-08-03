@@ -1,4 +1,10 @@
-﻿define(['contextMenuView', 'player', 'backgroundManager', 'helpers', 'streamItems'], function (ContextMenuView, player, backgroundManager, helpers, StreamItems) {
+﻿define([
+    'contextMenuView',
+    'player',
+    'backgroundManager',
+    'utility',
+    'streamItems'
+], function (ContextMenuView, player, backgroundManager, Utility, StreamItems) {
     'use strict';
 
     var StreamItemView = Backbone.View.extend({
@@ -18,8 +24,8 @@
         render: function () {
 
             this.$el.html(this.template(this.model.toJSON()));
-            this.$el.find('.videoTime').text(helpers.prettyPrintTime(this.model.get('video').get('duration')));
-            helpers.scrollElementInsideParent(this.$el.find('.videoTitle'));
+            this.$el.find('.videoTime').text(Utility.prettyPrintTime(this.model.get('video').get('duration')));
+            Utility.scrollElementInsideParent(this.$el.find('.videoTitle'));
 
             return this;
         },

@@ -1,5 +1,6 @@
 define(['backgroundManager'], function (backgroundManager) {
     'use strict';
+
     return function (config) {
         
         var contentHeader = $(config.selector);
@@ -107,21 +108,7 @@ define(['backgroundManager'], function (backgroundManager) {
         }
 
         return {
-            expand: expand,
-            contract: contract,
-            addInputElement: addInput,
-            
-            //  Display a message for X milliseconds inside of the input. 
-            flashMessage: function (message, durationInMilliseconds) {
-                
-                var placeholder = addInput.attr('placeholder');
-                addInput.val('').attr('placeholder', message);
-                
-                window.setTimeout(function () {
-                    addInput.attr('placeholder', placeholder);
-                }, durationInMilliseconds);
-                
-            }
+            addInputElement: addInput
         };
     };
 });

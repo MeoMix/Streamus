@@ -1,4 +1,4 @@
-﻿define(['settingsManager'], function (settingsManager) {
+﻿define(['settings'], function (Settings) {
     'use strict';
 
     var RadioButtonView = Backbone.View.extend({
@@ -14,7 +14,7 @@
         initialize: function () {
             //  Remember the initial state across pop-up sessions by writing to/from localStorage.
 
-            if (settingsManager.get('radioEnabled')) {
+            if (Settings.get('radioEnabled')) {
                 this.$el
                     .addClass('pressed')
                     .attr('title', this.enabledTitle);
@@ -34,7 +34,7 @@
                 this.$el.attr('title', this.disabledTitle);
             }
 
-            settingsManager.set('radioEnabled', isPressed);
+            Settings.set('radioEnabled', isPressed);
         }
 
     });

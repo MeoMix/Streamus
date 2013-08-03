@@ -1,4 +1,6 @@
-﻿define(['helpers'], function (helpers) {
+﻿define([
+    'utility'
+], function (Utility) {
     'use strict';
     
     var PlaylistView = Backbone.View.extend({
@@ -25,10 +27,10 @@
                 return memo + duration;
             }, 0);
 
-            var playlistInfo = 'Videos: ' + currentVideos.length + ', Duration: ' + helpers.prettyPrintTime(sumVideosDurations);
+            var playlistInfo = 'Videos: ' + currentVideos.length + ', Duration: ' + Utility.prettyPrintTime(sumVideosDurations);
             this.$el.find('span.playlistInfo').text(playlistInfo);
 
-            helpers.scrollElementInsideParent(this.$el.find('span.playlitTitle'));
+            Utility.scrollElementInsideParent(this.$el.find('span.playlitTitle'));
 
             return this;
         },

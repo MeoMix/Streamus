@@ -4,8 +4,8 @@ var BackgroundManager = null;
 //  BackgroundManager is a denormalization point for the Background's selected models.
 //  NOTE: It is important to understand that the activePlaylist is NOT guaranteed to be in the activeFolder. The user can click around, but this shouldn't affect state
 //  until they make a decision.
-define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'folders', 'repeatButtonState', 'streamItems', 'playerState'],
-    function (user, player, settingsManager, PlaylistItems, Playlists, Folders, RepeatButtonState, StreamItems, PlayerState) {
+define(['user', 'player', 'settings', 'playlistItems', 'playlists', 'folders', 'repeatButtonState', 'streamItems', 'playerState'],
+    function (user, player, Settings, PlaylistItems, Playlists, Folders, RepeatButtonState, StreamItems, PlayerState) {
     'use strict';
 
     var backgroundManagerModel = Backbone.Model.extend({
@@ -237,13 +237,13 @@ define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'fold
         this.on('change:activeFolder', function (model, activeFolder) {
 
             if (activeFolder === null) {
-                settingsManager.set('activeFolderId', null);
+                Settings.set('activeFolderId', null);
             } else {
-                settingsManager.set('activeFolderId', activeFolder.get('id'));
+                Settings.set('activeFolderId', activeFolder.get('id'));
             }
         });
         
-        var activeFolderId = settingsManager.get('activeFolderId');
+        var activeFolderId = Settings.get('activeFolderId');
         var activeFolder = this.get('allFolders').get(activeFolderId);
 
         if (typeof (activeFolder) === 'undefined') {
@@ -258,14 +258,14 @@ define(['user', 'player', 'settingsManager', 'playlistItems', 'playlists', 'fold
         this.on('change:activePlaylist', function (model, activePlaylist) {
 
             if (activePlaylist === null) {
-                settingsManager.set('activePlaylistId', null);
+                Settings.set('activePlaylistId', null);
             } else {
-                settingsManager.set('activePlaylistId', activePlaylist.get('id'));
+                Settings.set('activePlaylistId', activePlaylist.get('id'));
             }
 
         });
         
-        var activePlaylistId = settingsManager.get('activePlaylistId');
+        var activePlaylistId = Settings.get('activePlaylistId');
 
         //  There is no guarantee that activePlaylist is in activeFolder because a user could be looking
         //  at another folder without having selected a playlist in that folder.

@@ -1,4 +1,4 @@
-﻿define(['user', 'programState', 'backgroundManager', 'entityType', 'entityAction'], function(user, programState, backgroundManager, EntityType, EntityAction) {
+﻿define(['user', 'settings', 'backgroundManager'], function(user, Settings, backgroundManager) {
     'use strict';
     
     var pushMessageManagerModel = Backbone.Model.extend({
@@ -46,7 +46,7 @@
         sendChannelIdToServer: function () {
 
             //$.ajax({
-            //    url: programState.getBaseUrl() + 'PushMessage/AddChannelId',
+            //    url: Settings.get('serverURL') + 'PushMessage/AddChannelId',
             //    type: 'POST',
             //    dataType: 'json',
             //    data: {

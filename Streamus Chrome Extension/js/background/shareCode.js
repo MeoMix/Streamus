@@ -1,4 +1,4 @@
-define(['programState'], function (programState) {
+define(['settings'], function (Settings) {
     'use strict';
 
     var shareCodeModel = Backbone.Model.extend({
@@ -13,7 +13,7 @@ define(['programState'], function (programState) {
             };
         },
         
-        urlRoot: programState.getBaseUrl() + 'ShareCode/',
+        urlRoot: Settings.get('serverURL') + 'ShareCode/',
         
         initialize: function () {
             

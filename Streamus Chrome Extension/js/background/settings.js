@@ -1,14 +1,16 @@
 ﻿//  Exposed globally so that Chrome Extension's foreground can access through chrome.extension.getBackgroundPage()
-var SettingsManager = null;
+var Settings = null;
 
 //  Denormalization point for the Background's selected models.
 define(['repeatButtonState'], function (RepeatButtonState) {
     'use strict';
 
-    var settingsManagerModel = Backbone.Model.extend({
+    var settingsModel = Backbone.Model.extend({
         
         defaults: function() {
             return {
+                localDebug: true,
+                serverURL: '',
                 activeContentButtonId: getItem('activeContentButtonId') || 'HomeMenuButton',
                 activeFolderId: getItem('activeFolderId') || null,
                 activePlaylistId: getItem('activePlaylistId') || null,
@@ -21,6 +23,13 @@ define(['repeatButtonState'], function (RepeatButtonState) {
         },
         
         initialize: function () {
+            //  BaseURL is needed for ajax requests to the server.
+            if (this.get('localDebug')) {
+                this.set('serverURL', 'http://test.streamus.com:61975/');
+            }
+            else {
+                this.set('serverURL', 'http://streamus.apphb.com/');
+            }
             
             this.on('change:activeContentButtonId', function (model, activeContentButtonId) {
                 localStorage.setItem('activeContentButtonId', activeContentButtonId);
@@ -75,6 +84,7 @@ define(['repeatButtonState'], function (RepeatButtonState) {
         return item;
     }
     
-    SettingsManager = new settingsManagerModel();
-    return SettingsManager;
+    //  TODO: Broke naming conventions here.
+    Settings = new settingsModel();
+    return Settings;
 });

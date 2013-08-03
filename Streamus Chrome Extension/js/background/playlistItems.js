@@ -1,5 +1,5 @@
-﻿define(['playlistItem', 'programState'],
-    function (PlaylistItem, programState) {
+﻿define(['playlistItem', 'settings'],
+    function (PlaylistItem, Settings) {
         'use strict';
 
     var playlistItemsCollection = Backbone.Collection.extend({
@@ -30,7 +30,7 @@
 
                 //  Otherwise revert to a CreateMultiple
                 newItemsJqXhr = $.ajax({
-                    url: programState.getBaseUrl() + 'PlaylistItem/CreateMultiple',
+                    url: Settings.get('serverURL') + 'PlaylistItem/CreateMultiple',
                     type: 'POST',
                     contentType: 'application/json; charset=utf-8',
                     dataType: 'json',

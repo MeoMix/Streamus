@@ -1,4 +1,4 @@
-﻿define(['repeatButtonState', 'settingsManager'], function (RepeatButtonState, settingsManager) {
+﻿define(['repeatButtonState', 'settings'], function (RepeatButtonState, Settings) {
     'use strict';
 
     var RepeatButtonView = Backbone.View.extend({
@@ -12,7 +12,7 @@
         repeatVideoEnabledTitle: 'Repeat Video is enabled. Click to enable Repeat Playlist.',
         repeatPlaylistEnabledTitle: 'Repeat Playlist is enabled. Click to disable.',
 
-        state: settingsManager.get('repeatButtonState'),
+        state: Settings.get('repeatButtonState'),
         
         render: function () {
             var repeatVideoSvg = $('#RepeatVideoSvg');
@@ -73,7 +73,7 @@
             }
 
             this.state = nextState;
-            settingsManager.set('repeatButtonState', nextState);
+            Settings.set('repeatButtonState', nextState);
 
             this.render();
         }

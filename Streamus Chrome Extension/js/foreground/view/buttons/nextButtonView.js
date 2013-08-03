@@ -1,5 +1,5 @@
 //  When clicked -- goes to the next video. Can potentially go from the end of the list to the front if repeat playlist is toggled on
-define(['streamItems', 'settingsManager', 'repeatButtonState'], function (StreamItems, settingsManager, RepeatButtonState) {
+define(['streamItems', 'settings', 'repeatButtonState'], function (StreamItems, Settings, RepeatButtonState) {
     'use strict';
 
     var NextButtonView = Backbone.View.extend({
@@ -15,9 +15,9 @@ define(['streamItems', 'settingsManager', 'repeatButtonState'], function (Stream
                 this.disable();
             } else {
 
-                var radioEnabled = settingsManager.get('radioEnabled');
-                var shuffleEnabled = settingsManager.get('shuffleEnabled');
-                var repeatButtonState = settingsManager.get('repeatButtonState');
+                var radioEnabled = Settings.get('radioEnabled');
+                var shuffleEnabled = Settings.get('shuffleEnabled');
+                var repeatButtonState = Settings.get('repeatButtonState');
                 
                 if (shuffleEnabled && StreamItems.length > 1) {
                     this.enable();
@@ -43,7 +43,7 @@ define(['streamItems', 'settingsManager', 'repeatButtonState'], function (Stream
 
         initialize: function () {
             this.listenTo(StreamItems, 'add addMultiple remove empty change:selected', this.render);
-            this.listenTo(settingsManager, 'change:radioEnabled change:shuffleEnabled change:repeatButtonState', this.render);
+            this.listenTo(Settings, 'change:radioEnabled change:shuffleEnabled change:repeatButtonState', this.render);
 
             this.render();
         },

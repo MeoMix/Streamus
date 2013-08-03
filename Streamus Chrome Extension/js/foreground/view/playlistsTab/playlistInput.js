@@ -28,7 +28,7 @@
             
             //  Only add the playlist if something was provided.
             if (userInput.trim() !== '') {
-                contentHeader.flashMessage('Thanks!', 2000);
+                contentHeader.addInputElement.val('');
 
                 var dataSource = youTubeDataAPI.parseUrlForDataSource(userInput);
                 var activeFolder = backgroundManager.get('activeFolder');

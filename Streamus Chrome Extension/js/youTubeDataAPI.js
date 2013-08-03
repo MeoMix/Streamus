@@ -224,7 +224,7 @@ define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
 
         search: search,
         
-        //  TODO: Move to helpers.
+        //  TODO: Move to utility.
         //  Takes a URL and returns parsed URL information such as schema and video id if found inside of the URL.
         parseVideoIdFromUrl: function (url) {
             var videoId = null;

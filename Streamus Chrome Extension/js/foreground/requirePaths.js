@@ -2,9 +2,6 @@ var require = {
     baseUrl: '../js/',
     paths: {
         //  Global:
-        'helpers': 'helpers',
-        'programState': 'programState',
-        'youTubePlayerApi': 'youTubePlayerApi',
         'youTubeDataAPI': 'youTubeDataAPI',
         
         //  Enum:
@@ -26,12 +23,11 @@ var require = {
         'main': 'foreground/main',
         'foreground': 'foreground/foreground',
         'backgroundManager': 'foreground/backgroundManager',
-        'settingsManager': 'foreground/settingsManager',
+        'settings': 'foreground/settings',
         'player': 'foreground/player',
+        'utility': 'foreground/utility',
         
         'contentHeader': 'foreground/contentHeader',
-        'dialogs': 'foreground/dialogs',
-        'contentButtons': 'foreground/contentButtons',
 
         //  Collection:
         'contextMenuGroups': 'foreground/collection/contextMenuGroups',
@@ -42,10 +38,12 @@ var require = {
         'contextMenu': 'foreground/model/contextMenu',
         'contextMenuGroup': 'foreground/model/contextMenuGroup',
         'contextMenuItem': 'foreground/model/contextMenuItem',
+        'dialog': 'foreground/model/dialog',
         'spinnerBuilder': 'foreground/model/spinnerBuilder',
         
         //  View:
         'contextMenuView': 'foreground/view/contextMenuView',
+        'dialogView': 'foreground/view/dialogView',
         'headerTitleView': 'foreground/view/headerTitleView',
         'progressBarView': 'foreground/view/progressBarView',
         'volumeControlView': 'foreground/view/volumeControlView',

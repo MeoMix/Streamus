@@ -2,15 +2,13 @@
 //  Provides methods to work with PlaylistItems such as getting, removing, updating, etc..
 define(['playlistItems',
         'playlistItem',
-        'programState',
-        'settingsManager',
+        'settings',
         'video',
         'videos',
-        'helpers',
         'repeatButtonState',
         'shareCode',
         'shareableEntityType'
-], function (PlaylistItems, PlaylistItem, programState, settingsManager, Video, Videos, helpers, RepeatButtonState, ShareCode, ShareableEntityType) {
+], function (PlaylistItems, PlaylistItem, Settings, Video, Videos, RepeatButtonState, ShareCode, ShareableEntityType) {
         'use strict';
 
         var playlistModel = Backbone.Model.extend({
@@ -28,7 +26,7 @@ define(['playlistItems',
                 };
             },
 
-            urlRoot: programState.getBaseUrl() + 'Playlist/',
+            urlRoot: Settings.get('serverURL') + 'Playlist/',
             
             //  Convert data which is sent from the server back to a proper Backbone.Model.
             //  Need to recreate submodels as Backbone.Models else they will just be regular Objects.
@@ -69,7 +67,7 @@ define(['playlistItems',
                 //  Debounce because I want automatic typing but no reason to spam server with saves.
                 this.on('change:title', _.debounce(function (model, title) {
                     $.ajax({
-                        url: programState.getBaseUrl() + 'Playlist/UpdateTitle',
+                        url: Settings.get('serverURL') + 'Playlist/UpdateTitle',
                         type: 'POST',
                         dataType: 'json',
                         data: {
@@ -85,7 +83,7 @@ define(['playlistItems',
                 this.on('change:firstItemId', function (model, firstItemId) {
 
                     $.ajax({
-                        url: programState.getBaseUrl() + 'Playlist/UpdateFirstItem',
+                        url: Settings.get('serverURL') + 'Playlist/UpdateFirstItem',
                         type: 'POST',
                         dataType: 'json',
                         data: {
@@ -255,7 +253,7 @@ define(['playlistItems',
 
                 var self = this;
                 $.ajax({
-                    url: programState.getBaseUrl() + 'ShareCode/GetShareCode',
+                    url: Settings.get('serverURL') + 'ShareCode/GetShareCode',
                     type: 'GET',
                     dataType: 'json',
                     data: {

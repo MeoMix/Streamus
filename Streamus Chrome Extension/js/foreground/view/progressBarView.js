@@ -1,5 +1,10 @@
 ﻿//  A progress bar which shows the elapsed time as compared to the total time of the current video.
-define(['streamItems', 'player', 'helpers', 'playerState'], function (StreamItems, player, helpers, PlayerState) {
+define([
+    'streamItems',
+    'player',
+    'utility',
+    'playerState'
+], function (StreamItems, player, Utility, PlayerState) {
     'use strict';
 
     var ProgressBarView = Backbone.View.extend({
@@ -63,8 +68,8 @@ define(['streamItems', 'player', 'helpers', 'playerState'], function (StreamItem
             var backgroundImage = '-webkit-gradient(linear,left top, right top, from(#ccc), color-stop(' + fill + ',#ccc), color-stop(' + fill + ',rgba(0,0,0,0)), to(rgba(0,0,0,0)))';
             this.$el.css('background-image', backgroundImage);
 
-            this.currentTimeLabel.text(helpers.prettyPrintTime(currentTime));
-            this.totalTimeLabel.text(helpers.prettyPrintTime(totalTime));
+            this.currentTimeLabel.text(Utility.prettyPrintTime(currentTime));
+            this.totalTimeLabel.text(Utility.prettyPrintTime(totalTime));
  
         },
         

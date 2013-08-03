@@ -1,4 +1,4 @@
-define(['settingsManager'], function(settingsManager){
+define(['settings'], function (Settings) {
     'use strict';
 
     var ShuffleButtonView = Backbone.View.extend({
@@ -13,7 +13,7 @@ define(['settingsManager'], function(settingsManager){
         
         initialize: function() {
             //  Remember the initial state across pop-up sessions by writing to/from localStorage.
-            if (settingsManager.get('shuffleEnabled')) {
+            if (Settings.get('shuffleEnabled')) {
                 this.$el
                     .addClass('pressed')
                     .attr('title', this.enabledTitle);
@@ -33,7 +33,7 @@ define(['settingsManager'], function(settingsManager){
                 this.$el.attr('title', this.disabledTitle);
             }
 
-            settingsManager.set('shuffleEnabled', isPressed);
+            Settings.set('shuffleEnabled', isPressed);
         }
         
     });

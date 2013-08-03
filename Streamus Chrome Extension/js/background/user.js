@@ -2,7 +2,7 @@
 //  Tries to load itself by ID stored in localStorage and then by chrome.storage.sync.
 //  If still unloaded, tells the server to create a new user and assumes that identiy.
 var User = null;
-define(['folders', 'programState', 'settingsManager'], function (Folders, programState, settingsManager) {
+define(['folders', 'settings'], function (Folders, Settings) {
     'use strict';
 
     var syncUserIdKey = 'UserId';
@@ -19,7 +19,7 @@ define(['folders', 'programState', 'settingsManager'], function (Folders, progra
             };
         },
         
-        urlRoot: programState.getBaseUrl() + 'User/',
+        urlRoot: Settings.get('serverURL') + 'User/',
 
         initialize: function () {
             
@@ -40,7 +40,7 @@ define(['folders', 'programState', 'settingsManager'], function (Folders, progra
 
                 if (typeof foundUserId === 'undefined') {
 
-                    foundUserId = settingsManager.get('userId');
+                    foundUserId = Settings.get('userId');
                     
                     if (foundUserId !== null) {
                         self.set('id', foundUserId);
@@ -104,7 +104,7 @@ define(['folders', 'programState', 'settingsManager'], function (Folders, progra
         //  Announce that user has loaded so managers can use it to fetch data.
         this.set('loaded', true);
         this.set('dirty', false);
-        settingsManager.set('userId', this.get('id'));
+        Settings.set('userId', this.get('id'));
     }
     
     //  Loads user data by ID from the server, writes the ID

@@ -1,4 +1,4 @@
-﻿define(['video', 'programState'], function (Video) {
+﻿define(['video'], function (Video) {
 
     var videoCollection = Backbone.Collection.extend({
         model: Video

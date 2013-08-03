@@ -32,6 +32,14 @@
     height: 50px;
 }
 
+#contentWrapper {
+    text-align: center;
+}
+
+#content {
+    text-align: left;
+}
+
 #content div {
     -webkit-box-sizing: border-box;
     overflow: hidden;
@@ -175,7 +183,6 @@
 .addButton input {
     -webkit-box-sizing: border-box;
     -webkit-transition: all 0.5s;
-    background: #fff;
     border: 0;
     border-radius: 5px;
     bottom: 0;
@@ -795,39 +802,46 @@
     opacity: 1.0;
 }
 
-/*.star {
-   width: 0px;
-   height: 0px;
-   border-right:  100px solid transparent;
-   border-bottom: 70px  solid #fc2e5a;
-   border-left:   100px solid transparent;
-   -webkit-transform: rotate(35deg) scale(0.1);
+
+/* TODO: All of this is taken from Bootstrap. */
+.alert {
+    padding: 15px 35px 15px 15px;
+    margin-bottom: 20px;
+    color: #c09853;
+    background-color: #fcf8e3;
+    border: 1px solid #fbeed5;
+    z-index: 2000;
+    position: relative !important;
+    display:inline-block;
 }
 
-.star:before {
-   border-bottom: 80px solid #fc2e5a;
-   border-left: 30px solid transparent;
-   border-right: 30px solid transparent;
-   position: absolute;
-   height: 0;
-   width: 0;
-   top: -45px;
-   left: -65px;
-   display: block;
-   content: '';
-   -webkit-transform: rotate(-35deg);
+.alert-error {
+    color: #b94a48;
+    background-color: #f2dede;
+    border-color: #eed3d7;
 }
-.star:after {
-   position: absolute;
-   display: block;
-   color: #fc2e5a;
-   top: 3px;
-   left: -105px;
-   width: 0px;
-   height: 0px;
-   border-right: 100px solid transparent;
-   border-bottom: 70px solid #fc2e5a;
-   border-left: 100px solid transparent;
-   -webkit-transform: rotate(-70deg);
-   content: '';
-}*/
+
+.alert .close {
+    position: relative;
+    right: -21px;
+    line-height: 10px;
+}
+
+button.close {
+    padding: 0;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    -webkit-appearance: none;
+}
+
+.close {
+    float: right;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 20px;
+    color: #000000;
+    text-shadow: 0 1px 0 #ffffff;
+    opacity: 0.2;
+    filter: alpha(opacity=20);
+}

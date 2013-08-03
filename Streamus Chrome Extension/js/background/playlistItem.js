@@ -1,5 +1,5 @@
 ﻿//  PlaylistItems have a one-to-one relationship with a Video object via the videoId property.
-define(['helpers', 'programState', 'video'], function(helpers, programState, Video) {
+define(['settings', 'video'], function(Settings, Video) {
     'use strict';
     
     var playlistItemModel = Backbone.Model.extend({
@@ -13,7 +13,7 @@ define(['helpers', 'programState', 'video'], function(helpers, programState, Vid
                 title: ''
             };
         },
-        urlRoot: programState.getBaseUrl() + 'PlaylistItem/',
+        urlRoot: Settings.get('serverURL') + 'PlaylistItem/',
         parse: function (playlistItemDto) {
             
             //  Convert C# Guid.Empty into BackboneJS null

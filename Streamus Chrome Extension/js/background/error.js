@@ -1,5 +1,5 @@
 ﻿//  Holds all the relevant data for a client-side error
-define(['programState'], function (programState) {
+define(['settings'], function (Settings) {
     'use strict';
 
     var errorModel = Backbone.Model.extend({
@@ -10,7 +10,7 @@ define(['programState'], function (programState) {
             clientVersion: chrome.app.getDetails().version,
             timeOccurred: new Date()
         },
-        urlRoot: programState.getBaseUrl() + 'Error/'
+        urlRoot: Settings.get('serverURL') + 'Error/'
        
     });
 
@@ -18,7 +18,7 @@ define(['programState'], function (programState) {
     window.onerror = function (message, url, lineNumber) {
 
         //  Only log client errors to the database in a deploy environment, not when debugging locally.
-        if (!programState.get('isLocal')) {
+        if (!Settings.get('localDebug')) {
             var error = new errorModel({
                 message: message,
                 url: url,

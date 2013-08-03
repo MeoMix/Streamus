@@ -1,5 +1,13 @@
 //  This is the list of playlists on the playlists tab.
-define(['contextMenuView', 'backgroundManager', 'helpers', 'spinnerBuilder', 'dataSource', 'streamItems', 'playlistView'], function (ContextMenuView, backgroundManager, helpers, SpinnerBuilder, DataSource, StreamItems, PlaylistView) {
+define([
+    'contextMenuView',
+    'backgroundManager',
+    'utility',
+    'spinnerBuilder',
+    'dataSource',
+    'streamItems',
+    'playlistView'
+], function (ContextMenuView, backgroundManager, Utility, SpinnerBuilder, DataSource, StreamItems, PlaylistView) {
     'use strict';
 
     var PlaylistsView = Backbone.View.extend({
@@ -247,7 +255,7 @@ define(['contextMenuView', 'backgroundManager', 'helpers', 'spinnerBuilder', 'da
                 return memo + duration;
             }, 0);
 
-            var playlistInfo = 'Videos: ' + currentVideos.length + ', Duration: ' + helpers.prettyPrintTime(sumVideosDurations);
+            var playlistInfo = 'Videos: ' + currentVideos.length + ', Duration: ' + Utility.prettyPrintTime(sumVideosDurations);
             playlistLink.find('.playlistInfo').text(playlistInfo);
             
         }, 100),
