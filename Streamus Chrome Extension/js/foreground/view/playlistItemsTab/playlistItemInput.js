@@ -3,6 +3,8 @@
 define(['contentHeader', 'youTubeDataAPI', 'dialogs', 'helpers', 'backgroundManager'], function (ContentHeader, youTubeDataAPI, dialogs, helpers, backgroundManager) {
     'use strict';
 
+    console.log("Creating expanded");
+
     var contentHeader = new ContentHeader({
         selector: '#CurrentPlaylistItemDisplay',
         addText: 'Add Videos',

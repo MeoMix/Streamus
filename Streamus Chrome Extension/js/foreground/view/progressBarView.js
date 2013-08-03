@@ -90,7 +90,7 @@ define(['streamItems', 'player', 'helpers', 'playerState'], function (StreamItem
 
         stopSeeking: function(){
             
-            //  Seek is known to have finished when the player announces a state change.
+            //  Seek is known to have finished when the player announces a state change that isn't buffering / unstarted.
             var state = player.get('state');
 
             if (state == PlayerState.PLAYING || state == PlayerState.PAUSED) {

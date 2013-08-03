@@ -1,5 +1,7 @@
 ﻿define(['contentHeader', 'youTubeDataAPI', 'backgroundManager', 'dataSource'], function (ContentHeader, youTubeDataAPI, backgroundManager, DataSource) {
     'use strict';
+
+    console.log("Initializing");
     
     var contentHeader = new ContentHeader({
         selector: '#PlaylistDisplay',

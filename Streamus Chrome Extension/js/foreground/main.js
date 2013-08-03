@@ -8,7 +8,7 @@ require([
     //  TODO: These can/should probably be nuked
     'jqueryUi',
     'scrollIntoView'
-], function ($, _, Backbone, player) {
+], function ($, _, Backbone) {
     'use strict';
 
     var player = chrome.extension.getBackgroundPage().YouTubePlayer;
@@ -43,7 +43,7 @@ require([
             player.once('change:ready', function () {
 
                 console.log("PLAYER IS NOW READY!!");
-
+                require(['foreground']);
 
             });
         }
