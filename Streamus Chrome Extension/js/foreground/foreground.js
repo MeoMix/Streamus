@@ -47,15 +47,6 @@ define([
             var activeContentButtonId = Settings.get('activeContentButtonId');
             $('#' + activeContentButtonId).click();
 
-            //  Close the foreground whenever the PC goes idle.
-            chrome.idle.onStateChanged.addListener(function (newState) {
-
-                if (window && newState === 'idle') {
-                    window.close();
-                }
-
-            });
-
         },
 
         showContent: function (event) {
