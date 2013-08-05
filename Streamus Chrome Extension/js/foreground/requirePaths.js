@@ -23,8 +23,6 @@ var require = {
         'main': 'foreground/main',
         'foreground': 'foreground/foreground',
         'utility': 'foreground/utility',
-        
-        'contentHeader': 'foreground/contentHeader',
 
         //  Collection:
         'contextMenuGroups': 'foreground/collection/contextMenuGroups',
@@ -42,6 +40,7 @@ var require = {
         'spinnerBuilder': 'foreground/model/spinnerBuilder',
         
         //  View:
+        'contentHeader': 'foreground/view/contentHeader',
         'contextMenuView': 'foreground/view/contextMenuView',
         'dialogView': 'foreground/view/dialogView',
         'headerTitleView': 'foreground/view/headerTitleView',

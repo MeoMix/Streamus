@@ -113,9 +113,10 @@ define([
 
                 if (dataSourceType === DataSource.YOUTUBE_PLAYLIST || dataSourceType === DataSource.YOUTUBE_CHANNEL) {
 
-                    var playlistLink = self.ul.find('li[data-playlistid="' + playlist.get('id') + '"]');
-                    self.spinner.spin(playlistLink[0]);
+                    var playlistLink = this.ul.find('li[data-playlistid="' + playlist.get('id') + '"]');
+                    this.spinner.spin(playlistLink[0]);
 
+                    var self = this;
                     playlist.once('change:dataSourceLoaded', function () {
                         self.spinner.stop();
                     });

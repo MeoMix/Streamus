@@ -5,7 +5,7 @@ require([
     'jquery',
     'underscore',
     'backbone',
-    //  TODO: These can/should probably be nuked
+    //  TODO: I would like to make jqueryUi obsolete and implement scrollIntoView myself, we'll see.
     'jqueryUi',
     'scrollIntoView'
 ], function ($, _, Backbone) {
@@ -13,8 +13,6 @@ require([
 
     var player = chrome.extension.getBackgroundPage().YouTubePlayer;
     var user = chrome.extension.getBackgroundPage().User;
-
-    if (user == null) throw "WOW I thought this could never be null";
 
     //  If the foreground is opened before the background has had a chance to load, wait for the background.
     //  This is easier than having every control on the foreground guard against the background not existing.
@@ -24,8 +22,6 @@ require([
         user.on('change:loaded', function (model, loaded) {
             if (loaded) {
                 loadForeground();
-            } else {
-                //  Show refreshing message?
             }
         });
     }
@@ -33,18 +29,11 @@ require([
     function loadForeground() {
 
         if (player.get('ready')) {
-            console.log("Player is ready, requiring foreground");
             //  Load foreground when the background indicates it has loaded.
             require(['foreground']);
         } else {
-
-            console.log("WAITING FOR PLAYER TO BECOME READY");
-
             player.once('change:ready', function () {
-
-                console.log("PLAYER IS NOW READY!!");
                 require(['foreground']);
-
             });
         }
 

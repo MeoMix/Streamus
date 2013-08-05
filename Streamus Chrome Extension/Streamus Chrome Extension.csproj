@@ -163,13 +163,13 @@
     <Content Include="js\foreground\view\stream\streamView.js" />
     <Content Include="js\inject\streamusShareInject.js" />
     <Content Include="js\enum\dataSource.js" />
-    <Content Include="js\foreground\backgroundManager.js" />
-    <Content Include="js\foreground\contentHeader.js" />
+    <Content Include="js\foreground\model\backgroundManager.js" />
+    <Content Include="js\foreground\view\contentHeader.js" />
     <Content Include="js\foreground\foreground.js" />
     <Content Include="js\foreground\view\headerTitleView.js" />
-    <Content Include="js\foreground\settings.js" />
+    <Content Include="js\foreground\model\settings.js" />
     <Content Include="js\foreground\main.js" />
-    <Content Include="js\foreground\player.js" />
+    <Content Include="js\foreground\model\player.js" />
     <Content Include="js\foreground\view\buttons\playPauseButtonView.js" />
     <Content Include="js\foreground\view\buttons\previousButtonView.js" />
     <Content Include="js\foreground\view\buttons\radioButtonView.js" />
