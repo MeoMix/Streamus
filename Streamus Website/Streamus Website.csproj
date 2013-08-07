@@ -46,6 +46,7 @@
     <Content Include="css\index.css" />
     <Content Include="favicon.ico" />
     <Content Include="googlee6d26778f04ae1ed.html" />
+    <Content Include="img\sean.jpg" />
     <Content Include="img\chromeWebStoreBadge.png" />
     <Content Include="img\glyphicons-halflings-white.png" />
     <Content Include="img\glyphicons-halflings.png" />
@@ -71,8 +72,6 @@
     <Content Include="js\main.js" />
     <Content Include="js\olark.js" />
     <Content Include="js\underscore.js" />
-    <Content Include="legal\privacy.htm" />
-    <Content Include="legal\terms-of-use.htm" />
     <Content Include="share\index.htm" />
     <Content Include="Web.config" />
   </ItemGroup>

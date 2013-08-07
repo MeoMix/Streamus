@@ -45,19 +45,29 @@ define([
         
             //  Set the initially loaded content to whatever was clicked last or the home page as a default
             var activeContentButtonId = Settings.get('activeContentButtonId');
-            $('#' + activeContentButtonId).click();
+            console.log("Active content button id:", activeContentButtonId, $('#' + activeContentButtonId), $('#' + activeContentButtonId).length);
+            var activeButton = $('#' + activeContentButtonId);
+
+            this.setMenuButtonActive(activeButton);
 
         },
 
         showContent: function (event) {
+            
 
             var clickedMenuButton = $(event.currentTarget);
+            console.log("Showing conent:", clickedMenuButton);
+
+            this.setMenuButtonActive(clickedMenuButton);
+        },
+        
+        setMenuButtonActive: function(menuButton) {
 
             //  Clear content and show new content based on button clicked.
             $('.menubutton').removeClass('active');
-            clickedMenuButton.addClass('active');
+            menuButton.addClass('active');
 
-            Settings.set('activeContentButtonId', clickedMenuButton[0].id);
+            Settings.set('activeContentButtonId', menuButton[0].id);
 
             this.render();
         }

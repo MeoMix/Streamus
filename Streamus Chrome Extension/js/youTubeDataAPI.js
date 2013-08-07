@@ -1,5 +1,8 @@
 //  A global object which abstracts more difficult implementations of retrieving data from YouTube.
-define(['levenshtein', 'dataSource'], function (levenshtein, DataSource) {
+define([
+    'levenshtein',
+    'dataSource'
+], function (levenshtein, DataSource) {
     'use strict';
 
     var videoInformationFields = 'author,title,media:group(yt:videoid,yt:duration),yt:accessControl';

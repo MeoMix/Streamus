@@ -1,7 +1,45 @@
 ﻿$(function () {
     'use strict';
+
+    var BodyView = Backbone.View.extend({
+        el: $('body'),
+        
+        navigationItems: $('#navigationView ul li'),
+
+        events: {
+            'click .logoWrapper a': 'goHome',
+            'click #navigationView ul li': 'selectAndShowView',
+            'click .footer a': 'selectAndShowView'
+        },
+        
+        selectAndShowView: function(event) {
+
+            var clickedItem = $(event.currentTarget);
+
+            if (!clickedItem.hasClass('active')) {
+                this.$el.find('.active').removeClass('active');
+                
+                var contentId = clickedItem.data('contentid');
+
+                clickedItem.addClass('active');
+                
+                $('.content').hide();
+                $('#' + contentId).show();
+                
+            }
+
+        },
+        
+        goHome: function() {
+            this.navigationItems.first().click();
+        }
+
+    });
+
+    var bodyView = new BodyView;
     
-    var installButtonView = Backbone.View.extend({
+    //  TODO: Move to another file
+    var InstallButtonView = Backbone.View.extend({
         el: $('#installButton'),
 
         events: {
@@ -61,5 +99,5 @@
         }
     });
 
-    return new installButtonView;
+    var installButton = new InstallButtonView;
 });
