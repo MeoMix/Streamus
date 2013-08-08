@@ -11,7 +11,7 @@ define([
         
         defaults: function() {
             return {
-                localDebug: true,
+                localDebug: false,
                 serverURL: '',
                 activeContentButtonId: getItem('activeContentButtonId') || 'HomeMenuButton',
                 activeFolderId: getItem('activeFolderId') || null,
@@ -21,6 +21,7 @@ define([
                 shuffleEnabled: getItem('shuffleEnabled') || false,
                 suggestedQuality: getItem('suggestedQuality') || 'default',
                 userId: getItem('userId') || null,
+				youTubeInjectClicked: getItem('youTubeInjectClicked') || true
             };
         },
         
@@ -63,6 +64,10 @@ define([
             
             this.on('change:userId', function (model, userId) {
                 localStorage.setItem('userId', JSON.stringify(userId));
+            });
+
+			this.on('change:youTubeInjectClicked', function (model, youTubeInjectClicked) {
+                localStorage.setItem('youTubeInjectClicked', JSON.stringify(youTubeInjectClicked));
             });
         }
   

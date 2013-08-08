@@ -145,6 +145,18 @@ define([
                 });
                 
                 break;
+			case 'getYouTubeInjectClicked':
+				var clickStatus = Settings.get("youTubeInjectClicked");
+
+				sendResponse({
+					result: clickStatus
+				});
+
+				break;
+			case 'setYouTubeInjectClicked':
+				var clickStatus = Settings.get("youTubeInjectClicked");
+				if (!clickStatus) Settings.set("youTubeInjectClicked", true);
+				break;
         }
         
         //  Return true to allow sending a response back.
