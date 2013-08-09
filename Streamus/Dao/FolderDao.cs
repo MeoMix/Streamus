@@ -16,9 +16,9 @@ namespace Streamus.Dao
                 {
                     folder = NHibernateSession.Load<Folder>(id);
                 }
-                catch (Exception exception)
+                catch
                 {
-                    //  Consume exception and return null playlist.
+                    //  Consume exception and return null folder.
                 }
             }
 
