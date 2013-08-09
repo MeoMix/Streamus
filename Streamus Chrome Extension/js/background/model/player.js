@@ -65,6 +65,34 @@ define([
             });
 
 
+            var refreshPausedVideoInterval = null;
+            this.on('change:state', function (model, state) {
+
+                clearTimeout(refreshPausedVideoTimeout);
+       
+                if (state === PlayerState.PAUSED) {
+
+                    //  Start a long running timer when the player becomes paused. This is because a YouTube video
+                    //  will expire after ~8+ hours of being loaded. This only happens if the player is paused.
+                    //  Refresh videos after every 8 hours.
+                    var eightHoursInMilliseconds = 28800000;
+
+                    refreshPausedVideoInterval = setInterval(function () {
+
+                        var currentTime = self.get('currentTime');
+                        var loadedVideoId = self.get('loadedVideoId');
+
+                        self.stop();
+                        //  TODO: Seems weird to have to call cueVideoById and seekTo
+                        self.cueVideoById(loadedVideoId);
+                        self.seekTo(currentTime);
+
+                    }, tenSeconds);
+
+                }
+
+            });
+
             this.on('change:loadedVideoId', function() {
                 clearInterval(seekToInterval);
             });

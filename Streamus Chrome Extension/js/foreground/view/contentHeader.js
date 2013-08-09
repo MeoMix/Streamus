@@ -41,6 +41,7 @@ define(['backgroundManager'], function (BackgroundManager) {
         headerInput.appendTo(headerTitle);
         
         BackgroundManager.get('allPlaylists').on('change:title', function (model, title) {
+            console.log("Updating header input with:", title);
             headerInput.val(title);
         });
 

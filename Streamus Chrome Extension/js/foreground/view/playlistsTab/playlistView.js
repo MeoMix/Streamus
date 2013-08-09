@@ -35,7 +35,8 @@
             return this;
         },
         
-        initialize: function() {
+        initialize: function () {
+            this.listenTo(this.model, 'change:title', this.render);
             this.listenTo(this.model, 'destroy', this.remove);
         }
 

@@ -67,6 +67,8 @@ define([
 
             //  Debounce because I want automatic typing but no reason to spam server with saves.
             this.on('change:title', _.debounce(function (model, title) {
+                console.log("Title is changing!");
+
                 $.ajax({
                     url: Settings.get('serverURL') + 'Playlist/UpdateTitle',
                     type: 'POST',
