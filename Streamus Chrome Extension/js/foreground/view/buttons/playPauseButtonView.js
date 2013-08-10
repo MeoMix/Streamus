@@ -1,10 +1,10 @@
 //  The play/pause icon.
 define([
     'player',
-    'spinnerBuilder',
     'playerState',
-    'streamItems'
-], function (Player, SpinnerBuilder, PlayerState, StreamItems) {
+    'streamItems',
+    'loadingSpinnerView'
+], function (Player, PlayerState, StreamItems, LoadingSpinnerView) {
     'use strict';
     
     var PlayPauseButtonView = Backbone.View.extend({
@@ -14,7 +14,7 @@ define([
             'click': 'togglePlayingState'
         },
         
-        spinner: SpinnerBuilder.buildPlayPauseSpinner(),
+        loadingSpinnerView: new LoadingSpinnerView,
         
         disabledTitle: 'Play disabled. Try adding a video to your playlist, first!',
         pauseTitle: 'Click to pause the current video.',
@@ -35,14 +35,13 @@ define([
             var playerState = Player.get('state');
 
             if (playerState === PlayerState.BUFFERING) {
-                //  Show buffering icon and hide the others.
-                this.spinner.spin($('#LoadingSpinner')[0]);
+                this.$el.append(this.loadingSpinnerView.render().el);
 
                 playIcon.hide();
                 pauseIcon.hide();
             } else {
                 // Not buffering, so hide the spinner.
-                this.spinner.stop();
+                this.loadingSpinnerView.remove();
 
                 if (playerState === PlayerState.PLAYING) {
                     //  Change the music button to the 'Pause' image
@@ -51,7 +50,6 @@ define([
                     this.$el.attr('title', this.pauseTitle);
                 } else {
                     //  Change the music button to the 'Play' image
-                    this.spinner.stop();
                     pauseIcon.hide();
                     playIcon.show();
                     this.$el.attr('title', this.playTitle);

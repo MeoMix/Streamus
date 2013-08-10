@@ -3,11 +3,11 @@ define([
     'contextMenuView',
     'backgroundManager',
     'utility',
-    'spinnerBuilder',
     'dataSource',
     'streamItems',
-    'playlistView'
-], function (ContextMenuView, BackgroundManager, Utility, SpinnerBuilder, DataSource, StreamItems, PlaylistView) {
+    'playlistView',
+    'loadingSpinnerView'
+], function (ContextMenuView, BackgroundManager, Utility, DataSource, StreamItems, PlaylistView, LoadingSpinnerView) {
     'use strict';
 
     var PlaylistsView = Backbone.View.extend({
@@ -18,7 +18,7 @@ define([
         
         emptyNotification: $('#PlaylistsView .emptyListNotification'),
         
-        spinner: SpinnerBuilder.buildPlaylistSpinner(),
+        loadingSpinnerView: new LoadingSpinnerView,
         
         events: {
             'contextmenu': 'showContextMenu',
@@ -114,11 +114,11 @@ define([
                 if (dataSourceType === DataSource.YOUTUBE_PLAYLIST || dataSourceType === DataSource.YOUTUBE_CHANNEL) {
 
                     var playlistLink = this.ul.find('li[data-playlistid="' + playlist.get('id') + '"]');
-                    this.spinner.spin(playlistLink[0]);
+                    playlistLink.append(this.loadingSpinnerView.render().el);
 
                     var self = this;
                     playlist.once('change:dataSourceLoaded', function () {
-                        self.spinner.stop();
+                        self.loadingSpinnerView.remove();
                     });
 
                 }

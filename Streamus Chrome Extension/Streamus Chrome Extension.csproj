@@ -53,6 +53,7 @@
     <Content Include="js\foreground\model\contextMenuItem.js" />
     <Content Include="js\foreground\model\dialog.js" />
     <Content Include="js\foreground\view\dialogView.js" />
+    <Content Include="js\foreground\view\loadingSpinnerView.js" />
     <Content Include="js\foreground\view\playlistItemsTab\playlistItemView.js" />
     <Content Include="js\foreground\view\contextMenuView.js" />
     <Content Include="js\foreground\view\playlistsTab\playlistView.js" />

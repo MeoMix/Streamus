@@ -16,7 +16,6 @@ var require = {
         'levenshtein': 'thirdParty/levenshtein',
         'scrollIntoView': 'thirdParty/jquery.scrollIntoView',
         'sly': 'thirdParty/sly',
-        'spin': 'thirdParty/jquery.spin',
         'underscore': 'thirdParty/underscore',
 
         //  Foreground:
@@ -44,6 +43,7 @@ var require = {
         'contextMenuView': 'foreground/view/contextMenuView',
         'dialogView': 'foreground/view/dialogView',
         'headerTitleView': 'foreground/view/headerTitleView',
+        'loadingSpinnerView': 'foreground/view/loadingSpinnerView',
         'progressBarView': 'foreground/view/progressBarView',
         'volumeControlView': 'foreground/view/volumeControlView',
         
