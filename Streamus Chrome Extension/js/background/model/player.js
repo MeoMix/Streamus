@@ -68,7 +68,7 @@ define([
             var refreshPausedVideoInterval = null;
             this.on('change:state', function (model, state) {
 
-                clearTimeout(refreshPausedVideoTimeout);
+                clearInterval(refreshPausedVideoInterval);
        
                 if (state === PlayerState.PAUSED) {
 
