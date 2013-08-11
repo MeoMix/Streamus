@@ -162,7 +162,6 @@
     <Content Include="js\thirdParty\jqueryUi.js" />
     <Content Include="js\thirdParty\levenshtein.js" />
     <Content Include="js\thirdParty\require.js" />
-    <Content Include="js\thirdParty\jquery.spin.js" />
     <Content Include="js\thirdParty\underscore.js" />
     <Content Include="js\inject\youTubeIFrameInject.js" />
     <Content Include="js\background\model\youTubePlayerAPI.js" />
