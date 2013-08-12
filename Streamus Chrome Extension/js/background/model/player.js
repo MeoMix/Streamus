@@ -87,7 +87,7 @@ define([
                         self.cueVideoById(loadedVideoId);
                         self.seekTo(currentTime);
 
-                    }, tenSeconds);
+                    }, eightHoursInMilliseconds);
 
                 }
 
