@@ -10,11 +10,6 @@
         
         template: _.template($('#playlistItemTemplate').html()),
         
-        //  TODO: Delegate events to child from parent?
-        events: {
-            
-        },
-        
         render: function() {
             this.$el.html(this.template(this.model.toJSON()));
             

@@ -49,15 +49,19 @@
 
                         }
                         
-                        throttledConsoleLog("Drawing image from loaded video");
-
                         this.context.drawImage(this.video, 0, 0, this.el.width, this.el.height);
-                    } else {
+                    }
+                    else if (Player.get('currentTime') > 0) {
+                        //  The player might open while paused. Render the current video frame, but don't continously render until play starts.
+                        this.context.drawImage(this.video, 0, 0, this.el.width, this.el.height);
+                    }
+                    else {
                         //  TODO: When Streamus pauses the video image degrades because this is drawing instead of using the loaded video's current time.
                         var loadedVideoId = Player.get('loadedVideoId');
 
-                        throttledConsoleLog("Drawing from loadedVideoId:", loadedVideoId);
+                        throttledConsoleLog("Drawing default:", loadedVideoId, playerState);
                         if (loadedVideoId != '') {
+
                             this.videoDefaultImage.src = 'http://i2.ytimg.com/vi/' + loadedVideoId + '/mqdefault.jpg ';
                         }
 
