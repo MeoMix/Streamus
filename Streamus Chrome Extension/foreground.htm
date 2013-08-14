@@ -246,9 +246,7 @@
         
         <script type="text/template" id="playlistItemTemplate">
             
-            <div class="playlistItemVideoImage" style="background-image: url(http://img.youtube.com/vi/<%- video.get('id')%>/default.jpg)">
-
-            </div>
+            <img class="playlistItemVideoImage lazy" data-original="http://img.youtube.com/vi/<%- video.get('id')%>/default.jpg"  src="" />
             
             <div class="textWrapper">
                 <span class="playlistItemTitle"><%- title %></span>
@@ -263,7 +261,7 @@
                 <span class="videoTitle videoImageOverlay"><%- video.get('title') %></span>
             </div>
             
-            <img class="videoImage" src="<%- videoImageUrl %>" />
+            <img class="videoImage lazy" data-original="<%- videoImageUrl %>"  src="" />
 
             <div class="videoTimeOverlay imageOverlayWrapper">
                 <span class="videoTime videoImageOverlay"><!--Set inside render to utilize utility.js--></span>

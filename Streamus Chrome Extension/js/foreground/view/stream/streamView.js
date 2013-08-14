@@ -3,10 +3,11 @@
     'streamItemView',
     'contextMenuView',
     'backgroundManager',
+    'utility',
     'sly'
-], function (StreamItems, StreamItemView, ContextMenuView, BackgroundManager) {
+], function (StreamItems, StreamItemView, ContextMenuView, BackgroundManager, Utility) {
     'use strict';
-
+    
     var StreamView = Backbone.View.extend({
         el: $('#StreamView'),
         
@@ -36,6 +37,21 @@
                 elasticBounds: 1,
                 easing: 'easeOutExpo',
                 clickBar: 1
+            }, {
+                move: _.throttle(function() {
+ 
+                    //  Find images which haven't been lazily loaded, but are in the viewport and trigger an event to get them to load.
+                    self.$el.find('img.lazy[src=""]').each(function() {
+
+                        var isInViewport = Utility.isElementInViewport(this);
+                        
+                        if (isInViewport) {
+                            $(this).trigger('visible');
+                        }
+
+                    });
+
+                }, 500)
             }).init();
             
             if (StreamItems.length > 0) {
@@ -68,6 +84,12 @@
 
             var element = streamItemView.render().el;
             this.sly.add(element);
+            
+            $(element).find('img.lazy').lazyload({
+                effect: 'fadeIn',
+                container: this.$el,
+                event: 'visible'
+            });
 
             if (streamItem.get('selected')) {
                 //  activateImmediate will go directly to element without animation.
@@ -97,6 +119,12 @@
             });
             
             this.sly.add(elements);
+
+            $(elements).find('img.lazy').lazyload({
+                effect: 'fadeIn',
+                container: self.$el,
+                event: 'visible'
+            });
             
             //  Ensure proper item is selected.
             var selectedStreamItem = StreamItems.getSelectedItem();

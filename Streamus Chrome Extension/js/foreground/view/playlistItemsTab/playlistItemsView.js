@@ -8,7 +8,7 @@ define([
     'use strict';
 
     var PlaylistItemsView = Backbone.View.extend({
-
+        
         el: $('#PlaylistItemsView'),
         
         ul: $('#PlaylistItemsView ul'),
@@ -54,6 +54,12 @@ define([
                 //  Do this all in one DOM insertion to prevent lag in large playlists.
                 this.ul.append(listItems);
             }
+
+            this.$el.find('img.lazy').lazyload({
+                effect : 'fadeIn',
+                container: this.$el,
+                event: 'scroll manualShow'
+            });
 
             return this;
         },
@@ -114,6 +120,12 @@ define([
             } else {
                 element.appendTo(this.ul);
             }
+            
+            element.find('img.lazy').lazyload({
+                effect: 'fadeIn',
+                container: this.$el,
+                event: 'scroll manualShow'
+            });
 
             this.emptyNotification.hide();
             this.scrollItemIntoView(playlistItem);

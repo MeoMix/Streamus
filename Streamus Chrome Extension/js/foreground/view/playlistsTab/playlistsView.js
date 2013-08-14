@@ -78,7 +78,7 @@ define([
 
             this.listenTo(BackgroundManager, 'change:activeFolder', this.render);
             this.listenTo(BackgroundManager, 'change:activePlaylist', function (collection, playlist) {
-                console.log("Active playlist:", playlist);
+
                 if (playlist === null) {
                     self.ul.find('li').removeClass('loaded');
                 } else {

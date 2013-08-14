@@ -13,6 +13,7 @@ var require = {
         'backbone': 'thirdParty/backbone',
         'jquery': 'thirdParty/jquery',
         'jqueryUi': 'thirdParty/jqueryUi',
+        'lazyload': 'thirdParty/jquery.lazyload',
         'levenshtein': 'thirdParty/levenshtein',
         'scrollIntoView': 'thirdParty/jquery.scrollIntoView',
         'sly': 'thirdParty/sly',

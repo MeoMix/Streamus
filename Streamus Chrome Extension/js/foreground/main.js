@@ -5,7 +5,7 @@ require([
     'jquery',
     'underscore',
     'backbone',
-    //  TODO: I would like to make jqueryUi obsolete and implement scrollIntoView myself, we'll see.
+    'lazyload',
     'jqueryUi',
     'scrollIntoView'
 ], function ($, _, Backbone) {

@@ -686,7 +686,6 @@
 
 .sidebar-button:hover { opacity: 1; }
 
-
 .textWrapper {
     height: 44px;
     left: 60px;
@@ -696,6 +695,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 384px;
+    top: 0;
 }
 
 #PlaylistsContent .textWrapper {

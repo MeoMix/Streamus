@@ -9,7 +9,7 @@ define([
     'dialogView'
 ], function (ContentHeader, YouTubeDataAPI, Utility, BackgroundManager, Dialog, DialogView) {
     'use strict';
-
+    
     var contentHeader = new ContentHeader({
         selector: '#CurrentPlaylistItemDisplay',
         addText: 'Add Videos',

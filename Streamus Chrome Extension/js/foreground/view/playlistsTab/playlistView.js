@@ -10,6 +10,12 @@
         
         template: _.template($('#playlistTemplate').html()),
         
+        attributes: function () {
+            return {
+                'data-playlistid': this.model.get('id')
+            };
+        },
+
         //  TODO: Delegate events to child from parent?
         events: {
             
@@ -17,8 +23,6 @@
         
         render: function() {
             this.$el.html(this.template(this.model.toJSON()));
-
-            this.$el.attr('data-playlistid', this.model.get('id'));
 
             var currentVideos = this.model.get('items').pluck('video');
             var currentVideosDurations = _.pluck(currentVideos, 'duration');

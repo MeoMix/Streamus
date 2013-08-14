@@ -3,9 +3,12 @@
 
     var DialogView = Backbone.View.extend({
 
-        tagName: 'div',
+        className: function() {
+            //  Set the dialog's class based on the model's type.
+            var className = 'alert alert-' + this.model.get('type');
 
-        className: 'alert',
+            return className;
+        },
 
         template: _.template($('#dialogTemplate').html()),
 
@@ -20,11 +23,6 @@
         },
 
         initialize: function () {
-
-            //  Set the dialog's class based on the model's type.
-            var className = 'alert-' + this.model.get('type');
-            this.$el.addClass(className);
-        
             this.listenTo(this.model, 'destroy', this.remove);
         },
 

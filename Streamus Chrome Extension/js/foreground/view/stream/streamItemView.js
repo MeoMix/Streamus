@@ -24,7 +24,11 @@
         render: function () {
 
             this.$el.html(this.template(this.model.toJSON()));
+            
+            //  TODO: Set this property on the model before rendering instead.
             this.$el.find('.videoTime').text(Utility.prettyPrintTime(this.model.get('video').get('duration')));
+            
+            //  TODO: Invert this dependency so I don't have to call every time
             Utility.scrollElementInsideParent(this.$el.find('.videoTitle'));
 
             return this;

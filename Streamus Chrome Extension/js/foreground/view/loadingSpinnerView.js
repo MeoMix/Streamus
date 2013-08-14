@@ -11,12 +11,7 @@
             this.$el.html(this.template());
 
             return this;
-        },
-
-        initialize: function () {
-
         }
-
     });
 
     return LoadingSpinnerView;

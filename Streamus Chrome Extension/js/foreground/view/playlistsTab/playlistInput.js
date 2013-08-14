@@ -6,8 +6,6 @@
 ], function (ContentHeader, YouTubeDataAPI, BackgroundManager, DataSource) {
     'use strict';
 
-    console.log("Initializing");
-    
     var contentHeader = new ContentHeader({
         selector: '#PlaylistDisplay',
         addText: 'Add Playlist',

@@ -63,6 +63,7 @@
     <Content Include="js\options\player.js" />
     <Content Include="js\options\requirePaths.js" />
     <Content Include="js\enum\shareableEntityType.js" />
+    <Content Include="js\thirdParty\jquery.lazyload.js" />
     <Content Include="js\thirdParty\sly.js" />
     <Content Include="options.htm" />
     <Content Include="css\aristo\aristo.css" />

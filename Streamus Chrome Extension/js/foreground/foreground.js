@@ -2,6 +2,7 @@
 //  background YouTube player to load entirely before allowing foreground to open.
 define([
     'settings',
+    'playlistItemsView',
     'backgroundManager',
     'volumeControlView',
     'playPauseButtonView',
@@ -14,11 +15,11 @@ define([
     'videoDisplayView',
     'headerTitleView',
     'playlistItemInput',
-    'playlistItemsView',
+    
     'playlistInput',
     'playlistsView',
     'streamView'
-], function (Settings) {
+], function (Settings, PlaylistItemsView) {
     'use strict';
 
     //  TODO: There should probably be a ContentButtonView and Model which keep track of these properties and not just done on the ForegroundView.
@@ -39,6 +40,7 @@ define([
             var activeContentId = activeMenuButton.data('content');
             
             $('#' + activeContentId).show();
+            PlaylistItemsView.$el.trigger('manualShow');
         },
 
         initialize: function(){
@@ -49,14 +51,11 @@ define([
             var activeButton = $('#' + activeContentButtonId);
 
             this.setMenuButtonActive(activeButton);
-
         },
 
         showContent: function (event) {
-            
 
             var clickedMenuButton = $(event.currentTarget);
-            console.log("Showing conent:", clickedMenuButton);
 
             this.setMenuButtonActive(clickedMenuButton);
         },
