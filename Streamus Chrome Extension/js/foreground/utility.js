@@ -17,7 +17,30 @@ define({
         }).mouseout(function () {
             $(this).stop(true).animate({ marginLeft: 0 });
         });
-    },       
+    },
+    
+    //  If there are a ton of elements which need to scroll all under a given root element, allow for event delegation
+    scrollChildElements: function(parent, childElementSelector) {
+
+        $(parent).on('mouseover', childElementSelector, function () {
+
+            var distanceToMove = $(this).width() - $(this).parent().width();
+
+            $(this).animate({
+                marginLeft: "-" + distanceToMove + "px"
+            }, {
+                //  Just a feel good value; scales as the text gets longer
+                duration: 15 * distanceToMove,
+                easing: 'linear'
+            });
+
+        });
+
+        $(parent).on('mouseout', childElementSelector, function () {
+            $(this).stop(true).animate({ marginLeft: 0 });
+        });
+
+    },
      
     //  Takes a time in seconds and converts it to a displayable format of H:mm:ss or mm:ss.
     prettyPrintTime: function(timeInSeconds) {

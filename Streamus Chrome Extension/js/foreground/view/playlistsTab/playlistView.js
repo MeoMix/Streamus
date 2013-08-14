@@ -1,6 +1,4 @@
-﻿define([
-    'utility'
-], function (Utility) {
+﻿define(function () {
     'use strict';
     
     var PlaylistView = Backbone.View.extend({
@@ -16,26 +14,8 @@
             };
         },
 
-        //  TODO: Delegate events to child from parent?
-        events: {
-            
-        },
-        
         render: function() {
             this.$el.html(this.template(this.model.toJSON()));
-
-            var currentVideos = this.model.get('items').pluck('video');
-            var currentVideosDurations = _.pluck(currentVideos, 'duration');
-
-            var sumVideosDurations = _.reduce(currentVideosDurations, function (memo, duration) {
-                return memo + duration;
-            }, 0);
-
-            var playlistInfo = 'Videos: ' + currentVideos.length + ', Duration: ' + Utility.prettyPrintTime(sumVideosDurations);
-            this.$el.find('span.playlistInfo').text(playlistInfo);
-
-            Utility.scrollElementInsideParent(this.$el.find('span.playlitTitle'));
-
             return this;
         },
         

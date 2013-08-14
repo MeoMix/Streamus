@@ -73,6 +73,8 @@
             });
 
             this.listenTo(StreamItems, 'remove empty', this.sly.reload);
+            
+            Utility.scrollChildElements(this.el, '.videoTitle');
         },
         
         addItem: function (streamItem, activateImmediate) {

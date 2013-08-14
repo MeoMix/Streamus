@@ -3,8 +3,9 @@ define([
     'contextMenuView',
     'backgroundManager',
     'streamItems',
-    'playlistItemView'
-], function (ContextMenuView, BackgroundManager, StreamItems, PlaylistItemView) {
+    'playlistItemView',
+    'utility'
+], function (ContextMenuView, BackgroundManager, StreamItems, PlaylistItemView, Utility) {
     'use strict';
 
     var PlaylistItemsView = Backbone.View.extend({
@@ -101,6 +102,8 @@ define([
             });
 
             this.render();
+
+            Utility.scrollChildElements(this.el, 'span.playlistItemTitle');
         },
         
         addItem: function (playlistItem) {

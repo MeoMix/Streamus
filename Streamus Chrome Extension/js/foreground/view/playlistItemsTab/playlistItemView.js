@@ -1,6 +1,4 @@
-﻿define([
-    'utility'
-], function (Utility) {
+﻿define(function () {
     'use strict';
 
     var PlaylistItemView = Backbone.View.extend({
@@ -18,19 +16,7 @@
         },
         
         render: function () {
-
             this.$el.html(this.template(this.model.toJSON()));
-            
-            var videoDuration = this.model.get('video').get('duration');
-            var author = this.model.get('video').get('author');
-
-            //  Set this as a property of the model before rendering.
-            var playlistItemInfo = Utility.prettyPrintTime(videoDuration) + ' by ' + author;
-            this.$el.find('span.playlistItemInfo').text(playlistItemInfo);
-
-            //  TODO: Invert so parent is watching children.
-            Utility.scrollElementInsideParent(this.$el.find('span.playlitItemTitle'));
-
             return this;
         },
         

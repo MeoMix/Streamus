@@ -1,20 +1,37 @@
 ﻿//  Holds all the relevant data for a video.
 define([
-    'settings'
-], function (Settings) {
+    'settings',
+    'utility'
+], function (Settings, Utility) {
     'use strict';
 
     var videoModel = Backbone.Model.extend({
+        
         defaults: {
             //  Provided by YouTube's API.
             id: '',
             title: '',
             author: '',
-            duration: -1
+            duration: -1,
+            prettyDuration: ''
         },
-        urlRoot: Settings.get('serverURL') + 'Video/'
+        
+        urlRoot: Settings.get('serverURL') + 'Video/',
+        
+        initialize: function() {            
+            
+            this.listenTo(this, 'change:duration', this.setPrettyDuration);
+            this.setPrettyDuration();
+        },
+        
+        //  Calculate this value pre-emptively because when rendering I don't want to incur inefficiency
+        setPrettyDuration: function() {
+            this.set('prettyDuration', Utility.prettyPrintTime(this.get('duration')));
+        }
+        
     });
 
+    //  TODO: Do I need to return a function here or can I just call initialize
     return function (config) {
 
         //  Support passing raw YouTube videoInformation instead of a precise config object.

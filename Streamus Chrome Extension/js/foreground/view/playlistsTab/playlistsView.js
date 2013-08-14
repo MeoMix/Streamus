@@ -97,9 +97,12 @@ define([
             });
 
             this.render();
-            
+
+            Utility.scrollChildElements(this.el, 'span.playlitTitle');
+
             //  todo: find a place for this
             this.scrollItemIntoView(BackgroundManager.get('activePlaylist'), false);
+            
         },
         
         //  TODO: This should be implemented non-naively.

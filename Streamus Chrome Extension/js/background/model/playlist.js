@@ -8,8 +8,9 @@ define([
     'videos',
     'repeatButtonState',
     'shareCode',
-    'shareableEntityType'
-], function (PlaylistItems, PlaylistItem, Settings, Video, Videos, RepeatButtonState, ShareCode, ShareableEntityType) {
+    'shareableEntityType',
+    'utility'
+], function (PlaylistItems, PlaylistItem, Settings, Video, Videos, RepeatButtonState, ShareCode, ShareableEntityType, Utility) {
     'use strict';
 
     var playlistModel = Backbone.Model.extend({
@@ -23,7 +24,8 @@ define([
                 previousPlaylistId: null,
                 items: new PlaylistItems(),
                 dataSource: null,
-                dataSourceLoaded: false
+                dataSourceLoaded: false,
+                displayInfo: '' //  This is videos length and total duration of all videos
             };
         },
 
@@ -99,6 +101,30 @@ define([
                 });
                     
             });
+
+            this.listenTo(this.get('items'), 'add remove empty', this.setDisplayInfo);
+            this.setDisplayInfo();
+
+        },
+        
+        setDisplayInfo: function() {
+            
+            var currentVideos = this.get('items').pluck('video');
+
+            //  TODO: Why does pluck not work here?
+            var currentVideosDurations = _.map(currentVideos, function (currentVideo) {
+                return currentVideo.get('duration');
+            });
+
+            var test = _.pluck(currentVideos, 'duration');
+            console.log("Test:", test);
+
+            var sumVideosDurations = _.reduce(currentVideosDurations, function (memo, duration) {
+                return memo + duration;
+            }, 0);
+
+            var displayInfo = 'Videos: ' + currentVideos.length + ', Duration: ' + Utility.prettyPrintTime(sumVideosDurations);
+            this.set('displayInfo', displayInfo);
 
         },
             

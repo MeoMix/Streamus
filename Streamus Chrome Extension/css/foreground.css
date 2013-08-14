@@ -694,13 +694,11 @@
     right: 0;
     text-overflow: ellipsis;
     white-space: nowrap;
-    width: 384px;
     top: 0;
 }
 
 #PlaylistsContent .textWrapper {
     left: 10px;
-    width: 434px;
 }
 
 .playlistItemVideoImage {

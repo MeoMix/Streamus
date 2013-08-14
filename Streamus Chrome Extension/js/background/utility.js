@@ -30,6 +30,37 @@
         }
 
         return result;
-    }
+    },
+    
+    //  TODO: DRY with other utility
+    //  Takes a time in seconds and converts it to a displayable format of H:mm:ss or mm:ss.
+    prettyPrintTime: function (timeInSeconds) {
+        if (isNaN(timeInSeconds)) {
+            timeInSeconds = 0;
+        }
+
+        var hours = Math.floor(timeInSeconds / 3600);
+        var remainingSeconds = timeInSeconds % 3600;
+
+        var minutes = Math.floor(remainingSeconds / 60);
+        remainingSeconds = remainingSeconds % 60;
+
+        //  These lines ensure two-digits
+        if (minutes < 10) {
+            minutes = "0" + minutes;
+        }
+
+        if (remainingSeconds < 10) {
+            remainingSeconds = "0" + remainingSeconds;
+        }
+
+        var timeString = minutes + ':' + remainingSeconds;
+
+        if (hours > 0) {
+            timeString = hours + ':' + timeString;
+        }
+
+        return timeString;
+    },
 
 });
