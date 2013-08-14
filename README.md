@@ -1,57 +1,95 @@
-Streamus
+Streamus™
+=========
+
+A Google Chrome extension which allows users to add YouTube videos to playlists, share playlists and discover new YouTube videos.
+
+Overview
 ========
 
-A Google Chrome extension which allows users to create playlists containing videos streamed from YouTube.
+Streamus consists of a front-end client and a back-end server.
+
+Client
+------
+* [jQuery (v2.0.3+)](http://jquery.com/)
+* [jQuery UI (v1.10.3+)](http://jqueryui.com/) [AutoComplete and Sortable modules only]
+* [BackboneJS (v1.0.0+)](http://backbonejs.org/)
+* [RequireJS (v2.1.8+)](http://requirejs.org/)
+* [UnderscoreJS (v1.5.1+)](http://underscorejs.org/)
+* [Jasmine (v1.5.8+)](http://pivotal.github.io/jasmine/) [Coming soon...]
+
+Server
+------
+
+* [C# ASP.NET MVC (v4.0)](http://www.asp.net/mvc/mvc4)
+* [NUnit (v2.0+)](http://www.nunit.org/)
+* [NHibernate (v3.3.3+)](http://nhforge.org/)
+* [AutoFac (v3.1.1+)](https://code.google.com/p/autofac/)
+* [AutoMapper](https://github.com/AutoMapper/AutoMapper)
+* [log4net](http://logging.apache.org/log4net/)
+
+The server's modules are managed by NuGet Package Manager.
+
+The server is used to record information about a given user's listening experience. All videos, playlist items, playlists and folders are written to the database.
+The server is used to enable sharing of playlists between users by copying a playlist row and providing a link to the new row to other users.
+
+The client is able to display and interact with YouTube videos. Videos added to a playlist are stored permanently until deletion. Videos added to the stream are able to be played.
+The client is able to allow for discovery of new YouTube videos by suggesting future content based on related videos presently in a stream.
 
 Requirements
-========
-1. The latest version of Google Chrome.
-2. A stable Internet connection.
-3. Google Chrome's experimental API enabled.
+============
+
+Client
+------
+* The latest version of Google Chrome
+
+Server
+------
+* Visual Studio 2012 with ReSharper preferred
+* Ensure all DLLs are available. If unavailable, or out-of-date, utilize NuGet Package Manager to maintain versions.
 
 Installation
 ========
 
-1. Navigate to Google Chrome's Extension's page located at: chrome://chrome/extensions
+Client
+------
+1. Navigate to the page: chrome://extensions
 2. Mark the checkbox 'Developer mode' as selected.
 3. Click the button 'Load unpacked extensions...'
-4. Point the directory browser to the root directory in which Streamus was downloaded and click OK.
+4. Select the Streamus directory title 'Chrome Extension' and click OK.
+5. Run the extension.
 
-Overview
-========
- 
-Streamus was created with the intention of making the process of playing music much simpler. Previously, I had found that the most convenient way to play music was through YouTube. This lent itself to keeping a list of bookmarks of pleasant videos. I noticed, though, that my bookmarking solution did not scale well with large collections of videos. Streamus was designed with the intention of being just as simple, quick and easy as using YouTube itself, but with all of the functionality of a desktop MP3 player.
+* NOTE: If you wish to debug the client without a local server instance you will need to set 'localDebug' to false inside 'chrome extension/background/model/settings.js"
 
-An initial load of Streamus will present the user with a playlist containing a handful of videos. While not fully realized yet, the intention is to be able to pre-populate Streamus with hundreds of videos spanning all common genres of music. Users will have the ability to create their own playlists, stream from pre-existing, dynamic playlists, or enable Pandora-esque video finding.
+Server
+------
+1. Build 'Streamus Server' in Visual Studio 2012.
+2. Build 'Streamus Server Tests' in Visual Studio 2012.
+3. Create a new, local database called 'Streamus'
+4. Run the test case 'ResetDatabase' to populate the database with tables and schema information.
+5. Ensure all other test cases pass.
+6. Run Streamus Server.
 
 Supported Functionality
 ========
 
-* A fully functional YouTube search bar with results (roughly) identical to that of YouTube itself.
-* The ability to add videos via this YouTube search bar, or to simply provide a YouTube URL.
-* Play, pause, skip and rewind.
-* Skip to point in time in video by clicking on the elapsed time progress bar.
-* Control the sound output, mute/unmute the current video.
-* Shuffle playlists / drag-and-drop videos in playlist.
-* Delete videos from playlist
-* Create multiple playlists each storing their own set of videos
-* Rename playlists 
+* YouTube search
+* Add YouTube video to playlist
+* Add YouTube playlist as playlist
+* Add YouTube channel as playlist
+* Play, pause, skip, rewind, shuffle, repeat video, repeat playlist
+* Radio / Discovery
+* Desktop notifications of currently playing video
+* Customizable keyboard shortcuts to control play, pause, skip, previous
+* Sharing of playlists via URL
+* Enhancement of YouTube video pages with injected Streamus HTML
  
-Screenshots & Usage Demo
+Usage Demo
 ========
 
-* Screenshot: http://i.imgur.com/sBGZ6.png
-* Video: http://screencast.com/t/JG03NwwaxVKs
-
-Licensing
-========
-
-Licensed under The MIT License (MIT). http://www.opensource.org/licenses/mit-license.php
-Just acknowledge when credit is due - live and let live. :)
+A video explanation of how to use Streamus can be found here: http://www.youtube.com/watch?v=wjMLQWGYGOc
 
 Thank You's
 ========
 
-Misostc - Responsible for the entirety of the UI theme.
-Hfern - Contributor
-Sabarasaba - Contributor
+Misostc - Helped write a large portion of the client's user interface
+

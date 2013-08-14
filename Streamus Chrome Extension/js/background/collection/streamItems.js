@@ -35,6 +35,9 @@ define([
                 var videoId = addedStreamItem.get('video').get('id');
 
                 YouTubeDataAPI.getRelatedVideoInformation(videoId, function (relatedVideoInformation) {
+
+                    if (relatedVideoInformation == null) throw "Related video information not found." + videoId;
+
                     addedStreamItem.set('relatedVideoInformation', relatedVideoInformation);
                 });
 
@@ -119,6 +122,7 @@ define([
                         return streamItemFromCollection.get('video').get('id') === videoId;
                     });
 
+                    if (bulkInformation.relatedVideoInformation == null) throw "Related video information not found." + videoId;
                     streamItem.set('relatedVideoInformation', bulkInformation.relatedVideoInformation);
 
                 });
@@ -144,6 +148,7 @@ define([
             return this.findWhere({ selected: true }) || null;
         },
         
+        //  TODO: Change getRelatedVideos into a property so I can watch for relatedVideos existing.
         //  Take each streamItem's array of related videos, pluck them all out into a collection of arrays
         //  then flatten the arrays into a collection of videos.
         getRelatedVideos: function() {
@@ -151,6 +156,10 @@ define([
             var relatedVideos = _.flatten(this.map(function (streamItem) {
 
                 return _.map(streamItem.get('relatedVideoInformation'), function (relatedVideoInformation) {
+
+                    if (relatedVideoInformation.media$group == null) {
+                        console.log("RelatedVIdeoInformation is bad for:", streamItem);
+                    }
 
                     return new Video({
                         videoInformation: relatedVideoInformation
@@ -198,6 +207,8 @@ define([
 
             var relatedVideos = this.getRelatedVideos();
 
+            console.log("Related videos:", relatedVideos);
+
             //var groupedRelatedVideoLists = _.groupBy(relatedVideos, function (relatedVideo) {
             //    return relatedVideo.get('id');
             //});
@@ -221,7 +232,7 @@ define([
 
             //console.log("SmartFilter:", smartFilterRelatedVideos);
 
-            var relatedVideo = relatedVideos[_.random(relatedVideos.length - 1)];
+            var relatedVideo = relatedVideos[_.random(relatedVideos.length - 1)] || null;
             return relatedVideo;
         },
         
@@ -266,12 +277,21 @@ define([
 
                         var randomRelatedVideo = this.getRandomRelatedVideo();
 
-                        this.add({
-                            video: randomRelatedVideo,
-                            title: randomRelatedVideo.get('title'),
-                            videoImageUrl: 'http://img.youtube.com/vi/' + randomRelatedVideo.get('id') + '/default.jpg',
-                            selected: true
-                        });
+                        if (randomRelatedVideo === null) {
+
+                            console.error("No related video found.");
+
+                        }
+                        else {
+
+                            this.add({
+                                video: randomRelatedVideo,
+                                title: randomRelatedVideo.get('title'),
+                                videoImageUrl: 'http://img.youtube.com/vi/' + randomRelatedVideo.get('id') + '/default.jpg',
+                                selected: true
+                            });
+
+                        }
 
                     }
 

@@ -177,7 +177,7 @@ define([
                 success: function (result) {
 
                     console.log("Result:", result);
-                    console.log("Keywords:", result.feed.entry[0].media$group.media$keywords);
+                    //console.log("Keywords:", result.feed.entry[0].media$group.media$keywords);
 
                     var playableEntryList = [];
                     var unplayableEntryList = [];
