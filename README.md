@@ -35,18 +35,6 @@ The server is used to enable sharing of playlists between users by copying a pla
 The client is able to display and interact with YouTube videos. Videos added to a playlist are stored permanently until deletion. Videos added to the stream are able to be played.
 The client is able to allow for discovery of new YouTube videos by suggesting future content based on related videos presently in a stream.
 
-Requirements
-============
-
-Client
-------
-* The latest version of Google Chrome
-
-Server
-------
-* Visual Studio 2012 with ReSharper preferred
-* Ensure all DLLs are available. If unavailable, or out-of-date, utilize NuGet Package Manager to maintain versions.
-
 Installation
 ========
 
