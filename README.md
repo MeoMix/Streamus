@@ -74,10 +74,12 @@ Supported Functionality
 Usage Demo
 ========
 
-A video explanation of how to use Streamus can be found here: http://www.youtube.com/watch?v=wjMLQWGYGOc
+A video explanation of how to use Streamus can be found at:
+* "Streamus - Stream Bar Preview" - http://youtu.be/wjMLQWGYGOc
 
-Thank You's
-========
+Authors
+=======
 
-Misostc - Helped write a large portion of the client's user interface
-
+* MeoMix - Original developer, main contributor.
+* Misostc - Phenomenal user interfactor designer.
+* MiracleBlue - Brought on as a second developer to help with work load.
