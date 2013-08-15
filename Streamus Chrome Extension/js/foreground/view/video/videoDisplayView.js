@@ -108,7 +108,16 @@
             this.videoDefaultImage.onload = function () {
                 self.context.drawImage(this, 0, 0, self.el.width, self.el.height);
             };
-            
+
+            this.listenTo(Player, 'change:loadedVideoId', function () {
+                var loadedVideoId = Player.get('loadedVideoId');
+
+                if (loadedVideoId != '') {
+
+                    self.videoDefaultImage.src = 'http://i2.ytimg.com/vi/' + loadedVideoId + '/mqdefault.jpg ';
+                }
+
+            });
             this.listenTo(Player, 'change:state', this.render);
             this.listenTo(StreamItems, 'add addMultiple empty change:selected', this.render);
 

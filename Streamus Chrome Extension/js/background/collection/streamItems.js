@@ -102,7 +102,6 @@ define([
                 this.at(0).set('selected', true);
             }
 
-            //  TODO: Could probably be improved for very large playlists being added.
             //  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
             var sampleSize = streamItemsFromCollection.length >= 50 ? 50 : streamItemsFromCollection.length;
             var randomSampleIndices = Utility.getRandomNonOverlappingNumbers(sampleSize, streamItemsFromCollection.length);
@@ -113,12 +112,9 @@ define([
 
             //  Fetch all the related videos for videos on load.
             //  Data won't appear immediately as it is an async request, I just want to get the process started now.
-            //  TODO: What happens if they click next before relatedVideoInformation has been set?
 
-            console.log("I am now calling getBulkRelatedVideoInformation with:", randomVideoIds);
             YouTubeDataAPI.getBulkRelatedVideoInformation(randomVideoIds, function (bulkInformationList) {
 
-                console.log("I have received bulkInformation from YouTube. Processing...");
                 _.each(bulkInformationList, function (bulkInformation) {
                     var videoId = bulkInformation.videoId;
 
@@ -126,12 +122,10 @@ define([
                         return streamItemFromCollection.get('video').get('id') === videoId;
                     });
 
-                    if (bulkInformation.relatedVideoInformation == null) throw "Related video information not found." + videoId;
                     streamItem.set('relatedVideoInformation', bulkInformation.relatedVideoInformation);
 
                 });
-                console.log("Process successful.");
-                
+
             });
 
             this.trigger('addMultiple', streamItemsFromCollection);
@@ -165,7 +159,7 @@ define([
             });
 
             //  Create a list of all the related videos from all of the information of stream items.
-            var relatedVideos = _.flatten(this.map(streamItemsWithInfo, function (streamItem) {
+            var relatedVideos = _.flatten(_.map(streamItemsWithInfo, function (streamItem) {
 
                 return _.map(streamItem.get('relatedVideoInformation'), function (relatedVideoInformation) {
 
@@ -186,10 +180,8 @@ define([
                     var sameVideoId = streamItem.get('video').get('id') === relatedVideo.get('id');
 
                     var inBanList = _.contains(self.bannedVideoIdList, relatedVideo.get('id'));
-                    //  TODO: I don't think this does quite what I want it to do.
-                    //var similiarVideoName = levDistance(item.get('video').get('title'), relatedVideo.get('title')) < 3;
 
-                    return sameVideoId || inBanList; // || similiarVideoName;
+                    return sameVideoId || inBanList;
                 });
 
                 return alreadyExistingItem == null;
@@ -214,33 +206,8 @@ define([
         getRandomRelatedVideo: function() {
 
             var relatedVideos = this.getRelatedVideos();
-
-            console.log("Related videos:", relatedVideos);
-
-            //var groupedRelatedVideoLists = _.groupBy(relatedVideos, function (relatedVideo) {
-            //    return relatedVideo.get('id');
-            //});
-
-            //var sortedRelatedVideoLists = _.sortBy(groupedRelatedVideoLists, 'length');
-
-            //console.log("SortedRelatedVideoList:", sortedRelatedVideoLists);
-
-            //  Add items to our relatedVideos pool until we have a sufficiently random sampling amount.
-            //var smartFilterRelatedVideos = [];
-            //_.each(sortedRelatedVideoLists, function (sortedRelatedVideoList) {
-
-            //    console.log("SortedRelatedVideoList:", sortedRelatedVideoList);
-                
-            //    if (smartFilterRelatedVideos.length < 10) {
-            //        console.log("adding it");
-            //        smartFilterRelatedVideos.push(sortedRelatedVideoList[0]);
-            //    }
-
-            //});
-
-            //console.log("SmartFilter:", smartFilterRelatedVideos);
-
             var relatedVideo = relatedVideos[_.random(relatedVideos.length - 1)] || null;
+            
             return relatedVideo;
         },
         

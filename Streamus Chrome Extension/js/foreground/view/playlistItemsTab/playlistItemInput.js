@@ -87,7 +87,7 @@ define([
         //  Wrapped in a timeout to support 'rightclick->paste' 
         setTimeout(function () {
             var url = addInput.val();
-            var parsedVideoId = YouTubeDataAPI.parseVideoIdFromUrl(url);
+            var parsedVideoId = Utility.parseVideoIdFromUrl(url);
 
             //  If found a valid YouTube link then just add the video.
             if (parsedVideoId) {

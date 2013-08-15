@@ -107,7 +107,7 @@ define([
     return {
         
         getBulkRelatedVideoInformation: function(videoIds, callback) {
-            //  TODO: Maybe abort if takes too long or debug this really well.
+
             var bulkRelatedVideoInformation = [];
             var totalVideosToProcess = videoIds.length;
             var videosProcessed = 0;
@@ -162,7 +162,6 @@ define([
 
         },
         
-        //  TODO: Implement caching.
         //  When a video comes from the server it won't have its related videos, so need to fetch and populate.
         getRelatedVideoInformation: function (videoId, callback) {
 
@@ -230,19 +229,6 @@ define([
         },
 
         search: search,
-        
-        //  TODO: Move to utility.
-        //  Takes a URL and returns parsed URL information such as schema and video id if found inside of the URL.
-        parseVideoIdFromUrl: function (url) {
-            var videoId = null;
-
-            var match = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|watch\?.*?\&v=)([^#\&\?]*).*/);
-            if (match && match[2].length === 11) {
-                videoId = match[2];
-            }
-
-            return videoId;
-        },
         
         parseUrlForDataSource: function (url) {
 

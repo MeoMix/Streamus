@@ -3,6 +3,7 @@ var require = {
     paths: {
         //  Global:
         'youTubeDataAPI': 'youTubeDataAPI',
+        'utility': 'utility',
         
         //  Enum:
         'dataSource': 'enum/dataSource',
@@ -22,7 +23,6 @@ var require = {
         //  Foreground:
         'main': 'foreground/main',
         'foreground': 'foreground/foreground',
-        'utility': 'foreground/utility',
 
         //  Collection:
         'contextMenuGroups': 'foreground/collection/contextMenuGroups',

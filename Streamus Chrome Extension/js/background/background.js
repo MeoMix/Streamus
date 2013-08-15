@@ -102,7 +102,6 @@ define([
             case 'needSeekTo':
                 Player.triggerInitialLoadDataSeekTo();
                 break;
-            //  TODO: Why don't I have the video here already?
             case 'addVideoByIdToPlaylist':
                 var playlist = BackgroundManager.getPlaylistById(request.playlistId);
                 

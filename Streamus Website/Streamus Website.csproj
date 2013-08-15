@@ -68,6 +68,7 @@
     <Content Include="js\facebookLikeButton.js" />
     <Content Include="js\googleAnalytics.js" />
     <Content Include="js\index.js" />
+    <Content Include="js\installButtonView.js" />
     <Content Include="js\jquery.js" />
     <Content Include="js\main.js" />
     <Content Include="js\olark.js" />

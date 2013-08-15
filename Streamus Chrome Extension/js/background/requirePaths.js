@@ -4,6 +4,7 @@ var require = {
 
         //  Global:
         'youTubeDataAPI': 'youTubeDataAPI',
+        'utility': 'utility',
 
         //  Enum:
         'dataSource': 'enum/dataSource',
@@ -20,7 +21,6 @@ var require = {
         //  Background:
         'background': 'background/background',
         'main': 'background/main',
-        'utility': 'background/utility',
         
         //  Collection:
         'folders': 'background/collection/folders',
