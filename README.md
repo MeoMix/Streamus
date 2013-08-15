@@ -6,7 +6,13 @@ A Google Chrome extension which allows users to add YouTube videos to playlists,
 Overview
 ========
 
-Streamus consists of a front-end client and a back-end server.
+Streamus consists of a front-end client, the Google Chrome extension, a back-end server ("Streamus Server"), server test cases ("Streamus Server Tests"), and a website.
+
+The server's modules are managed by NuGet Package Manager.
+
+The server is used to record information about a given user's listening experience. All videos, playlist items, playlists and folders are written to the database.
+The server is used to enable sharing of playlists between users by copying a playlist row and providing a link to the new row to other users.
+
 
 Client
 ------
@@ -26,14 +32,6 @@ Server
 * [AutoFac (v3.1.1+)](https://code.google.com/p/autofac/)
 * [AutoMapper](https://github.com/AutoMapper/AutoMapper)
 * [log4net](http://logging.apache.org/log4net/)
-
-The server's modules are managed by NuGet Package Manager.
-
-The server is used to record information about a given user's listening experience. All videos, playlist items, playlists and folders are written to the database.
-The server is used to enable sharing of playlists between users by copying a playlist row and providing a link to the new row to other users.
-
-The client is able to display and interact with YouTube videos. Videos added to a playlist are stored permanently until deletion. Videos added to the stream are able to be played.
-The client is able to allow for discovery of new YouTube videos by suggesting future content based on related videos presently in a stream.
 
 Installation
 ========
@@ -76,6 +74,10 @@ Usage Demo
 
 A video explanation of how to use Streamus can be found at:
 * "Streamus - Stream Bar Preview" - http://youtu.be/wjMLQWGYGOc
+
+License
+=======
+This work is licensed under a [Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License](http://creativecommons.org/licenses/by-nc-nd/3.0/)
 
 Authors
 =======
