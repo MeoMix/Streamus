@@ -45,7 +45,7 @@
     <Content Include="background.htm" />
     <Content Include="js\background\collection\streamItems.js" />
     <Content Include="js\background\model\streamItem.js" />
-    <Content Include="js\background\utility.js" />
+    <Content Include="js\utility.js" />
     <Content Include="js\foreground\collection\contextMenuGroups.js" />
     <Content Include="js\foreground\collection\contextMenuItems.js" />
     <Content Include="js\foreground\model\contextMenu.js" />
@@ -147,7 +147,6 @@
     <Content Include="js\foreground\requirePaths.js" />
     <Content Include="js\foreground\model\spinnerBuilder.js" />
     <Content Include="js\foreground\view\video\videoDisplayView.js" />
-    <Content Include="js\foreground\utility.js" />
     <Content Include="js\inject\streamusInject.js" />
     <Content Include="js\inject\youTubeInject.js" />
     <Content Include="js\enum\playerState.js" />
