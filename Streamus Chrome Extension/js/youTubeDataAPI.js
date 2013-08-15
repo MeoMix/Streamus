@@ -116,11 +116,14 @@ define([
 
             var self = this;
             var youtubeQueryInterval = setInterval(function () {
+
                 if (videosProcessed == totalVideosToProcess) {
                     clearInterval(youtubeQueryInterval);
 
                     callback(bulkRelatedVideoInformation);
-                } else {
+                }
+                //  If there's still more videos to process...
+                else if (videosProcessing + videosProcessed < totalVideosToProcess) {
                     
                     //  Don't flood the network -- process a few at a time.
                     if (videosProcessing <= videosToProcessConcurrently) {
@@ -128,8 +131,11 @@ define([
 
                         var currentVideoId = videoIds.pop();
 
-                        var getRelatedVideoInfoClosure = function(closureCurrentVideoId) {
+                        //  Use a closure to ensure that I iterate over the proper videoId for each async call.
+                        var getRelatedVideoInfoClosure = function (closureCurrentVideoId) {
+
                             self.getRelatedVideoInformation(closureCurrentVideoId, function (relatedVideoInformation) {
+
                                 //  getRelatedVideoInformation might error out.
                                 if (relatedVideoInformation) {
 
@@ -142,6 +148,7 @@ define([
                                 videosProcessed++;
                                 videosProcessing--;
                             });
+
                         };
 
                         getRelatedVideoInfoClosure(currentVideoId);
@@ -169,15 +176,12 @@ define([
                     v: 2,
                     alt: 'json',
                     key: developerKey,
-                    //fields: videosInformationFields,
+                    fields: videosInformationFields,
                     //  Don't really need that many suggested videos, take 10.
                     'max-results': 10,
                     strict: true
                 },
                 success: function (result) {
-
-                    console.log("Result:", result);
-                    //console.log("Keywords:", result.feed.entry[0].media$group.media$keywords);
 
                     var playableEntryList = [];
                     var unplayableEntryList = [];

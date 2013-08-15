@@ -107,17 +107,10 @@ define([
 
         },
         
-        setDisplayInfo: function() {
-            
+        setDisplayInfo: function () {
+
             var currentVideos = this.get('items').pluck('video');
-
-            //  TODO: Why does pluck not work here?
-            var currentVideosDurations = _.map(currentVideos, function (currentVideo) {
-                return currentVideo.get('duration');
-            });
-
-            var test = _.pluck(currentVideos, 'duration');
-            console.log("Test:", test);
+            var currentVideosDurations = _.invoke(currentVideos, 'get', 'duration');
 
             var sumVideosDurations = _.reduce(currentVideosDurations, function (memo, duration) {
                 return memo + duration;

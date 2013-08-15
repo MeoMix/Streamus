@@ -111,10 +111,14 @@ define([
                 return streamItemsFromCollection[randomSampleIndex].get('video').get('id');
             });
 
-            //  Fetch all the related videos for videos on load. I don't want to save these to the DB because they're bulky and constantly change.
+            //  Fetch all the related videos for videos on load.
             //  Data won't appear immediately as it is an async request, I just want to get the process started now.
+            //  TODO: What happens if they click next before relatedVideoInformation has been set?
+
+            console.log("I am now calling getBulkRelatedVideoInformation with:", randomVideoIds);
             YouTubeDataAPI.getBulkRelatedVideoInformation(randomVideoIds, function (bulkInformationList) {
 
+                console.log("I have received bulkInformation from YouTube. Processing...");
                 _.each(bulkInformationList, function (bulkInformation) {
                     var videoId = bulkInformation.videoId;
 
@@ -126,6 +130,7 @@ define([
                     streamItem.set('relatedVideoInformation', bulkInformation.relatedVideoInformation);
 
                 });
+                console.log("Process successful.");
                 
             });
 
@@ -153,13 +158,16 @@ define([
         //  then flatten the arrays into a collection of videos.
         getRelatedVideos: function() {
 
-            var relatedVideos = _.flatten(this.map(function (streamItem) {
+            //  Find all streamItem entities which have related video information.
+            //  Some might not have information. This is OK. Either YouTube hasn't responded yet or responded with no information. Skip these.
+            var streamItemsWithInfo = this.filter(function (streamItem) {
+                return streamItem.get('relatedVideoInformation') != null;
+            });
+
+            //  Create a list of all the related videos from all of the information of stream items.
+            var relatedVideos = _.flatten(this.map(streamItemsWithInfo, function (streamItem) {
 
                 return _.map(streamItem.get('relatedVideoInformation'), function (relatedVideoInformation) {
-
-                    if (relatedVideoInformation.media$group == null) {
-                        console.log("RelatedVIdeoInformation is bad for:", streamItem);
-                    }
 
                     return new Video({
                         videoInformation: relatedVideoInformation
