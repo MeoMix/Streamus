@@ -6,8 +6,9 @@ define([
     'repeatButtonState',
     'youTubeDataAPI',
     'video',
-    'utility'
-], function (StreamItem, Settings, RepeatButtonState, YouTubeDataAPI, Video, Utility) {
+    'utility',
+    'player'
+], function (StreamItem, Settings, RepeatButtonState, YouTubeDataAPI, Video, Utility, Player) {
     'use strict';
 
     var streamItemsCollection = Backbone.Collection.extend({
@@ -55,6 +56,9 @@ define([
             this.on('remove', function(removedStreamItem, collection, options) {
                 if (this.length === 0) {
                     this.trigger('empty');
+
+                    //  TODO: Clear localStorage once I write to local storage.
+                    Player.stop();
                 }
 
                 if (removedStreamItem.get('selected') && this.length > 0) {

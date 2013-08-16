@@ -6,17 +6,18 @@ define([
     'video',
     'player',
     'settings',
-    'youTubeDataAPI'
-], function (Playlists, Playlist, Videos, Video, Player, Settings, youTubeDataAPI) {
+    'youTubeDataAPI',
+    'dataSource'
+], function (Playlists, Playlist, Videos, Video, Player, Settings, YouTubeDataAPI, DataSource) {
     'use strict';
     
-    var folderModel = Backbone.Model.extend({
+    var Folder = Backbone.Model.extend({
         defaults: function () {
             return {
                 id: null,
                 title: '',
                 playlists: new Playlists(),
-                firstPlaylistId: null,
+                firstPlaylistId: null
             };
         },
         urlRoot: Settings.get('serverURL') + 'Video/',
@@ -36,43 +37,43 @@ define([
         initialize: function () {
             var playlists = this.get('playlists');
 
-            //  Data was fetched from the server. Need to convert to Backbone.
+            //  Need to convert playlists array to Backbone.Collection
             if (!(playlists instanceof Backbone.Collection)) {
                 playlists = new Playlists(playlists);
-
-                this.set('playlists', playlists, {
-                    //  Silent operation because it isn't technically changing - just being made correct.
-                    silent: true
-                });
+                //  Silent because playlists is just being properly set.
+                this.set('playlists', playlists, { silent: true });
             }
 
-            var self = this;
-            playlists.on('change:selected', function (playlist, isSelected) {
-                if (isSelected) {
-                    //  TODO: Can this be abstracted down to the playlist level?
-                    playlist.get('items').on('change:selected', function (item, selected) {
+            //  If folder has an id then try to load active playlist from localstorage
+            if (!this.isNew() && playlists.length > 0) {
 
-                        if (selected) {
-                            var videoId = item.get('video').get('id');
+                var activePlaylistId = localStorage.getItem(this.get('id') + '_activePlaylistId');
 
-                            //  Maintain the playing state by loading if playing. 
-                            if (Player.isPlaying()) {
-                                Player.loadVideoById(videoId);
-                            } else {
-                                Player.cueVideoById(videoId);
-                            }
-                        }
-                    });
+                //  Be sure to always have an active playlist if there is one available.
+                var playlist = this.getPlaylistById(activePlaylistId) || playlists.at(0);
+                playlist.set('active', true);
 
-                } else {
-                    if (self.getSelectedPlaylist() === playlist) {
-                        playlist.get('items').off('change:selected add remove');
-                    }
-                }
-                
+            }
+
+            //  Cleanup local storage whenever folder is removed.
+            this.on('destroy', function () {
+                localStorage.removeItem(self.get('id') + '_activePlaylistId');
             });
 
+            this.listenTo(this.get('playlists'), 'change:active', function (playlist, isActive) {
+                //  Keep local storage up-to-date with the active playlist.
+                if (isActive) {
+                    localStorage.setItem(self.get('id') + '_activePlaylistId', playlist.get('id'));
+                }
+
+            });
+
+            var self = this;
             this.get('playlists').on('remove', function (removedPlaylist) {
+                //  Clear local storage of the active playlist if it gets removed.
+                if (removedPlaylist.get('active')) {
+                    localStorage.setItem(self.get('id') + '_activePlaylistId', null);
+                }
                 
                 var playlists = self.get('playlists');
 
@@ -97,17 +98,50 @@ define([
 
             });
 
+            this.listenTo(this.get('playlists'), 'add', function(playlist) {
+            
+                //  Notify all open YouTube tabs that a playlist has been added to a folder.
+                sendEventToOpenYouTubeTabs('add', 'playlist', {
+                    id: playlist.get('id'),
+                    title: playlist.get('title')
+                });
+            
+            });
+
+            this.listenTo(this.get('playlists'), 'remove', function (playlist) {
+
+                //  Notify all open YouTube tabs that a playlist has been removed from a folder.
+                sendEventToOpenYouTubeTabs('remove', 'playlist', {
+                    id: playlist.get('id'),
+                    title: playlist.get('title')
+                });
+
+            });
+
+            this.listenTo(this.get('playlists'), 'change:title', function (playlist) {
+
+                //  Notify all open YouTube tabs that a playlist has been renamed.
+                sendEventToOpenYouTubeTabs('rename', 'playlist', {
+                    id: playlist.get('id'),
+                    title: playlist.get('title')
+                });
+
+            });
+
         },
         
         addVideoByIdToPlaylist: function (id, playlistId) {
             this.get('playlists').get(playlistId).addVideoByIdToPlaylist(id);
         },
         
-        addPlaylistWithVideos: function(playlistTitle, videos, callback) {
+        addPlaylistWithVideos: function(playlistTitle, videos) {
+
+            console.log("Videos:", videos, videos.length);
 
             var playlist = new Playlist({
                 title: playlistTitle,
                 folderId: this.get('id'),
+                dataSource: DataSource.STREAM
             });
 
             var self = this;
@@ -129,9 +163,12 @@ define([
                         lastPlaylist.set('nextPlaylistId', playlist.get('id'));
                         firstPlaylist.set('previousPlaylistId', playlist.get('id'));
                     }
+                    
+                    currentPlaylists.push(playlist);
 
-                    playlist.addItems(videos, function() {
-                        currentPlaylists.push(playlist);
+                    playlist.addItems(videos, function () {
+                        console.log("pushing playlist", playlist);
+                        playlist.set('dataSourceLoaded', true);
                     });
                 }
             });
@@ -178,7 +215,7 @@ define([
 
         },
 
-        addPlaylistByDataSource: function (playlistTitle, dataSource, callback) {
+        addPlaylistByDataSource: function (playlistTitle, dataSource) {
             var self = this;
 
             var playlist = new Playlist({
@@ -207,7 +244,7 @@ define([
                     currentPlaylists.push(playlist);
                     
                     //  Recursively load any potential bulk data from YouTube after the Playlist has saved successfully.
-                    youTubeDataAPI.getDataSourceResults(dataSource, 0, function onGetDataSourceData(response) {
+                    YouTubeDataAPI.getDataSourceResults(dataSource, 0, function onGetDataSourceData(response) {
 
                         if (response.results.length === 0) {
                             playlist.set('dataSourceLoaded', true);
@@ -226,17 +263,16 @@ define([
                             playlist.addItems(videos, function () {
 
                                 //  Request next batch of data by iteration once addItems has succeeded.
-                                youTubeDataAPI.getDataSourceResults(dataSource, ++response.iteration, onGetDataSourceData);
+                                YouTubeDataAPI.getDataSourceResults(dataSource, ++response.iteration, onGetDataSourceData);
 
                             });
                     
                         }
                     });
                     
-                    //  Data might still be loading, but feel free to callback now as it could take a while.
-                    if (callback) {
-                        callback(playlist);
-                    }
+                    //  TODO: Maybe I want to make it active before I even add it? More complicated.
+                    //  Data might still be loading, but feel free to set active now as it may take a while.
+                    playlist.set('active', true);
                     
                 },
                 error: function (error) {
@@ -273,12 +309,33 @@ define([
                     console.error(error);
                 }
             });
+        },
+
+        getActivePlaylist: function(){
+            return this.get('playlists').findWhere({ active: true });
+        },
+
+        getPlaylistById: function (playlistId) {
+            return this.get('playlists').findWhere({ id: playlistId });
         }
     });
-    
-    return function (config) {
-        var folder = new folderModel(config);
 
-        return folder;
-    };
+
+    function sendEventToOpenYouTubeTabs(event, type, data) {
+
+        chrome.tabs.query({ url: '*://*.youtube.com/watch?v*' }, function (tabs) {
+
+            _.each(tabs, function (tab) {
+                chrome.tabs.sendMessage(tab.id, {
+                    event: event,
+                    type: type,
+                    data: data
+                });
+            });
+
+        });
+
+    }
+    
+    return Folder;
 });

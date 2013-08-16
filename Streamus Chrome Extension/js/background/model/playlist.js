@@ -56,14 +56,13 @@ define([
             return playlistDto;
         },
         initialize: function () {
+            var self = this;
             var items = this.get('items');
 
-            //  Our playlistItem data was fetched from the server with the playlist. Need to convert the collection to Backbone Model entities.
-            //  TODO: Can I handle this inside of parse?
+            //  Need to convert items array to Backbone.Collection
             if (!(items instanceof Backbone.Collection)) {
                 items = new PlaylistItems(items);
-                    
-                //  Silent operation because the playlist isn't technically changing - just being made correct.
+                //  Silent because items is just being properly set.
                 this.set('items', items, { silent: true });
             }
 
@@ -102,22 +101,50 @@ define([
                     
             });
 
-            this.listenTo(this.get('items'), 'add remove empty', this.setDisplayInfo);
+            console.log("Binding to event");
+            this.listenTo(this.get('items'), 'add empty', this.setDisplayInfo);
             this.setDisplayInfo();
 
+
+            this.listenTo(this.get('items'), 'remove', function (removedPlaylistItem) {
+                var playlistItems = self.get('items');
+
+                if (playlistItems.length > 0) {
+                    //  Update linked list pointers
+                    var previousItem = playlistItems.get(removedPlaylistItem.get('previousItemId'));
+                    var nextItem = playlistItems.get(removedPlaylistItem.get('nextItemId'));
+
+                    //  Remove the item from linked list.
+                    previousItem.set('nextItemId', nextItem.get('id'));
+                    nextItem.set('previousItemId', previousItem.get('id'));
+
+                    //  Update firstItem if it was removed
+                    if (self.get('firstItemId') === removedPlaylistItem.get('id')) {
+                        self.set('firstItemId', removedPlaylistItem.get('nextItemId'));
+                    }
+
+                } else {
+                    playlist.set('firstItemId', '00000000-0000-0000-0000-000000000000');
+                }
+
+                self.setDisplayInfo();
+            });
         },
         
         setDisplayInfo: function () {
+            console.log("setDisplayInfo is firing");
 
-            var currentVideos = this.get('items').pluck('video');
-            var currentVideosDurations = _.invoke(currentVideos, 'get', 'duration');
+            var videos = this.get('items').pluck('video');
+            var videoDurations = _.invoke(videos, 'get', 'duration');
 
-            var sumVideosDurations = _.reduce(currentVideosDurations, function (memo, duration) {
+            var sumVideoDurations = _.reduce(videoDurations, function (memo, duration) {
                 return memo + duration;
             }, 0);
 
-            var displayInfo = 'Videos: ' + currentVideos.length + ', Duration: ' + Utility.prettyPrintTime(sumVideosDurations);
+            var displayInfo = 'Videos: ' + videos.length + ', Duration: ' + Utility.prettyPrintTime(sumVideoDurations);
             this.set('displayInfo', displayInfo);
+
+            console.log("Set display info to:", displayInfo);
 
         },
             
@@ -209,8 +236,10 @@ define([
                         lastItem.set('nextItemId', itemsToSave.at(0).get('id'));
                         firstItem.set('previousItemId', itemsToSave.at(itemsToSave.length - 1).get('id'));
                     }
-                        
+                    
+                    console.log("Saved items successfully. Adding items", self.get('items'), itemsToSave);
                     self.get('items').add(itemsToSave.models);
+                    console.log("Items after add:", self.get('items'));
 
                     if (callback) {
                         callback();
@@ -292,6 +321,10 @@ define([
                 }
             });
 
+        },
+
+        getPlaylistItemById: function (playlistItemId) {
+            return this.get('items').findWhere({ id: playlistItemId });
         }
     });
 

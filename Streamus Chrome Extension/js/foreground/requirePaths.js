@@ -56,15 +56,15 @@ var require = {
         'repeatButtonView': 'foreground/view/buttons/repeatButtonView',
         'shuffleButtonView': 'foreground/view/buttons/shuffleButtonView',
         
-        //  View -> PlaylistItemsTab:
-        'playlistItemInput': 'foreground/view/playlistItemsTab/playlistItemInput',
-        'playlistItemsView': 'foreground/view/playlistItemsTab/playlistItemsView',
-        'playlistItemView': 'foreground/view/playlistItemsTab/playlistItemView',
+        //  View -> ActiveFolderTab:
+        'activeFolderView': 'foreground/view/activeFolderTab/activeFolderView',
+        'playlistInput': 'foreground/view/activeFolderTab/playlistInput',
+        'playlistView': 'foreground/view/activeFolderTab/playlistView',
 
-        //  View -> PlaylistsTab:
-        'playlistInput': 'foreground/view/playlistsTab/playlistInput',
-        'playlistsView': 'foreground/view/playlistsTab/playlistsView',
-        'playlistView': 'foreground/view/playlistsTab/playlistView',
+        //  View -> ActivePlaylistTab:
+        'activePlaylistView': 'foreground/view/activePlaylistTab/activePlaylistView',
+        'playlistItemInput': 'foreground/view/activePlaylistTab/playlistItemInput',
+        'playlistItemView': 'foreground/view/activePlaylistTab/playlistItemView',
         
         //  View -> Stream:
         'streamItemView': 'foreground/view/stream/streamItemView',

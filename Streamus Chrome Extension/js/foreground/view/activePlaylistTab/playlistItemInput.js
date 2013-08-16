@@ -37,7 +37,7 @@ define([
             //  Don't change the text when user clicks their video selection.
             event.preventDefault();
             contentHeader.addInputElement.val('');
-            BackgroundManager.get('activePlaylist').addItemByInformation(ui.item.value);
+            BackgroundManager.get('activeFolder').getActivePlaylist().addItemByInformation(ui.item.value);
         }
     //  http://stackoverflow.com/questions/3488016/using-html-in-jquery-ui-autocomplete
     }).data("ui-autocomplete")._renderItem = function (ul, item) {
@@ -64,7 +64,7 @@ define([
         YouTubeDataAPI.getVideoInformation({
             videoId: videoId,
             success: function (videoInformation) {
-                BackgroundManager.get('activePlaylist').addItemByInformation(videoInformation);
+                BackgroundManager.get('activeFolder').getActivePlaylist().addItemByInformation(videoInformation);
             },
             error: function () {
 

@@ -102,18 +102,6 @@
 
         return timeString;
     },
-
-    isElementInViewport: function (element) {
-
-        //  Support jQuery or DOM element.
-        if (element instanceof jQuery) {
-            element = element[0];
-        }
-
-        var rectangle = element.getBoundingClientRect();
-
-        return rectangle.top >= 0 && rectangle.left >= 0 && rectangle.bottom <= $(window).height() && rectangle.right <= $(window).width();
-    },
     
     //  Takes a URL and returns parsed URL information such as schema and video id if found inside of the URL.
     parseVideoIdFromUrl: function (url) {

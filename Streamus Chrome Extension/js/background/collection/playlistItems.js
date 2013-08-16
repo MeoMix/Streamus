@@ -69,6 +69,21 @@
 
             });
 
+        },
+
+        initialize: function () {
+
+            this.on('remove', function (removedPlaylistItem) {
+
+                //  TODO: Select next item??
+
+                if (this.length === 0) {
+                    this.trigger('empty');
+                }
+
+            });
+
+
         }
     });
 

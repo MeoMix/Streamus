@@ -63,7 +63,7 @@
                         position: 0,
                         text: 'Add to Playlist',
                         onClick: function () {
-                            BackgroundManager.get('activePlaylist').addItem(self.model.get('video'));
+                            BackgroundManager.get('activeFolder').getActivePlaylist().addItem(self.model.get('video'));
                         }
                     }, {
                         position: 1,

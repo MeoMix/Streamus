@@ -2,8 +2,6 @@
 var BackgroundManager = null;
 
 //  BackgroundManager is a denormalization point for the Background's selected models.
-//  NOTE: It is important to understand that the activePlaylist is NOT guaranteed to be in the activeFolder. The user can click around, but this shouldn't affect state
-//  until they make a decision.
 define([
     'user',
     'player',
@@ -19,10 +17,7 @@ define([
 
     var backgroundManagerModel = Backbone.Model.extend({
         defaults: {
-            activePlaylist: null,
             activeFolder: null,
-            allPlaylistItems: new PlaylistItems(),
-            allPlaylists: new Playlists(),
             allFolders: new Folders()
         },
         initialize: function () {
@@ -50,41 +45,12 @@ define([
                 } else {
                     
                     //  Unload streamus when refreshing ??
-                    self.set('activePlaylist', null);
                     self.set('activeFolder', null);
-                    self.set('allPlaylistItems', new PlaylistItems());
-                    self.set('allPlaylists', new Playlists());
                     self.set('allFolders', new Folders());
                 }
 
             });
-
-            //  TODO: potentially implement this at a collection level.
-            this.listenTo(this.get('allPlaylistItems'), 'remove', function() {
-                if (self.get('allPlaylistItems').length === 0) {
-                    self.get('allPlaylistItems').trigger('empty');
-                }
-            });
             
-
-            this.listenTo(this.get('allPlaylists'), 'remove', function () {
-                if (self.get('allPlaylists').length === 0) {
-                    self.get('allPlaylists').trigger('empty');
-                }
-            });
-
-        },
-        
-        getPlaylistById: function(playlistId) {
-            return this.get('allPlaylists').find(function(playlist) {
-                return playlist.get('id') === playlistId;
-            });
-        },
-        
-        getPlaylistItemById: function(playlistItemId) {
-            return this.get('allPlaylistItems').find(function(playlistItem) {
-                return playlistItem.get('id') === playlistItemId;
-            });
         },
         
         getFolderById: function(folderId) {
@@ -96,12 +62,9 @@ define([
     
     function initialize() {
         this.get('allFolders').add(User.get('folders').models);
-        this.get('allPlaylists').add(getAllPlaylists());
-        this.get('allPlaylistItems').add(getAllPlaylistItems());
 
         loadActiveFolder.call(this);
-        loadActivePlaylist.call(this);
-        
+
         this.listenTo(StreamItems, 'change:selected', function (changedStreamItem, selected) {
 
             //  TODO: Remember selected state in local storage.
@@ -121,26 +84,7 @@ define([
 
         });
 
-        this.listenTo(StreamItems, 'empty', function () {
-            //  TODO: Clear localStorage once I write to local storage.
-            Player.stop();
-        });
-
         var self = this;
-
-        this.get('allPlaylists').on('change:active', function(playlist, isActive) {
-
-            if (self.get('activePlaylist') === playlist && !isActive) {
-                self.set('activePlaylist', null);
-            } else if (isActive) {
-                self.set('activePlaylist', playlist);
-            }
-
-        });
-
-        this.get('allPlaylists').each(function(playlist) {
-            bindEventsToPlaylist.call(self, playlist);
-        });
 
         this.get('allFolders').on('change:active', function(folder, isActive) {
 
@@ -161,86 +105,8 @@ define([
             chrome.runtime.sendMessage({ method: "folderRemoved", folder: folder });
         });
 
-        this.get('allFolders').each(function (folder) {
-
-            folder.get('playlists').on('add', function (playlist) {
-                self.get('allPlaylists').add(playlist);
- 
-                var playlistItems = playlist.get('items');
-
-                playlistItems.each(function (playlistItem) {
-                    
-                    self.get('allPlaylistItems').add(playlistItem, {
-                        merge: true
-                    });
-
-                });
-
-                bindEventsToPlaylist.call(self, playlist);
-            });
-
-            folder.get('playlists').on('remove', function (playlist) {
-
-                self.get('allPlaylists').remove(playlist);
-
-                if (self.get('activePlaylist') === playlist) {
-
-                    var nextPlaylistId = playlist.get('nextPlaylistId');
-                    var activePlaylist = folder.get('playlists').get(nextPlaylistId);
-
-                    self.set('activePlaylist', activePlaylist);
-                }
-
-            });
-
-        });
-
-        //  TODO: Support adding Folder here.
-        //  TODO: Support removing Folder here.
     }
-    
-    function bindEventsToPlaylist(playlist) {
-        var self = this;
-        playlist.get('items').on('add', function (playlistItem) {
-            
-            self.get('allPlaylistItems').add(playlistItem, {
-                merge: true
-            });
-
-        });
-
-        playlist.get('items').on('remove', function (playlistItem) {
-
-            var playlistId = playlistItem.get('playlistId');
-            var playlist = self.getPlaylistById(playlistId);
-            var playlistItems = playlist.get('items');
-
-            //  TODO: Re-evaluate this logic.
-            //  TODO: I'd like to have this logic inside of playlist and not backgroundManager but the first bit of code
-            //  needs to run first because playlist.gotoNextItem is dependent on the old firstItemId to know the next item.
-            //  Update these before getting nextItem because we don't want to have something point to the removed item.
-            if (playlistItems.length > 0) {
-                //  Update linked list pointers
-                var previousItem = playlistItems.get(playlistItem.get('previousItemId'));
-                var nextItem = playlistItems.get(playlistItem.get('nextItemId'));
-
-                //  Remove the item from linked list.
-                previousItem.set('nextItemId', nextItem.get('id'));
-                nextItem.set('previousItemId', previousItem.get('id'));
-                
-                //  Update firstItem if it was removed
-                if (playlist.get('firstItemId') === playlistItem.get('id')) {
-                    playlist.set('firstItemId', playlistItem.get('nextItemId'));
-                }
-
-            } else {
-                playlist.set('firstItemId', '00000000-0000-0000-0000-000000000000');
-            }
-            
-            self.get('allPlaylistItems').remove(playlistItem);
-        });
-    }
-    
+        
     function loadActiveFolder() {
  
         this.on('change:activeFolder', function (model, activeFolder) {
@@ -260,53 +126,6 @@ define([
         } else {
             this.set('activeFolder', activeFolder);
         }
-    }
-
-    function loadActivePlaylist() {
- 
-        this.on('change:activePlaylist', function (model, activePlaylist) {
-
-            if (activePlaylist === null) {
-                Settings.set('activePlaylistId', null);
-            } else {
-                Settings.set('activePlaylistId', activePlaylist.get('id'));
-            }
-
-        });
-        
-        var activePlaylistId = Settings.get('activePlaylistId');
-
-        //  There is no guarantee that activePlaylist is in activeFolder because a user could be looking
-        //  at another folder without having selected a playlist in that folder.
-        var activePlaylist = _.find(getAllPlaylists(), function (playlist) {
-            return playlist.get('id') === activePlaylistId;
-        }) || null;
-        
-        if (activePlaylist === null) {
-            activePlaylist = this.get('activeFolder').get('playlists').at(0) || null;
-        }
-
-        this.set('activePlaylist', activePlaylist);
-    }
-
-    //  Takes all folders, retrieves all playlists from folders and then all items from playlists.
-    function getAllPlaylistItems() {
-        var allPlaylists = getAllPlaylists();
-
-        var allPlaylistItems = _.flatten(_.map(allPlaylists, function (playlist) {
-            return playlist.get('items').models;
-        }));
-
-        return allPlaylistItems;
-    }
-
-        //  Takes all folders and retrieves all playlists from the folders.
-    function getAllPlaylists() {
-        var allPlaylists = _.flatten(BackgroundManager.get('allFolders').map(function (folder) {
-            return folder.get('playlists').models;
-        }));
-
-        return allPlaylists;
     }
 
     BackgroundManager = new backgroundManagerModel();

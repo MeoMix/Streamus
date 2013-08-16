@@ -1,22 +1,21 @@
 //  This is the list of playlists on the playlists tab.
 define([
     'contextMenuView',
-    'backgroundManager',
     'utility',
     'dataSource',
     'streamItems',
     'playlistView',
     'loadingSpinnerView'
-], function (ContextMenuView, BackgroundManager, Utility, DataSource, StreamItems, PlaylistView, LoadingSpinnerView) {
+], function (ContextMenuView, Utility, DataSource, StreamItems, PlaylistView, LoadingSpinnerView) {
     'use strict';
 
-    var PlaylistsView = Backbone.View.extend({
+    var ActiveFolderView = Backbone.View.extend({
         
-        el: $('#PlaylistsView'),
+        el: $('#ActiveFolderView'),
+
+        ul: $('#ActiveFolderView ul'),
         
-        ul: $('#PlaylistsView ul'),
-        
-        emptyNotification: $('#PlaylistsView .emptyListNotification'),
+        emptyNotification: $('#ActiveFolderView .emptyListNotification'),
         
         loadingSpinnerView: new LoadingSpinnerView,
         
@@ -30,10 +29,10 @@ define([
         render: function() {
             this.ul.empty();
 
-            var activeFolder = BackgroundManager.get('activeFolder');
+            //  TODO: Change this to a template.
+            var activeFolder = this.model;
 
-            // TODO: Why am I calling render on playlistsView if activeFolder is null?
-            if (activeFolder === null || activeFolder.get('playlists').length === 0) {
+            if (activeFolder.get('playlists').length === 0) {
                 this.emptyNotification.show();
             } else {
                 this.emptyNotification.hide();
@@ -60,12 +59,10 @@ define([
                 //  Do this all in one DOM insertion to prevent lag in large folders.
                 this.ul.append(listItems);
 
-                //  TODO: This is probably partially handled by the PlaylistView not PlaylistsView
-                //  TODO: I presume this is still useful, but playlistItemsView doesn't have it so I need to double check.
-                var activePlaylist = BackgroundManager.get('activePlaylist');
-                if (activePlaylist !== null) {
-                    this.visuallySelectPlaylist(activePlaylist);
-                }
+                //  TODO: This is probably partially handled by the PlaylistView not ActiveFolderView
+                //  TODO: I presume this is still useful, but activePlaylistView doesn't have it so I need to double check.
+                var activePlaylist = this.model.getActivePlaylist();
+                this.visuallySelectPlaylist(activePlaylist);
             }
 
             return this;
@@ -75,58 +72,86 @@ define([
             var self = this;
             
             //  TODO: Sortable.
+            this.model.on('change', function () {
+                var previousModel = self.previous('model');
+                self.stopListening(previousModel.get('playlists'));
 
-            this.listenTo(BackgroundManager, 'change:activeFolder', this.render);
-            this.listenTo(BackgroundManager, 'change:activePlaylist', function (collection, playlist) {
-
-                if (playlist === null) {
-                    self.ul.find('li').removeClass('loaded');
-                } else {
-                    self.visuallySelectPlaylist(playlist);
-                }
-
-            });
-            
-            this.listenTo(BackgroundManager.get('allPlaylistItems'), 'add remove', this.updatePlaylistDescription);
-            this.listenTo(BackgroundManager.get('allPlaylists'), 'reset', this.render);
-            this.listenTo(BackgroundManager.get('allPlaylists'), 'add', this.addItem);
-            
-            //  TODO: THIS IS INCORRECT. Instead of allPlaylists it should be when the activeFolder is empty, but I need to be able to change the activeFolder listener.
-            this.listenTo(BackgroundManager.get('allPlaylists'), 'empty', function () {
-                self.emptyNotification.show();
+                self.startListeningToModel();
+                self.render();
             });
 
+            this.startListeningToModel();
             this.render();
 
             Utility.scrollChildElements(this.el, 'span.playlitTitle');
 
             //  todo: find a place for this
-            this.scrollItemIntoView(BackgroundManager.get('activePlaylist'), false);
-            
+            var activePlaylist = this.model.getActivePlaylist();
+            this.scrollItemIntoView(activePlaylist, false);
         },
-        
-        //  TODO: This should be implemented non-naively.
+
+        startListeningToModel: function(){
+            var self = this;
+
+            var playlists = this.model.get('playlists');
+
+            this.listenTo(playlists, 'change:active', function (playlist, isActive) {
+
+                if (isActive) {
+                    self.visuallySelectPlaylist(playlist);
+                } else {
+                    //  TODO: Change from loaded to active.
+                    self.ul.find('li').removeClass('loaded');
+                }
+
+            });
+
+            //  TODO: Do I even call playlists.reset anymore?
+            this.listenTo(playlists, 'reset empty', this.render);
+            this.listenTo(playlists, 'add', this.addItem);
+
+        },
+
         addItem: function (playlist) {
-            //  TODO: Don't just render here. 
-            this.render();
+
+            var playlistView = new PlaylistView({
+                model: playlist
+            });
+
+            var element = playlistView.render().$el;
+
+            if (this.ul.find('li').length > 0) {
+
+                var previousPlaylistId = playlist.get('previousPlaylistId');
+                var previousPlaylistLi = this.ul.find('li[data-playlistid="' + previousPlaylistId + '"]');
+                element.insertAfter(previousPlaylistLi);
+
+            } else {
+                element.appendTo(this.ul);
+            }
 
             if (playlist.has('dataSource')) {
 
                 var dataSourceType = playlist.get('dataSource').type;
 
-                if (dataSourceType === DataSource.YOUTUBE_PLAYLIST || dataSourceType === DataSource.YOUTUBE_CHANNEL) {
+                if (dataSourceType === DataSource.YOUTUBE_PLAYLIST || dataSourceType === DataSource.YOUTUBE_CHANNEL || dataSourceType === DataSource.STREAM) {
 
-                    var playlistLink = this.ul.find('li[data-playlistid="' + playlist.get('id') + '"]');
-                    playlistLink.append(this.loadingSpinnerView.render().el);
+                    if (!playlist.get('dataSourceLoaded')) {
 
-                    var self = this;
-                    playlist.once('change:dataSourceLoaded', function () {
-                        self.loadingSpinnerView.remove();
-                    });
+                        var playlistLi = this.ul.find('li[data-playlistid="' + playlist.get('id') + '"]');
+                        playlistLi.append(this.loadingSpinnerView.render().el);
+
+                        var self = this;
+                        playlist.once('change:dataSourceLoaded', function () {
+                            self.loadingSpinnerView.remove();
+                        });
+
+                    }
 
                 }
             }
 
+            this.emptyNotification.hide();
             this.scrollItemIntoView(playlist, true);
         },
         
@@ -137,10 +162,8 @@ define([
         
         showItemContextMenu: function (event) {
             
-            var activeFolder = BackgroundManager.get('activeFolder');
-
             var clickedPlaylistId = $(event.currentTarget).data('playlistid');
-            var clickedPlaylist = activeFolder.get('playlists').get(clickedPlaylistId);
+            var clickedPlaylist = this.model.get('playlists').get(clickedPlaylistId);
 
             //  Don't allow deleting of the last playlist in a folder ( at least for now )
             var isDeleteDisabled = clickedPlaylist.get('nextPlaylistId') === clickedPlaylist.get('id');
@@ -214,55 +237,43 @@ define([
         
         selectPlaylist: function(event) {
             var playlistId = $(event.currentTarget).data('playlistid');
-            var playlist = BackgroundManager.getPlaylistById(playlistId);
 
-            this.visuallySelectPlaylist(playlist);
-            BackgroundManager.set('activePlaylist', playlist);
+            console.log("playlistId:", playlistId);
+            console.log("Playlists:", this.model.get('playlists'));
+
+            var playlist = this.model.getPlaylistById(playlistId);
+
+            console.log("playlist:", playlist);
+
+            //  If the playlist is already active - do nothing
+            if (!playlist.get('active')) {
+                //  Deselect the presently active playlist before marking the new one as active.
+                var activePlaylist = this.model.getActivePlaylist();
+                activePlaylist.set('active', false);
+
+                playlist.set('active', true);
+            }
         },
         
-        //  TODO: Needs to be dry with playlistItemsView
+        //  TODO: This doesn't seem to be working.
+        //  TODO: Needs to be dry with activePlaylistView
         scrollItemIntoView: function (activePlaylist, useAnimation) {
 
             //  Since we emptied our list we lost the selection, reselect.
             if (activePlaylist) {
                 
-                var loadedPlaylistId = activePlaylist.get('id');
-                var activeListItem = this.ul.find('li[data-playlistid="' + loadedPlaylistId + '"]');
+                var activePlaylistId = activePlaylist.get('id');
+                var activeListItem = this.ul.find('li[data-playlistid="' + activePlaylistId + '"]');
+
+                console.log("activeLIstItem:", activeListItem);
 
                 if (activeListItem.length > 0) {
+                    console.log("scrolling into view");
                     activeListItem.scrollIntoView(useAnimation);
                 }
             }
             
         },
-        
-        //  TODO: Just call render instead?
-        //  TODO: Check if this is still needed. Probably is though.
-        //  Playlists keep track of how many videos they have. When adding a lot of items -- throttle.
-        updatePlaylistDescription: _.throttle(function(playlistItem) {
-
-            var playlistId = playlistItem.get('playlistId');
-            var playlistLink = this.ul.find('li[data-playlistid="' + playlistId + '"]');
-
-            var playlist = BackgroundManager.getPlaylistById(playlistId);
-
-            var currentItems = playlist.get('items');
-            var currentVideos = currentItems.map(function (currentItem) {
-                return currentItem.get('video');
-            });
-
-            var currentVideosDurations = currentVideos.map(function (currentVideo) {
-                return currentVideo.get('duration');
-            });
-
-            var sumVideosDurations = _.reduce(currentVideosDurations, function (memo, duration) {
-                return memo + duration;
-            }, 0);
-
-            var playlistInfo = 'Videos: ' + currentVideos.length + ', Duration: ' + Utility.prettyPrintTime(sumVideosDurations);
-            playlistLink.find('.playlistInfo').text(playlistInfo);
-            
-        }, 100),
         
         //  Removes the old 'current' marking and move it to the newly selected row.
         visuallySelectPlaylist: function(playlist) {
@@ -274,5 +285,5 @@ define([
 
     });
 
-    return new PlaylistsView;
+    return ActiveFolderView;
 });

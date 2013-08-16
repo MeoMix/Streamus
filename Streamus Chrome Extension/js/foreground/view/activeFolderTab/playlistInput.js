@@ -34,35 +34,30 @@
                 contentHeader.addInputElement.val('');
 
                 var dataSource = YouTubeDataAPI.parseUrlForDataSource(userInput);
+                //  TODO: Instead of reading from activeFolder this should be ActiveFolderView's model, but that'll be a circular reference so need to fix.
                 var activeFolder = BackgroundManager.get('activeFolder');
 
                 switch (dataSource.type) {
                     case DataSource.USER_INPUT:
-                        activeFolder.addPlaylistByDataSource(userInput, dataSource, function (playlist) {
-                            BackgroundManager.set('activePlaylist', playlist);
-                        });
+                        activeFolder.addPlaylistByDataSource(userInput, dataSource);
                         break;
                     case DataSource.YOUTUBE_PLAYLIST:
+
                         YouTubeDataAPI.getPlaylistTitle(dataSource.id, function (youTubePlaylistTitle) {
-                            activeFolder.addPlaylistByDataSource(youTubePlaylistTitle, dataSource, function (playlist) {
-                                BackgroundManager.set('activePlaylist', playlist);
-                            });
+                            activeFolder.addPlaylistByDataSource(youTubePlaylistTitle, dataSource);
                         });
+
                         break;
                     case DataSource.YOUTUBE_CHANNEL:
                         
                         YouTubeDataAPI.getChannelName(dataSource.id, function (channelName) {
                             var playlistTitle = channelName + '\'s Feed';
-                            activeFolder.addPlaylistByDataSource(playlistTitle, dataSource, function (playlist) {
-                                BackgroundManager.set('activePlaylist', playlist);
-                            });
+                            activeFolder.addPlaylistByDataSource(playlistTitle, dataSource);
                         });
 
                         break;
                     case DataSource.SHARED_PLAYLIST:
-                        activeFolder.addPlaylistByDataSource('', dataSource, function (playlist) {
-                            BackgroundManager.set('activePlaylist', playlist);
-                        });
+                        activeFolder.addPlaylistByDataSource('', dataSource);
                         break;
                     default:
                         console && console.error("Unhandled dataSource type:", dataSource.type);

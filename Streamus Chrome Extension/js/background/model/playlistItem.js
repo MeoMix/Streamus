@@ -41,10 +41,11 @@ define([
         initialize: function () {
             var video = this.get('video');
 
-            //  Need to convert to video object to Backbone.Model
+            //  Need to convert video object to Backbone.Model
             if (!(video instanceof Backbone.Model)) {
-                //  Silent because Video is just being properly set.
-                this.set('video', new Video(video), { silent: true });
+                video = new Video(video);
+                //  Silent because video is just being properly set.
+                this.set('video', video, { silent: true });
             }
 
         }

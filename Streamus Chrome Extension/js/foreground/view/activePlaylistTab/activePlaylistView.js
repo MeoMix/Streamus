@@ -1,20 +1,19 @@
 ﻿//  Represents the videos in a given playlist
 define([
     'contextMenuView',
-    'backgroundManager',
     'streamItems',
     'playlistItemView',
     'utility'
-], function (ContextMenuView, BackgroundManager, StreamItems, PlaylistItemView, Utility) {
+], function (ContextMenuView, StreamItems, PlaylistItemView, Utility) {
     'use strict';
 
-    var PlaylistItemsView = Backbone.View.extend({
+    var ActivePlaylistView = Backbone.View.extend({
         
-        el: $('#PlaylistItemsView'),
+        el: $('#ActivePlaylistView'),
         
-        ul: $('#PlaylistItemsView ul'),
+        ul: $('#ActivePlaylistView ul'),
         
-        emptyNotification: $('#PlaylistItemsView .emptyListNotification'),
+        emptyNotification: $('#ActivePlaylistView .emptyListNotification'),
         
         events: {
             'contextmenu': 'showContextMenu',
@@ -25,10 +24,9 @@ define([
         render: function () {
             this.ul.empty();
 
-            var activePlaylist = BackgroundManager.get('activePlaylist');
+            var activePlaylist = this.model;
 
-            // TODO: Why am I calling render on activePlaylistItems if activePlaylist is null?
-            if (activePlaylist === null || activePlaylist.get('items').length === 0) {
+            if (activePlaylist == null || activePlaylist.get('items').length === 0) {
                 this.emptyNotification.show();
             } else {
                 this.emptyNotification.hide();
@@ -89,24 +87,33 @@ define([
 
                     var nextItemId = nextListItem.data('itemid');
 
-                    BackgroundManager.get('activePlaylist').moveItem(movedItemId, nextItemId);
+                    self.model.moveItem(movedItemId, nextItemId);
                 }
             });
 
-            this.listenTo(BackgroundManager, 'change:activePlaylist', this.render);
-            this.listenTo(BackgroundManager.get('allPlaylistItems'), 'add', this.addItem);
-            
-            //  TODO: THIS IS INCORRECT. Instead of allPlaylistItems it should be when the activePlaylist is empty, but I need to be able to change the activePlaylist listener.
-            this.listenTo(BackgroundManager.get('allPlaylistItems'), 'empty', function () {
-                self.emptyNotification.show();
+            this.model.on('change', function (a, e) {
+
+                self.stopListening(this.previousAttributes().items);
+
+                self.startListeningToModel();
+                self.render();
             });
 
+            this.startListeningToModel();
             this.render();
 
             Utility.scrollChildElements(this.el, 'span.playlistItemTitle');
         },
+
+        startListeningToModel: function(){
+            var playlistItems = this.model.get('items');
+
+            this.listenTo(playlistItems, 'add', this.addItem);
+            this.listenTo(playlistItems, 'empty', this.render);
+        },
         
         addItem: function (playlistItem) {
+            console.log("addItem is firing!");
             var playlistItemView = new PlaylistItemView({
                 model: playlistItem
             });
@@ -135,7 +142,8 @@ define([
         },
         
         showContextMenu: function (event) {
-            
+            var self = this;
+
             ContextMenuView.addGroup({
                 position: 0,
                 items: [{
@@ -143,9 +151,7 @@ define([
                     text: 'Add Playlist to Stream',
                     onClick: function () {
 
-                        var activePlaylist = BackgroundManager.get('activePlaylist');
-
-                        var streamItems = activePlaylist.get('items').map(function (playlistItem) {
+                        var streamItems = self.model.get('items').map(function (playlistItem) {
                             return {
                                 id: _.uniqueId('streamItem_'),
                                 video: playlistItem.get('video'),
@@ -170,10 +176,10 @@ define([
         
         showItemContextMenu: function (event) {
 
-            var activePlaylist = BackgroundManager.get('activePlaylist');
             var clickedItemId = $(event.currentTarget).data('itemid');
-            var clickedItem = activePlaylist.get('items').get(clickedItemId);
+            var clickedItem = this.model.get('items').get(clickedItemId);
 
+            var self = this;
             ContextMenuView.addGroup({
                 position: 0,
                 items: [{
@@ -222,7 +228,7 @@ define([
                     text: 'Add Playlist to Stream',
                     onClick: function () {
 
-                        var streamItems = activePlaylist.get('items').map(function (playlistItem) {
+                        var streamItems = self.model.get('items').map(function (playlistItem) {
                             return {
                                 id: _.uniqueId('streamItem_'),
                                 video: playlistItem.get('video'),
@@ -250,7 +256,7 @@ define([
             
             //  Add item to stream on dblclick.
             var itemId = $(event.currentTarget).data('itemid');
-            var playlistItem = BackgroundManager.getPlaylistItemById(itemId);
+            var playlistItem = this.model.getPlaylistItemById(itemId);
 
             StreamItems.add({
                 id: _.uniqueId('streamItem_'),
@@ -272,5 +278,5 @@ define([
         
     });
 
-    return new PlaylistItemsView;
+    return ActivePlaylistView;
 });

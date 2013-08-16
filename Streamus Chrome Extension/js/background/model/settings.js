@@ -15,7 +15,6 @@ define([
                 serverURL: '',
                 activeContentButtonId: getItem('activeContentButtonId') || 'HomeMenuButton',
                 activeFolderId: getItem('activeFolderId') || null,
-                activePlaylistId: getItem('activePlaylistId') || null,
                 radioEnabled: getItem('radioEnabled') || false,
                 repeatButtonState: getItem('repeatButtonState') || RepeatButtonState.DISABLED,
                 shuffleEnabled: getItem('shuffleEnabled') || false,

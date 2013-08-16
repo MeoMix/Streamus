@@ -2,8 +2,11 @@
 //  background YouTube player to load entirely before allowing foreground to open.
 define([
     'settings',
-    'playlistItemsView',
     'backgroundManager',
+
+    'activeFolderView',
+    'activePlaylistView',
+
     'volumeControlView',
     'playPauseButtonView',
     'nextButtonView',
@@ -17,15 +20,22 @@ define([
     'playlistItemInput',
     
     'playlistInput',
-    'playlistsView',
     'streamView'
-], function (Settings, PlaylistItemsView) {
+], function (Settings, BackgroundManager, ActiveFolderView, ActivePlaylistView) {
     'use strict';
 
     //  TODO: There should probably be a ContentButtonView and Model which keep track of these properties and not just done on the ForegroundView.
     var ForegroundView = Backbone.View.extend({
 
         el: $('#contentWrapper'),
+
+        activeFolderView: new ActiveFolderView({
+            model: BackgroundManager.get('activeFolder')
+        }),
+
+        activePlaylistView: new ActivePlaylistView({
+            model: BackgroundManager.get('activeFolder').getActivePlaylist()
+        }),
 
         events: {
             //  TODO: Naming of menubutton vs content
@@ -40,14 +50,33 @@ define([
             var activeContentId = activeMenuButton.data('content');
             
             $('#' + activeContentId).show();
-            PlaylistItemsView.$el.trigger('manualShow');
+            this.activePlaylistView.$el.trigger('manualShow');
         },
 
-        initialize: function(){
+        initialize: function () {
+            var self = this;
+
+            this.listenTo(BackgroundManager, 'change:activeFolder', function (folder, isActive) {
+
+                if (isActive) {
+                    self.activeFolderView.model.set(folder);
+                }
+
+            });
+
+            //  TODO: if activeFolder changes I think I'll need to unbind and rebind
+            var activeFolder = BackgroundManager.get('activeFolder');
+            this.listenTo(activeFolder.get('playlists'), 'change:active', function (playlist, isActive) {
+
+                if (isActive) {
+                    console.log("Setting activePlaylistView's model to:", playlist, self.activePlaylistView.model, self.activePlaylistView.model == playlist);
+                    self.activePlaylistView.model.set(playlist);
+                }
+
+            });
         
             //  Set the initially loaded content to whatever was clicked last or the home page as a default
             var activeContentButtonId = Settings.get('activeContentButtonId');
-            console.log("Active content button id:", activeContentButtonId, $('#' + activeContentButtonId), $('#' + activeContentButtonId).length);
             var activeButton = $('#' + activeContentButtonId);
 
             this.setMenuButtonActive(activeButton);

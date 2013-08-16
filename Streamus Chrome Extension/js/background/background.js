@@ -103,7 +103,8 @@ define([
                 Player.triggerInitialLoadDataSeekTo();
                 break;
             case 'addVideoByIdToPlaylist':
-                var playlist = BackgroundManager.getPlaylistById(request.playlistId);
+                //  TODO: Maybe not active folder.
+                var playlist = BackgroundManager.get('activeFolder').get('playlists').get(request.playlistId);
                 
                 YouTubeDataAPI.getVideoInformation({
                     videoId: request.videoId,
@@ -161,50 +162,6 @@ define([
         //  Return true to allow sending a response back.
         return true;
     });
-
-    //  Backbone doesn't provide a way to get the event name when binding like this and I don't want to override their code, so leaving this a little less DRY.
-    BackgroundManager.get('allPlaylists').on('add', function (playlist) {
-
-        sendEventToOpenYouTubeTabs('add', 'playlist', {
-            id: playlist.get('id'),
-            title: playlist.get('title')
-        });
-
-    });
-        
-    BackgroundManager.get('allPlaylists').on('remove', function (playlist) {
-
-        sendEventToOpenYouTubeTabs('remove', 'playlist', {
-            id: playlist.get('id'),
-            title: playlist.get('title')
-        });
-
-    });
-        
-    BackgroundManager.get('allPlaylists').on('change:title', function (playlist) {
-
-        sendEventToOpenYouTubeTabs('rename', 'playlist', {
-            id: playlist.get('id'),
-            title: playlist.get('title')
-        });
-
-    });
-        
-    function sendEventToOpenYouTubeTabs(event, type, data) {
-        
-        chrome.tabs.query({ url: '*://*.youtube.com/watch?v*' }, function (tabs) {
-
-            _.each(tabs, function (tab) {
-                chrome.tabs.sendMessage(tab.id, {
-                    event: event,
-                    type: type,
-                    data: data
-                });
-            });
-
-        });
-        
-    }
         
     //  Modify the iFrame headers to force HTML5 player and to look like we're actually a YouTube page.
     //  The HTML5 player seems more reliable (doesn't crash when Flash goes down) and looking like YouTube

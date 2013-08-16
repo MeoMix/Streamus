@@ -38,18 +38,23 @@
                 easing: 'easeOutExpo',
                 clickBar: 1
             }, {
+                //  This is a pretty costly function because it fires so often. Use native javascript.
                 move: _.throttle(function() {
  
+                    var unloadedImgElements = self.$el.find('img.lazy[src=""]');
+                    
                     //  Find images which haven't been lazily loaded, but are in the viewport and trigger an event to get them to load.
-                    self.$el.find('img.lazy[src=""]').each(function() {
+                    for (var i = 0; i < unloadedImgElements.length; i++) {
+                        var unloadedImgElement = unloadedImgElements[i];
 
-                        var isInViewport = Utility.isElementInViewport(this);
-                        
+                        var rectangle = unloadedImgElement.getBoundingClientRect();
+                        var isInViewport = rectangle.left >= 0 && rectangle.right <= self.$el.width();
+
                         if (isInViewport) {
-                            $(this).trigger('visible');
+                            $(unloadedImgElement).trigger('visible');
                         }
 
-                    });
+                    }
 
                 }, 500)
             }).init();
@@ -160,6 +165,9 @@
                     position: 1,
                     text: 'Save Stream as Playlist',
                     onClick: function () {
+
+                        console.log("Pluck and before", StreamItems.length, StreamItems.pluck('video').length);
+
                         BackgroundManager.get('activeFolder').addPlaylistWithVideos('Playlist', StreamItems.pluck('video'));
                     }
                 }]

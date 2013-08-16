@@ -611,7 +611,7 @@
     top: 20px;
 }
 
-#PlaylistsView .loaded span { font-weight: bold !important; }
+#ActiveFolderView .loaded span { font-weight: bold !important; }
 
 .muted > svg > path { fill: Red !important; }
 

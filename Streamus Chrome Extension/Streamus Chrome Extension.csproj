@@ -54,9 +54,9 @@
     <Content Include="js\foreground\model\dialog.js" />
     <Content Include="js\foreground\view\dialogView.js" />
     <Content Include="js\foreground\view\loadingSpinnerView.js" />
-    <Content Include="js\foreground\view\playlistItemsTab\playlistItemView.js" />
+    <Content Include="js\foreground\view\activePlaylistTab\playlistItemView.js" />
     <Content Include="js\foreground\view\contextMenuView.js" />
-    <Content Include="js\foreground\view\playlistsTab\playlistView.js" />
+    <Content Include="js\foreground\view\activeFolderTab\playlistView.js" />
     <Content Include="js\options\settings.js" />
     <Content Include="js\options\main.js" />
     <Content Include="js\options\options.js" />
@@ -139,10 +139,10 @@
     <Content Include="js\foreground\view\buttons\shuffleButtonView.js" />
     <Content Include="js\foreground\view\buttons\nextButtonView.js" />
     <Content Include="js\foreground\view\volumeControlView.js" />
-    <Content Include="js\foreground\view\playlistItemsTab\playlistItemInput.js" />
-    <Content Include="js\foreground\view\playlistItemsTab\playlistItemsView.js" />
-    <Content Include="js\foreground\view\playlistsTab\playlistInput.js" />
-    <Content Include="js\foreground\view\playlistsTab\playlistsView.js" />
+    <Content Include="js\foreground\view\activePlaylistTab\playlistItemInput.js" />
+    <Content Include="js\foreground\view\activePlaylistTab\activePlaylistView.js" />
+    <Content Include="js\foreground\view\activeFolderTab\playlistInput.js" />
+    <Content Include="js\foreground\view\activeFolderTab\activeFolderView.js" />
     <Content Include="js\foreground\view\progressBarView.js" />
     <Content Include="js\foreground\requirePaths.js" />
     <Content Include="js\foreground\model\spinnerBuilder.js" />

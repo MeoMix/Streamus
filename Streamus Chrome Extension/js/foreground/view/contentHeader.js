@@ -12,12 +12,12 @@ define(['backgroundManager'], function (BackgroundManager) {
         var headerInput = $('<input/>', {
             'class': 'headerInput',
             type: 'text',
-            value: BackgroundManager.get('activePlaylist').get('title'),
+            value: BackgroundManager.get('activeFolder').getActivePlaylist().get('title'),
             
             on: {
                 
                 input: function () {
-                    BackgroundManager.get('activePlaylist').set('title', $(this).val());
+                    BackgroundManager.get('activeFolder').getActivePlaylist().set('title', $(this).val());
                 },
                 
                 mouseover: function () {
@@ -40,8 +40,7 @@ define(['backgroundManager'], function (BackgroundManager) {
 
         headerInput.appendTo(headerTitle);
         
-        BackgroundManager.get('allPlaylists').on('change:title', function (model, title) {
-            console.log("Updating header input with:", title);
+        BackgroundManager.get('activeFolder').get('playlists').on('change:title', function (model, title) {
             headerInput.val(title);
         });
 
