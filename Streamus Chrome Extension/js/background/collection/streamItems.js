@@ -7,8 +7,9 @@ define([
     'youTubeDataAPI',
     'video',
     'utility',
-    'player'
-], function (StreamItem, Settings, RepeatButtonState, YouTubeDataAPI, Video, Utility, Player) {
+    'player',
+    'playerState'
+], function (StreamItem, Settings, RepeatButtonState, YouTubeDataAPI, Video, Utility, Player, PlayerState) {
     'use strict';
 
     var streamItemsCollection = Backbone.Collection.extend({

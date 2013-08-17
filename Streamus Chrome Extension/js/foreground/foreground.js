@@ -61,7 +61,7 @@ define([
             this.listenTo(folders, 'change:active', function (folder, isActive) {
 
                 if (isActive) {
-                    self.activeFolderView.model.set(folder);
+                    self.activeFolderView.changeModel(folder);
                 }
 
             });
@@ -70,8 +70,11 @@ define([
             var playlists = folders.getActiveFolder().get('playlists');
             this.listenTo(playlists, 'change:active', function (playlist, isActive) {
 
+                console.log("Playlist " + playlist.get('title') + " has set active to:", isActive);
+
                 if (isActive) {
-                    self.activePlaylistView.model.set(playlist);
+                    console.log("Setting activePlaylistView's model to:", playlist.get('title'));
+                    self.activePlaylistView.changeModel(playlist);
                 }
 
             });

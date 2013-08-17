@@ -69,18 +69,9 @@ define([
         },
         
         initialize: function () {
-            var self = this;
-            
             //  TODO: Sortable.
-            this.model.on('change', function () {
-                var previousModel = self.previous('model');
-                self.stopListening(previousModel.get('playlists'));
 
-                self.startListeningToModel();
-                self.render();
-            });
-
-            this.startListeningToModel();
+            this.startListeningToPlaylists(this.model.get('playlists'));
             this.render();
 
             Utility.scrollChildElements(this.el, 'span.playlitTitle');
@@ -89,11 +80,20 @@ define([
             var activePlaylist = this.model.getActivePlaylist();
             this.scrollItemIntoView(activePlaylist, false);
         },
+        
+        changeModel: function(newModel) {
 
-        startListeningToModel: function(){
+            this.stopListening(this.model.get('playlists'));
+
+            this.model = newModel;
+            this.startListeningToPlaylists(newModel.get('playlists'));
+
+            //console.log("ActivePlaylist's model has changed. Re-rendering", this);
+            this.render();
+        },
+
+        startListeningToPlaylists: function (playlists) {
             var self = this;
-
-            var playlists = this.model.get('playlists');
 
             this.listenTo(playlists, 'change:active', function (playlist, isActive) {
 

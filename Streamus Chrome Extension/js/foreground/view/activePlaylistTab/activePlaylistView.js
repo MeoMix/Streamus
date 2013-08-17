@@ -26,6 +26,8 @@ define([
 
             var activePlaylist = this.model;
 
+            console.log("Active playlist is:", activePlaylist.get('title'));
+
             if (activePlaylist == null || activePlaylist.get('items').length === 0) {
                 this.emptyNotification.show();
             } else {
@@ -91,23 +93,23 @@ define([
                 }
             });
 
-            this.model.on('change', function (a, e) {
-
-                self.stopListening(this.previousAttributes().items);
-
-                self.startListeningToModel();
-                self.render();
-            });
-
-            this.startListeningToModel();
+            this.startListeningToItems(this.model.get('items'));
             this.render();
 
             Utility.scrollChildElements(this.el, 'span.playlistItemTitle');
         },
+        
+        changeModel: function(newModel) {
+          
+            this.stopListening(this.model.get('items'));
 
-        startListeningToModel: function(){
-            var playlistItems = this.model.get('items');
+            this.model = newModel;
+            this.startListeningToItems(newModel.get('items'));
 
+            this.render();
+        },
+
+        startListeningToItems: function (playlistItems) {
             this.listenTo(playlistItems, 'add', this.addItem);
             this.listenTo(playlistItems, 'empty', this.render);
         },
