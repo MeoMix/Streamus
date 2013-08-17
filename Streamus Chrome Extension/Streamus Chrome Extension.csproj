@@ -45,6 +45,8 @@
     <Content Include="background.htm" />
     <Content Include="js\background\collection\streamItems.js" />
     <Content Include="js\background\model\streamItem.js" />
+    <Content Include="js\foreground\view\activeFolderTab\activeFolderTabView.js" />
+    <Content Include="js\foreground\view\activePlaylistTab\activePlaylistTabView.js" />
     <Content Include="js\utility.js" />
     <Content Include="js\foreground\collection\contextMenuGroups.js" />
     <Content Include="js\foreground\collection\contextMenuItems.js" />
