@@ -57,11 +57,13 @@ var require = {
         'shuffleButtonView': 'foreground/view/buttons/shuffleButtonView',
         
         //  View -> ActiveFolderTab:
+        'activeFolderTabView': 'foreground/view/activeFolderTab/activeFolderTabView',
         'activeFolderView': 'foreground/view/activeFolderTab/activeFolderView',
         'playlistInput': 'foreground/view/activeFolderTab/playlistInput',
         'playlistView': 'foreground/view/activeFolderTab/playlistView',
 
         //  View -> ActivePlaylistTab:
+        'activePlaylistTabView': 'foreground/view/activePlaylistTab/activePlaylistTabView',
         'activePlaylistView': 'foreground/view/activePlaylistTab/activePlaylistView',
         'playlistItemInput': 'foreground/view/activePlaylistTab/playlistItemInput',
         'playlistItemView': 'foreground/view/activePlaylistTab/playlistItemView',

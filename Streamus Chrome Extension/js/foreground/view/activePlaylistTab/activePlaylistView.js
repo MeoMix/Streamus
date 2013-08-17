@@ -26,9 +26,7 @@ define([
 
             var activePlaylist = this.model;
 
-            console.log("Active playlist is:", activePlaylist.get('title'));
-
-            if (activePlaylist == null || activePlaylist.get('items').length === 0) {
+            if (activePlaylist.get('items').length === 0) {
                 this.emptyNotification.show();
             } else {
                 this.emptyNotification.hide();

@@ -30,7 +30,6 @@ var require = {
         'videos': 'background/collection/videos',
         
         //  Model:
-        'backgroundManager': 'background/model/backgroundManager',
         'error': 'background/model/error',
         'folder': 'background/model/folder',
         'iconManager': 'background/model/iconManager',

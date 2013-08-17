@@ -148,6 +148,7 @@
     outline: none;
     padding-left: 3px;
     padding-right: 3px;
+    width: 390px;
 }
 
 .addButton {
@@ -237,6 +238,10 @@
 .header.expanded .addInput {
     opacity: 1;
     cursor: auto;
+}
+
+.headerTitle {
+    right: 130px;
 }
 
 .ui-autocomplete {

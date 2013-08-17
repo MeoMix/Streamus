@@ -134,7 +134,7 @@ define([
 
                 var dataSourceType = playlist.get('dataSource').type;
 
-                if (dataSourceType === DataSource.YOUTUBE_PLAYLIST || dataSourceType === DataSource.YOUTUBE_CHANNEL || dataSourceType === DataSource.STREAM) {
+                if (dataSourceType === DataSource.YOUTUBE_PLAYLIST || dataSourceType === DataSource.YOUTUBE_CHANNEL) {
 
                     if (!playlist.get('dataSourceLoaded')) {
 
@@ -237,21 +237,18 @@ define([
         
         selectPlaylist: function(event) {
             var playlistId = $(event.currentTarget).data('playlistid');
-
-            console.log("playlistId:", playlistId);
-            console.log("Playlists:", this.model.get('playlists'));
-
             var playlist = this.model.getPlaylistById(playlistId);
 
-            console.log("playlist:", playlist);
+            console.log("I am about to select playlist:", playlist.get('title'), playlist);
 
             //  If the playlist is already active - do nothing
             if (!playlist.get('active')) {
                 //  Deselect the presently active playlist before marking the new one as active.
                 var activePlaylist = this.model.getActivePlaylist();
                 activePlaylist.set('active', false);
-
                 playlist.set('active', true);
+
+                console.log("Playlist has been marked as active.");
             }
         },
         

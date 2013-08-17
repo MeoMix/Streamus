@@ -102,7 +102,6 @@
     <Content Include="img\Yellow 3.png" />
     <Content Include="img\Yellow 4.png" />
     <Content Include="js\background\background.js" />
-    <Content Include="js\background\model\backgroundManager.js" />
     <Content Include="js\background\model\shareCode.js" />
     <Content Include="js\background\model\error.js" />
     <Content Include="js\background\model\iconManager.js" />
@@ -125,7 +124,7 @@
     <Content Include="js\foreground\view\stream\streamView.js" />
     <Content Include="js\inject\streamusShareInject.js" />
     <Content Include="js\enum\dataSource.js" />
-    <Content Include="js\foreground\model\backgroundManager.js" />
+    <Content Include="js\foreground\model\user.js" />
     <Content Include="js\foreground\view\contentHeader.js" />
     <Content Include="js\foreground\foreground.js" />
     <Content Include="js\foreground\view\headerTitleView.js" />

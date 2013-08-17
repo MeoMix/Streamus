@@ -39,6 +39,16 @@ namespace Streamus.Domain
         public static Playlist Create(PlaylistDto playlistDto)
         {
             Playlist playlist = Mapper.Map<PlaylistDto, Playlist>(playlistDto);
+
+            //  TODO: I could probably leverage backbone's CID property to have the items know of their playlist.
+            //  If an unsaved playlist comes from the client with items already in it, the items will not know their playlist's ID.
+            //  So, re-map to the playlist as appropriate.
+
+            List<PlaylistItem> improperlyAddedItems = playlist.Items.Where(i => i.Playlist == null).ToList();
+            improperlyAddedItems.ForEach(i => playlist.Items.Remove(i));
+
+            playlist.AddItems(improperlyAddedItems);
+
             return playlist;
         }
 
@@ -113,6 +123,11 @@ namespace Streamus.Domain
             nextItem.PreviousItem = previousItem;
 
             Items.Remove(playlistItem);
+        }
+
+        public virtual void RemoveItems(IEnumerable<PlaylistItem> playlistItems)
+        {
+            playlistItems.ToList().ForEach(RemoveItem);
         }
 
         public virtual void ValidateAndThrow()

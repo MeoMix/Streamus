@@ -124,7 +124,7 @@ define([
                     }
 
                 } else {
-                    playlist.set('firstItemId', '00000000-0000-0000-0000-000000000000');
+                    self.set('firstItemId', '00000000-0000-0000-0000-000000000000');
                 }
 
                 self.setDisplayInfo();

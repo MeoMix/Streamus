@@ -3,9 +3,8 @@
 define([
     'settings',
     'user',
-
-    'activeFolderView',
-    'activePlaylistView',
+    'activeFolderTabView',
+    'activePlaylistTabView',
 
     'volumeControlView',
     'playPauseButtonView',
@@ -17,23 +16,20 @@ define([
     'progressBarView',
     'videoDisplayView',
     'headerTitleView',
-    'playlistItemInput',
-    
-    'playlistInput',
     'streamView'
-], function (Settings, User, ActiveFolderView, ActivePlaylistView) {
+], function (Settings, User, ActiveFolderTabView, ActivePlaylistTabView) {
     'use strict';
 
     //  TODO: There should probably be a ContentButtonView and Model which keep track of these properties and not just done on the ForegroundView.
     var ForegroundView = Backbone.View.extend({
 
         el: $('#contentWrapper'),
-
-        activeFolderView: new ActiveFolderView({
+        
+        activeFolderTabView: new ActiveFolderTabView({
             model: User.get('folders').getActiveFolder()
         }),
 
-        activePlaylistView: new ActivePlaylistView({
+        activePlaylistTabView: new ActivePlaylistTabView({
             model: User.get('folders').getActiveFolder().getActivePlaylist()
         }),
 
@@ -50,7 +46,12 @@ define([
             var activeContentId = activeMenuButton.data('content');
             
             $('#' + activeContentId).show();
-            this.activePlaylistView.$el.trigger('manualShow');
+            
+            //  TODO: Fix this. It is used to manually trigger lazy-loading of images because they're visible, but its the wrong spot for the code.
+            if (activeContentId == 'HomeContent') {
+                this.activePlaylistTabView.activePlaylistView.$el.trigger('manualShow');
+            }
+
         },
 
         initialize: function () {
@@ -59,9 +60,10 @@ define([
             var folders = User.get('folders');
 
             this.listenTo(folders, 'change:active', function (folder, isActive) {
-
+                
+                //  TODO: Instead of calling changeModel, I would like to remove the view and re-add it.
                 if (isActive) {
-                    self.activeFolderView.changeModel(folder);
+                    self.activeFolderTabView.changeModel(folder);
                 }
 
             });
@@ -70,11 +72,9 @@ define([
             var playlists = folders.getActiveFolder().get('playlists');
             this.listenTo(playlists, 'change:active', function (playlist, isActive) {
 
-                console.log("Playlist " + playlist.get('title') + " has set active to:", isActive);
-
+                //  TODO: Instead of calling changeModel, I would like to remove the view and re-add it.
                 if (isActive) {
-                    console.log("Setting activePlaylistView's model to:", playlist.get('title'));
-                    self.activePlaylistView.changeModel(playlist);
+                    self.activePlaylistTabView.changeModel(playlist);
                 }
 
             });

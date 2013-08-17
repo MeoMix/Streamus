@@ -6,9 +6,8 @@ define([
     'video',
     'player',
     'settings',
-    'youTubeDataAPI',
-    'dataSource'
-], function (Playlists, Playlist, Videos, Video, Player, Settings, YouTubeDataAPI, DataSource) {
+    'youTubeDataAPI'
+], function (Playlists, Playlist, Videos, Video, Player, Settings, YouTubeDataAPI) {
     'use strict';
     
     var Folder = Backbone.Model.extend({
@@ -135,21 +134,20 @@ define([
         },
         
         addPlaylistWithVideos: function(playlistTitle, videos) {
-
-            console.log("Videos:", videos, videos.length);
-
+            var self = this;
+            
             var playlist = new Playlist({
                 title: playlistTitle,
                 folderId: this.get('id'),
-                dataSource: DataSource.STREAM
+                items: _.map(videos, function(video) { return { video: video }; })
             });
 
-            var self = this;
-
-            //  TODO: Change this so only need 1 request not 2.
             //  Save the playlist, but push after version from server because the ID will have changed.
             playlist.save({}, {
                 success: function() {
+
+                    //  TODO: I think I need to update all the pointers for items as well as playlist since I added items to the playlist without
+                    //  setting their pointers.
 
                     //  Update other affected Playlist pointers. DB is already correct, but backbone doesn't update automatically.
                     var currentPlaylists = self.get('playlists');
@@ -165,11 +163,6 @@ define([
                     }
                     
                     currentPlaylists.push(playlist);
-
-                    playlist.addItems(videos, function () {
-                        console.log("pushing playlist", playlist);
-                        playlist.set('dataSourceLoaded', true);
-                    });
                 }
             });
         },
@@ -269,10 +262,6 @@ define([
                     
                         }
                     });
-                    
-                    //  TODO: Maybe I want to make it active before I even add it? More complicated.
-                    //  Data might still be loading, but feel free to set active now as it may take a while.
-                    playlist.set('active', true);
                     
                 },
                 error: function (error) {
