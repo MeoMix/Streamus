@@ -2,10 +2,10 @@
     'streamItems',
     'streamItemView',
     'contextMenuView',
-    'backgroundManager',
+    'user',
     'utility',
     'sly'
-], function (StreamItems, StreamItemView, ContextMenuView, BackgroundManager, Utility) {
+], function (StreamItems, StreamItemView, ContextMenuView, User, Utility) {
     'use strict';
     
     var StreamView = Backbone.View.extend({
@@ -168,7 +168,7 @@
 
                         console.log("Pluck and before", StreamItems.length, StreamItems.pluck('video').length);
 
-                        BackgroundManager.get('activeFolder').addPlaylistWithVideos('Playlist', StreamItems.pluck('video'));
+                        User.get('folders').getActiveFolder().addPlaylistWithVideos('Playlist', StreamItems.pluck('video'));
                     }
                 }]
             });

@@ -30,7 +30,6 @@ var require = {
         'streamItems': 'foreground/collection/streamItems',
 
         //  Model:
-        'backgroundManager': 'foreground/model/backgroundManager',
         'contextMenu': 'foreground/model/contextMenu',
         'contextMenuGroup': 'foreground/model/contextMenuGroup',
         'contextMenuItem': 'foreground/model/contextMenuItem',
@@ -38,6 +37,7 @@ var require = {
         'player': 'foreground/model/player',
         'settings': 'foreground/model/settings',
         'spinnerBuilder': 'foreground/model/spinnerBuilder',
+        'user': 'foreground/model/user',
         
         //  View:
         'contentHeader': 'foreground/view/contentHeader',

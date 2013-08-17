@@ -1,9 +1,9 @@
 ﻿define([
     'contentHeader',
     'youTubeDataAPI',
-    'backgroundManager',
+    'user',
     'dataSource'
-], function (ContentHeader, YouTubeDataAPI, BackgroundManager, DataSource) {
+], function (ContentHeader, YouTubeDataAPI, User, DataSource) {
     'use strict';
 
     var contentHeader = new ContentHeader({
@@ -35,7 +35,7 @@
 
                 var dataSource = YouTubeDataAPI.parseUrlForDataSource(userInput);
                 //  TODO: Instead of reading from activeFolder this should be ActiveFolderView's model, but that'll be a circular reference so need to fix.
-                var activeFolder = BackgroundManager.get('activeFolder');
+                var activeFolder = User.get('folders').getActiveFolder();
 
                 switch (dataSource.type) {
                     case DataSource.USER_INPUT:

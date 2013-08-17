@@ -4,7 +4,11 @@
     'use strict';
 
     var Folders = Backbone.Collection.extend({
-        model: Folder
+        model: Folder,
+        
+        getActiveFolder: function() {
+            return this.findWhere({ active: true });
+        }
     });
 
     return Folders;

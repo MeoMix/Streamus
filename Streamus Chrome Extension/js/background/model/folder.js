@@ -50,8 +50,8 @@ define([
                 var activePlaylistId = localStorage.getItem(this.get('id') + '_activePlaylistId');
 
                 //  Be sure to always have an active playlist if there is one available.
-                var playlist = this.getPlaylistById(activePlaylistId) || playlists.at(0);
-                playlist.set('active', true);
+                var playlistToSetActive = this.getPlaylistById(activePlaylistId) || playlists.at(0);
+                playlistToSetActive.set('active', true);
 
             }
 
@@ -60,7 +60,7 @@ define([
                 localStorage.removeItem(self.get('id') + '_activePlaylistId');
             });
 
-            this.listenTo(this.get('playlists'), 'change:active', function (playlist, isActive) {
+            this.listenTo(playlists, 'change:active', function (playlist, isActive) {
                 //  Keep local storage up-to-date with the active playlist.
                 if (isActive) {
                     localStorage.setItem(self.get('id') + '_activePlaylistId', playlist.get('id'));
@@ -69,7 +69,7 @@ define([
             });
 
             var self = this;
-            this.get('playlists').on('remove', function (removedPlaylist) {
+            playlists.on('remove', function (removedPlaylist) {
                 //  Clear local storage of the active playlist if it gets removed.
                 if (removedPlaylist.get('active')) {
                     localStorage.setItem(self.get('id') + '_activePlaylistId', null);

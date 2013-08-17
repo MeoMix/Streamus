@@ -84,12 +84,32 @@ define([
     
     function onUserLoaded(model, shouldSetSyncStorage) {
 
-        //  Have to manually convert the JSON array into a Backbone.Collection
-        var folders = new Folders(model.get('folders'));
+        var folders = this.get('folders');
 
-        this.set('folders', folders, {
-            //  Silent operation because folders isn't technically changing - just being made correct.
-            silent: true
+        //  Need to convert folders array to Backbone.Collection
+        if (!(folders instanceof Backbone.Collection)) {
+            folders = new Folders(folders);
+            //  Silent because folders is just being properly set.
+            this.set('folders', folders, { silent: true });
+        }
+
+        //  Try to load active folder from localstorage
+        if (folders.length > 0) {
+
+            var activeFolderId = localStorage.getItem(this.get('id') + '_activeFolderId');
+
+            //  Be sure to always have an active folder if there is one available.
+            var folderToSetActive = this.get('folders').get(activeFolderId) || folders.at(0);
+            folderToSetActive.set('active', true);
+
+        }
+
+        var self = this;
+        this.listenTo(folders, 'change:active', function (folder, isActive) {
+            //  Keep local storage up-to-date with the active folder.
+            if (isActive) {
+                localStorage.setItem(self.get('id') + '_activeFolderId', folder.get('id'));
+            }
         });
 
         //  TODO: Error handling for writing to sync too much.

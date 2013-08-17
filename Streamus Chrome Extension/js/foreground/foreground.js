@@ -2,7 +2,7 @@
 //  background YouTube player to load entirely before allowing foreground to open.
 define([
     'settings',
-    'backgroundManager',
+    'user',
 
     'activeFolderView',
     'activePlaylistView',
@@ -21,7 +21,7 @@ define([
     
     'playlistInput',
     'streamView'
-], function (Settings, BackgroundManager, ActiveFolderView, ActivePlaylistView) {
+], function (Settings, User, ActiveFolderView, ActivePlaylistView) {
     'use strict';
 
     //  TODO: There should probably be a ContentButtonView and Model which keep track of these properties and not just done on the ForegroundView.
@@ -30,11 +30,11 @@ define([
         el: $('#contentWrapper'),
 
         activeFolderView: new ActiveFolderView({
-            model: BackgroundManager.get('activeFolder')
+            model: User.get('folders').getActiveFolder()
         }),
 
         activePlaylistView: new ActivePlaylistView({
-            model: BackgroundManager.get('activeFolder').getActivePlaylist()
+            model: User.get('folders').getActiveFolder().getActivePlaylist()
         }),
 
         events: {
@@ -56,7 +56,9 @@ define([
         initialize: function () {
             var self = this;
 
-            this.listenTo(BackgroundManager, 'change:activeFolder', function (folder, isActive) {
+            var folders = User.get('folders');
+
+            this.listenTo(folders, 'change:active', function (folder, isActive) {
 
                 if (isActive) {
                     self.activeFolderView.model.set(folder);
@@ -65,11 +67,10 @@ define([
             });
 
             //  TODO: if activeFolder changes I think I'll need to unbind and rebind
-            var activeFolder = BackgroundManager.get('activeFolder');
-            this.listenTo(activeFolder.get('playlists'), 'change:active', function (playlist, isActive) {
+            var playlists = folders.getActiveFolder().get('playlists');
+            this.listenTo(playlists, 'change:active', function (playlist, isActive) {
 
                 if (isActive) {
-                    console.log("Setting activePlaylistView's model to:", playlist, self.activePlaylistView.model, self.activePlaylistView.model == playlist);
                     self.activePlaylistView.model.set(playlist);
                 }
 

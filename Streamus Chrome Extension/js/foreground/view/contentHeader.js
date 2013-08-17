@@ -1,4 +1,6 @@
-define(['backgroundManager'], function (BackgroundManager) {
+define([
+    'user'
+], function (User) {
     'use strict';
 
     return function (config) {
@@ -12,12 +14,12 @@ define(['backgroundManager'], function (BackgroundManager) {
         var headerInput = $('<input/>', {
             'class': 'headerInput',
             type: 'text',
-            value: BackgroundManager.get('activeFolder').getActivePlaylist().get('title'),
+            value: User.get('folders').getActiveFolder().getActivePlaylist().get('title'),
             
             on: {
                 
                 input: function () {
-                    BackgroundManager.get('activeFolder').getActivePlaylist().set('title', $(this).val());
+                    User.get('folders').getActiveFolder().getActivePlaylist().set('title', $(this).val());
                 },
                 
                 mouseover: function () {
@@ -39,17 +41,18 @@ define(['backgroundManager'], function (BackgroundManager) {
         });
 
         headerInput.appendTo(headerTitle);
-        
-        BackgroundManager.get('activeFolder').get('playlists').on('change:title', function (model, title) {
-            headerInput.val(title);
+
+        var playlists = User.get('folders').getActiveFolder().get('playlists');
+        playlists.on('change:title', function(playlist, playlistTitle) {
+            headerInput.val(playlistTitle);
         });
 
-        BackgroundManager.on('change:activePlaylist ', function (model, activePlaylist) {
+        playlists.on('change:active', function (playlist, isActive) {
             
-            if (activePlaylist === null) {
-                headerInput.val('No Active Playlist');
+            if (isActive) {
+                headerInput.val(playlist.get('title'));
             } else {
-                headerInput.val(activePlaylist.get('title'));
+                headerInput.val('No Playlist Selected');
             }
 
         });

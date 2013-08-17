@@ -14,7 +14,7 @@
                 if (removedPlaylist.get('active')) {
 
                     var nextPlaylistId = removedPlaylist.get('nextPlaylistId');
-                    var activePlaylist = self.get(nextPlaylistId).set('active', true);
+                    self.get(nextPlaylistId).set('active', true);
 
                 }
 

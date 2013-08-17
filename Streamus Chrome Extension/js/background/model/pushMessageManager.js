@@ -1,8 +1,7 @@
 ﻿define([
     'user',
-    'settings',
-    'backgroundManager'
-], function (User, Settings, backgroundManager) {
+    'settings'
+], function (User, Settings) {
     'use strict';
     
     var pushMessageManagerModel = Backbone.Model.extend({

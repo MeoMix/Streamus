@@ -4,10 +4,10 @@ define([
     'contentHeader',
     'youTubeDataAPI',
     'utility',
-    'backgroundManager',
+    'user',
     'dialog',
     'dialogView'
-], function (ContentHeader, YouTubeDataAPI, Utility, BackgroundManager, Dialog, DialogView) {
+], function (ContentHeader, YouTubeDataAPI, Utility, User, Dialog, DialogView) {
     'use strict';
     
     var contentHeader = new ContentHeader({
@@ -37,7 +37,7 @@ define([
             //  Don't change the text when user clicks their video selection.
             event.preventDefault();
             contentHeader.addInputElement.val('');
-            BackgroundManager.get('activeFolder').getActivePlaylist().addItemByInformation(ui.item.value);
+            User.get('folders').getActiveFolder().getActivePlaylist().addItemByInformation(ui.item.value);
         }
     //  http://stackoverflow.com/questions/3488016/using-html-in-jquery-ui-autocomplete
     }).data("ui-autocomplete")._renderItem = function (ul, item) {
@@ -64,7 +64,7 @@ define([
         YouTubeDataAPI.getVideoInformation({
             videoId: videoId,
             success: function (videoInformation) {
-                BackgroundManager.get('activeFolder').getActivePlaylist().addItemByInformation(videoInformation);
+                User.get('folders').getActiveFolder().getActivePlaylist().addItemByInformation(videoInformation);
             },
             error: function () {
 
