@@ -1,11 +1,11 @@
 ﻿//  Background.js is a bit of a dumping ground for code which needs a permanent housing spot.
 define([
     'player',
-    'backgroundManager',
+    'user',
     'youTubeDataAPI',
     'playerState',
     'streamItems'
-], function (Player, BackgroundManager, YouTubeDataAPI, PlayerState, StreamItems) {
+], function (Player, User, YouTubeDataAPI, PlayerState, StreamItems) {
    'use strict';
   
    Player.on('change:state', function (model, state) {
@@ -87,11 +87,11 @@ define([
                 break;
 
             case 'getFolders':
-                var allFolders = BackgroundManager.get('allFolders');
+                var allFolders = User.get('folders');
                 sendResponse({ folders: allFolders });
                 break;
             case 'getPlaylists':                
-                var folder = BackgroundManager.getFolderById(request.folderId);
+                var folder = User.get('folders').findWhere({ id: request.folderId });
                 var playlists = folder.get('playlists');
 
                 sendResponse({ playlists: playlists });
@@ -104,7 +104,7 @@ define([
                 break;
             case 'addVideoByIdToPlaylist':
                 //  TODO: Maybe not active folder.
-                var playlist = BackgroundManager.get('activeFolder').get('playlists').get(request.playlistId);
+                var playlist = User.get('folders').findWhere({ active: true }).get('playlists').get(request.playlistId);
                 
                 YouTubeDataAPI.getVideoInformation({
                     videoId: request.videoId,
@@ -124,7 +124,7 @@ define([
 
                 break;
             case 'addPlaylistByShareData':
-                var activeFolder = BackgroundManager.get('activeFolder');
+                var activeFolder = User.get('folders').findWhere({ active: true });
                 
                 activeFolder.addPlaylistByShareData(request.shareCodeShortId, request.urlFriendlyEntityTitle, function (playlist) {
 

@@ -45,10 +45,21 @@ define([
             });
 
             this.on('change:selected', function(changedStreamItem, selected) {
-
+                //  TODO: Remember selected state in local storage.
                 //  Ensure only one streamItem is selected at a time by de-selecting all other selected streamItems.
                 if (selected) {
                     this.deselectAllExcept(changedStreamItem.cid);
+
+                    var videoId = changedStreamItem.get('video').get('id');
+
+                    //  Maintain the state of the player by playing or cueuing based on current player state.
+                    var playerState = Player.get('state');
+
+                    if (playerState === PlayerState.PLAYING || playerState === PlayerState.ENDED) {
+                        Player.loadVideoById(videoId);
+                    } else {
+                        Player.cueVideoById(videoId);
+                    }
                 }
 
             });
