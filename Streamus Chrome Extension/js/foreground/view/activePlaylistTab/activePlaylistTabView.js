@@ -1,13 +1,13 @@
 ﻿define([
     'activePlaylistView',
-    //  TODO: Convert playlistItemInput to a View
-    'playlistItemInput'
-], function (ActivePlaylistView) {
+    'playlistItemInputView'
+], function (ActivePlaylistView, PlaylistItemInputView) {
     'use strict';
 
     var ActivePlaylistTabView = Backbone.View.extend({
 
         activePlaylistView: null,
+        playlistItemInputView: null,
 
         initialize: function () {
 
@@ -15,7 +15,11 @@
             this.activePlaylistView = new ActivePlaylistView({
                 model: this.model
             });
-           
+
+            this.playlistItemInputView = new PlaylistItemInputView({
+                model: this.model
+            });
+
         },
 
         changeModel: function (newModel) {
@@ -23,6 +27,7 @@
 
             //  TODO: Destroy and re-create the view instead of calling changeModel.
             this.activePlaylistView.changeModel(newModel);
+            this.playlistItemInputView.changeModel(newModel);
         }
 
     });

@@ -142,7 +142,7 @@
     <Content Include="js\foreground\view\volumeControlView.js" />
     <Content Include="js\foreground\view\activePlaylistTab\playlistItemInput.js" />
     <Content Include="js\foreground\view\activePlaylistTab\activePlaylistView.js" />
-    <Content Include="js\foreground\view\activeFolderTab\playlistInput.js" />
+    <Content Include="js\foreground\view\activeFolderTab\playlistInputView.js" />
     <Content Include="js\foreground\view\activeFolderTab\activeFolderView.js" />
     <Content Include="js\foreground\view\progressBarView.js" />
     <Content Include="js\foreground\requirePaths.js" />

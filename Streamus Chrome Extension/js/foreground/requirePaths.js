@@ -40,7 +40,7 @@ var require = {
         'user': 'foreground/model/user',
         
         //  View:
-        'contentHeader': 'foreground/view/contentHeader',
+        'contentHeaderView': 'foreground/view/contentHeaderView',
         'contextMenuView': 'foreground/view/contextMenuView',
         'dialogView': 'foreground/view/dialogView',
         'headerTitleView': 'foreground/view/headerTitleView',
@@ -59,13 +59,13 @@ var require = {
         //  View -> ActiveFolderTab:
         'activeFolderTabView': 'foreground/view/activeFolderTab/activeFolderTabView',
         'activeFolderView': 'foreground/view/activeFolderTab/activeFolderView',
-        'playlistInput': 'foreground/view/activeFolderTab/playlistInput',
+        'playlistInputView': 'foreground/view/activeFolderTab/playlistInputView',
         'playlistView': 'foreground/view/activeFolderTab/playlistView',
 
         //  View -> ActivePlaylistTab:
         'activePlaylistTabView': 'foreground/view/activePlaylistTab/activePlaylistTabView',
         'activePlaylistView': 'foreground/view/activePlaylistTab/activePlaylistView',
-        'playlistItemInput': 'foreground/view/activePlaylistTab/playlistItemInput',
+        'playlistItemInputView': 'foreground/view/activePlaylistTab/playlistItemInputView',
         'playlistItemView': 'foreground/view/activePlaylistTab/playlistItemView',
         
         //  View -> Stream:

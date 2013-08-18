@@ -183,9 +183,6 @@
                 </div>
                 
                 <div id="HomeContent" class="content">
-                    <div id="CurrentPlaylistItemDisplay" class="header">
-                    </div>
-
                     <div id="ActivePlaylistView" class="list">
                         <div class="emptyListNotification">
                             This Playlist is empty. Try adding some videos by clicking above.
@@ -196,8 +193,6 @@
                 </div>
 
                 <div id="PlaylistsContent" class="content">
-                    <div id="PlaylistDisplay" class="header">
-                    </div>
 
                     <div id="ActiveFolderView" class="list">
                         <div class="emptyListNotification">
@@ -284,6 +279,32 @@
                     <% }); %>
                 </ul>
             <% }); %>
+
+        </script>
+        
+        <script type="text/template" id="contentHeaderTemplate">
+            
+            <span class="headerTitle">
+                <input class="headerInput" type="text" value="<%- title %>" />
+            </span>
+            
+            <div class="addButton">
+
+                <svg id="addButtonSvg">
+                    <rect x="4.625" y="0" width="2.75" height="12"/><rect x="0" y="4.625" width="12" height="2.75"/>
+                </svg>
+
+                <span class="addText"></span>
+                <input class="addInput" type="text" maxlength="255" />
+                
+                <div class="addCancelIcon">
+                    <svg id="addCancelIconSvg">
+                        <path d="M0,2 L2,0 L12,10 L10,12z"/>
+                        <path d="M12,2 L10,0 L0,10 L2,12z"/>
+                    </svg>
+                </div>
+
+            </div>
 
         </script>
 
