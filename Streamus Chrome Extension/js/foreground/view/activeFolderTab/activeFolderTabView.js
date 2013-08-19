@@ -1,11 +1,12 @@
 ﻿define([
     'activeFolderView',
-    //  TODO: Convert playlistInput to a View
     'playlistInputView'
 ], function (ActiveFolderView, PlaylistInputView) {
     'use strict';
 
     var ActiveFolderTabView = Backbone.View.extend({
+        
+        el: $('#PlaylistsContent'),
             
         activeFolderView: null,
         playlistInputView: null,
@@ -16,11 +17,12 @@
             this.activeFolderView = new ActiveFolderView({
                 model: this.model
             });
-
+            
             this.playlistInputView = new PlaylistInputView({
                 model: this.model
             });
 
+            this.$el.prepend(this.playlistInputView.render().el);
         },
         
         changeModel: function(newModel) {

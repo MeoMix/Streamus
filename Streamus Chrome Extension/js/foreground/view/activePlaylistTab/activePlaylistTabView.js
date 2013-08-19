@@ -6,6 +6,8 @@
 
     var ActivePlaylistTabView = Backbone.View.extend({
 
+        el: $('#HomeContent'),
+        
         activePlaylistView: null,
         playlistItemInputView: null,
 
@@ -19,6 +21,8 @@
             this.playlistItemInputView = new PlaylistItemInputView({
                 model: this.model
             });
+            
+            this.$el.prepend(this.playlistItemInputView.render().el);
 
         },
 

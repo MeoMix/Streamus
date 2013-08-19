@@ -9,11 +9,22 @@
        
         contentHeaderView: null,
         
+        className: 'header',
+        
         events: {
             
             'keydown .addInput': 'processInputOnEnter',
-            'paste drop focus .input': 'processInput'
+            'paste .addInput': 'processInput',
+            'drop .addInput': 'processInput',
+            'focus .addInput': 'processInput'
             
+        },
+        
+        render: function () {
+            this.$el.html();
+            this.$el.append(this.contentHeaderView.render().el);
+
+            return this;
         },
 
         initialize: function () {
@@ -34,12 +45,10 @@
 
             });
 
-            //  TODO: Instead of referencing this have the parent append and introduce a render method.
-            $('#PlaylistsContent').prepend(this.contentHeaderView.render().el);
         },
         
         processInputOnEnter: function (event) {
-            console.log("Event:", event);
+
             if (event.which === $.ui.keyCode.ENTER) {
                 this.processInput();
             }
@@ -52,6 +61,7 @@
             
             //  Wrap in a setTimeout to let drop event finish (no real noticeable lag but keeps things DRY easier)
             setTimeout(function () {
+
                 var userInput = self.contentHeaderView.getUserInput();
 
                 //  Only add the playlist if something was provided.
@@ -59,7 +69,7 @@
                     self.contentHeaderView.clearUserInput();
 
                     var dataSource = YouTubeDataAPI.parseUrlForDataSource(userInput);
-
+                    
                     switch (dataSource.type) {
                         case DataSource.USER_INPUT:
                             self.model.addPlaylistByDataSource(userInput, dataSource);
@@ -83,7 +93,7 @@
                             self.model.addPlaylistByDataSource('', dataSource);
                             break;
                         default:
-                            console && console.error("Unhandled dataSource type:", dataSource.type);
+                            console.error("Unhandled dataSource type:", dataSource.type);
                     }
 
                 }

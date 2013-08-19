@@ -127,7 +127,7 @@
     <Content Include="js\inject\streamusShareInject.js" />
     <Content Include="js\enum\dataSource.js" />
     <Content Include="js\foreground\model\user.js" />
-    <Content Include="js\foreground\view\contentHeader.js" />
+    <Content Include="js\foreground\view\contentHeaderView.js" />
     <Content Include="js\foreground\foreground.js" />
     <Content Include="js\foreground\view\headerTitleView.js" />
     <Content Include="js\foreground\model\settings.js" />
@@ -140,7 +140,7 @@
     <Content Include="js\foreground\view\buttons\shuffleButtonView.js" />
     <Content Include="js\foreground\view\buttons\nextButtonView.js" />
     <Content Include="js\foreground\view\volumeControlView.js" />
-    <Content Include="js\foreground\view\activePlaylistTab\playlistItemInput.js" />
+    <Content Include="js\foreground\view\activePlaylistTab\playlistItemInputView.js" />
     <Content Include="js\foreground\view\activePlaylistTab\activePlaylistView.js" />
     <Content Include="js\foreground\view\activeFolderTab\playlistInputView.js" />
     <Content Include="js\foreground\view\activeFolderTab\activeFolderView.js" />

@@ -13,25 +13,22 @@ define([
         
         contentHeaderView: null,
         
+        className: 'header',
+        
         events: {
           
             'input .addInput': 'showVideoSuggestions',
-            'paste drop .addInput': 'parseUrlInput',
+            'drop .addInput': 'parseUrlInput',
+            'paste .addInput': 'parseUrlInput',
             'focus .addInput': 'searchIfNotEmpty'
 
         },
         
-        initialize: function () {
+        render: function () {
             var self = this;
 
-            this.contentHeaderView = new ContentHeaderView({
-                model: this.model,
-                buttonText: 'Add Video',
-                inputPlaceholderText: 'Search or Enter YouTube video URL',
-                expanded: true
-            });
-            
-            $('#HomeContent').prepend(this.contentHeaderView.render().el);
+            this.$el.html();
+            this.$el.append(this.contentHeaderView.render().el);
             
             //  Provides the drop-down suggestions and video suggestions.
             this.contentHeaderView.enableAutocompleteOnUserInput({
@@ -54,7 +51,18 @@ define([
                     self.model.addItemByInformation(ui.item.value);
                 }
             });
-            
+
+            return this;
+        },
+        
+        initialize: function () {
+
+            this.contentHeaderView = new ContentHeaderView({
+                model: this.model,
+                buttonText: 'Add Video',
+                inputPlaceholderText: 'Search or Enter YouTube video URL',
+                expanded: true
+            });
             
         },
         

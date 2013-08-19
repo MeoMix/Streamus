@@ -32,8 +32,6 @@ define(function () {
             
             this.buttonText = options.buttonText;
             this.inputPlaceholderText = options.inputPlaceholderText;
-            
-            this.listenTo(this.model, 'change:title', this.render);
 
             //  TODO: I think I might need to re-call this every re-render and keep track of expanded state? Unsure.
             if (options.expanded) {
@@ -62,11 +60,13 @@ define(function () {
             return false;
         },
         
-        updateTitle: function(event) {
+        updateTitle: function (event) {
+            console.log("update title is being called");
             this.model.set('title', $(event.currentTarget).val());
         },
         
-        blurIfEmpty: function(event) {
+        blurIfEmpty: function (event) {
+            console.log("Blur if empty is being called");
             //  Don't blur if they're trying to highlight some text to edit and go outside the bounds.
             if (window.getSelection().toString() === '') {
                 $(event.currentTarget).blur();
