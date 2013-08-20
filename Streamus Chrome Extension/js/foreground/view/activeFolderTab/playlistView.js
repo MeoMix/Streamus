@@ -30,8 +30,6 @@
 
         updateDescription: _.throttle(function (playlistItem) {
 
-            console.log("Update description is firing");
-
             var currentItems = this.model.get('items');
             var currentVideos = currentItems.map(function (currentItem) {
                 return currentItem.get('video');

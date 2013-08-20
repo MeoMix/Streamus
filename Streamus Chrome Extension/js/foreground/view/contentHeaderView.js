@@ -61,12 +61,11 @@ define(function () {
         },
         
         updateTitle: function (event) {
-            console.log("update title is being called");
             this.model.set('title', $(event.currentTarget).val());
         },
         
         blurIfEmpty: function (event) {
-            console.log("Blur if empty is being called");
+
             //  Don't blur if they're trying to highlight some text to edit and go outside the bounds.
             if (window.getSelection().toString() === '') {
                 $(event.currentTarget).blur();
@@ -82,7 +81,6 @@ define(function () {
         },
         
         enableAutocompleteOnUserInput: function (options) {
-            console.log("Found it?", this.$el.find('.addInput').length);
 
             //  http://stackoverflow.com/questions/3488016/using-html-in-jquery-ui-autocomplete
             this.$el.find('.addInput').autocomplete(options).data("ui-autocomplete")._renderItem = function (ul, item) {

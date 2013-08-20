@@ -68,7 +68,6 @@ define([
 
             //  Debounce because I want automatic typing but no reason to spam server with saves.
             this.on('change:title', _.debounce(function (model, title) {
-                console.log("Title is changing!");
 
                 $.ajax({
                     url: Settings.get('serverURL') + 'Playlist/UpdateTitle',
@@ -101,10 +100,8 @@ define([
                     
             });
 
-            console.log("Binding to event");
             this.listenTo(this.get('items'), 'add empty', this.setDisplayInfo);
             this.setDisplayInfo();
-
 
             this.listenTo(this.get('items'), 'remove', function (removedPlaylistItem) {
                 var playlistItems = self.get('items');
@@ -132,7 +129,6 @@ define([
         },
         
         setDisplayInfo: function () {
-            console.log("setDisplayInfo is firing");
 
             var videos = this.get('items').pluck('video');
             var videoDurations = _.invoke(videos, 'get', 'duration');
@@ -143,8 +139,6 @@ define([
 
             var displayInfo = 'Videos: ' + videos.length + ', Duration: ' + Utility.prettyPrintTime(sumVideoDurations);
             this.set('displayInfo', displayInfo);
-
-            console.log("Set display info to:", displayInfo);
 
         },
             
@@ -237,10 +231,8 @@ define([
                         firstItem.set('previousItemId', itemsToSave.at(itemsToSave.length - 1).get('id'));
                     }
                     
-                    console.log("Saved items successfully. Adding items", self.get('items'), itemsToSave);
                     self.get('items').add(itemsToSave.models);
-                    console.log("Items after add:", self.get('items'));
-
+   
                     if (callback) {
                         callback();
                     }

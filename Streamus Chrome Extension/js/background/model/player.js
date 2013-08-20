@@ -107,16 +107,19 @@ define([
             });
 
             youTubeVideo.on('waiting', function () {
+                console.log("waiting!");
                 self.set('state', PlayerState.BUFFERING);
             });
 
             youTubeVideo.on('seeking', function () {
+                console.log("Seeking!");
                 if (self.get('state') === PlayerState.PLAYING) {
                     self.set('state', PlayerState.BUFFERING);
                 }
             });
 
             youTubeVideo.on('seeked', function () {
+                console.log("seeked!");
                 if (self.get('state') === PlayerState.BUFFERING) {
                     self.set('state', PlayerState.PLAYING);
                 }
@@ -136,6 +139,7 @@ define([
             });
 
             youTubeVideo.on('loadedmetadata', function () {
+                console.log("loadedmetadeta!");
                 this.currentTime = self.get('currentTime');
             });
             
@@ -174,7 +178,7 @@ define([
             });
 
             YouTubePlayerAPI.once('change:ready', function () {
-                console.log("youTubePlayerAPI is now ready");
+
                 //  Injected YouTube code creates a global YT object with which a 'YouTube Player' object can be created.
                 //  https://developers.google.com/youtube/iframe_api_reference#Loading_a_Video_Player
                 youTubePlayer = new window.YT.Player('MusicHolder', {
@@ -184,9 +188,11 @@ define([
                             self.set('muted', youTubePlayer.isMuted());
                             self.set('volume', youTubePlayer.getVolume());
 
-                            console.log("PLAYER IS NOW SET TO READY");
                             //  Announce that the YouTube Player is ready to go.
                             self.set('ready', true);
+                        },
+                        'onStateChange': function(state){
+                            console.log("onStateChange:", state);
                         },
                         'onError': function (error) {
 
@@ -324,19 +330,25 @@ define([
             }
         },
 
+        //  TODO: For certain long videos, (example: http://youtu.be/_EKBpHbRTPI ) seekTo's seeked event never returns.
+        //  I think this is due to YouTube's old implementation. I might be able to get around this by calling loadVideoById at a specific time-point??
         //  seekTo can be spammed via mousewheel scrolling so debounce as to not spam the player, but still capture final result.
         seekTo: _.debounce(function (timeInSeconds) {
+
+            //  Seek even if streamusPlayer is defined because we probably need to update the blob if it is.
+            //  The true paramater allows the youTubePlayer to seek ahead past its buffered video.
+            youTubePlayer.seekTo(timeInSeconds, true);
+
+            console.log("Seeking to:", timeInSeconds);
 
             this.set('currentTime', timeInSeconds);
             var streamusPlayer = this.get('streamusPlayer');
 
             if (streamusPlayer != null) {
+                console.log("Setting streamus player's time in seconds");
                 streamusPlayer.currentTime = timeInSeconds;
             }
 
-            //  Seek even if streamusPlayer is defined because we probably need to update the blob if it is.
-            //  The true paramater allows the youTubePlayer to seek ahead past its buffered video.
-            youTubePlayer.seekTo(timeInSeconds, true);
         }, 250),
         
         //  Attempt to set playback quality to suggestedQuality or highest possible.

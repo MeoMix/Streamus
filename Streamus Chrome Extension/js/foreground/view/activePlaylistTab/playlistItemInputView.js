@@ -69,6 +69,7 @@ define([
         changeModel: function(newModel) {
             this.model = newModel;
             this.contentHeaderView.changeModel(newModel);
+            this.render();
 
         },
         

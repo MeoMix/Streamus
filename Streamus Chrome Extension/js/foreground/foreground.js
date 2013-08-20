@@ -2,9 +2,9 @@
 //  background YouTube player to load entirely before allowing foreground to open.
 define([
     'settings',
-    'user',
     'activeFolderTabView',
     'activePlaylistTabView',
+    'streamView',
 
     'volumeControlView',
     'playPauseButtonView',
@@ -15,10 +15,11 @@ define([
     'repeatButtonView',
     'progressBarView',
     'videoDisplayView',
-    'headerTitleView',
-    'streamView'
-], function (Settings, User, ActiveFolderTabView, ActivePlaylistTabView) {
+    'headerTitleView'
+], function (Settings, ActiveFolderTabView, ActivePlaylistTabView, StreamView) {
     'use strict';
+
+    var activeFolder = chrome.extension.getBackgroundPage().User.get('folders').getActiveFolder();
 
     //  TODO: There should probably be a ContentButtonView and Model which keep track of these properties and not just done on the ForegroundView.
     var ForegroundView = Backbone.View.extend({
@@ -26,11 +27,15 @@ define([
         el: $('#contentWrapper'),
         
         activeFolderTabView: new ActiveFolderTabView({
-            model: User.get('folders').getActiveFolder()
+            model: activeFolder
         }),
 
         activePlaylistTabView: new ActivePlaylistTabView({
-            model: User.get('folders').getActiveFolder().getActivePlaylist()
+            model: activeFolder.getActivePlaylist()
+        }),
+
+        streamView: new StreamView({
+            model: activeFolder
         }),
 
         events: {
@@ -64,6 +69,7 @@ define([
                 //  TODO: Instead of calling changeModel, I would like to remove the view and re-add it.
                 if (isActive) {
                     self.activeFolderTabView.changeModel(folder);
+                    self.streamView.model = folder;
                 }
 
             });
@@ -87,9 +93,7 @@ define([
         },
 
         showContent: function (event) {
-
             var clickedMenuButton = $(event.currentTarget);
-
             this.setMenuButtonActive(clickedMenuButton);
         },
         

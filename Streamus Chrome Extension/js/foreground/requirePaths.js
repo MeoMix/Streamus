@@ -37,7 +37,6 @@ var require = {
         'player': 'foreground/model/player',
         'settings': 'foreground/model/settings',
         'spinnerBuilder': 'foreground/model/spinnerBuilder',
-        'user': 'foreground/model/user',
         
         //  View:
         'contentHeaderView': 'foreground/view/contentHeaderView',

@@ -25,9 +25,11 @@ $(function () {
                             });
 
                             if (videoStreamSrc.indexOf('blob') > -1) {
+                                console.log("blob");
                                 videoStream.removeAttr('src');
                             }
                             else {
+                                console.log("noblob");
                                 videoStream.removeAttr('src');
 
                                 chrome.runtime.sendMessage({

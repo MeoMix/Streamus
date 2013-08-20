@@ -2,10 +2,9 @@
     'streamItems',
     'streamItemView',
     'contextMenuView',
-    'user',
     'utility',
     'sly'
-], function (StreamItems, StreamItemView, ContextMenuView, User, Utility) {
+], function (StreamItems, StreamItemView, ContextMenuView, Utility) {
     'use strict';
     
     var StreamView = Backbone.View.extend({
@@ -48,15 +47,17 @@
                         var unloadedImgElement = unloadedImgElements[i];
 
                         var rectangle = unloadedImgElement.getBoundingClientRect();
-                        var isInViewport = rectangle.left >= 0 && rectangle.right <= self.$el.width();
+                        
+                        var isInViewportLeftSide = rectangle.right >= 0 && rectangle.right <= self.$el.width();
+                        var isInViewportRightSide = rectangle.left >= 0 && rectangle.left <= self.$el.width();
 
-                        if (isInViewport) {
+                        if (isInViewportRightSide || isInViewportLeftSide) {
                             $(unloadedImgElement).trigger('visible');
                         }
 
                     }
 
-                }, 500)
+                }, 300)
             }).init();
             
             if (StreamItems.length > 0) {
@@ -65,6 +66,10 @@
                 } else {
                     self.addItems(StreamItems.models, true);
                 }
+
+                //  Ensure proper item is selected.
+                var selectedStreamItem = StreamItems.getSelectedItem();
+                this.sly.activate(StreamItems.indexOf(selectedStreamItem));
             }
 
             //  Whenever an item is added to the collection, visually add an item, too.
@@ -133,10 +138,6 @@
                 event: 'visible'
             });
             
-            //  Ensure proper item is selected.
-            var selectedStreamItem = StreamItems.getSelectedItem();
-            //  TODO: ActivateImmediate doesn't seem to be doing anything.
-            this.sly.activate(StreamItems.indexOf(selectedStreamItem), activateImmediate);
             this.overlay.hide();
         },
         
@@ -165,10 +166,7 @@
                     position: 1,
                     text: 'Save Stream as Playlist',
                     onClick: function () {
-
-                        console.log("Pluck and before", StreamItems.length, StreamItems.pluck('video').length);
-
-                        User.get('folders').getActiveFolder().addPlaylistWithVideos('Playlist', StreamItems.pluck('video'));
+                        self.model.addPlaylistWithVideos('Playlist', StreamItems.pluck('video'));
                     }
                 }]
             });
@@ -183,5 +181,5 @@
 
     });
 
-    return new StreamView;
+    return StreamView;
 });

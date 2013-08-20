@@ -5,16 +5,6 @@
 ], function (StreamItems, Player, PlayerState) {
     'use strict';
 
-    var throttledConsoleLog = _.throttle(function () {
-        var args = [];
-        
-        for (var i = 0; i < arguments.length; i++) {
-            args.push(arguments[i]);
-        }
-
-        console.log(args.join(' '));
-    }, 1000);
-
     var VideoDisplayView = Backbone.View.extend({
         el: $('#VideoDisplayView'),
         
@@ -25,8 +15,6 @@
         render: function () {
             var self = this;
 
-            throttledConsoleLog("Rendering:", window != null);
-            
             //  Stop drawing entirely when the player stops.
             if (window != null) {
 
@@ -37,8 +25,6 @@
 
                     var playerState = Player.get('state');
                     
-                    throttledConsoleLog("Player State:", playerState);
-
                     if (playerState == PlayerState.PLAYING) {
                         //  Continously render if playing.
                         if (playerState == PlayerState.PLAYING) {
@@ -56,19 +42,14 @@
                         this.context.drawImage(this.video, 0, 0, this.el.width, this.el.height);
                     }
                     else {
-                        //  TODO: When Streamus pauses the video image degrades because this is drawing instead of using the loaded video's current time.
                         var loadedVideoId = Player.get('loadedVideoId');
 
-                        throttledConsoleLog("Drawing default:", loadedVideoId, playerState);
                         if (loadedVideoId != '') {
-
                             this.videoDefaultImage.src = 'http://i2.ytimg.com/vi/' + loadedVideoId + '/mqdefault.jpg ';
                         }
-
                     }
                     
                 } else {
-                    throttledConsoleLog("Stream item doesn't exist, painting black.");
 
                     setTimeout(function() {
                         //  Clear the canvas by painting over it with black.

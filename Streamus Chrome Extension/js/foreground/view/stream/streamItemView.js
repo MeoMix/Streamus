@@ -1,10 +1,9 @@
 ﻿define([
     'contextMenuView',
     'player',
-    'user',
     'utility',
     'streamItems'
-], function (ContextMenuView, Player, User, Utility, StreamItems) {
+], function (ContextMenuView, Player, Utility, StreamItems) {
     'use strict';
 
     var StreamItemView = Backbone.View.extend({
@@ -63,7 +62,7 @@
                         position: 0,
                         text: 'Add to Playlist',
                         onClick: function () {
-                            User.get('folders').getActiveFolder().getActivePlaylist().addItem(self.model.get('video'));
+                            self.parent.model.getActivePlaylist().addItem(self.model.get('video'));
                         }
                     }, {
                         position: 1,

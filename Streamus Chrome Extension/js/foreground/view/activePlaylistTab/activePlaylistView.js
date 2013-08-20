@@ -113,7 +113,7 @@ define([
         },
         
         addItem: function (playlistItem) {
-            console.log("addItem is firing!");
+
             var playlistItemView = new PlaylistItemView({
                 model: playlistItem
             });

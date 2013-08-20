@@ -88,7 +88,6 @@ define([
             this.model = newModel;
             this.startListeningToPlaylists(newModel.get('playlists'));
 
-            //console.log("ActivePlaylist's model has changed. Re-rendering", this);
             this.render();
         },
 
@@ -239,16 +238,12 @@ define([
             var playlistId = $(event.currentTarget).data('playlistid');
             var playlist = this.model.getPlaylistById(playlistId);
 
-            console.log("I am about to select playlist:", playlist.get('title'), playlist);
-
             //  If the playlist is already active - do nothing
             if (!playlist.get('active')) {
                 //  Deselect the presently active playlist before marking the new one as active.
                 var activePlaylist = this.model.getActivePlaylist();
                 activePlaylist.set('active', false);
                 playlist.set('active', true);
-
-                console.log("Playlist has been marked as active.");
             }
         },
         
@@ -262,10 +257,7 @@ define([
                 var activePlaylistId = activePlaylist.get('id');
                 var activeListItem = this.ul.find('li[data-playlistid="' + activePlaylistId + '"]');
 
-                console.log("activeLIstItem:", activeListItem);
-
                 if (activeListItem.length > 0) {
-                    console.log("scrolling into view");
                     activeListItem.scrollIntoView(useAnimation);
                 }
             }
