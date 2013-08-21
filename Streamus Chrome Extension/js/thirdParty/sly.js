@@ -1485,10 +1485,10 @@
             var delta = normalizeWheelDelta(event.originalEvent);
             if (itemNav) {
                 self[centeredNav ? 'toCenter' : 'toStart'](
-					within((centeredNav ? rel.centerItem : rel.firstItem) + o.scrollBy * delta, 0, items.length)
+					within((centeredNav ? rel.centerItem : rel.firstItem) + o.scrollBy * delta * -1, 0, items.length)
 				);
             } else {
-                self.slideBy(o.scrollBy * delta);
+                self.slideBy(o.scrollBy * delta * -1);
             }
         }
 
