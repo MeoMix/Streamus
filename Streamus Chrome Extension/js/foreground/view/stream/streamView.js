@@ -35,7 +35,8 @@
                 speed: 300,
                 elasticBounds: 1,
                 easing: 'easeOutExpo',
-                clickBar: 1
+                clickBar: 1,
+				scrollBy: 1
             }, {
                 //  This is a pretty costly function because it fires so often. Use native javascript.
                 move: _.throttle(function() {
