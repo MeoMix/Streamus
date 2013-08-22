@@ -2,6 +2,7 @@
     'jquery',
     'backbone',
     'underscore',
+    'googleApiClient',
     'error',
     'iconManager'
 ], function () {

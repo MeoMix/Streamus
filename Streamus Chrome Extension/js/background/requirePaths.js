@@ -17,6 +17,7 @@ var require = {
         'jquery': 'thirdParty/jquery',
         'levenshtein': 'thirdParty/levenshtein',
         'underscore': 'thirdParty/underscore',
+        'googleApiClient': 'thirdParty/googleApiClient',
         
         //  Background:
         'background': 'background/background',

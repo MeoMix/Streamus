@@ -75,5 +75,5 @@
     "css/youTubeInject.css"
   ],
   "content_security_policy": 
-    "script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com https://s.ytimg.com; object-src 'self'"
+    "script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com https://s.ytimg.com https://apis.google.com; object-src 'self'"
 }

@@ -62,7 +62,7 @@ define([
         initialize: function () {
             var self = this;
 
-            var folders = User.get('folders');
+            var folders = chrome.extension.getBackgroundPage().User.get('folders');
 
             this.listenTo(folders, 'change:active', function (folder, isActive) {
                 
