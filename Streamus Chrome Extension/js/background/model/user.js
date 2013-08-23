@@ -124,6 +124,8 @@ define([
             chrome.storage.sync.set(storedKey);
         }
 
+        console.log("user is now LOADED!");
+
         //  Announce that user has loaded so managers can use it to fetch data.
         this.set('loaded', true);
         this.set('dirty', false);

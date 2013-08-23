@@ -14,7 +14,7 @@ require([
 
     //  TODO: This is a really shitty encapsulation break, but it's a lot of work to put a loading over the foreground properly...
     var loadingSpinnerView = new LoadingSpinnerView;
-    $('#contentWrapper').append(loadingSpinnerView.render().el);
+    $('body').append(loadingSpinnerView.render().el);
 
     //  If the user opens the foreground SUPER FAST then requireJS won't have been able to load everything in the background in time.
     var player = chrome.extension.getBackgroundPage().YouTubePlayer;
@@ -45,13 +45,11 @@ require([
         //  If the foreground is opened before the background has had a chance to load, wait for the background.
         //  This is easier than having every control on the foreground guard against the background not existing.
         if (user.get('loaded')) {
+            console.log("User is loaded, calling wait for player");
             waitForPlayerReady();
         } else {
-            user.on('change:loaded', function (model, loaded) {
-                if (loaded) {
-                    waitForPlayerReady();
-                }
-            });
+            console.log("Waiting for user to change to loaded...");
+            user.once('change:loaded', waitForPlayerReady);
         }
 
     }
@@ -59,15 +57,22 @@ require([
     function waitForPlayerReady() {
 
         if (player.get('ready')) {
+            console.log("Player is ready, calling load foreground.");
             //  Load foreground when the background indicates it has loaded.
-            loadingSpinnerView.remove();
-            require(['foreground']);
+            loadForeground();
         } else {
-            player.once('change:ready', function () {
-                loadingSpinnerView.remove();
-                require(['foreground']);
-            });
+            console.log("Waiting for player to change to ready...", player.get('ready'));
+            player.once('change:ready', loadForeground);
         }
 
+    }
+
+    function loadForeground() {
+
+        console.log("Loading foreground");
+
+        $('body').removeClass('backgroundUnloaded');
+        loadingSpinnerView.remove();
+        require(['foreground']);
     }
 });

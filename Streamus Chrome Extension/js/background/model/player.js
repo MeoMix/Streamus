@@ -177,8 +177,17 @@ define([
                 youTubeVideo.attr('src', videoStreamSrc);
             });
 
-            YouTubePlayerAPI.once('change:ready', function () {
+            console.log("READY?!", YouTubePlayerAPI.get('ready'));
 
+            if (YouTubePlayerAPI.get('ready')) {
+                setYouTubePlayer();
+            }
+            else {
+                YouTubePlayerAPI.once('change:ready', setYouTubePlayer);
+            }
+
+            function setYouTubePlayer() {
+                console.log("Setting YouTube player");
                 //  Injected YouTube code creates a global YT object with which a 'YouTube Player' object can be created.
                 //  https://developers.google.com/youtube/iframe_api_reference#Loading_a_Video_Player
                 youTubePlayer = new window.YT.Player('MusicHolder', {
@@ -187,6 +196,8 @@ define([
 
                             self.set('muted', youTubePlayer.isMuted());
                             self.set('volume', youTubePlayer.getVolume());
+
+                            console.log("player is now READY!");
 
                             //  Announce that the YouTube Player is ready to go.
                             self.set('ready', true);
@@ -212,7 +223,7 @@ define([
                     }
                 });
 
-            });
+            };
         },
 
         //  YouTube won't give up the data if the src URL is non-blob unless we trigger a seekTo. Bastards.

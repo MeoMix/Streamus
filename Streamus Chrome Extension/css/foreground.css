@@ -7,6 +7,10 @@
     max-width: 614px;
 }
 
+body.backgroundUnloaded {
+    opacity: 0.5;
+}
+
 /*http://beautifulpixels.com/goodies/create-custom-webkit-scrollbar/*/
 
 ::-webkit-scrollbar {
