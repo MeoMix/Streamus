@@ -97,9 +97,9 @@ body {
     display: none !important;
 }
 
-#navigationView {
+ul.nav {
     margin-bottom: 0;
-    margin-top: 16px;
+    margin-top: 12px;
 }
 
 #homeContent {
@@ -116,9 +116,7 @@ body {
 
 @media (max-width: 1000px) {
     .container-narrow { padding: 20px; }
-
     .logoWrapper { text-align: center; }
-
     .badgeWrapper { text-align: left; }
 }
 
@@ -129,14 +127,17 @@ body {
     }
 
     .legalWrapper { text-align: center; }
-
-    .fb-like { display: none !important; }
+    .social { display: none !important; }
 }
 
 /* Hide the badges when we get really tiny because they don't look great. */
 
 @media (max-width: 352px) {
     .badgeWrapper { display: none !important; }
+}
+
+@media (max-width: 688px) {
+    .zopim { display: none !important; }
 }
 
 #aboutConclusion {

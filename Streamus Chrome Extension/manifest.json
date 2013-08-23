@@ -52,19 +52,19 @@
   ],
   "commands": {
     "nextVideo": {
-      "suggested_key": { "default": "Alt+P" },
+      "suggested_key": { "default": "Ctrl+Shift+Right" },
       "description": "Tells the player to play next video."
     },
     "previousVideo": {
-      "suggested_key": { "default": "Alt+E" },
+      "suggested_key": { "default": "Ctrl+Shift+Left" },
       "description": "Tells the player to play previous video."
     },
     "toggleVideo": {
-      "suggested_key": { "default": "Ctrl+P" },
+      "suggested_key": { "default": "Ctrl+Shift+Up" },
       "description": "Tells the player to toggle the video state."
     },
     "_execute_browser_action": {
-      "suggested_key": { "default": "Ctrl+B" }
+      "suggested_key": { "default": "Ctrl+Shift+Down" }
     }
   },
   "icons": {

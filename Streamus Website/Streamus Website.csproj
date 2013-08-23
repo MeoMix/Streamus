@@ -71,7 +71,7 @@
     <Content Include="js\installButtonView.js" />
     <Content Include="js\jquery.js" />
     <Content Include="js\main.js" />
-    <Content Include="js\olark.js" />
+    <Content Include="js\zopim.js" />
     <Content Include="js\twitterShareButton.js" />
     <Content Include="js\underscore.js" />
     <Content Include="share\index.htm" />

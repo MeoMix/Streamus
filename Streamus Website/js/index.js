@@ -4,11 +4,11 @@
     var BodyView = Backbone.View.extend({
         el: $('body'),
         
-        navigationItems: $('#navigationView ul li'),
+        navigationItems: $('ul.nav li'),
 
         events: {
             'click .logoWrapper a': 'goHome',
-            'click #navigationView ul li': 'selectAndShowView',
+            'click ul.nav li': 'selectAndShowView',
             'click .footer a': 'selectAndShowView'
         },
         
@@ -27,6 +27,7 @@
                 clickedItem.addClass('active');
                 
                 $('.content').hide();
+                
                 $('#' + contentId).show();
                 
             }
