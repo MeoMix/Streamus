@@ -158,7 +158,7 @@ $(function () {
             $(this).val('Working...');
             $(this).attr('disabled', true);
 
-            var match = document.URL.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/);
+            var match = document.URL.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|watch\?.*?\&v=)([^#\&\?]*).*/);
             var videoId = (match && match[2].length === 11) ? match[2] : null;
 
             var playlistId = playlistSelect.val();
