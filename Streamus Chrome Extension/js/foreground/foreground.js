@@ -19,6 +19,8 @@ define([
 ], function (Settings, ActiveFolderTabView, ActivePlaylistTabView, StreamView) {
     'use strict';
 
+    console.log("foreground loaded");
+
     var activeFolder = chrome.extension.getBackgroundPage().User.get('folders').getActiveFolder();
 
     //  TODO: There should probably be a ContentButtonView and Model which keep track of these properties and not just done on the ForegroundView.

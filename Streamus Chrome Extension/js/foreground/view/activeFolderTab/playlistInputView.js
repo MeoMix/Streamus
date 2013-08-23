@@ -92,6 +92,14 @@
                         case DataSource.SHARED_PLAYLIST:
                             self.model.addPlaylistByDataSource('', dataSource);
                             break;
+                        case DataSource.YOUTUBE_FAVORITES:
+
+                            YouTubeDataAPI.getChannelName(dataSource.id, function (channelName) {
+                                var playlistTitle = channelName + '\'s Feed';
+                                self.model.addPlaylistByDataSource(playlistTitle, dataSource);
+                            });
+
+                            break;
                         default:
                             console.error("Unhandled dataSource type:", dataSource.type);
                     }

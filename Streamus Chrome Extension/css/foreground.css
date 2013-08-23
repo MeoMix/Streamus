@@ -34,10 +34,12 @@
 
 #contentWrapper {
     text-align: center;
+    height: 100%;
 }
 
 #content {
     text-align: left;
+    height: 100%;
 }
 
 #content div {

@@ -133,7 +133,7 @@ define([
 
                 var dataSourceType = playlist.get('dataSource').type;
 
-                if (dataSourceType === DataSource.YOUTUBE_PLAYLIST || dataSourceType === DataSource.YOUTUBE_CHANNEL) {
+                if (dataSourceType === DataSource.YOUTUBE_PLAYLIST || dataSourceType === DataSource.YOUTUBE_CHANNEL || dataSourceType === DataSource.YOUTUBE_FAVORITES) {
 
                     if (!playlist.get('dataSourceLoaded')) {
 
