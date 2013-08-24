@@ -1,6 +1,6 @@
 ﻿{
   "name": "Streamus™ (Beta!)",
-  "version": "0.71",
+  "version": "0.76",
   "manifest_version": 2,
   "description": "Streamus turns YouTube into the music player you always wanted. Streamus makes streaming YouTube refreshingly easy.",
   "background":{
@@ -16,8 +16,6 @@
     "default_popup": "foreground.htm"
   },
   "permissions": [
-    "idle",
-    "pushMessaging",
 	"management",
 	"notifications",
     "storage",
@@ -32,39 +30,39 @@
     {
       "matches": ["*://*.youtube.com/embed/*"],
 	  "all_frames": true,
-      "js": ["js/thirdParty/jquery.js", "js/youTubeIFrameInject.js"]
+      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/inject/youTubeIFrameInject.js"]
     },
     {
       "matches": ["*://*.youtube.com/watch?*"],
       "run_at": "document_start",
-      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/youTubeInject.js"]
+      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/inject/youTubeInject.js"]
     },
     {
       "matches": ["*://*.share.streamus.com/*"],
 	  "run_at": "document_start",
-      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/shareInject.js"]
+      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/inject/streamusShareInject.js"]
     },
     {
       "matches": ["*://*.streamus.com/*"],
 	  "run_at": "document_start",
-      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/streamusInject.js"]
+      "js": ["js/thirdParty/underscore.js", "js/thirdParty/jquery.js", "js/inject/streamusInject.js"]
     }
   ],
   "commands": {
     "nextVideo": {
-      "suggested_key": { "default": "Alt+P" },
+      "suggested_key": { "default": "Ctrl+Shift+Right" },
       "description": "Tells the player to play next video."
     },
     "previousVideo": {
-      "suggested_key": { "default": "Alt+E" },
+      "suggested_key": { "default": "Ctrl+Shift+Left" },
       "description": "Tells the player to play previous video."
     },
     "toggleVideo": {
-      "suggested_key": { "default": "Ctrl+P" },
+      "suggested_key": { "default": "Ctrl+Shift+Up" },
       "description": "Tells the player to toggle the video state."
     },
     "_execute_browser_action": {
-      "suggested_key": { "default": "Ctrl+B" }
+      "suggested_key": { "default": "Ctrl+Shift+Down" }
     }
   },
   "icons": {
@@ -75,5 +73,5 @@
     "css/youTubeInject.css"
   ],
   "content_security_policy": 
-    "script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com https://s.ytimg.com; object-src 'self'"
+    "script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com https://s.ytimg.com https://apis.google.com; object-src 'self'"
 }

@@ -36,10 +36,17 @@ body {
     text-align: center;
 }
 
-.jumbotron.short { margin: inherit; }
+.jumbotron.short {
+     margin: inherit;
+}
 
-.jumbotron h1 {
+#homeContent .jumbotron h1 {
     font-size: 72px;
+    line-height: 1;
+}
+
+#aboutContent .jumbotron h1 {
+    font-size: 50px;
     line-height: 1;
 }
 
@@ -90,15 +97,26 @@ body {
     display: none !important;
 }
 
+ul.nav {
+    margin-bottom: 0;
+    margin-top: 12px;
+}
+
+#homeContent {
+    display: inherit;
+}
+
+.content {
+    display: none;
+}
+
 #___plusone_0 {
     margin-left: 4px !important;
 }
 
 @media (max-width: 1000px) {
     .container-narrow { padding: 20px; }
-
     .logoWrapper { text-align: center; }
-
     .badgeWrapper { text-align: left; }
 }
 
@@ -109,12 +127,28 @@ body {
     }
 
     .legalWrapper { text-align: center; }
-
-    .fb-like { display: none !important; }
+    .social { display: none !important; }
 }
 
 /* Hide the badges when we get really tiny because they don't look great. */
 
 @media (max-width: 352px) {
     .badgeWrapper { display: none !important; }
+}
+
+@media (max-width: 688px) {
+    .zopim { display: none !important; }
+}
+
+#aboutConclusion {
+    text-align: center;
+    margin-top: 30px;
+}
+
+#contactContent {
+    text-align: center;
+}
+
+#contactContent ul {
+    list-style: none;
 }

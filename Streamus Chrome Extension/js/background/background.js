@@ -1,9 +1,14 @@
 ﻿//  Background.js is a bit of a dumping ground for code which needs a permanent housing spot.
-define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 'ytHelper', 'repeatButtonState', 'playerState', 'streamItems'],
-    function (player, backgroundManager, settingsManager, pushMessageManager, ytHelper, RepeatButtonState, PlayerState, StreamItems) {
-        'use strict';
-  
-    player.on('change:state', function (model, state) {
+define([
+    'player',
+    'user',
+    'youTubeDataAPI',
+    'playerState',
+    'streamItems'
+], function (Player, User, YouTubeDataAPI, PlayerState, StreamItems) {
+    'use strict';
+
+   Player.on('change:state', function (model, state) {
 
         if (state === PlayerState.PLAYING) {
             //  Check if the foreground UI is open.
@@ -50,10 +55,10 @@ define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 
         }
         else if (command === 'toggleVideo') {
             
-            if (player.isPlaying()) {
-                player.pause();
+            if (Player.isPlaying()) {
+                Player.pause();
             } else {
-                player.play();
+                Player.play();
             }
             
         } else {
@@ -82,22 +87,26 @@ define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 
                 break;
 
             case 'getFolders':
-                var allFolders = backgroundManager.get('allFolders');
+                var allFolders = User.get('folders');
                 sendResponse({ folders: allFolders });
                 break;
             case 'getPlaylists':                
-                var folder = backgroundManager.getFolderById(request.folderId);
+                var folder = User.get('folders').findWhere({ id: request.folderId });
                 var playlists = folder.get('playlists');
 
                 sendResponse({ playlists: playlists });
                 break;
             case 'videoStreamSrcChange':
-                player.set('videoStreamSrc', request.videoStreamSrc);
+                Player.set('videoStreamSrc', request.videoStreamSrc);
+                break;
+            case 'needSeekTo':
+                Player.triggerInitialLoadDataSeekTo();
                 break;
             case 'addVideoByIdToPlaylist':
-                var playlist = backgroundManager.getPlaylistById(request.playlistId);
+                //  TODO: Maybe not active folder.
+                var playlist = User.get('folders').findWhere({ active: true }).get('playlists').get(request.playlistId);
                 
-                ytHelper.getVideoInformation({
+                YouTubeDataAPI.getVideoInformation({
                     videoId: request.videoId,
                     success: function(videoInformation) {
                         playlist.addItemByInformation(videoInformation);
@@ -115,7 +124,7 @@ define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 
 
                 break;
             case 'addPlaylistByShareData':
-                var activeFolder = backgroundManager.get('activeFolder');
+                var activeFolder = User.get('folders').findWhere({ active: true });
                 
                 activeFolder.addPlaylistByShareData(request.shareCodeShortId, request.urlFriendlyEntityTitle, function (playlist) {
 
@@ -136,55 +145,23 @@ define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 
                 });
                 
                 break;
+			case 'getYouTubeInjectClicked':
+				var clickStatus = Settings.get("youTubeInjectClicked");
+
+				sendResponse({
+					result: clickStatus
+				});
+
+				break;
+			case 'setYouTubeInjectClicked':
+				var clickStatus = Settings.get("youTubeInjectClicked");
+				if (!clickStatus) Settings.set("youTubeInjectClicked", true);
+				break;
         }
         
         //  Return true to allow sending a response back.
         return true;
     });
-
-    //  Backbone doesn't provide a way to get the event name when binding like this and I don't want to override their code, so leaving this a little less DRY.
-    backgroundManager.get('allPlaylists').on('add', function (playlist) {
-
-        sendEventToOpenYouTubeTabs('add', 'playlist', {
-            id: playlist.get('id'),
-            title: playlist.get('title')
-        });
-
-    });
-        
-    backgroundManager.get('allPlaylists').on('remove', function (playlist) {
-
-        sendEventToOpenYouTubeTabs('remove', 'playlist', {
-            id: playlist.get('id'),
-            title: playlist.get('title')
-        });
-
-    });
-        
-    backgroundManager.get('allPlaylists').on('change:title', function (playlist) {
-
-        sendEventToOpenYouTubeTabs('rename', 'playlist', {
-            id: playlist.get('id'),
-            title: playlist.get('title')
-        });
-
-    });
-        
-    function sendEventToOpenYouTubeTabs(event, type, data) {
-        
-        chrome.tabs.query({ url: '*://*.youtube.com/watch?v*' }, function (tabs) {
-
-            _.each(tabs, function (tab) {
-                chrome.tabs.sendMessage(tab.id, {
-                    event: event,
-                    type: type,
-                    data: data
-                });
-            });
-
-        });
-        
-    }
         
     //  Modify the iFrame headers to force HTML5 player and to look like we're actually a YouTube page.
     //  The HTML5 player seems more reliable (doesn't crash when Flash goes down) and looking like YouTube
@@ -200,9 +177,9 @@ define(['player', 'backgroundManager', 'settingsManager', 'pushMessageManager', 
             //  I've seen both of these Flash cookies before and I'm not sure if there are more.
             var flashCookieValue = 'f3=40008';
             var alternateFlashCookieValue = 'f3=40000';
-            var html5CookieValue = 'f2=40001000';
-            //var html5CookieValue = 'f2=40000000';
-           
+            //var html5CookieValue = 'f2=40001000';
+            var html5CookieValue = 'f2=40000000';
+
             //  Swap out the flash cookie variable with the HTML5 counterpart.
             if (cookieRequestHeader.value.indexOf(flashCookieValue) !== -1) {
                 

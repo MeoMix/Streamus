@@ -1,5 +1,7 @@
 ﻿//  When clicked -- goes to the next video. Can potentially go from the end of the list to the front if repeat playlist is toggled on
-define(['video'], function (Video) {
+define([
+    'video'
+], function (Video) {
     'use strict';
    
     var StreamItem = Backbone.Model.extend({

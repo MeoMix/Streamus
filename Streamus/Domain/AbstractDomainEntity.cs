@@ -5,7 +5,7 @@ namespace Streamus.Domain
 {
     public abstract class AbstractDomainEntity<T> : IAbstractDomainEntity<T>
     {
-        public T Id { get; set; }
+        public virtual T Id { get; set; }
 
         private int? _oldHashCode;
         public override int GetHashCode()

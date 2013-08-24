@@ -1,4 +1,7 @@
-﻿define(['settingsManager', 'player'], function(settingsManager, player){
+﻿define([
+    'settings',
+    'player'
+], function (Settings, Player) {
     'use strict';
 
     var suggestedQualitySelectView = Backbone.View.extend({
@@ -10,7 +13,7 @@
         
         initialize: function() {
             //  Initialize to whatever's stored in localStorage.
-            this.$el.val(settingsManager.get('suggestedQuality'));
+            this.$el.val(Settings.get('suggestedQuality'));
         },
         
         setSuggestedQuality: function () {
@@ -18,8 +21,8 @@
             //  Write user's choice to localStorage.
             var suggestedQuality = this.$el.val();
 
-            settingsManager.set('suggestedQuality', suggestedQuality);
-            player.setSuggestedQuality(suggestedQuality);
+            Settings.set('suggestedQuality', suggestedQuality);
+            Player.setSuggestedQuality(suggestedQuality);
 
         }
     });

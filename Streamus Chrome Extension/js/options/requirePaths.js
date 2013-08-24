@@ -7,7 +7,7 @@ var require = {
         'backbone': 'thirdParty/backbone',
         'underscore': 'thirdParty/underscore',
         'options': 'options/options',
-        'settingsManager': 'options/settingsManager',
+        'settings': 'options/settings',
         'player': 'options/player'
     }   
 };

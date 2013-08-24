@@ -1,4 +1,5 @@
-﻿using Streamus.Domain;
+﻿using Streamus.Dao;
+using Streamus.Domain;
 using Streamus.Domain.Managers;
 using Streamus.Dto;
 using System;
@@ -11,7 +12,6 @@ namespace Streamus.Controllers
     public class PlaylistItemController : Controller
     {
         private static readonly PlaylistItemManager PlaylistItemManager = new PlaylistItemManager();
-        private static readonly PushMessageManager PushMessageManager = new PushMessageManager();
 
         [HttpPost]
         public JsonDataContractActionResult Create(PlaylistItemDto playlistItemDto)
@@ -23,9 +23,6 @@ namespace Streamus.Controllers
             PlaylistItemManager.Save(playlistItem);
             
             PlaylistItemDto savedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
-
-            PushMessageDto pushMessageDto = new PushMessageDto(savedPlaylistItemDto);
-            PushMessageManager.SendPushMessage(playlistItem.Playlist.Folder.User.Id, pushMessageDto.ToJson());
 
             return new JsonDataContractActionResult(savedPlaylistItemDto);
         }

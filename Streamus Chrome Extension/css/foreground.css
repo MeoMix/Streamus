@@ -7,6 +7,10 @@
     max-width: 614px;
 }
 
+body.backgroundUnloaded {
+    opacity: 0.5;
+}
+
 /*http://beautifulpixels.com/goodies/create-custom-webkit-scrollbar/*/
 
 ::-webkit-scrollbar {
@@ -32,6 +36,16 @@
     height: 50px;
 }
 
+#contentWrapper {
+    text-align: center;
+    height: 100%;
+}
+
+#content {
+    text-align: left;
+    height: 100%;
+}
+
 #content div {
     -webkit-box-sizing: border-box;
     overflow: hidden;
@@ -43,10 +57,11 @@
 
 .halfGradient { background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, .1)), to(rgba(103, 103, 103, .1))); }
 
-#EmptyPlaylistNotification {
+.emptyListNotification {
     font-size: 14px;
     top: 154px;
     left: 70px;
+    display: none;
 }
 
 #head {
@@ -139,6 +154,11 @@
     outline: none;
     padding-left: 3px;
     padding-right: 3px;
+    width: 390px;
+}
+
+.headerInput:hover {
+    border-color: #eee;
 }
 
 .addButton {
@@ -151,6 +171,10 @@
     right: 6px;
     top: 6px;
     width: 120px;
+}
+
+.header.expanded .addButton {
+    width: 545px;   
 }
 
 #addButtonSvg {
@@ -174,7 +198,6 @@
 .addButton input {
     -webkit-box-sizing: border-box;
     -webkit-transition: all 0.5s;
-    background: #fff;
     border: 0;
     border-radius: 5px;
     bottom: 0;
@@ -187,7 +210,9 @@
     top: 0;
 }
 
-.addButton input:focus { outline: none }
+.addButton input:focus {
+     outline: none
+}
 
 .addCancelIcon {
     -webkit-transition: all 0.5s;
@@ -202,6 +227,10 @@
     width: 30px;
 }
 
+.header.expanded .addCancelIcon {
+    right: 0;
+}
+
 .addCancelIcon svg {
     height: 12px;
     left: 50%;
@@ -209,6 +238,20 @@
     position: absolute;
     top: 50%;
     width: 12px;
+}
+
+.addInput {
+    opacity: 0;
+    cursor: pointer;
+}
+
+.header.expanded .addInput {
+    opacity: 1;
+    cursor: auto;
+}
+
+.headerTitle {
+    right: 130px;
 }
 
 .ui-autocomplete {
@@ -351,7 +394,7 @@
 
 #PauseIcon { display: none; }
 
-#VideoTimeProgressBar {
+#ProgressBarView {
     -webkit-appearance: none !important;
     -webkit-box-sizing: border-box;
     background-color: #222;
@@ -367,7 +410,7 @@
     top: 12px;
 }
 
-#VideoTimeProgressBar::-webkit-slider-thumb {
+#ProgressBarView::-webkit-slider-thumb {
     -webkit-appearance: none !important;
     -webkit-box-shadow: 0 0 5px #000;
     background: #eaeaea;
@@ -378,7 +421,7 @@
     width: 12px;
 }
 
-#VideoTimeProgressBar::-webkit-slider-thumb:active { background: #fff; }
+#ProgressBarView::-webkit-slider-thumb:active { background: #fff; }
 
 #timeDisplayWrapper {
     background-color: #666;
@@ -452,7 +495,7 @@
 #VolumeControl.expanded #VolumeSliderWrapper { top: 30px; }
 
 #ShuffleButton:hover,
-#RadioModeButton:hover,
+#RadioButton:hover,
 #RepeatButton:hover { cursor: pointer; }
 
 #ShuffleButton {
@@ -461,7 +504,7 @@
     position: absolute;
 }
 
-#RadioModeButton {
+#RadioButton {
     bottom: 1px;
     left: 28px;
     position: absolute;
@@ -583,7 +626,7 @@
     top: 20px;
 }
 
-#PlaylistList .loaded span { font-weight: bold !important; }
+#ActiveFolderView .loaded span { font-weight: bold !important; }
 
 .muted > svg > path { fill: Red !important; }
 
@@ -658,16 +701,6 @@
 
 .sidebar-button:hover { opacity: 1; }
 
-#LoadingSpinner {
-    height: 48px;
-    margin-left: 10px;
-    margin-top: 14px;
-    width: 48px;
-}
-
-.spinner,
-.spinner * { overflow: visible !important; }
-
 .textWrapper {
     height: 44px;
     left: 60px;
@@ -676,12 +709,11 @@
     right: 0;
     text-overflow: ellipsis;
     white-space: nowrap;
-    width: 384px;
+    top: 0;
 }
 
 #PlaylistsContent .textWrapper {
     left: 10px;
-    width: 434px;
 }
 
 .playlistItemVideoImage {
@@ -794,39 +826,95 @@
     opacity: 1.0;
 }
 
-.star {
-   width: 0px;
-   height: 0px;
-   border-right:  100px solid transparent;
-   border-bottom: 70px  solid #fc2e5a;
-   border-left:   100px solid transparent;
-   -webkit-transform: rotate(35deg) scale(0.1);
+
+/* TODO: All of this is taken from Bootstrap. */
+.alert {
+    padding: 15px 35px 15px 15px;
+    margin-bottom: 20px;
+    color: #c09853;
+    background-color: #fcf8e3;
+    border: 1px solid #fbeed5;
+    z-index: 2000;
+    position: relative !important;
+    display:inline-block;
 }
 
-.star:before {
-   border-bottom: 80px solid #fc2e5a;
-   border-left: 30px solid transparent;
-   border-right: 30px solid transparent;
-   position: absolute;
-   height: 0;
-   width: 0;
-   top: -45px;
-   left: -65px;
-   display: block;
-   content: '';
-   -webkit-transform: rotate(-35deg);
+.alert-error {
+    color: #b94a48;
+    background-color: #f2dede;
+    border-color: #eed3d7;
 }
-.star:after {
-   position: absolute;
-   display: block;
-   color: #fc2e5a;
-   top: 3px;
-   left: -105px;
-   width: 0px;
-   height: 0px;
-   border-right: 100px solid transparent;
-   border-bottom: 70px solid #fc2e5a;
-   border-left: 100px solid transparent;
-   -webkit-transform: rotate(-70deg);
-   content: '';
+
+.alert .close {
+    position: relative;
+    right: -21px;
+    line-height: 10px;
+}
+
+button.close {
+    padding: 0;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    -webkit-appearance: none;
+}
+
+.close {
+    float: right;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 20px;
+    color: #000000;
+    text-shadow: 0 1px 0 #ffffff;
+    opacity: 0.2;
+    filter: alpha(opacity=20);
+}
+
+/* Animation keyframes - you need to add prefixes */
+@-webkit-keyframes spin {
+    from {
+              -webkit-transform: rotate(0deg);
+         }
+    to {
+           -webkit-transform: rotate(360deg);
+       }
+}
+ 
+/* Loading animation container */
+.loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 28px;
+    height: 28px;
+    margin: -14px 0 0 -14px;
+    -webkit-box-sizing: content-box !important;
+}
+ 
+/* Spinning circle (inner circle) */
+.loading .maskedCircle {
+    width: 20px;
+    height: 20px;
+    border-radius: 12px;
+    border: 3px solid #444;
+    -webkit-box-sizing: content-box !important;
+}
+ 
+/* Spinning circle mask */
+.loading .mask {
+    width: 12px;
+    height: 12px;
+    overflow: hidden;
+    -webkit-box-sizing: content-box !important;
+}
+ 
+/* Spinner */
+.loading .spinner {
+    position: absolute;
+    left: 1px;
+    top: 1px;
+    width: 26px;
+    height: 26px;
+    -webkit-animation: spin 1s infinite linear;
+    -webkit-box-sizing: content-box !important;
 }

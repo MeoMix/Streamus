@@ -46,6 +46,7 @@
     <Content Include="css\index.css" />
     <Content Include="favicon.ico" />
     <Content Include="googlee6d26778f04ae1ed.html" />
+    <Content Include="img\sean.jpg" />
     <Content Include="img\chromeWebStoreBadge.png" />
     <Content Include="img\glyphicons-halflings-white.png" />
     <Content Include="img\glyphicons-halflings.png" />
@@ -67,11 +68,12 @@
     <Content Include="js\facebookLikeButton.js" />
     <Content Include="js\googleAnalytics.js" />
     <Content Include="js\index.js" />
+    <Content Include="js\installButtonView.js" />
     <Content Include="js\jquery.js" />
     <Content Include="js\main.js" />
+    <Content Include="js\zopim.js" />
+    <Content Include="js\twitterShareButton.js" />
     <Content Include="js\underscore.js" />
-    <Content Include="legal\privacy.htm" />
-    <Content Include="legal\terms-of-use.htm" />
     <Content Include="share\index.htm" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -79,7 +81,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
     <None Include="Properties\PublishProfiles\Streamus Website.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

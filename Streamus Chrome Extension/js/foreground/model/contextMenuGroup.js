@@ -1,4 +1,6 @@
-﻿define(['contextMenuItems'], function (ContextMenuItems) {
+﻿define([
+    'contextMenuItems'
+], function (ContextMenuItems) {
     'use strict';
 
     var ContextMenuGroup = Backbone.Model.extend({

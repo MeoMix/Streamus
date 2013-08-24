@@ -1,14 +1,25 @@
 ﻿var StreamItems;
 
-define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video', 'helpers'], function(StreamItem, settingsManager, RepeatButtonState, ytHelper, Video, helpers) {
+define([
+    'streamItem',
+    'settings',
+    'repeatButtonState',
+    'youTubeDataAPI',
+    'video',
+    'utility',
+    'player',
+    'playerState'
+], function (StreamItem, Settings, RepeatButtonState, YouTubeDataAPI, Video, Utility, Player, PlayerState) {
     'use strict';
 
     var streamItemsCollection = Backbone.Collection.extend({
         model: StreamItem,
 
-        initialize: function() {
+        initialize: function () {
+            //  TODO: Probably make a stream model instead of extending streamItems
             //  Give StreamItems a history: https://github.com/jashkenas/backbone/issues/1442
             _.extend(this, { history: [] });
+            _.extend(this, { bannedVideoIdList: [] });
 
             var self = this;
 
@@ -25,17 +36,31 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
 
                 var videoId = addedStreamItem.get('video').get('id');
 
-                ytHelper.getRelatedVideoInformation(videoId, function(relatedVideoInformation) {
+                YouTubeDataAPI.getRelatedVideoInformation(videoId, function (relatedVideoInformation) {
+
+                    if (relatedVideoInformation == null) throw "Related video information not found." + videoId;
+
                     addedStreamItem.set('relatedVideoInformation', relatedVideoInformation);
                 });
 
             });
 
             this.on('change:selected', function(changedStreamItem, selected) {
-
+                //  TODO: Remember selected state in local storage.
                 //  Ensure only one streamItem is selected at a time by de-selecting all other selected streamItems.
                 if (selected) {
                     this.deselectAllExcept(changedStreamItem.cid);
+
+                    var videoId = changedStreamItem.get('video').get('id');
+
+                    //  Maintain the state of the player by playing or cueuing based on current player state.
+                    var playerState = Player.get('state');
+
+                    if (playerState === PlayerState.PLAYING || playerState === PlayerState.ENDED) {
+                        Player.loadVideoById(videoId);
+                    } else {
+                        Player.cueVideoById(videoId);
+                    }
                 }
 
             });
@@ -43,6 +68,9 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
             this.on('remove', function(removedStreamItem, collection, options) {
                 if (this.length === 0) {
                     this.trigger('empty');
+
+                    //  TODO: Clear localStorage once I write to local storage.
+                    Player.stop();
                 }
 
                 if (removedStreamItem.get('selected') && this.length > 0) {
@@ -90,18 +118,18 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
                 this.at(0).set('selected', true);
             }
 
-            //  TODO: Could probably be improved for very large playlists being added.
             //  Take a statistically significant sample of the videos added and fetch their relatedVideo information.
             var sampleSize = streamItemsFromCollection.length >= 50 ? 50 : streamItemsFromCollection.length;
-            var randomSampleIndices = helpers.getRandomNonOverlappingNumbers(sampleSize, streamItemsFromCollection.length);
+            var randomSampleIndices = Utility.getRandomNonOverlappingNumbers(sampleSize, streamItemsFromCollection.length);
 
             var randomVideoIds = _.map(randomSampleIndices, function (randomSampleIndex) {
                 return streamItemsFromCollection[randomSampleIndex].get('video').get('id');
             });
 
-            //  Fetch all the related videos for videos on load. I don't want to save these to the DB because they're bulky and constantly change.
+            //  Fetch all the related videos for videos on load.
             //  Data won't appear immediately as it is an async request, I just want to get the process started now.
-            ytHelper.getBulkRelatedVideoInformation(randomVideoIds, function (bulkInformationList) {
+
+            YouTubeDataAPI.getBulkRelatedVideoInformation(randomVideoIds, function (bulkInformationList) {
 
                 _.each(bulkInformationList, function (bulkInformation) {
                     var videoId = bulkInformation.videoId;
@@ -113,7 +141,7 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
                     streamItem.set('relatedVideoInformation', bulkInformation.relatedVideoInformation);
 
                 });
-                
+
             });
 
             this.trigger('addMultiple', streamItemsFromCollection);
@@ -134,14 +162,22 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
         getSelectedItem: function () {
             return this.findWhere({ selected: true }) || null;
         },
+        
+        //  TODO: Change getRelatedVideos into a property so I can watch for relatedVideos existing.
+        //  Take each streamItem's array of related videos, pluck them all out into a collection of arrays
+        //  then flatten the arrays into a collection of videos.
+        getRelatedVideos: function() {
 
-        getRandomRelatedVideo: function() {
+            //  Find all streamItem entities which have related video information.
+            //  Some might not have information. This is OK. Either YouTube hasn't responded yet or responded with no information. Skip these.
+            var streamItemsWithInfo = this.filter(function (streamItem) {
+                return streamItem.get('relatedVideoInformation') != null;
+            });
 
-            //  Take each streamItem's array of related videos, pluck them all out into a collection of arrays
-            //  then flatten the arrays into a collection of videos.
-            var relatedVideos = _.flatten(this.map(function(streamItem) {
+            //  Create a list of all the related videos from all of the information of stream items.
+            var relatedVideos = _.flatten(_.map(streamItemsWithInfo, function (streamItem) {
 
-                return _.map(streamItem.get('relatedVideoInformation'), function(relatedVideoInformation) {
+                return _.map(streamItem.get('relatedVideoInformation'), function (relatedVideoInformation) {
 
                     return new Video({
                         videoInformation: relatedVideoInformation
@@ -153,20 +189,22 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
 
             //  Don't add any videos that are already in the stream.
             var self = this;
-            relatedVideos = _.filter(relatedVideos, function(relatedVideo) {
-                var alreadyExistingItem = self.find(function(streamItem) {
-                    var sameVideoId = streamItem.get('video').get('id') === relatedVideo.get('id');
-                    //  TODO: I don't think this does quite what I want it to do.
-                    //var similiarVideoName = levDistance(item.get('video').get('title'), relatedVideo.get('title')) < 3;
 
-                    return sameVideoId; // || similiarVideoName;
+            relatedVideos = _.filter(relatedVideos, function (relatedVideo) {
+                var alreadyExistingItem = self.find(function (streamItem) {
+
+                    var sameVideoId = streamItem.get('video').get('id') === relatedVideo.get('id');
+
+                    var inBanList = _.contains(self.bannedVideoIdList, relatedVideo.get('id'));
+
+                    return sameVideoId || inBanList;
                 });
 
                 return alreadyExistingItem == null;
             });
 
             // Try to filter out 'playlist' songs, but if they all get filtered out then back out of this assumption.
-            var tempFilteredRelatedVideos = _.filter(relatedVideos, function(relatedVideo) {
+            var tempFilteredRelatedVideos = _.filter(relatedVideos, function (relatedVideo) {
                 //  assuming things >8m are playlists.
                 var isJustOneSong = relatedVideo.get('duration') < 480;
                 var isNotLive = relatedVideo.get('title').toLowerCase().indexOf('live') === -1;
@@ -178,16 +216,23 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
                 relatedVideos = tempFilteredRelatedVideos;
             }
 
-            return relatedVideos[_.random(relatedVideos.length - 1)];
-            ;
+            return relatedVideos;
+        },
+
+        getRandomRelatedVideo: function() {
+
+            var relatedVideos = this.getRelatedVideos();
+            var relatedVideo = relatedVideos[_.random(relatedVideos.length - 1)] || null;
+            
+            return relatedVideo;
         },
         
         //  If a streamItem which was selected is removed, selectNext will have a removedSelectedItemIndex provided
         selectNext: function(removedSelectedItemIndex) {
 
-            var shuffleEnabled = settingsManager.get('shuffleEnabled');
-            var radioModeEnabled = settingsManager.get('radioModeEnabled');
-            var repeatButtonState = settingsManager.get('repeatButtonState');
+            var shuffleEnabled = Settings.get('shuffleEnabled');
+            var radioEnabled = Settings.get('radioEnabled');
+            var repeatButtonState = Settings.get('repeatButtonState');
 
             //  If removedSelectedItemIndex is provided, RepeatButtonState -> Video doesn't matter because the video was just deleted.
             if (removedSelectedItemIndex === undefined && repeatButtonState === RepeatButtonState.REPEAT_VIDEO_ENABLED) {
@@ -219,16 +264,25 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
                         if (this.length == 1) {
                             this.at(0).trigger('change:selected', this.at(0), true);
                         }
-                    } else if (radioModeEnabled) {
+                    } else if (radioEnabled) {
 
                         var randomRelatedVideo = this.getRandomRelatedVideo();
 
-                        this.add({
-                            video: randomRelatedVideo,
-                            title: randomRelatedVideo.get('title'),
-                            videoImageUrl: 'http://img.youtube.com/vi/' + randomRelatedVideo.get('id') + '/default.jpg',
-                            selected: true
-                        });
+                        if (randomRelatedVideo === null) {
+
+                            console.error("No related video found.");
+
+                        }
+                        else {
+
+                            this.add({
+                                video: randomRelatedVideo,
+                                title: randomRelatedVideo.get('title'),
+                                videoImageUrl: 'http://img.youtube.com/vi/' + randomRelatedVideo.get('id') + '/default.jpg',
+                                selected: true
+                            });
+
+                        }
 
                     }
 
@@ -249,12 +303,12 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
             //  If no previous item was found in the history, then just go back one item
             if (previousStreamItem == null) {
 
-                var repeatButtonState = settingsManager.get('repeatButtonState');
+                var repeatButtonState = Settings.get('repeatButtonState');
 
                 if (repeatButtonState === RepeatButtonState.REPEAT_VIDEO_ENABLED) {
                     var selectedItem = this.findWhere({ selected: true });
                     selectedItem.trigger('change:selected', selectedItem, true);
-                } else if (settingsManager.get('shuffleEnabled')) {
+                } else if (Settings.get('shuffleEnabled')) {
 
                     var shuffledItems = _.shuffle(this.where({ playedRecently: false }));
                     shuffledItems[0].set('selected', true);
@@ -278,8 +332,16 @@ define(['streamItem', 'settingsManager', 'repeatButtonState', 'ytHelper', 'video
             } else {
                 previousStreamItem.set('selected', true);
             }
-
-
+        },
+        
+        ban: function (streamItem) {
+            this.bannedVideoIdList.push(streamItem.get('video').get('id'));
+        },
+        
+        clear: function() {
+            this.bannedVideoIdList = [];
+            this.reset();
+            this.trigger('empty');
         }
     });
 

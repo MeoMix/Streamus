@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using NHibernate;
 using NUnit.Framework;
 using Streamus.Dao;
 using Streamus.Domain;
@@ -34,6 +35,9 @@ namespace Streamus.Tests.Manager_Tests
 
             User = new UserManager().CreateUser();
             Folder = User.Folders.First();
+
+            //  Ensure Folder is lazily-loaded.
+            NHibernateSessionManager.Instance.Evict(Folder);
 
             Video = Helpers.CreateUnsavedVideoWithId();
             new VideoManager().Save(Video);
@@ -97,7 +101,20 @@ namespace Streamus.Tests.Manager_Tests
             NHibernateSessionManager.Instance.Clear();
 
             Playlist deletedPlaylist = PlaylistDao.Get(playlist.Id);
-            Assert.IsNull(deletedPlaylist);
+
+            bool objectNotFoundExceptionEncountered = false;
+            try
+            {
+                //  Evaluating a lazyily-loaded entity which isn't in the database will throw an ONF exception.
+                Assert.IsNull(deletedPlaylist);
+            }
+            catch (ObjectNotFoundException)
+            {
+                objectNotFoundExceptionEncountered = true;
+            }
+
+            Assert.IsTrue(objectNotFoundExceptionEncountered);
+
         }
     }
 }

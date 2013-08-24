@@ -39,67 +39,34 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.4.5.6\lib\net40\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.Helpers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.4.0.20710.0\lib\net40\System.Web.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.20710.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.Mvc.4.0.20710.0\lib\net40\System.Web.Mvc.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.20710.0\lib\net40\System.Web.Razor.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="background.htm" />
-    <Content Include="js\background\entityAction.js" />
-    <Content Include="js\background\entityType.js" />
     <Content Include="js\background\collection\streamItems.js" />
     <Content Include="js\background\model\streamItem.js" />
-    <Content Include="js\background\pushMessage.js" />
+    <Content Include="js\foreground\view\activeFolderTab\activeFolderTabView.js" />
+    <Content Include="js\foreground\view\activePlaylistTab\activePlaylistTabView.js" />
+    <Content Include="js\thirdParty\googleApiClient.js" />
+    <Content Include="js\utility.js" />
     <Content Include="js\foreground\collection\contextMenuGroups.js" />
     <Content Include="js\foreground\collection\contextMenuItems.js" />
     <Content Include="js\foreground\model\contextMenu.js" />
     <Content Include="js\foreground\model\contextMenuGroup.js" />
     <Content Include="js\foreground\model\contextMenuItem.js" />
+    <Content Include="js\foreground\model\dialog.js" />
+    <Content Include="js\foreground\view\dialogView.js" />
+    <Content Include="js\foreground\view\loadingSpinnerView.js" />
+    <Content Include="js\foreground\view\activePlaylistTab\playlistItemView.js" />
     <Content Include="js\foreground\view\contextMenuView.js" />
-    <Content Include="js\options\settingsManager.js" />
+    <Content Include="js\foreground\view\activeFolderTab\playlistView.js" />
+    <Content Include="js\options\settings.js" />
     <Content Include="js\options\main.js" />
     <Content Include="js\options\options.js" />
     <Content Include="js\options\player.js" />
     <Content Include="js\options\requirePaths.js" />
     <Content Include="js\enum\shareableEntityType.js" />
+    <Content Include="js\thirdParty\jquery.lazyload.js" />
     <Content Include="js\thirdParty\sly.js" />
     <Content Include="options.htm" />
     <Content Include="css\aristo\aristo.css" />
@@ -138,58 +105,52 @@
     <Content Include="img\Yellow 3.png" />
     <Content Include="img\Yellow 4.png" />
     <Content Include="js\background\background.js" />
-    <Content Include="js\background\backgroundManager.js" />
-    <Content Include="js\background\shareCode.js" />
-    <Content Include="js\background\error.js" />
-    <Content Include="js\background\iconManager.js" />
-    <Content Include="js\background\settingsManager.js" />
+    <Content Include="js\background\model\shareCode.js" />
+    <Content Include="js\background\model\error.js" />
+    <Content Include="js\background\model\iconManager.js" />
+    <Content Include="js\background\model\settings.js" />
     <Content Include="js\background\main.js" />
-    <Content Include="js\background\player.js" />
-    <Content Include="js\background\playlist.js" />
-    <Content Include="js\background\playlistItem.js" />
-    <Content Include="js\background\playlistItems.js" />
-    <Content Include="js\background\playlists.js" />
-    <Content Include="js\background\pushMessageManager.js" />
+    <Content Include="js\background\model\player.js" />
+    <Content Include="js\background\model\playlist.js" />
+    <Content Include="js\background\model\playlistItem.js" />
+    <Content Include="js\background\collection\playlistItems.js" />
+    <Content Include="js\background\collection\playlists.js" />
     <Content Include="js\background\requirePaths.js" />
-    <Content Include="js\background\folder.js" />
-    <Content Include="js\background\folders.js" />
-    <Content Include="js\background\user.js" />
-    <Content Include="js\background\video.js" />
-    <Content Include="js\background\videos.js" />
+    <Content Include="js\background\model\folder.js" />
+    <Content Include="js\background\collection\folders.js" />
+    <Content Include="js\background\model\user.js" />
+    <Content Include="js\background\model\video.js" />
+    <Content Include="js\background\collection\videos.js" />
     <Content Include="js\foreground\collection\streamItems.js" />
-    <Content Include="js\foreground\view\streamItemView.js" />
-    <Content Include="js\foreground\view\streamView.js" />
-    <Content Include="js\shareInject.js" />
+    <Content Include="js\foreground\view\stream\streamItemView.js" />
+    <Content Include="js\foreground\view\stream\streamView.js" />
+    <Content Include="js\inject\streamusShareInject.js" />
     <Content Include="js\enum\dataSource.js" />
-    <Content Include="js\foreground\backgroundManager.js" />
-    <Content Include="js\foreground\contentButtons.js" />
-    <Content Include="js\foreground\contentHeader.js" />
-    <Content Include="js\foreground\dialogs.js" />
+    <Content Include="js\foreground\model\user.js" />
+    <Content Include="js\foreground\view\contentHeaderView.js" />
     <Content Include="js\foreground\foreground.js" />
     <Content Include="js\foreground\view\headerTitleView.js" />
-    <Content Include="js\foreground\settingsManager.js" />
+    <Content Include="js\foreground\model\settings.js" />
     <Content Include="js\foreground\main.js" />
-    <Content Include="js\foreground\player.js" />
-    <Content Include="js\foreground\playerControls\playPauseButton.js" />
-    <Content Include="js\foreground\playerControls\previousButton.js" />
-    <Content Include="js\foreground\playerControls\radioModeButton.js" />
-    <Content Include="js\foreground\playerControls\repeatButton.js" />
-    <Content Include="js\foreground\playerControls\shuffleButton.js" />
-    <Content Include="js\foreground\playerControls\nextButton.js" />
-    <Content Include="js\foreground\playerControls\volumeControl.js" />
-    <Content Include="js\foreground\playlistItemsTab\playlistItemInput.js" />
-    <Content Include="js\foreground\playlistItemsTab\playlistItemsDisplay.js" />
-    <Content Include="js\foreground\playlistsTab\playlistInput.js" />
-    <Content Include="js\foreground\playlistsTab\playlistsDisplay.js" />
-    <Content Include="js\foreground\progressBar.js" />
+    <Content Include="js\foreground\model\player.js" />
+    <Content Include="js\foreground\view\buttons\playPauseButtonView.js" />
+    <Content Include="js\foreground\view\buttons\previousButtonView.js" />
+    <Content Include="js\foreground\view\buttons\radioButtonView.js" />
+    <Content Include="js\foreground\view\buttons\repeatButtonView.js" />
+    <Content Include="js\foreground\view\buttons\shuffleButtonView.js" />
+    <Content Include="js\foreground\view\buttons\nextButtonView.js" />
+    <Content Include="js\foreground\view\volumeControlView.js" />
+    <Content Include="js\foreground\view\activePlaylistTab\playlistItemInputView.js" />
+    <Content Include="js\foreground\view\activePlaylistTab\activePlaylistView.js" />
+    <Content Include="js\foreground\view\activeFolderTab\playlistInputView.js" />
+    <Content Include="js\foreground\view\activeFolderTab\activeFolderView.js" />
+    <Content Include="js\foreground\view\progressBarView.js" />
     <Content Include="js\foreground\requirePaths.js" />
-    <Content Include="js\foreground\spinnerManager.js" />
-    <Content Include="js\foreground\view\videoDisplayView.js" />
-    <Content Include="js\helpers.js" />
-    <Content Include="js\streamusInject.js" />
-    <Content Include="js\youTubeInject.js" />
+    <Content Include="js\foreground\model\spinnerBuilder.js" />
+    <Content Include="js\foreground\view\video\videoDisplayView.js" />
+    <Content Include="js\inject\streamusInject.js" />
+    <Content Include="js\inject\youTubeInject.js" />
     <Content Include="js\enum\playerState.js" />
-    <Content Include="js\programState.js" />
     <Content Include="js\enum\repeatButtonState.js" />
     <Content Include="js\tests\main.js" />
     <Content Include="js\tests\requirePaths.js" />
@@ -199,18 +160,15 @@
     <Content Include="js\thirdParty\jasmine.js" />
     <Content Include="js\thirdParty\jquery.js" />
     <Content Include="js\thirdParty\jquery.scrollIntoView.js" />
-    <Content Include="js\thirdParty\jqueryMousewheel.js" />
     <Content Include="js\thirdParty\jqueryUi.js" />
     <Content Include="js\thirdParty\levenshtein.js" />
     <Content Include="js\thirdParty\require.js" />
-    <Content Include="js\thirdParty\jquery.spin.js" />
     <Content Include="js\thirdParty\underscore.js" />
-    <Content Include="js\youTubeIFrameInject.js" />
-    <Content Include="js\youTubePlayerAPI.js" />
-    <Content Include="js\ytHelper.js" />
+    <Content Include="js\inject\youTubeIFrameInject.js" />
+    <Content Include="js\background\model\youTubePlayerAPI.js" />
+    <Content Include="js\youTubeDataAPI.js" />
     <Content Include="tests.htm" />
     <None Include="js\thirdParty\chrome-api-vsdoc.js" />
-    <Content Include="js\thirdParty\MIT.LICENSE" />
     <Content Include="manifest.json" />
   </ItemGroup>
   <PropertyGroup>

@@ -9,14 +9,14 @@ namespace Streamus.Domain
     [DataContract]
     public abstract class AbstractShareableDomainEntity : AbstractDomainEntity<Guid>, IShareableEntity
     {
-        public string Title { get; set; }
+        public virtual string Title { get; set; }
 
         /// <summary>
         ///     Grab the first 40 characters of the title and then trim back to the last whole word.
         ///     Replace spaces with underscores.
         /// </summary>
         /// <returns>A URL friendly title (e.g.): as_one_of_the_few_members_of_congress_who_have </returns>
-        public string GetUrlFriendlyTitle()
+        public virtual string GetUrlFriendlyTitle()
         {
             string shortUrlSubstring = Title.Substring(0, Math.Min(Title.Length, 41));
 
@@ -40,7 +40,7 @@ namespace Streamus.Domain
         ///     Essentially guaranteed unique when performing lookup with shortId + UrlFriendlyTitle
         /// </summary>
         /// <returns>6 digits of Guid without hyphen</returns>
-        public string GetShortId()
+        public virtual string GetShortId()
         {
             return Id.ToString().Replace("-", string.Empty).Substring(0, 12);
         }

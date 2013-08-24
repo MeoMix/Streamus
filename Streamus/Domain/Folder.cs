@@ -9,11 +9,11 @@ namespace Streamus.Domain
     //  Should create Strean objects as a LinkedList so that adding and removing is possible.
     public class Folder : AbstractDomainEntity<Guid>
     {
-        public string Title { get; set; }
+        public virtual string Title { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
-        public ICollection<Playlist> Playlists { get; set; }
-        public Playlist FirstPlaylist { get; set; }
-        public User User { get; set; }
+        public virtual ICollection<Playlist> Playlists { get; set; }
+        public virtual Playlist FirstPlaylist { get; set; }
+        public virtual User User { get; set; }
 
         public Folder()
         {
@@ -31,7 +31,7 @@ namespace Streamus.Domain
             Title = title;
         }
 
-        public Playlist CreateAndAddPlaylist()
+        public virtual Playlist CreateAndAddPlaylist()
         {
             string title = string.Format("New Playlist {0:D4}", Playlists.Count);
             var playlist = new Playlist(title);
@@ -41,10 +41,10 @@ namespace Streamus.Domain
             return playlist;
         }
 
-        public void AddPlaylist(Playlist playlist)
+        public virtual void AddPlaylist(Playlist playlist)
         {
             //  Playlist must be removed from other Folder before AddPlaylist affects it.
-            if (playlist.Folder != null && playlist.Folder != this)
+            if (playlist.Folder != null && playlist.Folder.Id != Id)
             {
                 string message = string.Format("Playlist {0} is already a child of Folder {1}", playlist.Title, playlist.Folder.Title);
                 throw new Exception(message);
@@ -73,7 +73,7 @@ namespace Streamus.Domain
             Playlists.Add(playlist);
         }
 
-        public void RemovePlaylist(Playlist playlist)
+        public virtual void RemovePlaylist(Playlist playlist)
         {
             if (FirstPlaylist == playlist)
             {
@@ -90,7 +90,7 @@ namespace Streamus.Domain
             Playlists.Remove(playlist);
         }
 
-        public void ValidateAndThrow()
+        public virtual void ValidateAndThrow()
         {
             var validator = new FolderValidator();
             validator.ValidateAndThrow(this);
