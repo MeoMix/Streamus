@@ -135,6 +135,9 @@
 
             if (streamItems.length === StreamItems.length) {
                 this.sly.activate(0);
+                
+                //  TODO: This fixes some odd padding issue with slyjs on the first item being added. Not sure why add doesn't fix it? 
+                this.sly.reload();
             }
 
             $(elements).find('img.lazy').lazyload({
@@ -142,7 +145,7 @@
                 container: self.$el,
                 event: 'visible'
             });
-            
+
             this.overlay.hide();
         },
         
