@@ -107,19 +107,16 @@ define([
             });
 
             youTubeVideo.on('waiting', function () {
-                console.log("waiting!");
                 self.set('state', PlayerState.BUFFERING);
             });
 
             youTubeVideo.on('seeking', function () {
-                console.log("Seeking!");
                 if (self.get('state') === PlayerState.PLAYING) {
                     self.set('state', PlayerState.BUFFERING);
                 }
             });
 
             youTubeVideo.on('seeked', function () {
-                console.log("seeked!");
                 if (self.get('state') === PlayerState.BUFFERING) {
                     self.set('state', PlayerState.PLAYING);
                 }
@@ -139,7 +136,6 @@ define([
             });
 
             youTubeVideo.on('loadedmetadata', function () {
-                console.log("loadedmetadeta!");
                 this.currentTime = self.get('currentTime');
             });
             
@@ -177,8 +173,6 @@ define([
                 youTubeVideo.attr('src', videoStreamSrc);
             });
 
-            console.log("READY?!", YouTubePlayerAPI.get('ready'));
-
             if (YouTubePlayerAPI.get('ready')) {
                 setYouTubePlayer();
             }
@@ -187,7 +181,7 @@ define([
             }
 
             function setYouTubePlayer() {
-                console.log("Setting YouTube player");
+
                 //  Injected YouTube code creates a global YT object with which a 'YouTube Player' object can be created.
                 //  https://developers.google.com/youtube/iframe_api_reference#Loading_a_Video_Player
                 youTubePlayer = new window.YT.Player('MusicHolder', {
@@ -197,13 +191,8 @@ define([
                             self.set('muted', youTubePlayer.isMuted());
                             self.set('volume', youTubePlayer.getVolume());
 
-                            console.log("player is now READY!");
-
                             //  Announce that the YouTube Player is ready to go.
                             self.set('ready', true);
-                        },
-                        'onStateChange': function(state){
-                            console.log("onStateChange:", state);
                         },
                         'onError': function (error) {
 
@@ -350,13 +339,10 @@ define([
             //  The true paramater allows the youTubePlayer to seek ahead past its buffered video.
             youTubePlayer.seekTo(timeInSeconds, true);
 
-            console.log("Seeking to:", timeInSeconds);
-
             this.set('currentTime', timeInSeconds);
             var streamusPlayer = this.get('streamusPlayer');
 
             if (streamusPlayer != null) {
-                console.log("Setting streamus player's time in seconds");
                 streamusPlayer.currentTime = timeInSeconds;
             }
 

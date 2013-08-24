@@ -495,7 +495,6 @@ define([
 
                     videosListRequest.execute(function (videosListResponse) {
 
-                        console.log("Videos response:", videosListResponse);
                         var videoInformationList = _.map(videosListResponse.items, function(item) {
 
                             return {
@@ -508,8 +507,6 @@ define([
                             };
 
                         });
-
-                        console.log("VideoInformationList:", videoInformationList);
 
                     });
                 });
