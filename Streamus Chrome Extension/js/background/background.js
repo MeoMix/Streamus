@@ -4,8 +4,10 @@ define([
     'user',
     'youTubeDataAPI',
     'playerState',
-    'streamItems'
-], function (Player, User, YouTubeDataAPI, PlayerState, StreamItems) {
+    'streamItems',
+    'error',
+    'iconManager'
+], function (Player, User, YouTubeDataAPI, PlayerState, StreamItems, Error, IconManager) {
     'use strict';
 
    Player.on('change:state', function (model, state) {
