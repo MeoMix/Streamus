@@ -16,8 +16,6 @@
     "default_popup": "foreground.htm"
   },
   "permissions": [
-    "idle",
-    "pushMessaging",
 	"management",
 	"notifications",
     "storage",

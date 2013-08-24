@@ -12,7 +12,6 @@ namespace Streamus.Controllers
     public class PlaylistItemController : Controller
     {
         private static readonly PlaylistItemManager PlaylistItemManager = new PlaylistItemManager();
-        private static readonly PushMessageManager PushMessageManager = new PushMessageManager();
 
         [HttpPost]
         public JsonDataContractActionResult Create(PlaylistItemDto playlistItemDto)
@@ -24,8 +23,6 @@ namespace Streamus.Controllers
             PlaylistItemManager.Save(playlistItem);
             
             PlaylistItemDto savedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
-
-            PushMessageManager.SendPushMessage(playlistItem.Playlist.Folder.User.Id, "Push Message");
 
             return new JsonDataContractActionResult(savedPlaylistItemDto);
         }

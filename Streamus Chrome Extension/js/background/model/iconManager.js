@@ -5,7 +5,7 @@ define([
 ], function (Player, PlayerState) {
     'use strict';
 
-    var iconManagerModel = Backbone.Model.extend({
+    var IconManager = Backbone.Model.extend({
         //  Begin listening to interesting player events and adjust UI as events happen
         initialize: function () {
 
@@ -76,5 +76,5 @@ define([
         });
     }
 
-    return new iconManagerModel();
+    return new IconManager;
 });

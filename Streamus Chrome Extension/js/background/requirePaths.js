@@ -37,7 +37,6 @@ var require = {
         'player': 'background/model/player',
         'playlist': 'background/model/playlist',
         'playlistItem': 'background/model/playlistItem',
-        'pushMessageManager': 'background/model/pushMessageManager',
         'settings': 'background/model/settings',
         'shareCode': 'background/model/shareCode',
         'streamItem': 'background/model/streamItem',

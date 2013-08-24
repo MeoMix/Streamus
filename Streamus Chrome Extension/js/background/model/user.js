@@ -27,14 +27,6 @@ define([
         initialize: function () {
             
             var self = this;
-            //chrome.idle.setDetectionInterval(15);
-            //chrome.idle.onStateChanged.addListener(function (newState) {
-
-            //    if (newState === 'active' && self.get('dirty')) {
-            //        fetchUser.call(self, false);
-            //    }
-
-            //});
 
             //  chrome.Storage.sync is cross-computer syncing with restricted read/write amounts.
             chrome.storage.sync.get(syncUserIdKey, function (data) {

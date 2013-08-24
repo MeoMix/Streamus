@@ -1,6 +1,5 @@
 ﻿//  Provides an interface to the YouTube iFrame.
 //  Starts up Player object after receiving a ready response from the YouTube API.
-//  TODO: Weird that this requires jQuery but nothing else does.
 define(function () {
     'use strict';
 
@@ -14,7 +13,6 @@ define(function () {
             
             //  This function will be called when the API is fully loaded. Needs to be exposed globally so YouTube can call it.
             window.onYouTubePlayerAPIReady = function () {
-                console.log("onYouTubePlayerAPI is READY!!!!!!!!");
                 self.set('ready', true);
             };
 
@@ -30,5 +28,5 @@ define(function () {
         }
     });
     
-    return new YouTubePlayerAPI;
+    return new YouTubePlayerAPI;    
 });

@@ -115,7 +115,6 @@
     <Content Include="js\background\model\playlistItem.js" />
     <Content Include="js\background\collection\playlistItems.js" />
     <Content Include="js\background\collection\playlists.js" />
-    <Content Include="js\background\model\pushMessageManager.js" />
     <Content Include="js\background\requirePaths.js" />
     <Content Include="js\background\model\folder.js" />
     <Content Include="js\background\collection\folders.js" />
