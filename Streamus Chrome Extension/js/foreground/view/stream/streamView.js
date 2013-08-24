@@ -115,7 +115,7 @@
             this.overlay.hide();
         },
         
-        addItems: function (streamItems, activateImmediate) {
+        addItems: function (streamItems) {
 
             var self = this;
             var streamItemViews = _.map(streamItems, function(streamItem) {
@@ -132,6 +132,10 @@
             });
             
             this.sly.add(elements);
+
+            if (streamItems.length === StreamItems.length) {
+                this.sly.activate(0);
+            }
 
             $(elements).find('img.lazy').lazyload({
                 effect: 'fadeIn',
