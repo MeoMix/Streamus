@@ -21,8 +21,7 @@ require([
     'backbone',
     'googleApiClient',
     'error',
-    'iconManager',
-    'settings'
+    'iconManager'
 ], function ($, _, Backbone, GoogleApiClient, Error, IconManager, Settings) {
     'use strict';
 

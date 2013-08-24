@@ -3,8 +3,9 @@ var Settings = null;
 
 //  Denormalization point for the Background's selected models.
 define([
+    'backbone',
     'repeatButtonState'
-], function (RepeatButtonState) {
+], function (Backbone, RepeatButtonState) {
     'use strict';
 
     var settingsModel = Backbone.Model.extend({
