@@ -114,5 +114,15 @@
 
         return videoId;
     },
+    
+    htmlEscape: function (unsafeString) {
+        var safeString = unsafeString
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+
+        return safeString;
+    }
 
 });

@@ -170,6 +170,7 @@
     <Content Include="tests.htm" />
     <None Include="js\thirdParty\chrome-api-vsdoc.js" />
     <Content Include="manifest.json" />
+    <Content Include="_locales\en\messages.json" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

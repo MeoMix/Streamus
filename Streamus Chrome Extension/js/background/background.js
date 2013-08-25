@@ -6,8 +6,9 @@ define([
     'playerState',
     'streamItems',
     'error',
-    'iconManager'
-], function (Player, User, YouTubeDataAPI, PlayerState, StreamItems, Error, IconManager) {
+    'iconManager',
+    'omnibox'
+], function (Player, User, YouTubeDataAPI, PlayerState, StreamItems, Error, IconManager, Omnibox) {
     'use strict';
 
    Player.on('change:state', function (model, state) {
@@ -42,7 +43,7 @@ define([
         }
 
     });
-    
+
     //  Receive keyboard shortcuts from users.
     chrome.commands.onCommand.addListener(function (command) {
         

@@ -1,0 +1,26 @@
+﻿{
+	"extensionName": {
+		"message": "Streamus™ (Beta!)",
+		"description": "The name of the extesnion."
+	},
+	"extensionDescription" : {
+		"message": "Streamus turns YouTube into the music player you always wanted. Streamus makes streaming YouTube refreshingly easy.",
+		"description": "The description of the extesnion."
+	},
+	"extensionTitle": {
+		"message": "Streamus: Simple, streaming music.",
+		"description": "The title of the extesnion."
+	},
+	"nextVideoCommandDescription": {
+		"message": "Tell Streamus to go to the next video in the stream.",
+		"description": "Describes the action which will occur when the user hits the next video command"
+	},
+	"previousVideoCommandDescription": {
+		"message": "Tell Streamus to go to the previous video in the stream.",
+		"description": "Describes the action which will occur when the user hits the previous video command"
+	},
+	"toggleVideoCommandDescription": {
+		"message": "Tell Streamus to toggle (play/pause) the current video.",
+		"description": "Describes the action which will occur when the user hits the toggle video command"
+	}
+}
