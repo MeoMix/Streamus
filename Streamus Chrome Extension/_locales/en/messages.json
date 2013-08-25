@@ -22,5 +22,74 @@
 	"toggleVideoCommandDescription": {
 		"message": "Tell Streamus to toggle (play/pause) the current video.",
 		"description": "Describes the action which will occur when the user hits the toggle video command"
+	},
+	"addToPlaylist": {
+		"message": "Add to Playlist",
+	},
+	"copyUrl": {
+		"message": "Copy URL"
+	},
+    "copyTitleAndUrl": {
+		"message": "Copy Title - URL"
+	},
+	"deleteVideo": {
+		"message": "Delete Video"
+	},
+	"delete": {
+		"message": "Delete"
+	},
+	"lastPlaylistNoDeleteWarning": {
+		"message": "This is your last Playlist, so you can't delete it."
+	},
+	"addVideoToStream": {
+		"message": "Add Video to Stream"
+	},
+	"addPlaylistToStream": {
+		"message": "Add Playlist to Stream"
+	},
+	"addPlaylistNoAddStreamWarning": {
+		"message": "You need to add items to your Playlist first."
+	},
+	"videoCopyrightBanned": {
+		"message": "Unable to use video because it was banned on copyright grounds."
+	},
+	"banUntilStreamClear": {
+		"message": "Ban until Stream Clear"
+	},
+	"cantBanNeedMoreVideos": {
+		"message": "Your Stream is low on unbanned videos. Try adding more videos before banning again."
+	},
+	"clearStream": {
+		"message": "Clear Stream"
+	},
+	"saveStreamAsPlaylist": {
+		"message": "Save Stream as Playlist"
+	},
+	"addToStreamus": {
+		"message": "Add to Streamus"
+	},
+	"addVideoToStreamus": {
+		"message": "Add Video to Streamus"
+	},
+	"selectPlaylist": {
+		"message": "Select playlist"
+	},
+	"videoAddSuccess": {
+		"message": "Video successfully added to Streamus."
+	},
+	"errorEncountered": {
+		"message": "An error was encountered."
+	},
+	"addVideo": {
+		"message": "Add video"
+	},
+	"working": {
+		"message": "Working..."
+	},
+	"newPlaylist": {
+		"message": "New Playlist"
+	},
+	"emptyStreamItem": {
+		"emptyStreamItem": "Empty Stream Item"
 	}
 }

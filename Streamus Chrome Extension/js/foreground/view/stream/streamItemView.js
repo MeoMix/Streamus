@@ -60,13 +60,13 @@
                 position: 0,
                 items: [{
                         position: 0,
-                        text: 'Add to Playlist',
+                        text: chrome.i18n.getMessage("addToPlaylist"),
                         onClick: function () {
                             self.parent.model.getActivePlaylist().addItem(self.model.get('video'));
                         }
                     }, {
                         position: 1,
-                        text: 'Copy URL',
+                        text: chrome.i18n.getMessage("copyUrl"),
                         onClick: function () {
 
                             chrome.extension.sendMessage({
@@ -77,7 +77,7 @@
                         }
                     }, {
                         position: 2,
-                        text: 'Copy Title - URL',
+                        text: chrome.i18n.getMessage("copyTitleAndUrl"),
                         onClick: function() {
 
                             chrome.extension.sendMessage({
@@ -88,15 +88,15 @@
                         }
                     }, {
                         position: 3,
-                        text: 'Remove ' + this.model.get('title'),
+                        text: chrome.i18n.getMessage("delete"),
                         onClick: function () {
                             self.model.destroy();
                         }
                     }, {
                         position: 4,
-                        text: 'Ban until Stream Clear',
+                        text: chrome.i18n.getMessage("banUntilStreamClear"),
                         disabled: StreamItems.getRelatedVideos().length < 5,
-                        title: StreamItems.getRelatedVideos().length < 5 ? 'Your Stream is low on unbanned videos. Try adding more videos before banning again.' : '',
+                        title: StreamItems.getRelatedVideos().length < 5 ? chrome.i18n.getMessage("cantBanNeedMoreVideos") : '',
                         onClick: function () {
                             StreamItems.ban(self.model);
                             self.model.destroy();

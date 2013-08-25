@@ -184,7 +184,7 @@ define([
                 position: 0,
                 items: [{
                     position: 0,
-                    text: 'Copy URL',
+                    text: chrome.i18n.getMessage("copyUrl"),
                     onClick: function () {
                         chrome.extension.sendMessage({
                             method: 'copy',
@@ -193,7 +193,7 @@ define([
                     }
                 }, {
                     position: 1,
-                    text: 'Copy Title - URL',
+                    text: chrome.i18n.getMessage("copyTitleAndUrl"),
                     onClick: function () {
 
                         chrome.extension.sendMessage({
@@ -203,13 +203,13 @@ define([
                     }
                 }, {
                     position: 2,
-                    text: 'Delete Video',
+                    text: chrome.i18n.getMessage("deleteVideo"),
                     onClick: function () {
                         clickedItem.destroy();
                     }
                 }, {
                     position: 3,
-                    text: 'Add Video to Stream',
+                    text: chrome.i18n.getMessage("addVideoToStream"),
                     onClick: function () {
                         StreamItems.add({
                             id: _.uniqueId('streamItem_'),
@@ -225,7 +225,7 @@ define([
                 position: 1,
                 items: [{
                     position: 0,
-                    text: 'Add Playlist to Stream',
+                    text: chrome.i18n.getMessage("addPlaylistToStream"),
                     onClick: function () {
 
                         var streamItems = self.model.get('items').map(function (playlistItem) {

@@ -172,7 +172,7 @@ define([
                 position: 0,
                 items: [{
                     position: 0,
-                    text: 'Copy URL',
+                    text: chrome.i18n.getMessage("copyUrl"),
                     onClick: function () {
 
                         clickedPlaylist.getShareCode(function (shareCode) {
@@ -192,9 +192,9 @@ define([
                     }
                 }, {
                     position: 1,
-                    text: 'Delete',
+                    text: chrome.i18n.getMessage("delete"),
                     disabled: isDeleteDisabled,
-                    title: isDeleteDisabled ? 'This is your last Playlist, so you can\'t delete it' : '',
+                    title: isDeleteDisabled ? chrome.i18n.getMessage("lastPlaylistNoDeleteWarning") : '',
                     onClick: function () {
 
                         if (!isDeleteDisabled) {
@@ -203,9 +203,9 @@ define([
                     }
                 }, {
                     position: 2,
-                    text: 'Add Playlist to Stream',
+                    text: chrome.i18n.getMessage("addPlaylistToStream"),
                     disabled: isAddPlaylistDisabled,
-                    title: isAddPlaylistDisabled ? 'You need to add items to your Playlist first' : '',
+                    title: isAddPlaylistDisabled ? chrome.i18n.getMessage("addPlaylistNoAddStreamWarning") : '',
                     onClick: function () {
 
                         if (!isAddPlaylistDisabled) {

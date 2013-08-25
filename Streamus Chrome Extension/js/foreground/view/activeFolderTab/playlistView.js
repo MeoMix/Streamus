@@ -28,7 +28,7 @@
             this.listenTo(this.model.get('items'), 'add remove', this.updateDescription);
         },
 
-        updateDescription: _.throttle(function (playlistItem) {
+        updateDescription: _.throttle(function () {
 
             var currentItems = this.model.get('items');
             var currentVideos = currentItems.map(function (currentItem) {

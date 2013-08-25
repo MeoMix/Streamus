@@ -166,13 +166,13 @@
                 position: 1,
                 items: [{
                     position: 0,
-                    text: 'Clear Stream',
+                    text: chrome.i18n.getMessage("clearStream"),
                     onClick: function () {
                         self.clear();
                     }
                 }, {
                     position: 1,
-                    text: 'Save Stream as Playlist',
+                    text: chrome.i18n.getMessage("saveStreamAsPlaylist"),
                     onClick: function () {
                         self.model.addPlaylistWithVideos('Playlist', StreamItems.pluck('video'));
                     }

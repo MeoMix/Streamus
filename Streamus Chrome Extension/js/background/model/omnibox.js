@@ -33,7 +33,7 @@ define([
                 } else {
 
                     //  TODO: Maybe abort ajax requests during typing.
-                    YouTubeDataAPI.search(trimmedSearchText, function (videoInformationList) {
+                    YouTubeDataAPI.quickSearch(trimmedSearchText, function (videoInformationList) {
 
                         var suggestions = _.map(videoInformationList, function (videoInformation) {
 
@@ -41,10 +41,16 @@ define([
                                 videoInformation: videoInformation
                             });
                             self.get('suggestedVideos').add(video);
-                            
-                            var label = video.get('prettyDuration') + "  " + video.get('title');
 
-                            return { content: 'http://youtu.be/' + video.get('id'), description: Utility.htmlEscape(label) };
+                            var textStyleRegExp = new RegExp(text, "i");
+                            var safeTitle = Utility.htmlEscape(video.get('title'));
+                            //var styledTitle = safeTitle.replace(textStyleRegExp, '<match>' + text + '</match>');
+                            var styledTitle = safeTitle.replace(textStyleRegExp, '<match>$&</match>');
+
+                            console.log("styled title:", styledTitle, text);
+                            var description = '<dim>' + video.get('prettyDuration') + "</dim>  " + styledTitle;
+
+                            return { content: 'http://youtu.be/' + video.get('id'), description: description };
                         });
 
                         suggest(suggestions);

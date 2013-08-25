@@ -152,7 +152,7 @@ define([
                 error: function () {
 
                     var bannedDialog = new Dialog({
-                        text: 'Unable to use video because it was banned on copyright grounds.',
+                        text: chrome.i18n.getMessage("videoCopyrightBanned"),
                         type: 'error'
                     });
 
