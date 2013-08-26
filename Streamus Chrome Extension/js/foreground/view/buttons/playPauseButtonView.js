@@ -16,9 +16,9 @@ define([
         
         loadingSpinnerView: new LoadingSpinnerView,
         
-        disabledTitle: 'Play disabled. Try adding a video to your playlist, first!',
-        pauseTitle: 'Click to pause the current video.',
-        playTitle: 'Click to play the current video.',
+        disabledTitle: chrome.i18n.getMessage("playDisabled"),
+        pauseTitle: chrome.i18n.getMessage("clickToPause"),
+        playTitle: chrome.i18n.getMessage("clickToPlay"),
         
         render: function () {
 

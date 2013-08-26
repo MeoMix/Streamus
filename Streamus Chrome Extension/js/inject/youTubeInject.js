@@ -86,7 +86,7 @@ $(function () {
     
     //var selectSteamContent = $('<span>', {
     //    'class': 'yt-uix-button-content',
-    //    text: 'Select Folder'
+    //    text: chrome.i18n.getMessage("selectFolder")
     //});
     
     //selectSteamContent.appendTo(selectFolderButton);

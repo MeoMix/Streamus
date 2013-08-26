@@ -67,6 +67,8 @@ define([
 
             var self = this;
             
+            this.emptyNotification.text(chrome.i18n.getMessage("emptyPlaylist"));
+            
             //  Allows for drag-and-drop of videos
             this.ul.sortable({
                 axis: 'y',

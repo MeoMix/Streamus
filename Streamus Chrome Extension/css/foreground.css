@@ -278,7 +278,7 @@ body.backgroundUnloaded {
 
 #VideoContent { background-color: black; }
 
-#VideoDisplayView {
+#VideoContent > *{
     margin-top: 18px;
 }
 
@@ -756,27 +756,23 @@ body.backgroundUnloaded {
     opacity: 1.0;
 }
 
-#StreamViewOverlay,
 #StreamView {
     left: 0;
     right: 0;
     top: 420px;
     height: 120px;
     position: absolute;
-}
-
-#StreamViewOverlay {
-    z-index: 99;
-    text-align: center;
-    margin-top: 51px;
-    font-size: 14px;
-}
-
-#StreamView {
     background-color: #eaeaea;
     white-space: nowrap;
     -webkit-box-shadow: inset 0px 2px 5px #FFF;
     box-shadow: inset 0px 2px 5px #FFF;
+}
+
+#StreamView .overlay {
+    font-size: 14px;
+    position: absolute;
+    top: 51px;
+    left: 160px;
 }
 
 #StreamView ul {

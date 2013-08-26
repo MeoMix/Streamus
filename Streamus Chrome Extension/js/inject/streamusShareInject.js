@@ -27,9 +27,9 @@ $(function () {
             var resultText;
 
             if (response.result === 'success') {
-                resultText = 'Playlist ' + response.playlistTitle + ' added successfully.';
+                resultText = chrome.i18n.getMessage("playlist") + ' ' + response.playlistTitle + ' ' + chrome.i18n.getMessage('addSuccess');
             } else {
-                resultText = 'There was an issue adding your playlist. Check the URL?';
+                resultText = chrome.i18n.getMessage("addErrorCheckUrl");
             }
             
             $('<h3>', {

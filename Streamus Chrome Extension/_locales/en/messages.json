@@ -1,35 +1,29 @@
 ﻿{
-	"extensionName": {
-		"message": "Streamus™ (Beta!)",
-		"description": "The name of the extesnion."
+    "extensionName": {
+		"message": "Streamus™ (Beta!)"
 	},
 	"extensionDescription" : {
-		"message": "Streamus turns YouTube into the music player you always wanted. Streamus makes streaming YouTube refreshingly easy.",
-		"description": "The description of the extesnion."
+		"message": "Streamus turns YouTube into the music player you always wanted. Streamus makes streaming YouTube refreshingly easy."
 	},
 	"extensionTitle": {
-		"message": "Streamus: Simple, streaming music.",
-		"description": "The title of the extesnion."
+		"message": "Streamus: Simple, streaming music."
 	},
 	"nextVideoCommandDescription": {
-		"message": "Tell Streamus to go to the next video in the stream.",
-		"description": "Describes the action which will occur when the user hits the next video command"
+		"message": "Tell Streamus to go to the next video in the stream."
 	},
 	"previousVideoCommandDescription": {
-		"message": "Tell Streamus to go to the previous video in the stream.",
-		"description": "Describes the action which will occur when the user hits the previous video command"
+		"message": "Tell Streamus to go to the previous video in the stream."
 	},
 	"toggleVideoCommandDescription": {
-		"message": "Tell Streamus to toggle (play/pause) the current video.",
-		"description": "Describes the action which will occur when the user hits the toggle video command"
+		"message": "Tell Streamus to toggle (play/pause) the current video."
 	},
 	"addToPlaylist": {
-		"message": "Add to Playlist",
+		"message": "Add to Playlist"
 	},
 	"copyUrl": {
 		"message": "Copy URL"
 	},
-    "copyTitleAndUrl": {
+	"copyTitleAndUrl": {
 		"message": "Copy Title - URL"
 	},
 	"deleteVideo": {
@@ -90,6 +84,96 @@
 		"message": "New Playlist"
 	},
 	"emptyStreamItem": {
-		"emptyStreamItem": "Empty Stream Item"
+		"message": "Empty Stream Item"
+	},
+	"welcomeToStreamus": {
+		"message": "Welcome to Streamus"
+	},
+	"installed": {
+		"message": "Installed"
+	},
+	"noVideosInStream": {
+		"message": "No Videos in Stream. Try clicking on a Playlist Item."
+	},
+	"emptyFolder": {
+		"message": "This Folder is empty. Try adding some videos by clicking above."
+	},
+	"emptyPlaylist": {
+		"message": "This Playlist is empty. Try adding some videos by clicking above."
+	},
+	"repeatDisabled": {
+		"message": "Repeat is disabled. Click to enable Repeat Video."
+	},
+	"repeatVideoEnabled": {
+		"message": "Repeat Video is enabled. Click to enable Repeat Playlist."
+	},
+	"repeatPlaylistEnabled": {
+		"message": "Repeat Playlist is enabled. Click to disable."
+	},
+	"radioEnabled": {
+		"message": "Radio is enabled. Click to disable."
+	},
+	"radioDisabled": {
+		"message": "Radio is disabled. Click to enable."
+	},
+	"shuffleEnabled": {
+		"message": "Playlist shuffling is enabled. Click to disable."
+	},
+	"shuffleDisabled": {
+		"message": "Playlist shuffling is disabled. Click to enable."
+	},
+	"playDisabled": {
+		"message": "Play disabled. Try adding a video to your playlist, first!"
+	},
+	"clickToPlay": {
+		"message": "Click to play the current video."
+	},
+	"clickToPause": {
+		"message": "Click to pause the current video."
+	},
+	"skipNextVideo": {
+		"message": "Skip to the next video."
+	},
+	"backPreviousVideo": {
+		"message": "Go back to the previous video."
+	},
+	"clickDragChangeTime": {
+		"message": "Click or drag to change the time."
+	},
+	"elapsedTime": {
+		"message": "Elapsed time"
+	},
+	"totalTime": {
+		"message": "Video duration"
+	},
+	"toggleVolume": {
+		"message": "Toggle volume"
+	},
+	"clickDragChangeVolume": {
+		"message": "Click or drag to change the volume."
+	},
+	"suggestedQuality": {
+		"message": "Suggested Quality:"
+	},
+	"highest": {
+		"message": "Highest"
+	},
+	"auto": {
+		"message": "Auto"
+	},
+	"lowest": {
+		"message": "Lowest"
+	},
+	"playlist": {
+		"message": "Playlist"
+	},
+	"addSuccess": {
+		"message": "added successfully"
+	},
+	"addErrorCheckUrl": {
+		"message": "There was an issue adding your playlist. Check the URL?"
+	},
+	"selectFolder": {
+		"message": "Select Folder"
 	}
 }

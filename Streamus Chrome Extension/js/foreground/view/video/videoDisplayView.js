@@ -1,4 +1,5 @@
-﻿define([
+﻿//  TODO: Decouple streamItems from this so it can be more easily used in fullscreen.
+define([
     'streamItems',
     'player',
     'playerState'
@@ -6,10 +7,17 @@
     'use strict';
 
     var VideoDisplayView = Backbone.View.extend({
-        el: $('#VideoDisplayView'),
-        
+        tagName: 'canvas',
+
+        template: _.template($('#videoDisplayTemplate').html()),
+
         events: {
             click: 'togglePlayerState'
+        },
+        
+        attributes: {
+            height: "315",
+            width: "560"
         },
 
         render: function () {
@@ -62,6 +70,8 @@
                 }
                 
             }
+
+            return this;
         },
             
         togglePlayerState: function () {
@@ -106,5 +116,5 @@
         }
     });
 
-    return new VideoDisplayView;
+    return VideoDisplayView;
 });

@@ -26,7 +26,7 @@ define([
         },
         
         //  Refreshes the playlist display with the current playlist information.
-        render: function() {
+        render: function () {
             this.ul.empty();
 
             //  TODO: Change this to a template.
@@ -70,6 +70,7 @@ define([
         
         initialize: function () {
             //  TODO: Sortable.
+            this.emptyNotification.text(chrome.i18n.getMessage("emptyFolder"));
 
             this.startListeningToPlaylists(this.model.get('playlists'));
             this.render();

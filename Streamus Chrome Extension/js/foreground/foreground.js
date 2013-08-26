@@ -5,7 +5,7 @@ define([
     'activeFolderTabView',
     'activePlaylistTabView',
     'streamView',
-
+    'videoDisplayView',
     'volumeControlView',
     'playPauseButtonView',
     'nextButtonView',
@@ -14,9 +14,9 @@ define([
     'radioButtonView',
     'repeatButtonView',
     'progressBarView',
-    'videoDisplayView',
+
     'headerTitleView'
-], function (Settings, ActiveFolderTabView, ActivePlaylistTabView, StreamView) {
+], function (Settings, ActiveFolderTabView, ActivePlaylistTabView, StreamView, VideoDisplayView) {
     'use strict';
 
     var activeFolder = chrome.extension.getBackgroundPage().User.get('folders').getActiveFolder();
@@ -37,6 +37,8 @@ define([
         streamView: new StreamView({
             model: activeFolder
         }),
+        
+        videoDisplayView: new VideoDisplayView,
 
         events: {
             //  TODO: Naming of menubutton vs content
@@ -61,6 +63,24 @@ define([
 
         initialize: function () {
             var self = this;
+
+            this.$el.find('#VideoContent').append(this.videoDisplayView.render().el);
+
+            //chrome.windows.create({
+            //    url: "fullscreen.htm",
+            //    type: "popup",
+            //    focused: true
+            //}, function (window) {
+
+            //    console.log("Window:", window);
+
+            //    //.$el.find('#VideoContent').append(this.videoDisplayView.render().el);
+
+            //    //chrome.windows.update(window.id, {
+            //    //    state: "fullscreen"
+            //    //});
+            //});
+
 
             var folders = chrome.extension.getBackgroundPage().User.get('folders');
 

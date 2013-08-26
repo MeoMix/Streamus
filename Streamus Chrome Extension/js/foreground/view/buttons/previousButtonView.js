@@ -44,7 +44,9 @@ define([
             return this;
         },
         
-        initialize: function() {
+        initialize: function () {
+            this.$el.attr('title', chrome.i18n.getMessage("backPreviousVideo"));
+
             this.listenTo(StreamItems, 'add addMultiple empty remove change:selected', this.render);
             this.listenTo(Settings, 'change:radioEnabled change:shuffleEnabled change:repeatButtonState', this.render);
 

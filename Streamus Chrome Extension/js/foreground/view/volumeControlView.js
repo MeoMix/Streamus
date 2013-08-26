@@ -14,6 +14,10 @@ define([
             'mouseenter .volumeControl': 'expand',
             'mouseleave': 'contract'
         },
+        
+        volumeSliderWapper: $('#VolumeSliderWrapper'),
+        volumeSlider: $('#VolumeSlider'),
+        muteButton: $('#MuteButton'),
 
         render: function () {
             var volume = Player.get('volume');
@@ -47,9 +51,8 @@ define([
 
         //  Initialize player's volume and muted state to last known information or 100 / unmuted.
         initialize: function () {
-            this.volumeSliderWrapper = this.$('#VolumeSliderWrapper');
-            this.volumeSlider = this.$('#VolumeSlider');
-            this.muteButton = this.$('#MuteButton');
+            this.muteButton.attr('title', chrome.i18n.getMessage("toggleVolume"));
+            this.volumeSlider.attr('title', chrome.i18n.getMessage("clickDragChangeVolume"));
 
             //  Set the initial volume of the control based on what the YouTube player says is the current volume.
             var volume = Player.get('volume');

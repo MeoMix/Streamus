@@ -17,10 +17,13 @@
         },
         
         sly: null,
-        overlay: $('#StreamViewOverlay'),
+        overlay: $('#StreamView .overlay'),
 
         initialize: function () {
             var self = this;
+
+            //  Setting it here so I can use internationalization... could probably do it in a template more cleanly though.
+            this.overlay.text(chrome.i18n.getMessage("noVideosInStream"));
 
             // Call Sly on frame
             this.sly = new window.Sly(this.$el, {
@@ -79,7 +82,7 @@
             this.listenTo(StreamItems, 'change:selected', this.selectItem);
 
             this.sly.reload();
-            this.listenTo(StreamItems, 'empty', function() {
+            this.listenTo(StreamItems, 'empty', function () {
                 this.overlay.show();
             });
 
