@@ -14,22 +14,58 @@
         },
 
         initialize: function () {
-            //var self = this;
+
+            //  Make the canvas full-screen size.
+            var videoDisplayView = new VideoDisplayView;
+
+            var element = videoDisplayView.render().el;
+            $('body').append(element);
             
-            //var videoDisplayView = new VideoDisplayView;
-            //var element = videoDisplayView.render().el;
+            $(window).on('resize', function () {
 
-            //window.addEventListener('resize', function() {
-            //    element.width = window.innerWidth;
-            //    element.height = window.innerHeight;
-            //}, false);
+                element.width = window.innerWidth;
+                element.height = window.innerHeight;
 
-            //element.width = window.innerWidth;
-            //element.height = window.innerHeight;
+                if ((screen.availHeight || screen.height - 30) <= window.innerHeight) {
+                    // browser is almost certainly fullscreen
+                    videoDisplayView.render();
+                    
+                } else {
+                    
+                    //  They decided to click 'exit fullscreen' instead of hit f11.
+                    chrome.windows.getAll(function (windows) {
 
-            //$('body').append(element);
+                        var window = _.findWhere(windows, { focused: true });
+                        chrome.windows.remove(window.id);
+
+                    });
+                    
+                }
+
+            });
+
+            $(window).keydown(function (event) {
+                
+                //  When the user exits fullscreen, kill the window.
+                if (event.keyCode === 122) {
+
+                    chrome.windows.getAll(function(windows) {
+
+                        var window = _.findWhere(windows, { state: "fullscreen" });
+                        chrome.windows.remove(window.id);
+
+                    });
+
+                }
+                
+                event.stopPropagation();
+                return false;
+                
+            });
+            
+            
+            
         }
-
 
     });
 

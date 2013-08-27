@@ -4,6 +4,7 @@
     <head>
         <title>Streamus</title>
         <link href="css/foreground.css" rel="stylesheet" type="text/css" />
+        <link href="css/contextMenu.css" rel="stylesheet" type="text/css" />
         <link href="css/aristo/aristo.css" rel="stylesheet" type="text/css" />
 
         <script src="js/foreground/requirePaths.js"></script>
@@ -264,7 +265,7 @@
                 <ul id="<%= group.cid %>">
                     <% group.get('items').each(function(item){ %>
                        <li>
-                           <a id="<%= item.cid %>" <% if( item.get('disabled') ) { %> disabled="disabled" <% } %> href="#"><%= item.get('text') %></a>
+                           <a id="<%= item.cid %>" title="<%= item.get('title') %>" <% if( item.get('disabled') ) { %> disabled="disabled" <% } %> href="#"><%= item.get('text') %></a>
                        </li>
                     <% }); %>
                 </ul>

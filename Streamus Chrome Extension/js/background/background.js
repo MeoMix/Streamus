@@ -166,6 +166,8 @@ define([
         return true;
     });
         
+
+    //  TODO: This isn't called early enough. Sometimes still shows error in dev console, bleh.
     //  Modify the iFrame headers to force HTML5 player and to look like we're actually a YouTube page.
     //  The HTML5 player seems more reliable (doesn't crash when Flash goes down) and looking like YouTube
     //  means we can bypass a lot of the embed restrictions.

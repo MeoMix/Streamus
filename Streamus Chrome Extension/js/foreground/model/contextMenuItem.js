@@ -7,6 +7,7 @@
                 position: -1,
                 text: '',
                 disabled: false,
+                title: '',
                 onClick: null
             };
         }

@@ -221,7 +221,6 @@ define([
         },
             
         cueVideoById: function (videoId) {
-            
             this.set('loadedVideoId', videoId);
 
             var streamusPlayer = this.get('streamusPlayer');
@@ -242,7 +241,6 @@ define([
             var streamusPlayer = this.get('streamusPlayer');
 
             if (streamusPlayer != null) {
-                //streamusPlayer.pause();
                 $(streamusPlayer).attr('autoplay', true);
             }
             

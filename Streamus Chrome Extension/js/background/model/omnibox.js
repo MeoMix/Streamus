@@ -67,7 +67,11 @@ define([
                     var url = 'http://youtu.be/' + suggestedVideo.get('id');
                     return text === url;
                 });
-                
+
+                Player.once('change:loadedVideoId', function () {
+                    Player.play();
+                });
+
                 StreamItems.add({
                     id: _.uniqueId('streamItem_'),
                     video: pickedVideo,
@@ -75,9 +79,7 @@ define([
                     videoImageUrl: 'http://img.youtube.com/vi/' + pickedVideo.get('id') + '/default.jpg',
                     selected: true
                 });
-
-                Player.play();
-
+                
             });
             
         }

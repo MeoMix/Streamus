@@ -175,5 +175,18 @@
 	},
 	"selectFolder": {
 		"message": "Select Folder"
+	},
+
+
+
+
+	"fullScreen": {
+		"message": "Full Screen"
+	},
+	"exitFullScreen": {
+		"message": "Exit Full Screen"
+	},
+	"loadVideoBeforeFullScreen": {
+		"message": "Load a video before trying to go full screen"
 	}
 }

@@ -66,22 +66,6 @@ define([
 
             this.$el.find('#VideoContent').append(this.videoDisplayView.render().el);
 
-            //chrome.windows.create({
-            //    url: "fullscreen.htm",
-            //    type: "popup",
-            //    focused: true
-            //}, function (window) {
-
-            //    console.log("Window:", window);
-
-            //    //.$el.find('#VideoContent').append(this.videoDisplayView.render().el);
-
-            //    //chrome.windows.update(window.id, {
-            //    //    state: "fullscreen"
-            //    //});
-            //});
-
-
             var folders = chrome.extension.getBackgroundPage().User.get('folders');
 
             this.listenTo(folders, 'change:active', function (folder, isActive) {
