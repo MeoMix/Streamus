@@ -19,6 +19,8 @@
             var videoDisplayView = new VideoDisplayView;
 
             var element = videoDisplayView.render().el;
+            element.width = window.innerWidth;
+            element.height = window.innerHeight;
             $('body').append(element);
             
             $(window).on('resize', function () {
