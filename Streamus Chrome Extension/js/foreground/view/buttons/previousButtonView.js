@@ -2,15 +2,16 @@
 define([
     'streamItems',
     'settings',
-    'repeatButtonState'
-], function (StreamItems, Settings, RepeatButtonState) {
+    'repeatButtonState',
+    'player'
+], function (StreamItems, Settings, RepeatButtonState, Player) {
     'use strict';
 
     var PreviousButtonView = Backbone.View.extend({
         el: $('#PreviousButton'),
         
         events: {
-            'click': 'gotoPreviousVideo'
+            'click': 'doTimeBasedPrevious'
         },
         
         render: function () {
@@ -18,27 +19,7 @@ define([
             if (StreamItems.length === 0) {
                 this.disable();
             } else {
-
-                var shuffleEnabled = Settings.get('shuffleEnabled');
-                var repeatButtonState = Settings.get('repeatButtonState');
-                
-                if (shuffleEnabled && StreamItems.length > 1) {
-                    this.enable();
-                }
-                else if(repeatButtonState !== RepeatButtonState.DISABLED) {
-                    this.enable();
-                } else {
-                    //  Disable only if on the first item in stream with no options enabled.
-                    var selectedItemIndex = StreamItems.indexOf(StreamItems.findWhere({ selected: true }));
-
-                    if (selectedItemIndex === 0) {
-                        this.disable();
-                    } else {
-                        this.enable();
-                    }
-
-                }
-
+                this.enable();
             }
 
             return this;
@@ -54,10 +35,17 @@ define([
         },
         
         //  Prevent spamming by only allowing a previous click once every 100ms.
-        gotoPreviousVideo: _.debounce(function () {
+        doTimeBasedPrevious: _.debounce(function () {
 
             if (!this.$el.hasClass('disabled')) {
-                StreamItems.selectPrevious();
+                
+                // Restart video when clicking 'previous' if too much time has passed or if no other video to go to
+                if (StreamItems.length === 1 || Player.get('currentTime') > 5) {
+                    Player.seekTo(0);
+                } else {
+                    
+                    StreamItems.selectPrevious();
+                }
             }
 
         }, 100, true),

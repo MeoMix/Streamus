@@ -240,6 +240,21 @@ body.backgroundUnloaded {
     width: 12px;
 }
 
+svg.deleteButtonSvg {
+    height: 12px;
+    width: 12px;
+    position: absolute;
+    right: 0;
+    background-color: #000;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 9999;
+}
+
+.streamItem:hover svg.deleteButtonSvg {
+    opacity: 1;
+}
+
 .addInput {
     opacity: 0;
     cursor: pointer;

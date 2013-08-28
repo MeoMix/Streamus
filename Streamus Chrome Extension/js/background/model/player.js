@@ -344,7 +344,7 @@ define([
                 streamusPlayer.currentTime = timeInSeconds;
             }
 
-        }, 250),
+        }, 100),
         
         //  Attempt to set playback quality to suggestedQuality or highest possible.
         setSuggestedQuality: function(suggestedQuality) {

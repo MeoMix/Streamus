@@ -14,6 +14,7 @@ define([
 
         events: {
             'click': 'togglePlayerState',
+            'dblclick': 'goFullScreen',
             'contextmenu': 'showContextMenu'
         },
         
@@ -21,6 +22,8 @@ define([
             height: "315",
             width: "560"
         },
+        
+        videoDefaultImage: new Image(),
 
         render: function () {
             var self = this;
@@ -73,23 +76,7 @@ define([
 
             return this;
         },
-            
-        togglePlayerState: function () {
-            
-            if (StreamItems.length > 0) {
-                
-                if (Player.isPlaying()) {
-                    Player.pause();
-                } else {
-                    Player.play();
-                }
-
-            }
-
-        },
-        
-        videoDefaultImage: new Image(),
-        
+           
         initialize: function () {
 
             this.context = this.el.getContext('2d');
@@ -113,6 +100,56 @@ define([
             this.listenTo(StreamItems, 'add addMultiple empty change:selected', this.render);
 
             this.render();
+        },
+        
+        togglePlayerState: function () {
+            
+            if (StreamItems.length > 0) {
+                
+                if (Player.isPlaying()) {
+                    Player.pause();
+                } else {
+                    Player.play();
+                }
+
+            }
+
+        },
+        
+        goFullScreen: function() {
+                  
+            //  fullscreen detect:
+            if (!window.screenTop && !window.screenY) {
+                //  exit full screen
+                chrome.windows.getAll(function (windows) {
+
+                    var window = _.findWhere(windows, { state: "fullscreen" });
+                    chrome.windows.remove(window.id);
+
+                });
+                
+            } else {
+                var loadedVideoId = Player.get('loadedVideoId');
+                var isFullScreenDisabled = loadedVideoId == '';
+
+                if (!isFullScreenDisabled) {
+                                
+                    chrome.windows.create({
+                        url: "fullscreen.htm",
+                        type: "popup",
+                        focused: true
+                    }, function (window) {
+
+                        chrome.windows.update(window.id, {
+                            state: "fullscreen"
+                        });
+
+                    });
+
+                }
+                
+            }
+
         },
         
         showContextMenu: function (event) {

@@ -43,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="background.htm" />
+    <Content Include="css\contextMenu.css" />
+    <Content Include="css\fullscreen.css" />
     <Content Include="fullscreen.htm" />
     <Content Include="js\background\collection\streamItems.js" />
     <Content Include="js\background\model\omnibox.js" />

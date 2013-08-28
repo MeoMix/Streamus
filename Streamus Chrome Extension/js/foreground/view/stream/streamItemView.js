@@ -17,7 +17,8 @@
         events: {
             'contextmenu': 'showContextMenu',
             'click': 'select',
-            'dblclick': 'togglePlayingState'
+            'dblclick': 'togglePlayingState',
+            'click .deleteButtonSvg': 'doDelete'
         },
 
         render: function () {
@@ -50,6 +51,10 @@
             } else {
                 Player.play();
             }
+        },
+        
+        doDelete: function() {
+            this.model.destroy();
         },
 
         showContextMenu: function() {

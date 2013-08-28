@@ -199,10 +199,11 @@ define([
                 var alreadyExistingItem = self.find(function (streamItem) {
 
                     var sameVideoId = streamItem.get('video').get('id') === relatedVideo.get('id');
+                    var sameCleanTitle = streamItem.get('video').get('cleanTitle') === relatedVideo.get('cleanTitle');
 
                     var inBanList = _.contains(self.bannedVideoIdList, relatedVideo.get('id'));
 
-                    return sameVideoId || inBanList;
+                    return sameVideoId || sameCleanTitle || inBanList;
                 });
 
                 return alreadyExistingItem == null;
