@@ -26,19 +26,15 @@
 	},
     "commands": {
 		"nextVideo": {
-			"suggested_key": { "default": "Ctrl+Shift+Right" },
 			"description": "Go to the next video in the stream."
 		},
 		"previousVideo": {
-			"suggested_key": { "default": "Ctrl+Shift+Left" },
 			"description": "Go to the previous video in the stream."
 		},
 		"toggleVideo": {
-			"suggested_key": { "default": "Ctrl+Shift+Up" },
 			"description": "Toggle (play/pause) the current video."
 		},
 		"_execute_browser_action": {
-			"suggested_key": { "default": "Ctrl+Shift+Down" }
 		}
 	},
 	"content_scripts": [

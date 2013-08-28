@@ -56,9 +56,12 @@ define([
                     //  Maintain the state of the player by playing or cueuing based on current player state.
                     var playerState = Player.get('state');
 
+                    //  TODO: Maybe ended here isn't right if they had only 1 item in the playlist and then add another with the first ended.
+                    console.log("Player state:", playerState);
                     if (playerState === PlayerState.PLAYING || playerState === PlayerState.ENDED) {
                         Player.loadVideoById(videoId);
                     } else {
+                        console.log("Cueuing video by id");
                         Player.cueVideoById(videoId);
                     }
                 }

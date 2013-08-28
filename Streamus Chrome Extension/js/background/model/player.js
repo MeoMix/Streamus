@@ -225,10 +225,16 @@ define([
 
             var streamusPlayer = this.get('streamusPlayer');
             
+            console.log("Streamus Player:", streamusPlayer);
+
             if (streamusPlayer != null) {
+                console.log("paused and removing autoplay");
                 streamusPlayer.pause();
-                $(streamusPlayer).removeAttr('autoplay');
             }
+
+            //  Sometimes streamusPlayer is null. Need to fix that I think.
+            //  If YouTubeVideo is loading its metadata we need to keep its state in sync regardless.
+            $('#YouTubeVideo').removeAttr('autoplay');
 
             youTubePlayer.loadVideoById({
                 videoId: videoId,
