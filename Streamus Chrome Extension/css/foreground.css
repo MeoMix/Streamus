@@ -293,7 +293,7 @@ svg.deleteButtonSvg {
 
 #VideoContent { background-color: black; }
 
-#VideoContent > *{
+#VideoContent > canvas{
     margin-top: 18px;
 }
 
@@ -879,4 +879,16 @@ button.close {
     height: 26px;
     -webkit-animation: spin 1s infinite linear;
     -webkit-box-sizing: content-box !important;
+}
+
+.html5-bezel {
+    top: 135px;
+    left: 240px;
+    -webkit-box-sizing: content-box !important;
+}
+
+.html5-bezel>div {
+    margin: 0 auto;
+    -webkit-box-sizing: content-box !important;
+    position: static !important;
 }

@@ -108,6 +108,7 @@ define([
                 
                 if (Player.isPlaying()) {
                     Player.pause();
+                    
                 } else {
                     Player.play();
                 }
