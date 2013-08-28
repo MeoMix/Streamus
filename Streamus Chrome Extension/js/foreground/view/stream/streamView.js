@@ -17,10 +17,13 @@
         },
         
         sly: null,
-        overlay: $('#StreamViewOverlay'),
+        overlay: $('#StreamView .overlay'),
 
         initialize: function () {
             var self = this;
+
+            //  Setting it here so I can use internationalization... could probably do it in a template more cleanly though.
+            this.overlay.text(chrome.i18n.getMessage("noVideosInStream"));
 
             // Call Sly on frame
             this.sly = new window.Sly(this.$el, {
@@ -79,7 +82,7 @@
             this.listenTo(StreamItems, 'change:selected', this.selectItem);
 
             this.sly.reload();
-            this.listenTo(StreamItems, 'empty', function() {
+            this.listenTo(StreamItems, 'empty', function () {
                 this.overlay.show();
             });
 
@@ -135,6 +138,9 @@
 
             if (streamItems.length === StreamItems.length) {
                 this.sly.activate(0);
+                
+                //  TODO: This fixes some odd padding issue with slyjs on the first item being added. Not sure why add doesn't fix it? 
+                this.sly.reload();
             }
 
             $(elements).find('img.lazy').lazyload({
@@ -142,7 +148,7 @@
                 container: self.$el,
                 event: 'visible'
             });
-            
+
             this.overlay.hide();
         },
         
@@ -163,13 +169,13 @@
                 position: 1,
                 items: [{
                     position: 0,
-                    text: 'Clear Stream',
+                    text: chrome.i18n.getMessage("clearStream"),
                     onClick: function () {
                         self.clear();
                     }
                 }, {
                     position: 1,
-                    text: 'Save Stream as Playlist',
+                    text: chrome.i18n.getMessage("saveStreamAsPlaylist"),
                     onClick: function () {
                         self.model.addPlaylistWithVideos('Playlist', StreamItems.pluck('video'));
                     }
@@ -182,7 +188,7 @@
             });
 
             return false;
-        },
+        }
 
     });
 

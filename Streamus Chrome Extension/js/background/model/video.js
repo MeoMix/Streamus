@@ -13,7 +13,9 @@ define([
             title: '',
             author: '',
             duration: -1,
-            prettyDuration: ''
+            
+            prettyDuration: '',
+            cleanTitle: '',
         },
         
         urlRoot: Settings.get('serverURL') + 'Video/',
@@ -21,12 +23,19 @@ define([
         initialize: function() {            
             
             this.listenTo(this, 'change:duration', this.setPrettyDuration);
+            this.listenTo(this, 'change:title', this.setCleanTitle);
             this.setPrettyDuration();
+            this.setCleanTitle();
         },
         
         //  Calculate this value pre-emptively because when rendering I don't want to incur inefficiency
         setPrettyDuration: function() {
             this.set('prettyDuration', Utility.prettyPrintTime(this.get('duration')));
+        },
+        
+        //  Useful for comparisons and other searching.
+        setCleanTitle: function() {
+            this.set('cleanTitle', Utility.cleanseVideoTitle(this.get('title')));
         }
         
     });

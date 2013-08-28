@@ -1,16 +1,29 @@
-﻿define([
+﻿//  TODO: Decouple streamItems from this so it can be more easily used in fullscreen.
+define([
     'streamItems',
     'player',
-    'playerState'
-], function (StreamItems, Player, PlayerState) {
+    'playerState',
+    'contextMenuView'
+], function (StreamItems, Player, PlayerState, ContextMenuView) {
     'use strict';
 
     var VideoDisplayView = Backbone.View.extend({
-        el: $('#VideoDisplayView'),
-        
+        tagName: 'canvas',
+
+        template: _.template($('#videoDisplayTemplate').html()),
+
         events: {
-            click: 'togglePlayerState'
+            'click': 'togglePlayerState',
+            'dblclick': 'goFullScreen',
+            'contextmenu': 'showContextMenu'
         },
+        
+        attributes: {
+            height: "315",
+            width: "560"
+        },
+        
+        videoDefaultImage: new Image(),
 
         render: function () {
             var self = this;
@@ -21,20 +34,16 @@
                 var streamItemExists = StreamItems.length > 0;
                 this.$el.toggleClass('clickable', streamItemExists);
                 
-                if (streamItemExists) {                    
-
+                if (streamItemExists) {
                     var playerState = Player.get('state');
                     
                     if (playerState == PlayerState.PLAYING) {
                         //  Continously render if playing.
-                        if (playerState == PlayerState.PLAYING) {
 
-                            window.requestAnimationFrame(function () {
-                                self.render();
-                            });
+                        window.requestAnimationFrame(function () {
+                            self.render();
+                        });
 
-                        }
-                        
                         this.context.drawImage(this.video, 0, 0, this.el.width, this.el.height);
                     }
                     else if (Player.get('currentTime') > 0) {
@@ -45,13 +54,15 @@
                         var loadedVideoId = Player.get('loadedVideoId');
 
                         if (loadedVideoId != '') {
+                            //  Be sure to clear the source because if the canvas resized with the src intact it will be white and won't refresh when setting source again.
+                            this.videoDefaultImage.src = '';
                             this.videoDefaultImage.src = 'http://i2.ytimg.com/vi/' + loadedVideoId + '/mqdefault.jpg ';
                         }
                     }
                     
                 } else {
 
-                    setTimeout(function() {
+                    setTimeout(function () {
                         //  Clear the canvas by painting over it with black.
                         //  TODO: Perhaps something more visually appealing / indicative than black fill?
                         self.context.rect(0, 0, self.el.width, self.el.height);
@@ -62,24 +73,10 @@
                 }
                 
             }
-        },
-            
-        togglePlayerState: function () {
-            
-            if (StreamItems.length > 0) {
-                
-                if (Player.isPlaying()) {
-                    Player.pause();
-                } else {
-                    Player.play();
-                }
 
-            }
-
+            return this;
         },
-        
-        videoDefaultImage: new Image(),
-        
+           
         initialize: function () {
 
             this.context = this.el.getContext('2d');
@@ -103,8 +100,125 @@
             this.listenTo(StreamItems, 'add addMultiple empty change:selected', this.render);
 
             this.render();
+        },
+        
+        togglePlayerState: function () {
+            
+            if (StreamItems.length > 0) {
+                
+                if (Player.isPlaying()) {
+                    Player.pause();
+                } else {
+                    Player.play();
+                }
+
+            }
+
+        },
+        
+        goFullScreen: function() {
+                  
+            //  fullscreen detect:
+            if (!window.screenTop && !window.screenY) {
+                //  exit full screen
+                chrome.windows.getAll(function (windows) {
+
+                    var window = _.findWhere(windows, { state: "fullscreen" });
+                    chrome.windows.remove(window.id);
+
+                });
+                
+            } else {
+                var loadedVideoId = Player.get('loadedVideoId');
+                var isFullScreenDisabled = loadedVideoId == '';
+
+                if (!isFullScreenDisabled) {
+                                
+                    chrome.windows.create({
+                        url: "fullscreen.htm",
+                        type: "popup",
+                        focused: true
+                    }, function (window) {
+
+                        chrome.windows.update(window.id, {
+                            state: "fullscreen"
+                        });
+
+                    });
+
+                }
+                
+            }
+
+        },
+        
+        showContextMenu: function (event) {
+            console.log('This:', window, this, event);
+
+            //  fullscreen detect:
+            if (!window.screenTop && !window.screenY) {
+
+                ContextMenuView.addGroup({
+                    position: 0,
+                    items: [{
+                        position: 0,
+                        text: chrome.i18n.getMessage("exitFullScreen"),
+                        onClick: function () {
+
+                            chrome.windows.getAll(function (windows) {
+
+                                var window = _.findWhere(windows, { state: "fullscreen" });
+                                chrome.windows.remove(window.id);
+
+                            });
+                            
+                        }
+                    }]
+                });
+                
+            } else {
+                var loadedVideoId = Player.get('loadedVideoId');
+                var isFullScreenDisabled = loadedVideoId == '';
+
+                ContextMenuView.addGroup({
+                    position: 0,
+                    items: [{
+                        position: 0,
+                        text: chrome.i18n.getMessage("fullScreen"),
+                        disabled: isFullScreenDisabled,
+                        title: isFullScreenDisabled ? chrome.i18n.getMessage("loadVideoBeforeFullScreen") : '',
+                        onClick: function () {
+                            
+                            if (!isFullScreenDisabled) {
+                                
+                                chrome.windows.create({
+                                    url: "fullscreen.htm",
+                                    type: "popup",
+                                    focused: true
+                                }, function (window) {
+
+                                    chrome.windows.update(window.id, {
+                                        state: "fullscreen"
+                                    });
+
+                                });
+
+                            }
+
+                        }
+                    }]
+                });
+                
+            }
+
+            ContextMenuView.show({
+                top: event.pageY,
+                left: event.pageX + 1
+            });
+
+            return false;
         }
     });
 
-    return new VideoDisplayView;
+    return VideoDisplayView;
 });

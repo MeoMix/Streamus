@@ -11,9 +11,9 @@
             'click': 'toggleRepeat'
         },
         
-        disabledTitle: 'Repeat is disabled. Click to enable Repeat Video.',
-        repeatVideoEnabledTitle: 'Repeat Video is enabled. Click to enable Repeat Playlist.',
-        repeatPlaylistEnabledTitle: 'Repeat Playlist is enabled. Click to disable.',
+        disabledTitle: chrome.i18n.getMessage("repeatDisabled"),
+        repeatVideoEnabledTitle: chrome.i18n.getMessage("repeatVideoEnabled"),
+        repeatPlaylistEnabledTitle: chrome.i18n.getMessage("repeatPlaylistEnabled"),
 
         state: Settings.get('repeatButtonState'),
         

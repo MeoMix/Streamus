@@ -12,7 +12,7 @@ define([
         render: function() {
           
             if (StreamItems.length == 0) {
-                this.$el.text('Welcome to Streamus');
+                this.$el.text(chrome.i18n.getMessage("welcomeToStreamus"));
             } else {
                 var selectedStreamItem = StreamItems.findWhere({ selected: true });
                 this.$el.text(selectedStreamItem.get('title'));

@@ -9,7 +9,7 @@ define([
             return {
                 // TODO: Figure out all the properties this model needs.
                 video: null,
-                title: 'Empty Stream Item',
+                title: chrome.i18n.getMessage("emptyStreamItem"),
                 videoImageUrl: '',
                 //  Used to weight randomness in shuffle. Resets to false when all in collection are set to true.
                 playedRecently: false,

@@ -10,8 +10,8 @@
             'click': 'toggleRadio'
         },
 
-        enabledTitle: 'Radio is enabled. Click to disable.',
-        disabledTitle: 'Radio is disabled. Click to enable.',
+        enabledTitle: chrome.i18n.getMessage("radioEnabled"),
+        disabledTitle: chrome.i18n.getMessage("radioDisabled"),
         
         initialize: function () {
             //  Remember the initial state across pop-up sessions by writing to/from localStorage.

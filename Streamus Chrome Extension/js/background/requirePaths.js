@@ -34,6 +34,7 @@ var require = {
         'error': 'background/model/error',
         'folder': 'background/model/folder',
         'iconManager': 'background/model/iconManager',
+        'omnibox': 'background/model/omnibox',
         'player': 'background/model/player',
         'playlist': 'background/model/playlist',
         'playlistItem': 'background/model/playlistItem',

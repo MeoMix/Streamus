@@ -19,27 +19,9 @@ require([
     'jquery',
     'underscore',
     'backbone',
-    'googleApiClient',
-    'error',
-    'iconManager',
-    'settings'
-], function ($, _, Backbone, GoogleApiClient, Error, IconManager, Settings) {
+    'googleApiClient'
+], function ($, _, Backbone, GoogleApiClient) {
     'use strict';
-
-    //  Send a log message whenever any client errors occur; for debugging purposes.
-    window.onerror = function (message, url, lineNumber) {
-
-        //  Only log client errors to the database in a deploy environment, not when debugging locally.
-        if (!Settings.get('localDebug')) {
-            var error = new Error({
-                message: message,
-                url: url,
-                lineNumber: lineNumber
-            });
-
-            error.save();
-        }
-    };
 
     //  Only use main.js for loading external helper files before the background is ready. Then, load the background.
     require(['background'], function () { });

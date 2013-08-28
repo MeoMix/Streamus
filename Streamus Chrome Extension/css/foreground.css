@@ -240,6 +240,21 @@ body.backgroundUnloaded {
     width: 12px;
 }
 
+svg.deleteButtonSvg {
+    height: 12px;
+    width: 12px;
+    position: absolute;
+    right: 0;
+    background-color: #000;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 9999;
+}
+
+.streamItem:hover svg.deleteButtonSvg {
+    opacity: 1;
+}
+
 .addInput {
     opacity: 0;
     cursor: pointer;
@@ -278,7 +293,7 @@ body.backgroundUnloaded {
 
 #VideoContent { background-color: black; }
 
-#VideoDisplayView {
+#VideoContent > *{
     margin-top: 18px;
 }
 
@@ -632,55 +647,6 @@ body.backgroundUnloaded {
 
 .muted > svg > rect { fill: Black !important; }
 
-#contextMenu {
-    -webkit-box-shadow: 4px 7px 3px rgba(0, 0, 0, .3);
-    background: #fff;
-    position: absolute;
-    z-index: 100;
-    padding: 5px 0;
-    border: 1px solid #BABABA;
-    display: none;
-}
-
-#contextMenu ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-#contextMenu ul:not(:last-child) {
-   border-bottom: 1px solid #EFEFEF;
-}
-
-#contextMenu ul li {
-    overflow: hidden;
-    max-width: 200px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    padding: 0 15px;
-}
-
-#contextMenu ul li:hover { background: #EFEFEF; }
-
-#contextMenu ul li:active {
-    background: #efefef;
-    color: #fff;
-}
-
-#contextMenu ul li a {
-    color: #000;
-    font: 12px/2.2 sans-serif;
-    text-decoration: none;
-    cursor: default;
-}
-
-#contextMenu ul li a[disabled=disabled] {
-    background-color: transparent !important;
-    color: gray !important;
-    cursor: default;
-    text-decoration: line-through !important;
-}
-
 .pressed *,
 .pressed svg * { fill: #6ABD45 !important; }
 
@@ -756,27 +722,23 @@ body.backgroundUnloaded {
     opacity: 1.0;
 }
 
-#StreamViewOverlay,
 #StreamView {
     left: 0;
     right: 0;
     top: 420px;
     height: 120px;
     position: absolute;
-}
-
-#StreamViewOverlay {
-    z-index: 99;
-    text-align: center;
-    margin-top: 51px;
-    font-size: 14px;
-}
-
-#StreamView {
     background-color: #eaeaea;
     white-space: nowrap;
     -webkit-box-shadow: inset 0px 2px 5px #FFF;
     box-shadow: inset 0px 2px 5px #FFF;
+}
+
+#StreamView .overlay {
+    font-size: 14px;
+    position: absolute;
+    top: 51px;
+    left: 160px;
 }
 
 #StreamView ul {

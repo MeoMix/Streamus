@@ -41,6 +41,10 @@ define([
         },
         
         initialize: function () {
+            this.$el.attr('title', chrome.i18n.getMessage("clickDragChangeTime"));
+            //  TODO: naming discrepancy
+            this.currentTimeLabel.attr('title', chrome.i18n.getMessage("elapsedTime"));
+            this.totalTimeLabel.attr('title', chrome.i18n.getMessage("totalTime"));
             
             this.listenTo(StreamItems, 'empty', this.clear);
             this.listenTo(StreamItems, 'change:selected', this.restart);

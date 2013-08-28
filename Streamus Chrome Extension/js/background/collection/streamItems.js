@@ -65,12 +65,17 @@ define([
 
             });
 
-            this.on('remove', function(removedStreamItem, collection, options) {
+            this.on('empty', function () {
+                
+                //  TODO: Clear localStorage once I write to local storage.
+                Player.stop();
+                
+            });
+
+            this.on('remove', function (removedStreamItem, collection, options) {
+
                 if (this.length === 0) {
                     this.trigger('empty');
-
-                    //  TODO: Clear localStorage once I write to local storage.
-                    Player.stop();
                 }
 
                 if (removedStreamItem.get('selected') && this.length > 0) {
@@ -194,10 +199,11 @@ define([
                 var alreadyExistingItem = self.find(function (streamItem) {
 
                     var sameVideoId = streamItem.get('video').get('id') === relatedVideo.get('id');
+                    var sameCleanTitle = streamItem.get('video').get('cleanTitle') === relatedVideo.get('cleanTitle');
 
                     var inBanList = _.contains(self.bannedVideoIdList, relatedVideo.get('id'));
 
-                    return sameVideoId || inBanList;
+                    return sameVideoId || sameCleanTitle || inBanList;
                 });
 
                 return alreadyExistingItem == null;

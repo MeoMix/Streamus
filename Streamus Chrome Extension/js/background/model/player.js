@@ -221,7 +221,6 @@ define([
         },
             
         cueVideoById: function (videoId) {
-            
             this.set('loadedVideoId', videoId);
 
             var streamusPlayer = this.get('streamusPlayer');
@@ -242,7 +241,6 @@ define([
             var streamusPlayer = this.get('streamusPlayer');
 
             if (streamusPlayer != null) {
-                //streamusPlayer.pause();
                 $(streamusPlayer).attr('autoplay', true);
             }
             
@@ -346,7 +344,7 @@ define([
                 streamusPlayer.currentTime = timeInSeconds;
             }
 
-        }, 250),
+        }, 100),
         
         //  Attempt to set playback quality to suggestedQuality or highest possible.
         setSuggestedQuality: function(suggestedQuality) {

@@ -10,8 +10,8 @@ define([
             'click': 'toggleShuffleVideo'
         },
         
-        enabledTitle: 'Playlist shuffling is enabled. Click to disable.',
-        disabledTitle: 'Playlist shuffling is disabled. Click to enable.',
+        enabledTitle: chrome.i18n.getMessage("shuffleEnabled"),
+        disabledTitle: chrome.i18n.getMessage("shuffleDisabled"),
         
         initialize: function() {
             //  Remember the initial state across pop-up sessions by writing to/from localStorage.

@@ -7,13 +7,13 @@ $(function () {
     style.href = chrome.extension.getURL('css/youTubeInject.css');
     document.head.appendChild(style);
 
-    var addButtonWrapper = $('<span >');
+    var addButtonWrapper = $('<span>');
     var youtubeButtonInsertLocation = $('#watch7-secondary-actions');
     addButtonWrapper.insertBefore(youtubeButtonInsertLocation.children(':first'));
     
 	var addButton = $('<button>', {
 	    'class': 'action-panel-trigger yt-uix-button yt-uix-button-text yt-uix-tooltip',
-	    title: 'Add video to Streamus',
+	    title: chrome.i18n.getMessage("addVideoToStreamus"),
 	    type: 'button',
 	    role: 'button',
 	    'data-button-toggle': true,
@@ -25,7 +25,7 @@ $(function () {
 	addButton.appendTo(addButtonWrapper);
     var addButtonContent = $('<span>', {
         'class': 'yt-uix-button-content',
-        text: 'Add to Streamus'
+        text: chrome.i18n.getMessage("addToStreamus")
     });
     addButtonContent.appendTo(addButton);
 
@@ -34,7 +34,6 @@ $(function () {
 	}, function(response) {
 		if (!response.result) {
 			addButton.addClass("notClickedYet");
-			//alert("notClickedYet")
 		}
 	});
 
@@ -87,7 +86,7 @@ $(function () {
     
     //var selectSteamContent = $('<span>', {
     //    'class': 'yt-uix-button-content',
-    //    text: 'Select Folder'
+    //    text: chrome.i18n.getMessage("selectFolder")
     //});
     
     //selectSteamContent.appendTo(selectFolderButton);
@@ -121,21 +120,21 @@ $(function () {
     selectPlaylistButton.appendTo(sharePanelMainButtons);
     var selectPlaylistContent = $('<span>', {
         'class': 'yt-uix-button-content',
-        text: 'Select Playlist'
+        text: chrome.i18n.getMessage("selectPlaylist")
     });
 
     selectPlaylistContent.appendTo(selectPlaylistButton);
 
     var successEventNotification = $('<div>', {
         id: 'successEventNotification',
-        text: 'Video successfully added to Streamus.',
+        text: chrome.i18n.getMessage("videoAddSuccess"),
         'class': 'eventNotification'
     });
     successEventNotification.appendTo(sharePanelMainButtons);
     
     var errorEventNotification = $('<div>', {
         id: 'errorEventNotification',
-        text: 'An error was encountered.',
+        text: chrome.i18n.getMessage("errorEncountered"),
         'class': 'eventNotification'
     });
     errorEventNotification.appendTo(sharePanelMainButtons);
@@ -149,13 +148,13 @@ $(function () {
 
     var videoAddButton = $('<input>', {
         type: 'button',
-        value: 'Add Video',
-        title: 'Add Video',
+        value: chrome.i18n.getMessage("addVideo"),
+        title: chrome.i18n.getMessage("addVideo"),
         id: 'streamusVideoAddButton',
         'class': 'yt-uix-button yt-uix-tooltip',
         click: function () {
 
-            $(this).val('Working...');
+            $(this).val(chrome.i18n.getMessage("working"));
             $(this).attr('disabled', true);
 
             var match = document.URL.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|watch\?.*?\&v=)([^#\&\?]*).*/);
@@ -172,7 +171,7 @@ $(function () {
                 
                 if (response.result === 'success') {
                     $(self).removeAttr('disabled');
-                    $(self).val('Add Video');
+                    $(self).val(chrome.i18n.getMessage("addVideo"));
                     successEventNotification.fadeIn().css("display", "inline-block");
 
                     setTimeout(function() {
@@ -180,7 +179,7 @@ $(function () {
                     }, 3000);
                 } else {
                     $(self).removeAttr('disabled');
-                    $(self).val('Add Video');
+                    $(self).val(chrome.i18n.getMessage("addVideo"));
                     errorEventNotification.fadeIn().css("display", "inline-block");
                     setTimeout(function () {
                         errorEventNotification.fadeOut();

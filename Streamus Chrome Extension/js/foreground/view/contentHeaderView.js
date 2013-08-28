@@ -47,13 +47,13 @@ define(function () {
         
         expand: function() {
             this.$el.addClass('expanded');
-            this.$el.find('.headerInput').attr('disabled', 'disabled');
+            this.$el.find('.headerInput').prop('disabled', true);
             this.$el.find('.addInput').focus();
         },
         
         contract: function() {
             this.$el.removeClass('expanded');
-            this.$el.find('.headerInput').removeAttr('disabled');
+            this.$el.find('.headerInput').prop('disabled', false);
             this.$el.find('.addInput').val('').blur();
 
             //  Prevent click event from bubbling up so button does not expand on click.

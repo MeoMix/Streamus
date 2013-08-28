@@ -230,6 +230,36 @@ define([
 
         search: search,
         
+        //  Like search but limited to just one ajax request and smaller video size (used for omnibox currently)
+        quickSearch: function(text, callback) {
+            var quickSearchJqXhr = $.ajax({
+                type: 'GET',
+                url: 'https://gdata.youtube.com/feeds/api/videos',
+                dataType: 'json',
+                data: {
+                    category: 'Music',
+                    time: 'all_time',
+                    'max-results': 6, // Omnibox can only show 6 results so don't both getting more.
+                    'start-index': 1,
+                    format: 5,
+                    v: 2,
+                    alt: 'json',
+                    q: text,
+                    key: developerKey,
+                    fields: videosInformationFields,
+                    strict: true
+                },
+                success: function (result) {
+                    callback(result.feed.entry);
+                },
+                error: function (error) {
+                    console.error(error);
+                }
+            });
+
+            return quickSearchJqXhr;
+        },
+        
         //  TODO: How can I make this prettier?
         parseUrlForDataSource: function (url) {
 
@@ -240,16 +270,6 @@ define([
             
             //  Try for PlaylistId:
             var dataSourceId = tryGetIdFromUrl(url, 'list=PL');
-
-            if (dataSourceId !== '') {
-                dataSource = {
-                    id: dataSourceId,
-                    type: DataSource.YOUTUBE_PLAYLIST
-                };
-                return dataSource;
-            }
-            
-            dataSourceId = tryGetIdFromUrl(url, 'list=ALYL');
 
             if (dataSourceId !== '') {
                 dataSource = {
@@ -284,6 +304,16 @@ define([
                     type: DataSource.YOUTUBE_CHANNEL
                 };
 
+                return dataSource;
+            }
+            
+            dataSourceId = tryGetIdFromUrl(url, 'list=UU');
+
+            if (dataSourceId !== '') {
+                dataSource = {
+                    id: dataSourceId,
+                    type: DataSource.YOUTUBE_CHANNEL
+                };
                 return dataSource;
             }
 

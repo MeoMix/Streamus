@@ -44,8 +44,17 @@ define([
 
             return this;
         },
+        
+        attributes: function() {
+            return {
+                title: 'Skip to the next video.',
+                'test': 'hi'
+            };
+        },
 
         initialize: function () {
+            this.$el.attr('title', chrome.i18n.getMessage("skipNextVideo"));
+
             this.listenTo(StreamItems, 'add addMultiple remove empty change:selected', this.render);
             this.listenTo(Settings, 'change:radioEnabled change:shuffleEnabled change:repeatButtonState', this.render);
 
