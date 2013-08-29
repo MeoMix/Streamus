@@ -5,6 +5,7 @@
         <title>Streaming YouTube music made simple by Google Chrome - Streamus</title>
         <meta name="description" content="Streamus is a Google Chrome extension that turns YouTube into the music video player you always wanted.">
         <meta name="keywords" content="Streamus, music, online, YouTube, listen, streaming, play, digital, album, artist, playlist">
+        <link href="css/blueimp-gallery.min.css" rel="stylesheet" />
         <link href="css/bootstrap.css" rel="stylesheet" />
         <link href="css/bootstrap-responsive.css" rel="stylesheet" />
         <link href="css/index.css" rel="stylesheet" />
@@ -39,7 +40,30 @@
                     <a id="installButton" class="btn btn-large btn-success" href="javascript:void(0)">Install extension now</a>
                 </div>
 
-                <hr>
+                <hr/>
+                
+                <!-- The Gallery as inline carousel, can be positioned anywhere on the page -->
+                <div id="blueimp-gallery-carousel" class="blueimp-gallery blueimp-gallery-carousel">
+                    <div class="slides"></div>
+                    <h3 class="title"></h3>
+                    <a class="prev">‹</a>
+                    <a class="next">›</a>
+                    <a class="play-pause"></a>
+                    <ol class="indicator"></ol>
+                </div>
+
+                <div id="links">
+                    <a href="img/mainScreenshot.png" title="Streaming YouTube music made simple by Google Chrome - Streamus" data-gallery>
+                    </a>
+                    <a href="img/videoScreenshot.png" title="Watch YouTube videos tab-free!" data-gallery>
+                    </a>
+                    <a href="img/youTubeInjectScreenshot.png" title="Seamless YouTube integration makes cataloging music simple!" data-gallery>
+                    </a>
+                    <a href="img/keyboardShortcutsScreenshot.png" title="Set your own keyboard shortcuts to easily skip between videos." data-gallery>
+                    </a>
+                </div>
+                
+                <hr/>
 
                 <div class="row-fluid marketing">
                     <div class="span6">
@@ -331,6 +355,7 @@
         <script src="js/backbone.js"></script>
         <script src="js/bootstrap.js"></script>
         <script src="js/detectMobileBrowser.js"></script>
+        <script src="js/jquery.blueimp-gallery.min.js"></script>
         <script src="js/googleAnalytics.js"></script>
         <script src="js/facebookLikeButton.js"></script>
         <script src="js/googlePlusOneButton.js"></script>

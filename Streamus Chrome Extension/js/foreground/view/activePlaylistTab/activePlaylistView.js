@@ -145,24 +145,32 @@ define([
         
         showContextMenu: function (event) {
             var self = this;
+            
+            var isAddPlaylistDisabled = this.model.get('items').length === 0;
 
             ContextMenuView.addGroup({
                 position: 0,
                 items: [{
                     position: 0,
-                    text: 'Add Playlist to Stream',
+                    text: chrome.i18n.getMessage("addPlaylistToStream"),
+                    disabled: isAddPlaylistDisabled,
+                    title: isAddPlaylistDisabled ? chrome.i18n.getMessage("addPlaylistNoAddStreamWarning") : '',
                     onClick: function () {
 
-                        var streamItems = self.model.get('items').map(function (playlistItem) {
-                            return {
-                                id: _.uniqueId('streamItem_'),
-                                video: playlistItem.get('video'),
-                                title: playlistItem.get('title'),
-                                videoImageUrl: 'http://img.youtube.com/vi/' + playlistItem.get('video').get('id') + '/default.jpg'
-                            };
-                        });
+                        if (!isAddPlaylistDisabled) {
+                            
+                            var streamItems = self.model.get('items').map(function (playlistItem) {
+                                return {
+                                    id: _.uniqueId('streamItem_'),
+                                    video: playlistItem.get('video'),
+                                    title: playlistItem.get('title'),
+                                    videoImageUrl: 'http://img.youtube.com/vi/' + playlistItem.get('video').get('id') + '/default.jpg'
+                                };
+                            });
 
-                        StreamItems.addMultiple(streamItems);
+                            StreamItems.addMultiple(streamItems);
+                            
+                        }
 
                     }
                 }]

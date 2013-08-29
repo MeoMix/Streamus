@@ -39,6 +39,7 @@
     <FilesToIncludeForPublish>OnlyFilesToRunTheApp</FilesToIncludeForPublish>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="css\blueimp-gallery.min.css" />
     <Content Include="css\bootstrap-responsive.css" />
     <Content Include="css\bootstrap.css" />
     <Content Include="font\helvetica neue\helveticaneue-webfont.svg" />
@@ -46,12 +47,23 @@
     <Content Include="css\index.css" />
     <Content Include="favicon.ico" />
     <Content Include="googlee6d26778f04ae1ed.html" />
+    <Content Include="img\error.png" />
+    <Content Include="img\error.svg" />
+    <Content Include="img\keyboardShortcutsScreenshot.png" />
+    <Content Include="img\loading.gif" />
+    <Content Include="img\mainScreenshot.png" />
+    <Content Include="img\play-pause.png" />
+    <Content Include="img\play-pause.svg" />
     <Content Include="img\sean.jpg" />
     <Content Include="img\chromeWebStoreBadge.png" />
     <Content Include="img\glyphicons-halflings-white.png" />
     <Content Include="img\glyphicons-halflings.png" />
     <Content Include="img\logo.png" />
+    <Content Include="img\video-play.png" />
+    <Content Include="img\video-play.svg" />
+    <Content Include="img\videoScreenshot.png" />
     <Content Include="img\youTubeBadge.png" />
+    <Content Include="img\youTubeInjectScreenshot.png" />
     <Content Include="index.htm" />
     <Content Include="js\backbone.js" />
     <Content Include="js\bootstrap.js" />
@@ -69,6 +81,7 @@
     <Content Include="js\googleAnalytics.js" />
     <Content Include="js\index.js" />
     <Content Include="js\installButtonView.js" />
+    <Content Include="js\jquery.blueimp-gallery.min.js" />
     <Content Include="js\jquery.js" />
     <Content Include="js\main.js" />
     <Content Include="js\zopim.js" />
