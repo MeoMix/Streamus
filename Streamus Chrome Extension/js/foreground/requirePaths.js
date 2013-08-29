@@ -35,6 +35,7 @@ var require = {
         'contextMenuItem': 'foreground/model/contextMenuItem',
         'dialog': 'foreground/model/dialog',
         'player': 'foreground/model/player',
+        'reloadPrompt': 'foreground/model/reloadPrompt',
         'settings': 'foreground/model/settings',
         'spinnerBuilder': 'foreground/model/spinnerBuilder',
         
@@ -45,6 +46,7 @@ var require = {
         'headerTitleView': 'foreground/view/headerTitleView',
         'loadingSpinnerView': 'foreground/view/loadingSpinnerView',
         'progressBarView': 'foreground/view/progressBarView',
+        'reloadPromptView': 'foreground/view/reloadPromptView',
         'volumeControlView': 'foreground/view/volumeControlView',
         
         //  View -> Buttons:

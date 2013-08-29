@@ -188,5 +188,11 @@
 	},
 	"loadVideoBeforeFullScreen": {
 		"message": "Load a video before trying to go full screen"
+	},
+	"reloadPromptText": {
+		"message": "Woah! Streamus is taking a long time to load. Reloading may help."
+	},
+    "reloadButtonText": {
+		"message": "Reload Streamus"
 	}
 }

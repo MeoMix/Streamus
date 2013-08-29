@@ -7,7 +7,7 @@
     max-width: 614px;
 }
 
-body.backgroundUnloaded {
+body.backgroundUnloaded > * {
     opacity: 0.5;
 }
 
@@ -841,6 +841,23 @@ button.close {
            -webkit-transform: rotate(360deg);
        }
 }
+
+.reloadPrompt {
+    position: absolute;
+    -webkit-box-sizing: content-box !important;
+    margin-left: -172px;
+
+    text-align: center;
+    top: 30%;
+    left: 50%;
+    opacity: 1 !important;
+}
+
+.reloadPrompt > button {
+    display: block;
+    margin: 0 auto;
+    margin-top: 10px;
+}
  
 /* Loading animation container */
 .loading {
@@ -851,6 +868,10 @@ button.close {
     height: 28px;
     margin: -14px 0 0 -14px;
     -webkit-box-sizing: content-box !important;
+}
+
+body.backgroundUnloaded .loading {
+    opacity: 1;
 }
  
 /* Spinning circle (inner circle) */

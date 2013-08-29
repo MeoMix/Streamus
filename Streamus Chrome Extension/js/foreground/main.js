@@ -24,14 +24,21 @@ require([
     'underscore',
     'backbone',
     'loadingSpinnerView',
+    'reloadPromptView',
     'lazyload',
     'jqueryUi',
     'scrollIntoView'
-], function ($, _, Backbone, LoadingSpinnerView) {
+], function ($, _, Backbone, LoadingSpinnerView, ReloadPromptView) {
     'use strict';
 
     var loadingSpinnerView = new LoadingSpinnerView;
     $('body').append(loadingSpinnerView.render().el);
+
+    var reloadPromptView = new ReloadPromptView;
+    var showReloadPromptTimeout = setTimeout(function () {
+        $('body').append(reloadPromptView.render().el);
+
+    }, 5000);
 
     //  If the user opens the foreground SUPER FAST then requireJS won't have been able to load everything in the background in time.
     var player = chrome.extension.getBackgroundPage().YouTubePlayer;
@@ -83,7 +90,11 @@ require([
     function loadForeground() {
 
         $('body').removeClass('backgroundUnloaded');
+        clearTimeout(showReloadPromptTimeout);
+        reloadPromptView.remove();
+
         loadingSpinnerView.remove();
         require(['foreground']);
+
     }
 });
