@@ -5,9 +5,8 @@
         <title>Streaming YouTube music made simple by Google Chrome - Streamus</title>
         <meta name="description" content="Streamus is a Google Chrome extension that turns YouTube into the music video player you always wanted.">
         <meta name="keywords" content="Streamus, music, online, YouTube, listen, streaming, play, digital, album, artist, playlist">
-        <link href="http://www.streamus.com/css/bootstrap.css" rel="stylesheet" />
-        <link href="http://www.streamus.com/css/bootstrap-responsive.css" rel="stylesheet" />
-        <link href="http://www.streamus.com/css/index.css" rel="stylesheet" />
+
+        <link href="http://www.streamus.com/css/minified.css" rel="stylesheet" />
         <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/jbnkffmindojffecdhbbmekbmkkfpmjd">
         <link rel='shortcut icon' href='http://www.streamus.com/favicon.ico' />
     </head>
@@ -16,7 +15,7 @@
             
             <div class="row-fluid">
                 <a class="logoWrapper pull-left" href="javascript:void(0)" onclick=" document.location.href = 'http://streamus.com' ">
-                    <img src="http://streamus.com/img/logo.png" title="Streaming YouTube music made simple by Google Chrome - Streamus" alt="Streaming YouTube music made simple by Google Chrome - Streamus" />
+                    <img width="250" height="54" src="http://streamus.com/img/logo.png" title="Streaming YouTube music made simple by Google Chrome - Streamus" alt="Streaming YouTube music made simple by Google Chrome - Streamus" />
                 </a>
             </div>
 
@@ -223,11 +222,10 @@
                 </div>                                     
                 
                 <div class="span6 text-right badgeWrapper">
-                    <img src="http://www.streamus.com/img/youTubeBadge.png" alt="Powered by YouTube" />
-                    
-                    
+                    <img width="85" height="40"  src="http://www.streamus.com/img/youTubeBadge.png" alt="Powered by YouTube" />
+                       
                     <a href="https://chrome.google.com/webstore/detail/streamus-beta/jbnkffmindojffecdhbbmekbmkkfpmjd?hl=en-US" >
-                        <img src="http://www.streamus.com/img/chromeWebStoreBadge.png" alt="Available in the Chrome Web Store" />  
+                        <img width="150" height="40" src="http://www.streamus.com/img/chromeWebStoreBadge.png" alt="Available in the Chrome Web Store" />  
                     </a>
 
                 </div>  
@@ -240,22 +238,75 @@
             <div id="fb-root"></div>
             <div class="fb-like" data-href="https://www.facebook.com/GetStreamus"  data-send="false" data-layout="button_count" data-width="420" data-show-faces="false" data-font="lucida grande"></div>
             
-            <a href="https://twitter.com/share" class="twitter-share-button" data-via="GetStreamus">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-via="GetStreamus"></a>
         </aside>
 
         <!-- Placed at the end of the document so the pages load faster -->
-        <script src="http://www.streamus.com/js/jquery.js"></script>
-        <script src="http://www.streamus.com/js/underscore.js"></script>
-        <script src="http://www.streamus.com/js/backbone.js"></script>
-        <script src="http://www.streamus.com/js/bootstrap.js"></script>
-        <script src="http://www.streamus.com/js/detectMobileBrowser.js"></script>
-        <script src="http://www.streamus.com/js/googleAnalytics.js"></script>
-        <script src="http://www.streamus.com/js/googlePlusOneButton.js"></script>
-        <script src="http://www.streamus.com/js/twitterShareButton.js"></script>
-        <script src="http://www.streamus.com/js/facebookLikeButton.js"></script>
-        <script src="http://www.streamus.com/js/zopim.js"></script>
-        <script src="http://www.streamus.com/js/installButtonView.js"></script>
-        <script src="http://www.streamus.com/js/index.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
+        <script src="http://www.streamus.com/js/bootstrap.min.js"></script>
+        <script src="http://www.streamus.com/js/detectMobileBrowser.min.js"></script>
+        <script src="http://www.streamus.com/js/installButtonView.min.js"></script>
+        <script src="http://www.streamus.com/js/index.min.js"></script>
+        
+        <script type="text/javascript">
+            //  inline load Google Analytics:
+            (function (d, j, f, c, h, b, e) { d.GoogleAnalyticsObject = h; d[h] = d[h] || function () { (d[h].q = d[h].q || []).push(arguments) }, d[h].l = 1 * new Date(); b = j.createElement(f), e = j.getElementsByTagName(f)[0]; b.async = 1; b.src = c; e.parentNode.insertBefore(b, e) })(window, document, "script", "//www.google-analytics.com/analytics.js", "ga"); ga("create", "UA-41808530-1", "streamus.com"); ga("send", "pageview");
+
+            //  inline social buttons:
+            //  facebook:
+            (function (d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s);
+                js.id = id;
+                js.async = true;
+                js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=104501109590252";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+
+            //  twitter:
+            (function (d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s);
+                js.id = id;
+                js.async = true;
+                js.src = "//platform.twitter.com/widgets.js";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'twitter-wjs'));
+
+            //  twitter:
+            (function (d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s);
+                js.id = id;
+                js.async = true;
+                js.src = "https://apis.google.com/js/plusone.js";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'google-jspo'));
+            
+            //  zopim:
+            window.$zopim || (function (d, s) {
+                var z = $zopim = function (c) { z._.push(c); }, $ = z.s =
+                    d.createElement(s), e = d.getElementsByTagName(s)[0];
+                z.set = function (o) {
+                    z.set.
+                        _.push(o);
+                };
+                z._ = [];
+                z.set._ = [];
+                $.async = !0;
+                $.setAttribute('charset', 'utf-8');
+                $.src = '//v2.zopim.com/?1TIFyJJeUxtn1IuZpJGTUc0e3kpthpoN';
+                z.t = +new Date;
+                $.
+                    type = 'text/javascript';
+                e.parentNode.insertBefore($, e);
+            })(document, 'script');
+        </script>
 
     </body>
 </html>

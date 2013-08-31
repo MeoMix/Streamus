@@ -11,9 +11,12 @@ define([
 ], function (Player, User, YouTubeDataAPI, PlayerState, StreamItems, Error, IconManager, Omnibox) {
     'use strict';
 
+    var notification;
+
    Player.on('change:state', function (model, state) {
 
-        if (state === PlayerState.PLAYING) {
+       if (state === PlayerState.PLAYING) {
+
             //  Check if the foreground UI is open.
             var foreground = chrome.extension.getViews({ type: "popup" });
   
@@ -22,9 +25,13 @@ define([
                 //  If the foreground UI is not open, show a notification to indicate active video.
                 var selectedStreamItem = StreamItems.findWhere({ selected: true });
                 var activeVideoId = selectedStreamItem.get('video').get('id');
+                
+                if (notification) {
+                    notification.close();
+                }
 
                 //  TODO: Create HTML notification in the future. Doesn't have all the support we need currently.
-                var notification = window.webkitNotifications.createNotification(
+                notification = window.webkitNotifications.createNotification(
                   'http://img.youtube.com/vi/' + activeVideoId + '/default.jpg',
                   'Now Playing',
                   selectedStreamItem.get('title')
@@ -34,6 +41,7 @@ define([
 
                 setTimeout(function () {
                     notification.close();
+                    notification = null;
                 }, 3000);
             }
         }

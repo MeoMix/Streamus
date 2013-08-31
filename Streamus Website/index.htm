@@ -5,10 +5,8 @@
         <title>Streaming YouTube music made simple by Google Chrome - Streamus</title>
         <meta name="description" content="Streamus is a Google Chrome extension that turns YouTube into the music video player you always wanted.">
         <meta name="keywords" content="Streamus, music, online, YouTube, listen, streaming, play, digital, album, artist, playlist">
-        <link href="css/blueimp-gallery.min.css" rel="stylesheet" />
-        <link href="css/bootstrap.css" rel="stylesheet" />
-        <link href="css/bootstrap-responsive.css" rel="stylesheet" />
-        <link href="css/index.css" rel="stylesheet" />
+
+        <link href="css/minified.css" rel="stylesheet" />
         <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/jbnkffmindojffecdhbbmekbmkkfpmjd">
         <link rel='shortcut icon' href='favicon.ico' />
     </head>
@@ -16,7 +14,7 @@
         <div class="container-narrow">
             
             <a href="javascript:void(0)"  class="logoWrapper" data-contentid="homeContent">
-                <img src="img/logo.png" title="Streaming YouTube music made simple by Google Chrome - Streamus" alt="Streaming YouTube music made simple by Google Chrome - Streamus" />
+                <img width="250" height="54" src="img/logo.png" title="Streaming YouTube music made simple by Google Chrome - Streamus" alt="Streaming YouTube music made simple by Google Chrome - Streamus" />
             </a>
 
             <ul class="nav nav-pills pull-right">
@@ -49,13 +47,13 @@
                 </div>
 
                 <div id="links">
-                    <a href="img/mainScreenshot.png" title="Streaming YouTube music made simple by Google Chrome - Streamus" data-gallery>
+                    <a href="img/mainScreenshot.png" title="Streaming YouTube music made simple by Google Chrome - Streamus" data-gallery="blueimp-gallery-carousel">
                     </a>
-                    <a href="img/videoScreenshot.png" title="Watch YouTube videos tab-free!" data-gallery>
+                    <a href="img/videoScreenshot.png" title="Watch YouTube videos tab-free!" data-gallery="blueimp-gallery-carousel">
                     </a>
-                    <a href="img/youTubeInjectScreenshot.png" title="Seamless YouTube integration makes cataloging music simple!" data-gallery>
+                    <a href="img/youTubeInjectScreenshot.png" title="Seamless YouTube integration makes cataloging music simple!" data-gallery="blueimp-gallery-carousel">
                     </a>
-                    <a href="img/keyboardShortcutsScreenshot.png" title="Set your own keyboard shortcuts to easily skip between videos." data-gallery>
+                    <a href="img/keyboardShortcutsScreenshot.png" title="Set your own keyboard shortcuts to easily skip between videos." data-gallery="blueimp-gallery-carousel">
                     </a>
                 </div>
                 
@@ -109,7 +107,7 @@
                     </div>
 
                     <div class="span4">
-                        <img src="img/sean.jpg" class="img-polaroid" />
+                        <img width="720" height="960" src="img/sean.jpg" class="img-polaroid" />
                     </div>
                 </div>
             </div>
@@ -117,7 +115,7 @@
             <div id="contactContent" class="content">
                 
                 <div class="row-fluid marketing">
-                    <p>You can get ahold of me numerous ways. I'm pretty much always online:
+                    <p>You can get ahold of me numerous ways. I'm pretty much always online:</p>
                     
                     <ul>
                         <li>admin at streamus dot com</li>
@@ -323,13 +321,12 @@
                         <a href="javascript:void(0)" data-contentid="privacyContent" title="Privacy Policy of Streamus" rel="noindex, nofollow">Privacy</a>
                     </p>
                 </div>
-                   
 
                 <div class="span6 text-right badgeWrapper">
-                    <img src="img/youTubeBadge.png" alt="Powered by YouTube" />
+                    <img width="85" height="40" src="img/youTubeBadge.png" alt="Powered by YouTube" />
                     
                     <a href="https://chrome.google.com/webstore/detail/streamus-beta/jbnkffmindojffecdhbbmekbmkkfpmjd?hl=en-US" >
-                        <img src="img/chromeWebStoreBadge.png" alt="Available in the Chrome Web Store" />  
+                        <img width="150" height="40" src="img/chromeWebStoreBadge.png" alt="Available in the Chrome Web Store" />  
                     </a>
 
                 </div>  
@@ -342,22 +339,76 @@
             <div id="fb-root"></div>
             <div class="fb-like" data-href="https://www.facebook.com/GetStreamus"  data-send="false" data-layout="button_count" data-width="420" data-show-faces="false" data-font="lucida grande"></div>
             
-            <a href="https://twitter.com/share" class="twitter-share-button" data-via="GetStreamus">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-via="GetStreamus"></a>
         </aside>
 
         <!-- Placed at the end of the document so the pages load faster -->
-        <script src="js/jquery.js"></script>
-        <script src="js/underscore.js"></script>
-        <script src="js/backbone.js"></script>
-        <script src="js/bootstrap.js"></script>
-        <script src="js/detectMobileBrowser.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/detectMobileBrowser.min.js"></script>
         <script src="js/jquery.blueimp-gallery.min.js"></script>
-        <script src="js/googleAnalytics.js"></script>
-        <script src="js/facebookLikeButton.js"></script>
-        <script src="js/googlePlusOneButton.js"></script>
-        <script src="js/twitterShareButton.js"></script>
-        <script src="js/zopim.js"></script>
-        <script src="js/installButtonView.js"></script>
-        <script src="js/index.js"></script>
+        <script src="js/installButtonView.min.js"></script>
+        <script src="js/index.min.js"></script>
+        
+        <script type="text/javascript">
+            //  inline load Google Analytics:
+            (function (d, j, f, c, h) { d.GoogleAnalyticsObject = h; d[h] = d[h] || function () { (d[h].q = d[h].q || []).push(arguments) }, d[h].l = 1 * new Date(); b = j.createElement(f), e = j.getElementsByTagName(f)[0]; b.async = 1; b.src = c; e.parentNode.insertBefore(b, e) })(window, document, "script", "//www.google-analytics.com/analytics.js", "ga"); ga("create", "UA-41808530-1", "streamus.com"); ga("send", "pageview");
+        
+            //  inline social buttons:
+            //  facebook:
+            (function (d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s);
+                js.id = id;
+                js.async = true;
+                js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=104501109590252";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+            
+            //  twitter:
+            (function (d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s);
+                js.id = id;
+                js.async = true;
+                js.src = "//platform.twitter.com/widgets.js";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'twitter-wjs'));
+            
+            //  twitter:
+            (function (d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s);
+                js.id = id;
+                js.async = true;
+                js.src = "https://apis.google.com/js/plusone.js";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'google-jspo'));
+            
+            //  zopim:
+            window.$zopim || (function (d, s) {
+                var z = $zopim = function (c) { z._.push(c); }, $ = z.s =
+                    d.createElement(s), e = d.getElementsByTagName(s)[0];
+                z.set = function (o) {
+                    z.set.
+                        _.push(o);
+                };
+                z._ = [];
+                z.set._ = [];
+                $.async = !0;
+                $.setAttribute('charset', 'utf-8');
+                $.src = '//v2.zopim.com/?1TIFyJJeUxtn1IuZpJGTUc0e3kpthpoN';
+                z.t = +new Date;
+                $.
+                    type = 'text/javascript';
+                e.parentNode.insertBefore($, e);
+            })(document, 'script');
+        </script>
+        
     </body>
 </html>

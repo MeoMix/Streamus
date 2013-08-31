@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/MsBuild/2003">
+
+  
+  <UsingTask TaskName="CssCompressorTask" AssemblyFile="..\packages\YUICompressor.NET.MSBuild.2.3.0.0\lib\NET20\Yahoo.Yui.Compressor.Build.MsBuild.dll" />
+  <UsingTask TaskName="JavaScriptCompressorTask" AssemblyFile="..\packages\YUICompressor.NET.MSBuild.2.3.0.0\lib\NET20\Yahoo.Yui.Compressor.Build.MsBuild.dll" />
+
+  
+  <!-- 
+      ****************************************************************************************************************************************
+      ******  Please refer to the official documentation for the full list of options: http://yuicompressor.codeplex.com/documentation  ******  
+      ****************************************************************************************************************************************
+  -->
+
+  <Target Name="Minify">
+
+    <ItemGroup>
+      <FilesToDelete Include="css\minified.css"/>
+
+      <FilesToDelete Include="js\bootstrap.min.js"/>
+      <FilesToDelete Include="js\detectMobileBrowser.min.js"/>
+      <FilesToDelete Include="js\index.min.js"/>
+      <FilesToDelete Include="js\installButtonView.min.js"/>
+      <FilesToDelete Include="js\jquery.blueimp-gallery.min.js"/>
+    </ItemGroup>
+
+    <Delete Files="@(FilesToDelete)" />
+    
+    <ItemGroup>
+      <!-- Single files, listed in order of dependency -->
+      <CssFiles Include="css\*.css"/>
+
+      <Backbone Include="js\backbone.js"/>
+      <Bootstrap Include="js\bootstrap.js"/>
+      <DetectMobileBrowser Include="js\detectMobileBrowser.js"/>
+      <Index Include="js\index.js"/>
+      <InstallButtonView Include="js\installButtonView.js"/>
+      <JqueryBlueimpGallery Include="js\jquery.blueimp-gallery.js"/>
+    </ItemGroup>
+
+    <CssCompressorTask SourceFiles="@(CssFiles)" OutputFile="css\minified.css" />
+
+    <JavaScriptCompressorTask SourceFiles="@(Bootstrap)" OutputFile="js\bootstrap.min.js" />
+    <JavaScriptCompressorTask SourceFiles="@(DetectMobileBrowser)" OutputFile="js\detectMobileBrowser.min.js" />
+    <JavaScriptCompressorTask SourceFiles="@(Index)" OutputFile="js\index.min.js" />
+    <JavaScriptCompressorTask SourceFiles="@(InstallButtonView)" OutputFile="js\installButtonView.min.js" />
+    <JavaScriptCompressorTask SourceFiles="@(JqueryBlueimpGallery)" OutputFile="js\jquery.blueimp-gallery.min.js" />
+    
+  </Target>
+</Project>

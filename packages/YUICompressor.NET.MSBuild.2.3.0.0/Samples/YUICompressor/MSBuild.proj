@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/MsBuild/2003">
+
+  
+  <UsingTask TaskName="CssCompressorTask" AssemblyFile="..\..\lib\NET20\Yahoo.Yui.Compressor.Build.MsBuild.dll" />
+  <UsingTask TaskName="JavaScriptCompressorTask" AssemblyFile="..\..\lib\NET20\Yahoo.Yui.Compressor.Build.MsBuild.dll" />
+
+  
+  <!-- 
+      ****************************************************************************************************************************************
+      ******  Please refer to the official documentation for the full list of options: http://yuicompressor.codeplex.com/documentation  ******  
+      ****************************************************************************************************************************************
+  -->
+
+  
+  
+  <Target Name="Minify">
+    
+    <ItemGroup>
+      <!-- Single files, listed in order of dependency -->
+      <CssFiles Include="..\..\..\..\Streamus Website\css\*.css"/>
+      <JavaScriptFiles Include="..\..\..\..\Streamus Website\js\backbone.js"/>
+      <JavaScriptFiles Include="..\..\..\..\Streamus Website\js\bootstrap.js"/>
+      <JavaScriptFiles Include="..\..\..\..\Streamus Website\js\bootstrap.js"/>
+      <JavaScriptFiles Include="..\..\..\..\Streamus Website\js\detectMobileBrowser.js"/>
+      <JavaScriptFiles Include="..\..\..\..\Streamus Website\js\facebookLikeButton.js"/>
+      <JavaScriptFiles Include="..\..\..\..\Streamus Website\js\googleAnalytics.js"/>
+      <JavaScriptFiles Include="..\..\..\..\Streamus Website\js\googlePlusOneButton.js"/>
+      <JavaScriptFiles Include="..\..\..\..\Streamus Website\js\index.js"/>
+      <JavaScriptFiles Include="..\..\..\..\Streamus Website\js\installButtonView.js"/>
+      <JavaScriptFiles Include="..\..\..\..\Streamus Website\js\jquery.blueimp-gallery.min.js"/>
+      <JavaScriptFiles Include="..\..\..\..\Streamus Website\js\jquery.js"/>
+      <JavaScriptFiles Include="..\..\..\..\Streamus Website\js\main.js"/>
+      <JavaScriptFiles Include="..\..\..\..\Streamus Website\js\twitterShareButton.js"/>
+      <JavaScriptFiles Include="..\..\..\..\Streamus Website\js\underscore.js"/>
+      <JavaScriptFiles Include="..\..\..\..\Streamus Website\js\zopim.js"/>
+    </ItemGroup>
+
+    <CssCompressorTask
+          SourceFiles="@(CssFiles)"
+          OutputFile="..\..\..\..\Streamus Website\css\minified.css"
+       />
+
+    <JavaScriptCompressorTask
+          SourceFiles="@(JavaScriptFiles)"
+          OutputFile="..\..\..\..\Streamus Website\js\minified.js"
+       />
+    
+  </Target>
+</Project>

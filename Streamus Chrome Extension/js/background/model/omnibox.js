@@ -68,7 +68,7 @@ define([
                     return text === url;
                 });
 
-                Player.once('change:loadedVideoId', function () {
+                Player.once('change:videoStreamSrc', function(model, streamSrc) {
                     Player.play();
                 });
 

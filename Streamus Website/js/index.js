@@ -42,13 +42,9 @@
 
     var bodyView = new BodyView;
     
-
-    //var gallery = $('#blueimp-gallery').data('gallery');
-    
     blueimp.Gallery( $('#links a') , {
         container: '#blueimp-gallery-carousel',
         carousel: true
     });
-
 
 });

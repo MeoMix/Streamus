@@ -19,6 +19,8 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <ExcludeFilesFromDeployment>minifier.proj;optipng.exe</ExcludeFilesFromDeployment>
+    <ExcludeFoldersFromDeployment>bin;obj;Properties</ExcludeFoldersFromDeployment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,6 +44,7 @@
     <Content Include="css\blueimp-gallery.min.css" />
     <Content Include="css\bootstrap-responsive.css" />
     <Content Include="css\bootstrap.css" />
+    <Content Include="css\minified.css" />
     <Content Include="font\helvetica neue\helveticaneue-webfont.svg" />
     <Content Include="font\helvetica neue\helveticaneuebold-webfont.svg" />
     <Content Include="css\index.css" />
@@ -65,7 +68,6 @@
     <Content Include="img\youTubeBadge.png" />
     <Content Include="img\youTubeInjectScreenshot.png" />
     <Content Include="index.htm" />
-    <Content Include="js\backbone.js" />
     <Content Include="js\bootstrap.js" />
     <Content Include="font\helvetica neue\helveticaneue-webfont.eot" />
     <Content Include="font\helvetica neue\helveticaneue-webfont.ttf" />
@@ -75,18 +77,15 @@
     <Content Include="font\helvetica neue\helveticaneuebold-webfont.woff" />
     <Content Include=".htaccess" />
     <None Include="js\chrome-api-vsdoc.js" />
-    <Content Include="js\googlePlusOneButton.js" />
+    <Content Include="js\bootstrap.min.js" />
     <Content Include="js\detectMobileBrowser.js" />
-    <Content Include="js\facebookLikeButton.js" />
-    <Content Include="js\googleAnalytics.js" />
+    <Content Include="js\detectMobileBrowser.min.js" />
+    <Content Include="js\index.min.js" />
+    <Content Include="js\installButtonView.min.js" />
+    <Content Include="js\jquery.blueimp-gallery.min.js" />
     <Content Include="js\index.js" />
     <Content Include="js\installButtonView.js" />
-    <Content Include="js\jquery.blueimp-gallery.min.js" />
-    <Content Include="js\jquery.js" />
-    <Content Include="js\main.js" />
-    <Content Include="js\zopim.js" />
-    <Content Include="js\twitterShareButton.js" />
-    <Content Include="js\underscore.js" />
+    <Content Include="js\jquery.blueimp-gallery.js" />
     <Content Include="share\index.htm" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -94,6 +93,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="packages.config" />
+    <Content Include="minifier.proj" />
     <None Include="Properties\PublishProfiles\Streamus Website.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -102,7 +103,17 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="EcmaScript.NET">
+      <HintPath>..\packages\EcmaScript.Net.1.0.1.0\lib\net20\EcmaScript.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="Yahoo.Yui.Compressor">
+      <HintPath>..\packages\YUICompressor.NET.2.3.0.0\lib\NET20\Yahoo.Yui.Compressor.dll</HintPath>
+    </Reference>
+    <Reference Include="Yahoo.Yui.Compressor.Build.MsBuild">
+      <HintPath>..\packages\YUICompressor.NET.MSBuild.2.3.0.0\lib\NET20\Yahoo.Yui.Compressor.Build.MsBuild.dll</HintPath>
+    </Reference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -129,6 +140,9 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <PropertyGroup>
+    <PostBuildEvent>MSBuild "$(ProjectDir)\minifier.proj"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
