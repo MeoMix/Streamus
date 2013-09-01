@@ -40,7 +40,8 @@ body {
      margin: inherit;
 }
 
-#homeContent .jumbotron h1 {
+#homeContent .jumbotron h1,
+#gettingStartedContent .jumbotron h1 {
     font-size: 72px;
     line-height: 1;
 }
@@ -151,4 +152,21 @@ ul.nav {
 
 #contactContent ul {
     list-style: none;
+}
+
+.featurette {
+    padding-top: 120px;
+    overflow: hidden;
+}
+
+.featurette-image {
+    margin-top: -120px;
+}
+
+.featurette-image.pull-left {
+    margin-right: 40px;
+}
+
+.featurette-image.pull-right {
+    margin-left: 40px;
 }

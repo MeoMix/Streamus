@@ -62,6 +62,10 @@
     <Content Include="img\glyphicons-halflings-white.png" />
     <Content Include="img\glyphicons-halflings.png" />
     <Content Include="img\logo.png" />
+    <Content Include="img\streamusIntro1.png" />
+    <Content Include="img\streamusIntro2.png" />
+    <Content Include="img\streamusIntro3.png" />
+    <Content Include="img\streamusIntro5.png" />
     <Content Include="img\video-play.png" />
     <Content Include="img\video-play.svg" />
     <Content Include="img\videoScreenshot.png" />
