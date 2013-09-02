@@ -11,7 +11,7 @@
             'click ul.nav li': 'selectAndShowView',
             'click .footer a': 'selectAndShowView'
         },
-        
+       
         installButton: new InstallButtonView,
         
         //  Toggle between Home/Contact/About etc. 

@@ -40,17 +40,6 @@ body {
      margin: inherit;
 }
 
-#homeContent .jumbotron h1,
-#gettingStartedContent .jumbotron h1 {
-    font-size: 72px;
-    line-height: 1;
-}
-
-#aboutContent .jumbotron h1 {
-    font-size: 50px;
-    line-height: 1;
-}
-
 .footer { padding-top: 10px; }
 
 .footer * {
@@ -73,7 +62,6 @@ body {
     line-height: 1;
     padding-top: 5px;
 }
-
 
 .social {
     max-width: 250px;
@@ -101,6 +89,7 @@ body {
 ul.nav {
     margin-bottom: 0;
     margin-top: 12px;
+    display: inline-block;
 }
 
 #homeContent {
@@ -115,30 +104,8 @@ ul.nav {
     margin-left: 4px !important;
 }
 
-@media (max-width: 1000px) {
-    .container-narrow { padding: 20px; }
-    .logoWrapper { text-align: center; }
-    .badgeWrapper { text-align: left; }
-}
-
-@media (max-width: 767px) {
-    .badgeWrapper {
-        margin-top: inherit;
-        text-align: center;
-    }
-
-    .legalWrapper { text-align: center; }
-    .social { display: none !important; }
-}
-
-/* Hide the badges when we get really tiny because they don't look great. */
-
-@media (max-width: 352px) {
-    .badgeWrapper { display: none !important; }
-}
-
-@media (max-width: 688px) {
-    .zopim { display: none !important; }
+.logoWrapper {
+    display: inline-block;
 }
 
 #aboutConclusion {
@@ -169,4 +136,81 @@ ul.nav {
 
 .featurette-image.pull-right {
     margin-left: 40px;
+}
+
+#homeContent .jumbotron h1,
+#gettingStartedContent .jumbotron h1 {
+    font-size: 72px;
+    line-height: 1;
+}
+
+#aboutContent .jumbotron h1 {
+    font-size: 50px;
+    line-height: 1;
+}
+
+@media (max-width: 1000px) {
+    .container-narrow { padding: 10px 0;}
+    .badgeWrapper { text-align: left; }
+    .social { display: none !important; }
+    .zopim { display: none !important; }
+}
+
+@media (max-width: 767px) {
+    .badgeWrapper {
+        margin-top: inherit;
+        text-align: center !important;
+    }
+    .logoWrapper {
+         text-align: center !important;
+    }
+    .navigationWrapper {
+        text-align: center !important;
+        margin-top: 20px !important;
+        zoom: .9;
+    }
+    .legalWrapper {
+         text-align: center;
+    }
+
+    .content {
+        zoom: .9;
+    }
+}
+
+@media (max-width: 352px) {
+    .badgeWrapper {
+        zoom: .7
+    }
+
+    .header,
+    .footer {
+        zoom: .9
+    }
+   
+    .content {
+        zoom: .7;
+    }
+
+    .navigationWrapper {
+        text-align: center !important;
+        margin-top: 10px !important;
+        zoom: .8;
+    }
+
+}
+
+@media (max-width: 290px) {
+    .content {
+        zoom: .6;
+    }
+
+    #homeContent > .jumbotron h1 {
+        font-size: 66px;
+    }
+
+    .navigationWrapper {
+        zoom: .7;
+    }
+
 }
