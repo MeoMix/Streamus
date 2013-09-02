@@ -35,6 +35,8 @@ define([
         //  Need to recreate submodels as Backbone.Models else they will just be regular Objects.
         parse: function (playlistDto) {
 
+            console.log("Plalyist is being parsed:", playlistDto);
+
             //  Convert C# Guid.Empty into BackboneJS null
             for (var key in playlistDto) {
                 if (playlistDto.hasOwnProperty(key) && playlistDto[key] == '00000000-0000-0000-0000-000000000000') {
@@ -52,6 +54,10 @@ define([
                 
             // Remove so parse doesn't set and overwrite instance after parse returns.
             delete playlistDto.items;
+
+
+            this.setDisplayInfo();
+            console.log("DisplayInfo has been set:", this);
                 
             return playlistDto;
         },
@@ -103,6 +109,10 @@ define([
             this.listenTo(this.get('items'), 'add empty', this.setDisplayInfo);
             this.setDisplayInfo();
 
+            this.on('change:displayInfo', function() {
+                console.log("Display info has changed:", this.get('displayInfo'));
+            });
+
             this.listenTo(this.get('items'), 'remove', function (removedPlaylistItem) {
                 var playlistItems = self.get('items');
 
@@ -136,6 +146,9 @@ define([
             var sumVideoDurations = _.reduce(videoDurations, function (memo, duration) {
                 return memo + duration;
             }, 0);
+
+            console.log("Sum video durations:", sumVideoDurations);
+            console.log("Videos:", videos.length);
 
             var displayInfo = 'Videos: ' + videos.length + ', Duration: ' + Utility.prettyPrintTime(sumVideoDurations);
             this.set('displayInfo', displayInfo);
@@ -181,6 +194,8 @@ define([
                     }
 
                     self.get('items').push(playlistItem);
+                    //  TODO: Consider just incrementing displayInfo instead of re-calculating if it becomes too expensive... should be ok though
+                    self.setDisplayInfo();
   
                     if (callback) {
                         callback(playlistItem);
@@ -232,6 +247,7 @@ define([
                     }
                     
                     self.get('items').add(itemsToSave.models);
+                    self.setDisplayInfo();
    
                     if (callback) {
                         callback();

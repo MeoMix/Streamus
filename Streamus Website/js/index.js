@@ -14,24 +14,47 @@
        
         installButton: new InstallButtonView,
         
+        initialize: function () {
+
+            var activeLink = this.$el.find('ul.nav li a[href="' + window.location.hash + '"]');
+
+            if (activeLink.length > 0) {
+                this.showViewBasedOnListItem(activeLink.parent());
+            }
+
+        },
+        
         //  Toggle between Home/Contact/About etc. 
-        selectAndShowView: function(event) {
+        selectAndShowView: function (event) {
 
             var clickedItem = $(event.currentTarget);
 
             if (!clickedItem.hasClass('active')) {
                 this.$el.find('.active').removeClass('active');
-                
+
                 var contentId = clickedItem.data('contentid');
 
                 clickedItem.addClass('active');
-                
+
                 $('.content').hide();
-                
+
                 $('#' + contentId).show();
-                
+
+                this.showViewBasedOnListItem(clickedItem);
             }
 
+        },
+        
+        showViewBasedOnListItem: function (listItem) {
+            this.$el.find('.active').removeClass('active');
+
+            var contentId = listItem.data('contentid');
+
+            listItem.addClass('active');
+
+            $('.content').hide();
+
+            $('#' + contentId).show();
         },
         
         goHome: function() {
