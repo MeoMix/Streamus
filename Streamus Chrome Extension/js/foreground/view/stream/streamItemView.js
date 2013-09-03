@@ -36,7 +36,11 @@
 
             var self = this;
             this.listenTo(this.model, 'destroy', function () {
+
                 self.parent.sly.remove(this.render().el);
+                
+                //  TODO: Crappy encapsulation break here.
+                $('.streamItem.active').click();
             });
         },
 
