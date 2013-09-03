@@ -33,24 +33,29 @@ define([
 
                 var streamItemExists = StreamItems.length > 0;
                 this.$el.toggleClass('clickable', streamItemExists);
-                
+
                 if (streamItemExists) {
+
                     var playerState = Player.get('state');
-                    
+                    //console.log("Stream exists...", playerState);
                     if (playerState == PlayerState.PLAYING) {
                         //  Continously render if playing.
 
-                        window.requestAnimationFrame(function () {
-                            self.render();
+                        window.requestAnimationFrame(function() {
+
+                            //  TODO: For some reason if I just let this render infinitely it starts going black... but why?
+                            if (self.$el.is(':visible')) {
+                                self.render();
+                            }
+
                         });
 
+                        console.log("Drawing image:", this.el.width, this.el.height, this.video);
                         this.context.drawImage(this.video, 0, 0, this.el.width, this.el.height);
-                    }
-                    else if (Player.get('currentTime') > 0) {
+                    } else if (Player.get('currentTime') > 0) {
                         //  The player might open while paused. Render the current video frame, but don't continously render until play starts.
                         this.context.drawImage(this.video, 0, 0, this.el.width, this.el.height);
-                    }
-                    else {
+                    } else {
                         var loadedVideoId = Player.get('loadedVideoId');
 
                         if (loadedVideoId != '') {
@@ -59,10 +64,12 @@ define([
                             this.videoDefaultImage.src = 'http://i2.ytimg.com/vi/' + loadedVideoId + '/mqdefault.jpg ';
                         }
                     }
-                    
+
                 } else {
 
-                    setTimeout(function () {
+                    console.log("Stream doesn't exist...");
+
+                    setTimeout(function() {
                         //  Clear the canvas by painting over it with black.
                         //  TODO: Perhaps something more visually appealing / indicative than black fill?
                         self.context.rect(0, 0, self.el.width, self.el.height);
@@ -71,7 +78,6 @@ define([
                     }, 0);
 
                 }
-                
             }
 
             return this;
@@ -98,8 +104,6 @@ define([
             });
             this.listenTo(Player, 'change:state', this.render);
             this.listenTo(StreamItems, 'add addMultiple empty change:selected', this.render);
-
-            this.render();
         },
         
         togglePlayerState: function () {

@@ -58,13 +58,20 @@ define([
             if (activeContentId == 'HomeContent') {
                 this.activePlaylistTabView.activePlaylistView.$el.trigger('manualShow');
             }
+            else if (activeContentId == 'VideoContent') {
+                console.log("Rendering");
+                this.videoDisplayView.render();
+            }
 
         },
 
         initialize: function () {
             var self = this;
 
-            this.$el.find('#VideoContent').append(this.videoDisplayView.render().el);
+            console.log("INITIALIZING FOREGROUND");
+
+            
+            console.log("VideoContent:", this.$el.find('#VideoContent'));
 
             var folders = chrome.extension.getBackgroundPage().User.get('folders');
 
@@ -94,6 +101,7 @@ define([
             var activeButton = $('#' + activeContentButtonId);
 
             this.setMenuButtonActive(activeButton);
+            this.$el.find('#VideoContent').append(this.videoDisplayView.render().el);
         },
 
         showContent: function (event) {

@@ -99,6 +99,9 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <Content Include="minifier.proj" />
+    <Content Include="js\index.min.js.map">
+      <DependentUpon>index.js</DependentUpon>
+    </Content>
     <None Include="Properties\PublishProfiles\Streamus Website.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
