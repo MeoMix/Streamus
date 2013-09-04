@@ -32,7 +32,7 @@ define([
             
             //  Provides the drop-down suggestions and video suggestions.
             this.contentHeaderView.enableAutocompleteOnUserInput({
-                autoFocus: true,
+                autoFocus: false,
                 source: [],
                 position: {
                     my: "left top",
@@ -77,20 +77,18 @@ define([
         showVideoSuggestions: function () {
             var self = this;
             
-            var searchText = this.contentHeaderView.getUserInput();
-
-            var trimmedSearchText = $.trim(searchText);
+            var userInput = this.contentHeaderView.getUserInput();
 
             //  Clear results if there is no text.
-            if (trimmedSearchText === '') {
+            if (userInput === '') {
 
                 this.contentHeaderView.setAutocompleteSource([]);
 
             } else {
-                YouTubeDataAPI.search(trimmedSearchText, function (videoInformationList) {
+                YouTubeDataAPI.search(userInput, function (videoInformationList) {
 
                     //  Do not display results if searchText was modified while searching.
-                    if (trimmedSearchText === $.trim(self.contentHeaderView.getUserInput())) {
+                    if (userInput === self.contentHeaderView.getUserInput()) {
 
                         var videoSourceList = _.map(videoInformationList, function (videoInformation) {
 
@@ -119,8 +117,8 @@ define([
             
             //  Wrapped in a timeout to support 'rightclick->paste' 
             setTimeout(function () {
-                var url = self.contentHeaderView.getUserInput();
-                var parsedVideoId = Utility.parseVideoIdFromUrl(url);
+                var userInput = self.contentHeaderView.getUserInput();
+                var parsedVideoId = Utility.parseVideoIdFromUrl(userInput);
 
                 //  If found a valid YouTube link then just add the video.
                 if (parsedVideoId) {
@@ -134,7 +132,7 @@ define([
             
             var userInput = this.contentHeaderView.getUserInput();
 
-            if (userInput.trim() != '') {
+            if (userInput !== '') {
                 this.contentHeaderView.triggerAutocompleteSearch();
             }
             

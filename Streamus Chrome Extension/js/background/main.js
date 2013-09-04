@@ -4,9 +4,9 @@
             exports: '_'
         },
         backbone: {
-            //These script dependencies should be loaded before loading backbone.js
+            //  These script dependencies should be loaded before loading backbone.js
             deps: ["underscore", "jquery"],
-            //Once loaded, use the global 'Backbone' as the module value.
+            //  Once loaded, use the global 'Backbone' as the module value.
             exports: "Backbone"
         },
         googleApiClient: {
@@ -22,6 +22,9 @@ require([
     'googleApiClient'
 ], function ($, _, Backbone, GoogleApiClient) {
     'use strict';
+
+    //  TODO: is https the right call here? Maybe I should use http sometimes? how to know?
+    var refererUrl = 'https://youtube.com/embed/undefined?enablejsapi=1';
     
     //  This has to be setup SUPER early because I can't load the YouTube iframe without generating ugly errors unless this is in place.
     //  Error looks like: Blocked a frame with origin "https://www.youtube.com" from accessing a frame with origin 
@@ -33,61 +36,41 @@ require([
     //  means we can bypass a lot of the embed restrictions.
     chrome.webRequest.onBeforeSendHeaders.addListener(function (info) {
 
-        var cookieRequestHeader = _.find(info.requestHeaders, function (requestHeader) {
-            return requestHeader.name === 'Cookie';
-        });
-
-        if (cookieRequestHeader) {
-
-            //  I've seen both of these Flash cookies before and I'm not sure if there are more.
-            var flashCookieValue = 'f3=40008';
-            var alternateFlashCookieValue = 'f3=40000';
-            //var html5CookieValue = 'f2=40001000';
-            var html5CookieValue = 'f2=40000000';
-
-            //  Swap out the flash cookie variable with the HTML5 counterpart.
-            if (cookieRequestHeader.value.indexOf(flashCookieValue) !== -1) {
-
-                cookieRequestHeader.value = cookieRequestHeader.value.replace(flashCookieValue, html5CookieValue);
-
-            }
-            else if (cookieRequestHeader.value.indexOf(alternateFlashCookieValue) !== -1) {
-
-                cookieRequestHeader.value = cookieRequestHeader.value.replace(alternateFlashCookieValue, html5CookieValue);
-
-            } else {
-                cookieRequestHeader.value += '&' + html5CookieValue;
-            }
-
-        }
-
+        //  TODO: Remove this logic in a bit when I'm confident it never appears.
         var refererRequestHeader = _.find(info.requestHeaders, function (requestHeader) {
             return requestHeader.name === 'Referer';
         });
+        
+        if (refererRequestHeader != null) throw "RefererRequestHeader exists when it was expected to never exist, value: " + refererRequestHeader.value;
 
-        if (refererRequestHeader == null) {
-            //  Bypass YouTube's embedded player content restrictions by looking like YouTube
-            //  Any referer will do, maybe change to Streamus.com in the future? Or maybe leave as YouTube
-            //  to stay under the radar. Not sure which is less suspicious.
-            info.requestHeaders.push({
-                name: "Referer",
-                value: "https://youtube.com/embed/undefined?enablejsapi=1"
-            });
-        }
+        //  Bypass YouTube's embedded player content restrictions by looking like YouTube
+        //  Any referer will do, maybe change to Streamus.com in the future? Or maybe leave as YouTube
+        //  to stay under the radar. Not sure which is less suspicious.
+        info.requestHeaders.push({
+            name: "Referer",
+            value: refererUrl
+        });
 
         //  Make Streamus look like an iPhone to guarantee the html5 player shows up even if the video has an ad.
         var userAgentRequestHeader = _.find(info.requestHeaders, function (requestHeader) {
             return requestHeader.name === 'User-Agent';
         });
-
-        if (userAgentRequestHeader !== null) {
-            userAgentRequestHeader.value = 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5';
+        
+        var iPhoneUserAgent = 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5';
+        if (userAgentRequestHeader === null) {
+            info.requestHeaders.push({
+                name: "User-Agent",
+                value: iPhoneUserAgent
+            });
+        } else {
+            userAgentRequestHeader.value = iPhoneUserAgent;
         }
 
         return { requestHeaders: info.requestHeaders };
     }, {
-        urls: ["https://www.youtube.com/embed/undefined?enablejsapi=1"]
+        urls: [refererUrl]
     },
+        //  Needs to be blocking in order to modify requestHeaders before sending -- obviously can't if they're async
         ["blocking", "requestHeaders"]
     );
 

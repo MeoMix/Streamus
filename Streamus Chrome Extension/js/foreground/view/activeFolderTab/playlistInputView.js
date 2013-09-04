@@ -65,7 +65,7 @@
                 var userInput = self.contentHeaderView.getUserInput();
 
                 //  Only add the playlist if something was provided.
-                if (userInput.trim() !== '') {
+                if (userInput !== '') {
                     self.contentHeaderView.clearUserInput();
 
                     var dataSource = YouTubeDataAPI.parseUrlForDataSource(userInput);

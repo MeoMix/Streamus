@@ -73,7 +73,7 @@ define(function () {
         },
         
         getUserInput: function() {
-            return this.$el.find('.addInput').val();
+            return $.trim(this.$el.find('.addInput').val());
         },
         
         clearUserInput: function() {
