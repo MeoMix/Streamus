@@ -37,7 +37,7 @@ define([
                 if (streamItemExists) {
 
                     var playerState = Player.get('state');
-                    //console.log("Stream exists...", playerState);
+
                     if (playerState == PlayerState.PLAYING) {
                         //  Continously render if playing.
 
@@ -50,7 +50,6 @@ define([
 
                         });
 
-                        console.log("Drawing image:", this.el.width, this.el.height, this.video);
                         this.context.drawImage(this.video, 0, 0, this.el.width, this.el.height);
                     } else if (Player.get('currentTime') > 0) {
                         //  The player might open while paused. Render the current video frame, but don't continously render until play starts.
@@ -66,8 +65,6 @@ define([
                     }
 
                 } else {
-
-                    console.log("Stream doesn't exist...");
 
                     setTimeout(function() {
                         //  Clear the canvas by painting over it with black.
@@ -158,7 +155,6 @@ define([
         },
         
         showContextMenu: function (event) {
-            console.log('This:', window, this, event);
 
             //  fullscreen detect:
             if (!window.screenTop && !window.screenY) {

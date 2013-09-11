@@ -47,7 +47,9 @@ require([
 
         if (player == null || user == null) {
 
-            var checkBackgroundLoadedInterval = setInterval(function() {
+            var checkBackgroundLoadedInterval = setInterval(function () {
+
+                console.log("checkBackgroundLoadedInterval");
 
                 player = chrome.extension.getBackgroundPage().YouTubePlayer;
                 user = chrome.extension.getBackgroundPage().User;

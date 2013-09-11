@@ -46,6 +46,9 @@ define([
         var maxResultsPerSearch = 50;
 
         var searchInterval = setInterval(function () {
+            
+            console.log("search interval");
+
             elapsedTime += timeInterval;
 
             if (elapsedTime < timeToSpendSearching) {
@@ -116,7 +119,7 @@ define([
 
             var self = this;
             var youtubeQueryInterval = setInterval(function () {
-
+                console.log("query youtube interval");
                 if (videosProcessed == totalVideosToProcess) {
                     clearInterval(youtubeQueryInterval);
 
@@ -156,7 +159,6 @@ define([
                     }
 
                 }
-
 
             }, 200);
 

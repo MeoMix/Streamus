@@ -75,25 +75,36 @@ define([
                     //  Start a long running timer when the player becomes paused. This is because a YouTube video
                     //  will expire after ~8+ hours of being loaded. This only happens if the player is paused.
                     //  Refresh videos after every 8 hours.
-                    var eightHoursInMilliseconds = 28800000;
+                    //var eightHoursInMilliseconds = 28800000;
 
-                    refreshPausedVideoInterval = setInterval(function () {
+                    //refreshPausedVideoInterval = setInterval(function () {
 
-                        var currentTime = self.get('currentTime');
-                        var loadedVideoId = self.get('loadedVideoId');
+                        console.log("refreshPause interval has fired.");
 
-                        self.stop();
-                        //  TODO: Seems weird to have to call cueVideoById and seekTo
-                        self.cueVideoById(loadedVideoId);
-                        self.seekTo(currentTime);
+                        var currentTime = parseInt(self.get('currentTime'), 10);
+                    console.log("currentTime:", currentTime);
+                    var loadedVideoId = self.get('loadedVideoId');
+                    
+                        youTubePlayer.loadVideoById({
+                            videoId: 'tvY7Nw1i6Kw',
+                            startSeconds: currentTime,
+                            suggestedQuality: Settings.get('suggestedQuality')
+                        });
+                        
 
-                    }, eightHoursInMilliseconds);
+                    //self.stop();
+                    //  TODO: Seems weird to have to call cueVideoById and seekTo
+                    //self.cueVideoById(loadedVideoId);
+                    //self.seekTo(currentTime);
+
+                    //}, eightHoursInMilliseconds);
 
                 }
 
             });
 
-            this.on('change:loadedVideoId', function() {
+            this.on('change:loadedVideoId', function () {
+                console.log("clearing seekTo interval");
                 clearInterval(seekToInterval);
             });
             
@@ -123,6 +134,7 @@ define([
             });
 
             youTubeVideo.on('ended', function () {
+                console.log("youTubeVideo on ended detected. Setting playerState to ended");
                 self.set('state', PlayerState.ENDED);
             });
 
@@ -131,16 +143,19 @@ define([
             });
 
             //  TODO: Would be nice to use this instead of a polling interval.
-            youTubeVideo.on('timeupdate', function() {
+            youTubeVideo.on('timeupdate', function () {
+                console.log("timeUpdate setting currentTime to:", this.currentTime);
                 self.set('currentTime', Math.ceil(this.currentTime));
             });
 
             youTubeVideo.on('loadedmetadata', function () {
+                console.log("loadedmetadata, these times should be equal: ", self.get('currentTime'), youTubePlayer.getCurrentTime());
                 this.currentTime = self.get('currentTime');
             });
             
             var seekToInterval = null;
             youTubeVideo.on('canplay', function () {
+                console.log("canplay");
                 self.set('streamusPlayer', this);
 
                 //  I store volume out of 100 and volume on HTML5 player is range of 0 to 1 so divide by 100.
@@ -151,19 +166,24 @@ define([
                 //  This ensure that youTube continues to update blob data.
                 if (videoStreamSrc.indexOf('blob') > -1) {
 
+                    console.log("blob detected");
+                    clearInterval(seekToInterval);
                     seekToInterval = setInterval(function () {
 
-                        if (self.get('streamusPlayer') != null) {
+                        console.log("refretching blob");
+
+                        if (self.get('streamusPlayer') != null && self.get('state') === PlayerState.PLAYING) {
                             var currentTime = self.get('streamusPlayer').currentTime;
                             youTubePlayer.seekTo(currentTime, true);
                         }
 
-                    }, 10000);
+                    }, 20000);
                 }
 
             });
 
-            this.on('change:loadedVideoId', function() {
+            this.on('change:loadedVideoId', function () {
+                console.log("Change loadedVideoId detected, setting time to 0");
                 youTubeVideo.currentTime = 0;
             });
             
@@ -194,6 +214,10 @@ define([
                             //  Announce that the YouTube Player is ready to go.
                             self.set('ready', true);
                         },
+                        'onStateChange': function () {
+                            console.log("STATE:", youTubePlayer.getPlayerState());
+                            console.log("Time:", youTubePlayer.getCurrentTime());
+                        },
                         'onError': function (error) {
 
                             console.error("An error was encountered.", error);
@@ -216,7 +240,8 @@ define([
         },
 
         //  YouTube won't give up the data if the src URL is non-blob unless we trigger a seekTo. Bastards.
-        triggerInitialLoadDataSeekTo: function(){
+        triggerInitialLoadDataSeekTo: function () {
+            console.log("initial load seekto going");
             youTubePlayer.seekTo(1, true);
         },
             

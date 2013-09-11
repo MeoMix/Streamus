@@ -47,6 +47,7 @@ define([
                 }, 3000);
             }
         } else if (state === PlayerState.ENDED) {
+            console.log("Player State is ENDED and I am selecting the next video.");
             StreamItems.selectNext();
         }
     });
