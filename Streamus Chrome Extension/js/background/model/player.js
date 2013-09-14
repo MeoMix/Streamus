@@ -79,21 +79,21 @@ define([
 
                     //refreshPausedVideoInterval = setInterval(function () {
 
-                        console.log("refreshPause interval has fired.");
+                    //    console.log("refreshPause interval has fired.");
 
-                        var currentTime = parseInt(self.get('currentTime'), 10);
-                    console.log("currentTime:", currentTime);
-                    var loadedVideoId = self.get('loadedVideoId');
+                    //    var currentTime = parseInt(self.get('currentTime'), 10);
+                    //console.log("currentTime:", currentTime);
+                    //var loadedVideoId = self.get('loadedVideoId');
                     
-                        youTubePlayer.loadVideoById({
-                            videoId: 'tvY7Nw1i6Kw',
-                            startSeconds: currentTime,
-                            suggestedQuality: Settings.get('suggestedQuality')
-                        });
+                    //    youTubePlayer.loadVideoById({
+                    //        videoId: 'tvY7Nw1i6Kw',
+                    //        startSeconds: currentTime,
+                    //        suggestedQuality: Settings.get('suggestedQuality')
+                    //    });
                         
 
                     //self.stop();
-                    //  TODO: Seems weird to have to call cueVideoById and seekTo
+                    ////  TODO: Seems weird to have to call cueVideoById and seekTo
                     //self.cueVideoById(loadedVideoId);
                     //self.seekTo(currentTime);
 
