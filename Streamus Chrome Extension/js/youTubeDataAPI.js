@@ -7,6 +7,9 @@ define([
 
     var videoInformationFields = 'author,title,media:group(yt:videoid,yt:duration),yt:accessControl';
     var videosInformationFields = 'entry(' + videoInformationFields + ')';
+    
+    //  A developer key uniquely identifies a product that is submitting an API request.
+    //  https://developers.google.com/youtube/2.0/developers_guide_protocol#Developer_Key
     var developerKey = 'AI39si7voIBGFYe-bcndXXe8kex6-N_OSzM5iMuWCdPCSnZxLB_qIEnQ-HMijHrwN1Y9sFINBi_frhjzVVrYunHH8l77wfbLCA';
     
     //  Some videos aren't allowed to be played in Streamus, but we can respond by finding similiar.
