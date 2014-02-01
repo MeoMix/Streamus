@@ -29,7 +29,7 @@ Server
 * [C# ASP.NET MVC (v4.0)](http://www.asp.net/mvc/mvc4)
 * [NUnit (v2.0+)](http://www.nunit.org/)
 * [NHibernate (v3.3.3+)](http://nhforge.org/)
-* [AutoFac (v3.1.1+)](https://code.google.com/p/autofac/)
+* [AutoFac (v3.1.1+)](https://github.com/autofac/Autofac)
 * [AutoMapper](https://github.com/AutoMapper/AutoMapper)
 * [log4net](http://logging.apache.org/log4net/)
 
