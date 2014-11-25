@@ -265,74 +265,30 @@ define([
             return quickSearchJqXhr;
         },
         
-        //  TODO: How can I make this prettier?
         parseUrlForDataSource: function (url) {
+            var identifierMap = [
+                { identifier: 'list=PL', type: DataSource.YOUTUBE_PLAYLIST },
+                { identifier: 'list=FL', type: DataSource.YOUTUBE_FAVORITES },
+                { identifier: '/user/', type: DataSource.YOUTUBE_CHANNEL },
+                { identifier: '/channel/', type: DataSource.YOUTUBE_CHANNEL },
+                { identifier: 'list=UU', type: DataSource.YOUTUBE_CHANNEL },
+                { identifier: 'streamus:', type: DataSource.SHARED_PLAYLIST }
+            ];
 
-            var dataSource = {
+            for (var pair in identifierMap) {
+                var dataSourceId = tryGetIdFromUrl(url, pair.identifier);
+                if (dataSourceId !== '') {
+                    return {
+                        id: dataSourceId,
+                        type: pair.type
+                    };
+                }
+            }
+
+            return {
                 id: null,
                 type: DataSource.USER_INPUT
             };
-            
-            //  Try for PlaylistId:
-            var dataSourceId = tryGetIdFromUrl(url, 'list=PL');
-
-            if (dataSourceId !== '') {
-                dataSource = {
-                    id: dataSourceId,
-                    type: DataSource.YOUTUBE_PLAYLIST
-                };
-                return dataSource;
-            }
-            
-            //  Try for user favorite videos:
-            dataSourceId = tryGetIdFromUrl(url, 'list=FL');
-            
-            if (dataSourceId !== '') {
-                dataSource = {
-                    id: dataSourceId,
-                    type: DataSource.YOUTUBE_FAVORITES
-                };
-                return dataSource;
-            }
-
-            //  Try feed from a user URL
-            dataSourceId = tryGetIdFromUrl(url, '/user/');
-                
-            //  Maybe they gave a channel ID instead which works same as user
-            if (dataSourceId === '') {
-                dataSourceId = tryGetIdFromUrl(url, '/channel/');
-            }
-                
-            if (dataSourceId !== '') {
-                dataSource = {
-                    id: dataSourceId,
-                    type: DataSource.YOUTUBE_CHANNEL
-                };
-
-                return dataSource;
-            }
-            
-            dataSourceId = tryGetIdFromUrl(url, 'list=UU');
-
-            if (dataSourceId !== '') {
-                dataSource = {
-                    id: dataSourceId,
-                    type: DataSource.YOUTUBE_CHANNEL
-                };
-                return dataSource;
-            }
-
-            dataSourceId = tryGetIdFromUrl(url, 'streamus:');
-                    
-            if (dataSourceId !== '') {
-                dataSource = {
-                    id: dataSourceId,
-                    type: DataSource.SHARED_PLAYLIST
-                };
-                return dataSource;
-            }
-
-            return dataSource;
         },
         
         getChannelName: function (channelId, callback) {
